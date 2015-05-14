@@ -18,4 +18,9 @@ public class IO {
 		}
 		return str;
 	}
+	
+	public static String getConsoleInput(String descriptionOfWhatIWant) {
+		System.out.print(descriptionOfWhatIWant);
+		return getConsoleInput();
+	}
 }
