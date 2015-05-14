@@ -35,31 +35,40 @@ public class UserControlledServer {
 		private int getNumberOfPlayers() {
 			return players.size();
 		}
-		
+
 		public void start() {
 			if(getNumberOfPlayers() == 0) {
 				System.out.println("no players, nothing to do, exiting");
 				return;
 			}
 			System.out.println("All players have joined, starting game.");
-			System.out.println("What do you want to do?");
+			System.out.println("What do you want to do? (type help for command list)");
 			String input = IO.getConsoleInput(" > ");
 			while( !input.equals("quit") && !input.equals("exit") ) {
-				if(input.equals("send")) {
-					System.out.print("Select a player number (there are currently " + getNumberOfPlayers() + " players) : ");
-					int playerNumber = Integer.valueOf(IO.getConsoleInput());
-					while(playerNumber < 1 && playerNumber > getNumberOfPlayers())
-					{
-						System.out.println();
-						playerNumber  = Integer.valueOf(IO.getConsoleInput("please enter a value between 1 and " + getNumberOfPlayers() + " : "));
+				input = IO.getConsoleInput(" > ");
+				String delims = "[ ]+";
+				String[] tokens = input.split(delims);
+				String command = tokens[0];
+				if(command.equals("send")) {
+					int player;
+					try {
+						player = Integer.parseInt(tokens[1]);
+					} catch (NumberFormatException e) {
+						continue; // if is not integer, continue loop (skips it)
 					}
-					String message = IO.getConsoleInput("Whad do you want to say to player " + playerNumber + " : ");
-					Player p = players.get(playerNumber - 1);
-					p.display(message);
-				}
-				else
-				{
-					input = IO.getConsoleInput(" Commands are : send quit exit\n > ");
+					if(player < 1) {
+						player *= -1;
+					}
+					if(player > getNumberOfPlayers()) {
+						System.out.println(" -  There are only " + getNumberOfPlayers() + " players.");
+						continue;
+					}
+
+					String message = input.substring(input.indexOf(tokens[2]));
+					players.get(player - 1).display(message);
+
+				} else if (command.equals("help")) {
+					System.out.println("Commands are : \n -  send player_number message \n -  quit \n -  exit\n -  help\n > ");
 				}
 			}
 			System.out.println("Game stops");
