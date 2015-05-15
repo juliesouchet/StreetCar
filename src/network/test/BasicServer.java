@@ -1,4 +1,4 @@
-package network.test.basic;
+package network.test;
 
 import game.AbstractGame;
 import game.Player;

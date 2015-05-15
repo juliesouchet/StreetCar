@@ -1,4 +1,4 @@
-package network.test.user_controlled;
+package network.test;
 
 import java.util.ArrayList;
 
@@ -69,6 +69,8 @@ public class UserControlledServer {
 
 				} else if (command.equals("help")) {
 					System.out.println("Commands are : \n -  send player_number message \n -  quit \n -  exit\n -  help\n > ");
+				} else if(command.equals("get")) {
+					
 				}
 			}
 			System.out.println("Game stops");
