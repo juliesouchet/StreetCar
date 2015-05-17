@@ -8,6 +8,7 @@ import game.UsedPlayerNameException;
 import ihm.TestIHM;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

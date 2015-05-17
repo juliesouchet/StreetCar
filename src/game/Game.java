@@ -80,7 +80,6 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 		return null;
 	}
-
 // --------------------------------------------
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
