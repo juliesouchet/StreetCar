@@ -7,14 +7,14 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class AbstractGame implements GameInterface {
-	protected ArrayList<PlayerInterface> players;
+	protected HashMap<String, PlayerInterface> players; // HashMap<playerName, player>
 	protected int maxNumberOfPlayers;
 
 	protected AbstractGame () {
-		players = new ArrayList<PlayerInterface>();
+		players = new HashMap<>();
 		maxNumberOfPlayers = Integer.MAX_VALUE;
 	}
 
@@ -44,9 +44,9 @@ public abstract class AbstractGame implements GameInterface {
 		if(getNumberOfPlayers() >= maxNumberOfPlayers) {
 			player.display("(message from server) - Sorry, I am full.");
 		}
-		players.add(player);
-		player.display("You are player " + getNumberOfPlayers());
-		System.out.println("a player has joined, I named him player " + getNumberOfPlayers());
+		players.put(player.getName(), player);
+		player.display("Message from server\n -  Hello " + player.getName() + ", you have joined.");
+		System.out.println("\nPlayer " + player.getName() + " has joined.");
 		if(getNumberOfPlayers() == maxNumberOfPlayers) {
 			onPlayerLimitReached();
 		}
@@ -58,5 +58,6 @@ public abstract class AbstractGame implements GameInterface {
 
 	public abstract void beginGame();
 	public abstract void onPlayerLimitReached();
+	public abstract void onNewPlayer(PlayerInterface player);
 
 }

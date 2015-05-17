@@ -10,10 +10,20 @@ import java.rmi.server.UnicastRemoteObject;
 public abstract class AbstractPlayer implements PlayerInterface {
 
 	GameInterface game;
+	String name;
 
 	@Override
 	public void setGame(GameInterface game) throws RemoteException {
 		this.game = game;
+	}
+	
+	@Override
+	public String getName() throws RemoteException {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void tryJoiningGame(String url) {
@@ -25,7 +35,7 @@ public abstract class AbstractPlayer implements PlayerInterface {
 				game.onJoinRequest(this);
 			}
 			else {
-				System.err.println("Couldn't connect, no server found.");
+				System.err.println("Object at destination URL is not a server.");
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

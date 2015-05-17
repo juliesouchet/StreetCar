@@ -29,35 +29,38 @@ public class TestGame extends AbstractGame {
 			String delims = "[ ]+";
 			String[] tokens = input.split(delims);
 			String command = tokens[0];			
-			
+
 			if(command.equals("send")) {
-				int player;
-				try {
-					player = Integer.parseInt(tokens[1]);
-				} catch (NumberFormatException e) {
-					System.out.println(" There is no \"player " + tokens[1] + "\"");
-					continue; // if is not integer, continue loop (skips it)
+				if(tokens.length < 2) {
+					System.out.println("\nToo few arguments, eg :\n -  send <player_number> <message>");
+					continue;
 				}
-				if(player < 1) {
-					player *= -1;
-				}
-				if(player > getNumberOfPlayers()) {
-					System.out.println(" -  There are only " + getNumberOfPlayers() + " players.");
+				String playerName = tokens[1];
+				if(!players.containsKey(playerName)) {
+					System.out.println(" There is no player \"" + tokens[1] + "\"");
 					continue;
 				}
 
 				String message = input.substring(input.indexOf(tokens[2]));
 				try {
-					players.get(player - 1).display(message);
+					players.get(playerName).display(message);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			} else if (command.equals("help")) {
-				System.out.println("Commands are : \n -  send player_number message \n -  quit \n -  exit\n -  help\n > ");
-			} else if(command.equals("get")) {
-
+				System.out.println("Commands are : \n -  send player_number message \n -  quit \n -  exit\n -  help\n -  print_players\n > ");
+			} else if(command.equals("print_players")) {
+				System.out.println("\nPlayers : ");
+				try {
+					for(PlayerInterface player : players.values()) {
+						System.out.println("\n" + player.getName());
+					}
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		System.out.println("Game stops");
@@ -73,6 +76,12 @@ public class TestGame extends AbstractGame {
 
 	@Override
 	public void onPlayerLimitReached() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onNewPlayer(PlayerInterface player) {
 		// TODO Auto-generated method stub
 
 	}
