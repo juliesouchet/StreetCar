@@ -1,7 +1,13 @@
 package player;
 
+import game.FullPartyException;
+import game.Game;
+import game.InterfaceGame;
+import game.UsedPlayerColorException;
+import game.UsedPlayerNameException;
 import ihm.TestIHM;
 
+import java.awt.Color;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -9,9 +15,6 @@ import java.rmi.RemoteException;
 import javax.swing.SwingUtilities;
 
 import util.NetworkTools;
-import application.Game;
-import application.FullPartyException;
-import application.InterfaceGame;
 
 
 
@@ -45,18 +48,20 @@ public class Main implements Runnable
 	 * @throws NotBoundException 		: The app IP or game name is wrong	(caught by IHM)
 	 * @throws RemoteException 			: The web host is offline			(caught by IHM)
 	 * @throws FullPartyException											(caught by IHM)
-	 ===========================================================================*/
-	public void newGame(String playerName, String gameName, boolean gameCreation, String applicationIP) throws RemoteException, NotBoundException, FullPartyException
+	 * @throws UsedPlayerColorException 
+	 * @throws UsedPlayerNameException
+	 * 	 ===========================================================================*/
+	public void newGame(String playerName, String gameName, Color playerColor, boolean gameCreation, String applicationIP) throws RemoteException, NotBoundException, FullPartyException, UsedPlayerNameException, UsedPlayerColorException
 	{
 		String localIP = NetworkTools.firstFreeSocketInfo().IP;
 
-		if (gameCreation)															// App thread creation
+		if (gameCreation)														// App thread creation
 		{
 			this.game		= new Game(gameName, localIP);
 			SwingUtilities	.invokeLater((Game)this.game);
 		}
-		else	this.game	= Game.getRemoteGame(applicationIP, gameName);	// Remote application pointer
+		else	this.game	= Game.getRemoteGame(applicationIP, gameName);		// Remote application pointer
 
-		this.player = new TestPlayer(gameName, playerName, localIP, game, ihm);		// Player Creation
+		this.player = new TestPlayer(playerName, playerColor, game, ihm);		// Player Creation
 	}
 }

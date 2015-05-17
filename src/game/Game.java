@@ -1,11 +1,13 @@
-package application;
+package game;
 
+import java.awt.Color;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.LinkedList;
+import java.util.HashMap;
+
 import player.InterfacePlayer;
 
 /**============================================================
@@ -29,8 +31,8 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 	public final static String	applicationProtocol		= "rmi";
 	public final static int		maxNbrPlayer			= 6;
 
-	private String						gameName;
-	private LinkedList<InterfacePlayer>	playerList;
+	private String								gameName;
+	private HashMap<String, InterfacePlayer>	playerList;
 
 // --------------------------------------------
 // Builder:
@@ -51,7 +53,7 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
-		this.playerList = new LinkedList<InterfacePlayer>();					// Init application
+		this.playerList = new HashMap<String, InterfacePlayer>();					// Init application
 		this.gameName	= new String(gameName);
 
 		System.out.println("\n===========================================================");
@@ -84,23 +86,34 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public void onJoinRequest(InterfacePlayer player) throws RemoteException, FullPartyException
+	public void onJoinRequest(InterfacePlayer player) throws RemoteException, FullPartyException, UsedPlayerNameException, UsedPlayerColorException
 	{
-		FullPartyException e = null;
-
 		System.out.println("\n===========================================================");
-		System.out.println(messageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
-		if (this.playerList.size() >= maxNbrPlayer)	
+		System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
+		if (this.playerList.size() >= maxNbrPlayer)
 		{
 			System.out.println(messageHeader + "Refusing player, party is currently full.");
 			System.out.println("===========================================================\n");
-			e = new FullPartyException();
+			throw new FullPartyException();
 		}
-		else this.playerList.addLast(player);
-
-		System.out.println(messageHeader + "accepted player");
-		System.out.println("===========================================================\n");
-		if (e != null)	throw e;
+		else if (playerList.containsKey(player.getName()))
+		{
+			System.out.println(messageHeader + "Refusing player, name already taken.");
+			System.out.println("===========================================================\n");
+			throw new UsedPlayerNameException();
+		}
+		else if (usedColor(player.getColor()))
+		{
+			System.out.println(messageHeader + "Refusing player, color \"" + player.getColor() + "\"  already taken.");
+			System.out.println("===========================================================\n");
+			throw new UsedPlayerColorException();
+		}
+		else
+		{
+			this.playerList.put(player.getName(), player);
+			System.out.println(messageHeader + "accepted player");
+			System.out.println("===========================================================\n");
+		}
 	}
 	public boolean quitGame(String gameName, String playerName) throws RemoteException
 	{
@@ -114,7 +127,7 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 			for (i=0; i<size; i++)
 			{
 				InterfacePlayer p = playerList.get(i);
-				if (p.getPlayerName().equals(playerName))
+				if (p.getName().equals(playerName))
 				{
 					playerList.remove(i);
 					resS= "player logged out";
@@ -140,5 +153,17 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 	public void run()
 	{
 		
+	}
+
+// --------------------------------------------
+// Private methodes:
+// --------------------------------------------
+	private boolean usedColor(Color c) throws RemoteException
+	{
+		for (InterfacePlayer p: playerList.values())
+		{
+			if (p.getColor().equals(c))	return true;
+		}
+		return false;
 	}
 }
