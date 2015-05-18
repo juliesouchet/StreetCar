@@ -20,6 +20,7 @@ import main.java.player.PlayerInterface;
 
 
 
+@SuppressWarnings("serial")
 public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 {
 // --------------------------------------------

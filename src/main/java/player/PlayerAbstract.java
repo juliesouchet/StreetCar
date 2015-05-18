@@ -5,7 +5,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import test.java.engine.TestIHM;
-
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -23,6 +22,7 @@ import main.java.game.GameInterface;
 
 
 
+@SuppressWarnings("serial")
 public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
 // --------------------------------------------
@@ -36,11 +36,11 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public PlayerAbstract(String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerAbstract(String playerName, Color playerColor, GameInterface game, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super();
 
-		this.game	= app;												// Init Player
+		this.game	= game;												// Init Player
 		this.ihm	= ihm;
 		this.name	= new String(playerName);
 		this.color	= playerColor;
@@ -51,7 +51,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		System.out.println("===========================================================\n");
 
 		this.game.onJoinRequest(this);									// Log the player to the application
-}
+	}
 
 // --------------------------------------------
 // Public methodes: my be called by the remote object
