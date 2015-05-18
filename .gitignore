@@ -9,7 +9,7 @@
 *.ear
 hs_err_pid*
 *.gitignore
-.bin
+./bin
 
 ##########################
 # Mac OSX hidden files
