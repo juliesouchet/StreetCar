@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.Point;
+import java.util.Iterator;
 
 
 
@@ -37,7 +38,7 @@ public class Direction
 	}
 	public static void checkDirection(int d)
 	{
-		if ((d < minVal) || (d > maxVal)) throw new RuntimeException("Unknown direction: " + d);		
+		if ((d < minVal) || (d > maxVal)) throw new RuntimeException("Unknown direction: " + d);
 	}
 	public static Point getNeighbour(int x, int y, int d)
 	{
@@ -47,7 +48,22 @@ public class Direction
 			case NORTH:	return new Point(x,	y-1);	// North
 			case SOUTH:	return new Point(x,	y+1);	// South
 			case WEST:	return new Point(x-1,	y);	// West
-			case EAST:	return new Point(x+1,	y);	// East
+			default:	return new Point(x+1,	y);	// East
 		}
+	}
+	public static Iterator<Integer> getIterator()
+	{
+		return new MyIterator();
+	}
+
+// --------------------------------------------
+// Direction Iterator:
+// --------------------------------------------
+	private static class MyIterator implements Iterator<Integer>
+	{
+		private int d;
+		public boolean hasNext(){return (d <= maxVal);}
+		public Integer next()	{checkDirection(d); d++; return d;}
+		public void remove()	{throw new RuntimeException("Not implemented");}
 	}
 }
