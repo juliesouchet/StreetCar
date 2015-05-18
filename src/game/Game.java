@@ -20,13 +20,10 @@ import player.InterfacePlayer;
 
 public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 {
-	
-	static String messageHeader =  "Street Car application: ";
-	
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
-	public final static String	defaultApplicationIP	= "127.0.0.1";
+	private static final String messageHeader			=  "Street Car application: ";
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 	public final static int		maxNbrPlayer			= 6;
