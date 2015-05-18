@@ -32,3 +32,10 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+##########################
+# RStudio generated files
+##########################
+
+*.Rhistory
+*.html
