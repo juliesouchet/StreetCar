@@ -1,17 +1,13 @@
 package player;
 
-import game.FullPartyException;
-import game.InterfaceGame;
-import game.UsedPlayerColorException;
-import game.UsedPlayerNameException;
+import game.ExceptionFullParty;
+import game.GameInterface;
+import game.ExceptionUsedPlayerColor;
+import game.ExceptionUsedPlayerName;
 import ihm.TestIHM;
-
 import java.awt.Color;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 
-import util.NetworkTools;
 
 
 
@@ -19,7 +15,8 @@ import util.NetworkTools;
 
 
 
-public class TestPlayer extends AbstractPlayer
+
+public class PlayerTest extends PlayerAbstract
 {
 // --------------------------------------------
 // Attributs:
@@ -31,11 +28,11 @@ public class TestPlayer extends AbstractPlayer
 	/**
 	 * @return Creates a local player that can be called as a local object
 	 * @throws RemoteException 			: The web host is offline			(caught by IHM)
-	 * @throws FullPartyException											(caught by IHM)
-	 * @throws UsedPlayerColorException 									(caught by IHM)
-	 * @throws UsedPlayerNameException 									    (caught by IHM)
+	 * @throws ExceptionFullParty											(caught by IHM)
+	 * @throws ExceptionUsedPlayerColor 									(caught by IHM)
+	 * @throws ExceptionUsedPlayerName 									    (caught by IHM)
 	 */
-	public TestPlayer(String playerName, Color playerColor, InterfaceGame app, TestIHM ihm) throws RemoteException, FullPartyException, UsedPlayerNameException, UsedPlayerColorException
+	public PlayerTest(String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);
 	}

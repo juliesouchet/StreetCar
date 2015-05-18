@@ -4,7 +4,7 @@ package game;
 
 
 @SuppressWarnings("serial")
-public class FullPartyException extends Exception
+public class ExceptionFullParty extends Exception
 {
 
 }

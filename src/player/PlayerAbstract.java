@@ -1,9 +1,9 @@
 package player;
 
-import game.FullPartyException;
-import game.InterfaceGame;
-import game.UsedPlayerColorException;
-import game.UsedPlayerNameException;
+import game.ExceptionFullParty;
+import game.GameInterface;
+import game.ExceptionUsedPlayerColor;
+import game.ExceptionUsedPlayerName;
 import ihm.TestIHM;
 
 import java.awt.Color;
@@ -22,12 +22,12 @@ import java.rmi.server.UnicastRemoteObject;
 
 
 
-public abstract class AbstractPlayer extends UnicastRemoteObject implements InterfacePlayer
+public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
-	protected InterfaceGame	game;
+	protected GameInterface	game;
 	protected TestIHM		ihm;
 	protected String		name;
 	protected Color			color;
@@ -35,7 +35,7 @@ public abstract class AbstractPlayer extends UnicastRemoteObject implements Inte
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public AbstractPlayer(String playerName, Color playerColor, InterfaceGame app, TestIHM ihm) throws RemoteException, FullPartyException, UsedPlayerNameException, UsedPlayerColorException
+	public PlayerAbstract(String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super();
 

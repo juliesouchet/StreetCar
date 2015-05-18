@@ -1,10 +1,10 @@
 package player;
 
-import game.FullPartyException;
+import game.ExceptionFullParty;
 import game.Game;
-import game.InterfaceGame;
-import game.UsedPlayerColorException;
-import game.UsedPlayerNameException;
+import game.GameInterface;
+import game.ExceptionUsedPlayerColor;
+import game.ExceptionUsedPlayerName;
 import ihm.TestIHM;
 
 import java.awt.Color;
@@ -26,10 +26,10 @@ public class Main implements Runnable
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
-	private InterfaceGame		game;					// Apps attributs: Are established if the player hosts the application
+	private GameInterface		game;					// Apps attributs: Are established if the player hosts the application
 
 	private TestIHM					ihm;					// Player attributs
-	private InterfacePlayer		player;
+	private PlayerInterface		player;
 
 // --------------------------------------------
 // Local methodes:
@@ -48,11 +48,11 @@ public class Main implements Runnable
 	 * @param applicationIP equals null if the player shelters the game
 	 * @throws NotBoundException 		: The app IP or game name is wrong	(caught by IHM)
 	 * @throws RemoteException 			: The web host is offline			(caught by IHM)
-	 * @throws FullPartyException											(caught by IHM)
-	 * @throws UsedPlayerColorException 
-	 * @throws UsedPlayerNameException
+	 * @throws ExceptionFullParty											(caught by IHM)
+	 * @throws ExceptionUsedPlayerColor 
+	 * @throws ExceptionUsedPlayerName
 	 * 	 ===========================================================================*/
-	public void newGame(String playerName, String gameName, Color playerColor, boolean gameCreation, String applicationIP) throws RemoteException, NotBoundException, FullPartyException, UsedPlayerNameException, UsedPlayerColorException
+	public void newGame(String playerName, String gameName, Color playerColor, boolean gameCreation, String applicationIP) throws RemoteException, NotBoundException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		String localIP = NetworkTools.firstFreeSocketInfo().IP;
 
@@ -63,6 +63,6 @@ public class Main implements Runnable
 		}
 		else	this.game	= Game.getRemoteGame(applicationIP, gameName);		// Remote application pointer
 
-		this.player = new TestPlayer(playerName, playerColor, game, ihm);		// Player Creation
+		this.player = new PlayerTest(playerName, playerColor, game, ihm);		// Player Creation
 	}
 }

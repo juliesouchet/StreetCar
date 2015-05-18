@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
-import player.InterfacePlayer;
+import player.PlayerInterface;
 
 /**============================================================
  * Remote Application 
@@ -18,7 +18,7 @@ import player.InterfacePlayer;
 
 
 
-public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
+public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 {
 // --------------------------------------------
 // Attributs:
@@ -29,7 +29,7 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 	public final static int		maxNbrPlayer			= 6;
 
 	private String								gameName;
-	private HashMap<String, InterfacePlayer>	playerList;
+	private HashMap<String, PlayerInterface>	playerList;
 
 // --------------------------------------------
 // Builder:
@@ -50,7 +50,7 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
-		this.playerList = new HashMap<String, InterfacePlayer>();					// Init application
+		this.playerList = new HashMap<String, PlayerInterface>();					// Init application
 		this.gameName	= new String(gameName);
 
 		System.out.println("\n===========================================================");
@@ -65,14 +65,14 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 	 * @throws RemoteException 			: The web host is offline			(catched by IHM)
 	 * @throws auther java.rmi.Exception: NetworkError						(catched by IHM)
 	 =========================================================================*/
-	public static InterfaceGame getRemoteGame(String appIP, String gameName) throws RemoteException, NotBoundException
+	public static GameInterface getRemoteGame(String appIP, String gameName) throws RemoteException, NotBoundException
 	{
 		String url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 
 ////	System.setSecurityManager(new RMISecurityManager());
 		try 
 		{
-			return (InterfaceGame) Naming.lookup(url);
+			return (GameInterface) Naming.lookup(url);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 		return null;
@@ -82,7 +82,7 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public void onJoinRequest(InterfacePlayer player) throws RemoteException, FullPartyException, UsedPlayerNameException, UsedPlayerColorException
+	public void onJoinRequest(PlayerInterface player) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		System.out.println("\n===========================================================");
 		System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
@@ -90,19 +90,19 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 		{
 			System.out.println(messageHeader + "Refusing player, party is currently full.");
 			System.out.println("===========================================================\n");
-			throw new FullPartyException();
+			throw new ExceptionFullParty();
 		}
 		else if (playerList.containsKey(player.getName()))
 		{
 			System.out.println(messageHeader + "Refusing player, name already taken.");
 			System.out.println("===========================================================\n");
-			throw new UsedPlayerNameException();
+			throw new ExceptionUsedPlayerName();
 		}
 		else if (usedColor(player.getColor()))
 		{
 			System.out.println(messageHeader + "Refusing player, color \"" + player.getColor() + "\"  already taken.");
 			System.out.println("===========================================================\n");
-			throw new UsedPlayerColorException();
+			throw new ExceptionUsedPlayerColor();
 		}
 		else
 		{
@@ -122,7 +122,7 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 		{
 			for (i=0; i<size; i++)
 			{
-				InterfacePlayer p = playerList.get(i);
+				PlayerInterface p = playerList.get(i);
 				if (p.getName().equals(playerName))
 				{
 					playerList.remove(i);
@@ -156,7 +156,7 @@ public class Game extends UnicastRemoteObject implements Runnable, InterfaceGame
 // --------------------------------------------
 	private boolean usedColor(Color c) throws RemoteException
 	{
-		for (InterfacePlayer p: playerList.values())
+		for (PlayerInterface p: playerList.values())
 		{
 			if (p.getColor().equals(c))	return true;
 		}
