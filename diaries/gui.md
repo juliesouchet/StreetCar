@@ -11,10 +11,10 @@ https://moqups.com/louissellam/WC9XQzbg
 Nous avons eu un audit de la partie IHM.
 Cela a révélé des problèmes tel que :  
   - Les boutons `Retour` / `Annuler` / `Quitter`.  
-	- Emplacement du menu dans la vue en jeu.  
-	- Accessibilité des regles dans la vu en jeu.  
-	- Pouvoir faire autre chose dans la salle d'attente comme lire les règles.  
-	- Faire une salle d'attente commune à l'host et aux clients.  
+  - Emplacement du menu dans la vue en jeu.  
+  - Accessibilité des regles dans la vu en jeu.  
+  - Pouvoir faire autre chose dans la salle d'attente comme lire les règles.  
+  - Faire une salle d'attente commune à l'host et aux clients.  
   
 Nous avons crée l'aborescence des sources dans differents dossiers.  
 Nous avons à la structure du code de la partie IHM.  
