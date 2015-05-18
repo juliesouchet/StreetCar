@@ -1,17 +1,22 @@
-# Generalités :
+The MIT License (MIT)
 
+Copyright (c) [2015] [Vizzini Jeremy, Sellam Louis, Souchet Julie, Pruliere
+Valentin, Coutaud Ulysse, Riyane Sid-Lakhdar]
 
-le coup de chaque joueur qui a une couleur ET un "pion/jeton/avatar/..." (val & riyane)
-    nous, ce qu'on voudrait, c'est que chaque pion ai une couleur, et que chaque couleur représente ce pion
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-quand un joueur fait un essai, est-ce qu'on afficher ce qu'il est en train d'essayer aux autres joueurs?
-    (val & riyane)
-    
-est-ce qu'on informe un joueur qui veut commencer son voyage d'innoguration qu'il n'a pas un chemin valide (cad reliant ses deux terminus et passant par toutes les bonnes étapes de sa route)     (val & riyane)
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-
-# Engine :
-
-# IA :
-
-# GUI :
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
