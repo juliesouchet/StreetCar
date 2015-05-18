@@ -1,6 +1,5 @@
 package main.java.data;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
 import main.java.util.Direction;
@@ -17,6 +16,7 @@ public class Tile
 	private LinkedList<Path>	pathList;
 	private boolean				isTree;
 	private boolean				isBuilding;
+	private boolean				isStop;
 	private boolean				isTerminus;
 
 // --------------------------------------------
@@ -27,28 +27,36 @@ public class Tile
 		this.isTree		= t.isTree;
 		this.isBuilding	= t.isBuilding;
 		this.isTerminus	= t.isTerminus;
+		this.isStop		= t.isStop;
 		this.pathList	= new LinkedList<Path>(t.pathList);
 	}
-	public Tile(LinkedList<Path> pathList, boolean isTree, boolean isBuilding, boolean isTerminus) throws RuntimeException
+	public Tile(LinkedList<Path> pathList, boolean isTree, boolean isBuilding, boolean isTerminus, boolean isStop) throws RuntimeException
 	{
 		if ((isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
 		if ((isBuilding)&& (isTerminus))		 throw new RuntimeException("A tile can not be a building and contain a terminus");
 
+		this.pathList	= new LinkedList<Path>(pathList);
 		this.isBuilding	= isBuilding;
 		this.isTree		= isTree;
 		this.isTerminus	= isTerminus;
-		this.pathList	= new LinkedList<Path>(pathList);
+		this.isStop		= isStop;
+	}
+	
+	public Tile cloneTile(Tile t)
+	{
+		return new Tile(t);
 	}
 
 // --------------------------------------------
 // Setters/getters:
 // --------------------------------------------
-	public void		turnLeft()		{for (Path p: pathList)	p.turnLeft();}
-	public void		turnRight()		{for (Path p: pathList)	p.turnRight();}
+	public void		turnLeft()		{for (Path p: pathList)	p.turnLeft();}  // counterclockwise
+	public void		turnRight()		{for (Path p: pathList)	p.turnRight();} // clockwise
 	public void		turnHalf()		{for (Path p: pathList)	p.turnHalf();}
 	public boolean	isTree()		{return this.isTree;}
 	public boolean	isBuilding()	{return this.isBuilding;}
 	public boolean	isTerminus()	{return this.isTerminus;}
+	public boolean	isStop()		{return this.isStop;}
 	public boolean	isEmpty()		{return ((!this.isBuilding) && (!this.isTree) && (this.pathList.isEmpty()));}
 	public LinkedList<Integer> getAccessibleDirections()
 	{
@@ -56,8 +64,8 @@ public class Tile
 
 		for (Path p: pathList)
 		{
-			if (!listContainsInt(res, p.d0))	res.add(p.d0);
-			if (!listContainsInt(res, p.d1))	res.add(p.d1);
+			if (!res.contains(p.end0))	res.add(p.end0);
+			if (!res.contains(p.end1))	res.add(p.end1);
 		}
 		return res;
 	}
@@ -89,42 +97,33 @@ public class Tile
 	}
 
 // --------------------------------------------
-// Private Local methods
-// --------------------------------------------
-	private boolean listContainsInt(Collection<Integer> c, int i)
-	{
-		for (int o: c) {if (o == i) return true;}
-		return false;
-	}
-
-// --------------------------------------------
-// Path Class:
+// class Path :
 // Represents a path between two cardinal directions
 // --------------------------------------------
 	public class Path
 	{
 		// Attributes
-		public int d0;
-		public int d1;
+		public int end0;
+		public int end1;
 
 		// Builder
 		public Path(int d0, int d1)
 		{
 			Direction.checkDirection(d0);
 			Direction.checkDirection(d1);
-			this.d0	= d0;
-			this.d1	= d1;
+			this.end0	= d0;
+			this.end1	= d1;
 		}
 		// Setter
-		public void turnLeft()	{d0 = Direction.turnLeft(d0);	d1 = Direction.turnLeft(d1);}
-		public void turnRight()	{d0 = Direction.turnRight(d0);	d1 = Direction.turnRight(d1);}
+		public void turnLeft()	{end0 = Direction.turnLeft(end0);	end1 = Direction.turnLeft(end1);}
+		public void turnRight()	{end0 = Direction.turnRight(end0);	end1 = Direction.turnRight(end1);}
 		public void turnHalf()
 		{
-			d0 = Direction.turnLeft(d0);
-			d0 = Direction.turnLeft(d0);
-			d1 = Direction.turnRight(d1);
-			d1 = Direction.turnRight(d1);
+			end0 = Direction.turnLeft(end0);
+			end0 = Direction.turnLeft(end0);
+			end1 = Direction.turnRight(end1);
+			end1 = Direction.turnRight(end1);
 		}
-		public boolean equals(Path p)	{return ((d0 == p.d0) && (d1 == p.d1));}
+		public boolean equals(Path p)	{return ((end0 == p.end0) && (end1 == p.end1));}
 	}
 }
