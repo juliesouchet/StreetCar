@@ -1,6 +1,7 @@
 package main.java.game;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -8,6 +9,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
+import main.java.data.Tile;
 import main.java.player.PlayerInterface;
 
 
@@ -164,5 +166,12 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 			if (p.getColor().equals(c))	return true;
 		}
 		return false;
+	}
+	@Override
+	public void onJoinRequest(String playerName, PlayerInterface player)
+			throws RemoteException, ExceptionFullParty,
+			ExceptionUsedPlayerName, ExceptionUsedPlayerColor {
+		// TODO Auto-generated method stub
+		
 	}
 }
