@@ -60,6 +60,17 @@ public class Tile
 	public boolean	isTerminus()	{return this.isTerminus;}
 	public boolean	isStop()		{return this.isStop;}
 	public boolean	isEmpty()		{return ((!this.isBuilding) && (!this.isTree) && (this.pathList.isEmpty()));}
+	public boolean	isPathTo(int dir)
+	{
+		Direction.checkDirection(dir);
+		for (Path p: this.pathList)
+		{
+			if (p.end0 == dir)	return true;
+			if (p.end1 == dir)	return true;
+		}
+		return false;
+	}
+
 	public LinkedList<Integer> getAccessibleDirections()
 	{
 		LinkedList<Integer> res = new LinkedList<Integer>();

@@ -36,6 +36,12 @@ public class Direction
 		if (d != minVal)	return d--;
 		else				return maxVal;
 	}
+	public static int turnHalf(int d)
+	{
+		checkDirection(d);
+		int res = turnLeft(d);
+		return turnLeft(res);
+	}
 	public static void checkDirection(int d)
 	{
 		if ((d < minVal) || (d > maxVal)) throw new RuntimeException("Unknown direction: " + d);
