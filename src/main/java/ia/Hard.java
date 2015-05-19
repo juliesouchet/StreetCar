@@ -29,6 +29,25 @@ public class Hard implements PlayerInterface {
 	 *				Local methods			*		
 	 *======================================*/
 	
+	@SuppressWarnings("unused")
+	private LinkedList<CoordinatedTile> calculateBestWay() {
+		LinkedList<CoordinatedTile> res = new LinkedList<CoordinatedTile>();
+		// TODO : calculates the way from the start to the stops to the end (all possible combinations) and keep the best
+		return res;		
+	}
+	
+	@SuppressWarnings("unused")
+	/**
+	 * Used to put the various segments of the way one after another
+	 * @param l1
+	 * @param l2
+	 * @return the concatenation of l1 and l2 with the necessary cross-roads
+	 */
+	private LinkedList<CoordinatedTile> fusion(LinkedList<CoordinatedTile> l1, LinkedList<CoordinatedTile> l2) {
+		LinkedList<CoordinatedTile> res = new LinkedList<CoordinatedTile>();
+		// TODO : returns the concatenation of l1 and l2 with the necessary cross-roads
+		return res;
+	}
 
 	@SuppressWarnings("unused")
 	/**
