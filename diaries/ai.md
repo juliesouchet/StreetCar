@@ -1,34 +1,48 @@
 ## StreetCar - Intelligence artificielle
-----------------
+
 Coutaud Ulysse  
-Souchet Julie  
+Souchet Julie
+
+-----
 
 ### Jour 1 : Lundi 18 mai  
   
   
-#### Critères de choix de l'intelligence artificielle :  
-  - construire la voie optimale d'un terminal à l'autre en passant par les arrêts obligatoires  
-  - saboter les voies des adversaires  
-  - bluffer
+#### CritÃ¨res de choix de l'intelligence artificielle :  
+>  construire la voie optimale d'un terminal Ã  l'autre en passant par les arrÃªts obligatoires  
 
-#### Calcul de la voie optimale (pour l'instant sans les arrêts):  
-On représente le terrain par un graphe, dont les sommets correspondent aux points cardinaux des cases et les arêtes aux rails sur les tuiles.  
+>  saboter les voies des adversaires  
 
-On initialise le graphe avec tous les chemins possibles, c'est-à-dire :  
-  - Pour une case vide ou contenant une tuile remplaçable : toutes les arêtes reliant tous les sommets  
-  - Pour une case contenant une tuile *non* remplaçable : les arêtes représentées par les rails sur la tuile.
+>  bluffer  
 
-Dans chaque case, toute arête reçoit un poids :  
-  - Si elle était déjà présente sur le plateau : $0$
-  - Si on doit (rem)placer une tuile : "coût" de la tuile minimale contenant cette arête (et les éventuelles arêtes déjà présentes)  
-  - Si ce mouvement est interdit : $+\infty$  
 
-On se sert ensuite de l'algorithme A* pour rechercher le chemin le plus court entre les deux cases de départ du terminal et les deux cases d'arrivée (les voies n'étant pas orientées, on peut choisir n'importe quel départ ou arrivée). Comme heuristique, nous avons choisi de calculer la distance en ligne droite entre le point de départ et le point d'arrivée. Comme les voies ne sont pas en diagonales, la distance estimée est toujours inférieure à la distance réelle.  
-
-Le coût d'une tuile dépend d'où on l'obtient :  
-  - de la main du joueur : $0$ (on l'a déjà sous la main)  
-  - de la pioche : $$\frac{nombreDeTuilesTotalesDansLaPioche}{nombreDeTuilesDeCeTypeDansLaPioche}$$ allant de $1$ à $+\infty$  (plus une tuile est rare, plus il faudra de chance pour l'obtenir)  
-  - de la main d'un adversaire ayant commencé son voyage inaugural : $1$ (il suffit de se servir)  
-  - du plateau : $1$ (il suffit de l'échanger)  
+#### Calcul de la voie optimale (pour l'instant sans les arrÃªts):  
+* On reprÃ©sente le terrain par un graphe, dont les sommets correspondent aux points cardinaux des cases et les arÃªtes aux rails sur les tuiles.  
   
-Pour l'instant cet algorithme ne prend pas en compte les arrêts obligatoires sur le trajet de la ligne, mais nous comptons les ajouter demain.
+
+* On initialise le graphe avec tous les chemins possibles, c'est-Ã -dire :  
+    + Pour une case vide ou contenant une tuile remplaÃ§able : toutes les arÃªtes reliant tous les sommets  
+    + Pour une case contenant une tuile *non* remplaÃ§able : les arÃªtes reprÃ©sentant les rails sur la tuile.  
+  
+
+* Dans chaque case, toute arÃªte reÃ§oit un poids :  
+    + Si elle Ã©tait dÃ©jÃ  prÃ©sente sur le plateau : $0$  
+    + Si on doit (rem)placer une tuile : coÃ»t de la tuile minimale contenant cette arÃªte (et les Ã©ventuelles arÃªtes dÃ©jÃ  prÃ©sentes)    
+  *Attention : on joue 2 tuiles / tour*  
+    + Si ce mouvement est interdit : $+\infty$  
+  *Attention : on peut Ã©changer 2 tuiles simulanÃ©ment pour crÃ©er une connexion*  
+  
+
+* Le coÃ»t d'une tuile dÃ©pend d'oÃ¹ on l'obtient :  
+    + de la main du joueur : $0$ (on l'a dÃ©jÃ  sous la main)  
+    + de la pioche : $$\frac{nombreDeTuilesTotalesDansLaPioche}{nombreDeTuilesDeCeTypeDansLaPioche}$$     allant de $1$ Ã  $+\infty$  (plus une tuile est rare, plus il faudra de chance pour l'obtenir)  
+    + de la main d'un adversaire ayant commencÃ© son voyage inaugural : $1$ (il suffit de se servir)  
+    + du plateau : $1$ (il suffit de l'Ã©changer)  
+  
+
+* On se sert ensuite de l'algorithme `A*` pour rechercher le chemin le plus court entre les deux cases de dÃ©part du terminal et les deux cases d'arrivÃ©e (les voies n'Ã©tant pas orientÃ©es, on peut choisir n'importe quel terminal de dÃ©part ou d'arrivÃ©e). Comme heuristique, nous avons choisi de calculer la distance en ligne droite entre le point de dÃ©part et le point d'arrivÃ©e. Comme les voies ne sont pas en diagonales, la distance estimÃ©e est toujours infÃ©rieure Ã  la distance rÃ©elle.  
+  
+  
+Pour l'instant cet algorithme ne prend pas en compte les arrÃªts obligatoires sur le trajet de la ligne, mais nous comptons les ajouter demain.  
+
+-------------------
