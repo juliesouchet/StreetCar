@@ -13,5 +13,10 @@ est-ce qu'on informe un joueur qui veut commencer son voyage d'innoguration qu'i
 # Engine :
 
 # IA :
+Pour ceux de l'engine :
+> Pioche et toutes les méthodes associées (état courant, tirer une carte...)  
+> Mains des différents joueurs  
+> Historique des coups joués (tous les joueurs)  
+> Etat des joueurs (quelle phase de jeu)  
 
 # GUI :
