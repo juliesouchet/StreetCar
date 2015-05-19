@@ -18,7 +18,6 @@ public class FrameController implements KeyListener {
 
     protected JFrame frame;
     protected JMenuBar menuBar;
-    protected PanelController panelController;
     
     MainMenuPanelController mainMenuPanelController;
 
@@ -29,15 +28,14 @@ public class FrameController implements KeyListener {
     }
 
     public FrameController(PanelController panelController) {
-        this.frame = this.createInitialFrame();
+        this.frame = this.setupInitialFrame();
         this.frame.addKeyListener(this);
         this.menuBar = this.createInitialMenuBar();
-        this.panelController = panelController;
     }
 
     // Create UI elements
 
-    public JFrame createInitialFrame() {
+    public JFrame setupInitialFrame() {
         JFrame frame = new JFrame("Untitled");
         frame.setSize(1100, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,12 +57,8 @@ public class FrameController implements KeyListener {
     	return (JPanel) this.frame.getContentPane();
     }
     
-    public PanelController getPanelController() {
-        return this.panelController;
-    }
-
-    public void setPanelController(PanelController panelController) {
-        this.panelController = panelController;
+    public void setFrameContentPane(JPanel panel) {
+    	this.frame.setContentPane(panel);
     }
 
     // Show / hide frame
