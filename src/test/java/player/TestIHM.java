@@ -1,9 +1,9 @@
-package test.java.engine;
+package test.java.player;
 
 import java.awt.Color;
 import java.util.Scanner;
 
-import main.java.engine.player.Main;
+import main.java.player.Main;
 
 
 

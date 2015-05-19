@@ -1,14 +1,14 @@
-package main.java.engine.player;
+package main.java.player;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import test.java.engine.TestIHM;
-import main.java.engine.game.ExceptionFullParty;
-import main.java.engine.game.ExceptionUsedPlayerColor;
-import main.java.engine.game.ExceptionUsedPlayerName;
-import main.java.engine.game.GameInterface;
+import test.java.player.TestIHM;
+import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionUsedPlayerColor;
+import main.java.game.ExceptionUsedPlayerName;
+import main.java.game.GameInterface;
 
 
 
@@ -22,7 +22,6 @@ import main.java.engine.game.GameInterface;
 
 
 
-@SuppressWarnings("serial")
 public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
 // --------------------------------------------
@@ -50,7 +49,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		System.out.println("Street Car player : ready and logged");
 		System.out.println("===========================================================\n");
 
-		this.game.onJoinRequest(playerName, this);									// Log the player to the application
+		this.game.onJoinRequest(this);									// Log the player to the application
 	}
 
 // --------------------------------------------

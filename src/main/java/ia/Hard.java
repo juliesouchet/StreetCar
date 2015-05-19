@@ -5,15 +5,15 @@ import java.awt.Point;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 
-import main.java.engine.data.Tile;
-import main.java.engine.data.Tile.Path;
-import main.java.engine.player.PlayerInterface;
+import main.java.data.Tile;
+import main.java.data.Tile.Path;
+import main.java.player.PlayerInterface;
 
 public class Hard implements PlayerInterface {
 	/*======================================*
 	 *			Inherited methods			*		
 	 *======================================*/
-	
+
 	@Override
 	public String getName() throws RemoteException {
 		return "Hard";
@@ -24,7 +24,7 @@ public class Hard implements PlayerInterface {
 		// TODO Which color ?
 		return null;
 	}
-
+/****************
 	@Override
 	public boolean isHumanPlayer() throws RemoteException {
 		return false;
@@ -86,7 +86,7 @@ public class Hard implements PlayerInterface {
 
 	}
 
-	
+****/
 	
 
 
