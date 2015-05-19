@@ -5,7 +5,7 @@ import java.awt.Point;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import main.java.data.Tile;
+import main.java.engine.data.Tile;
 
 
 

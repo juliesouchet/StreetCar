@@ -5,10 +5,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import test.java.engine.TestIHM;
-import main.java.engine.game.ExceptionFullParty;
-import main.java.engine.game.ExceptionUsedPlayerColor;
-import main.java.engine.game.ExceptionUsedPlayerName;
-import main.java.engine.game.GameInterface;
+import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionUsedPlayerColor;
+import main.java.game.ExceptionUsedPlayerName;
+import main.java.game.GameInterface;
 
 
 
@@ -26,7 +26,7 @@ import main.java.engine.game.GameInterface;
 public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
 // --------------------------------------------
-// Attributes:
+// Attributs:
 // --------------------------------------------
 	protected GameInterface	game;
 	protected TestIHM		ihm;
@@ -50,18 +50,18 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		System.out.println("Street Car player : ready and logged");
 		System.out.println("===========================================================\n");
 
-		this.game.onJoinRequest(playerName, this);									// Log the player to the application
+		this.game.onJoinRequest(this);									// Log the player to the application
 	}
 
 // --------------------------------------------
-// Public methods: may be called by the remote object
+// Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
 	public String 	getName()	throws RemoteException	{return this.name;}
 	public Color	getColor()	throws RemoteException	{return this.color;}
 
 // --------------------------------------------
-// Local methods:
+// Local methodes:
 // --------------------------------------------
 
 }

@@ -5,11 +5,11 @@ import java.awt.Point;
 import java.rmi.RemoteException;
 
 import test.java.engine.TestIHM;
-import main.java.data.Tile;
-import main.java.game.ExceptionFullParty;
-import main.java.game.ExceptionUsedPlayerColor;
-import main.java.game.ExceptionUsedPlayerName;
-import main.java.game.GameInterface;
+import main.java.engine.data.Tile;
+import main.java.engine.game.ExceptionFullParty;
+import main.java.engine.game.ExceptionUsedPlayerColor;
+import main.java.engine.game.ExceptionUsedPlayerName;
+import main.java.engine.game.GameInterface;
 
 
 
@@ -24,6 +24,8 @@ public class PlayerTest extends PlayerAbstract
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
+
+	private static final long serialVersionUID = 8115400749334702829L;
 
 // --------------------------------------------
 // Builder:
@@ -108,6 +110,7 @@ public class PlayerTest extends PlayerAbstract
 		// TODO Auto-generated method stub
 		
 	}
+
 
 // --------------------------------------------
 // Local methods:

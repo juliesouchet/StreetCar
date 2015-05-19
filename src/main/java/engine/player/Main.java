@@ -1,19 +1,19 @@
 package main.java.player;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import javax.swing.SwingUtilities;
-
 import test.java.engine.TestIHM;
-import main.java.engine.game.ExceptionFullParty;
-import main.java.engine.game.ExceptionUsedPlayerColor;
-import main.java.engine.game.ExceptionUsedPlayerName;
-import main.java.engine.game.Game;
-import main.java.engine.game.GameInterface;
-import main.java.engine.util.NetworkTools;
+import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionUsedPlayerColor;
+import main.java.game.ExceptionUsedPlayerName;
+import main.java.game.Game;
+import main.java.game.GameInterface;
+import main.java.util.NetworkTools;
 
 
 
@@ -23,16 +23,15 @@ import main.java.engine.util.NetworkTools;
 public class Main implements Runnable
 {
 // --------------------------------------------
-// Attributes:
+// Attributs:
 // --------------------------------------------
-	private GameInterface		game;					// Apps attributes: Are established if the player hosts the application
+	private GameInterface		game;					// Apps attributs: Are established if the player hosts the application
 
-	private TestIHM				ihm;					// Player attributes
-	@SuppressWarnings("unused")
+	private TestIHM					ihm;					// Player attributs
 	private PlayerInterface		player;
 
 // --------------------------------------------
-// Local methods:
+// Local methodes:
 // --------------------------------------------
 	public static void main(String[] args) throws RemoteException, UnknownHostException
 	{
