@@ -37,12 +37,12 @@ public class TestIHM
 		}
 		System.out.print("\n\n");
 		System.out.print("\t- Player name\t\t :");						name		= sc.next();
-		System.out.print("\t- Game name\t\t :");							gameName	= sc.next();
+		System.out.print("\t- Game name\t\t :");						gameName	= sc.next();
 		Color color = askColor(sc);
 		if(!create){System.out.print("\t- IP of the application\t:");	ip			= sc.next();}
 		else															ip			= null;
-
-		try					{m.newGame(name, gameName, color, create, ip);}
+String boardName = "newOrleans";	/////// Nom par defaut
+		try					{m.newGame(name, gameName, boardName, color, create, ip);}
 		catch (Exception e)	{e.printStackTrace();}
 		sc.close();
 	}
