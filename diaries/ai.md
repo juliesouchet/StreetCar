@@ -46,3 +46,13 @@ Souchet Julie
 Pour l'instant cet algorithme ne prend pas en compte les arrêts obligatoires sur le trajet de la ligne, mais nous comptons les ajouter demain.  
 
 -------------------
+
+### Jour 2 : Mardi 19 mai  
+
+#### Calcul de la voie optimale avec les arrêts :  
+
+* __Algorithme :__  
+Afin d'améliorer l'algorithme ci-dessus, nous allons, pour chaque combinaison des arrêts obligatoires (1-2-3, 2-1-3, 3-2-1...) calculer les chemins les plus courts, puis les mettre bout à bout. Le résultat gagnant sera celui de meilleure qualité.  
+
+* __Code :__  
+Nous avons commencé à construire la structure du code de l'IA, avec toutes les fonctions nécessaires.
