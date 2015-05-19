@@ -1,11 +1,10 @@
-package main.java.engine.player;
+package main.java.player;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import main.java.engine.data.Tile;
+
 
 
 
@@ -15,7 +14,7 @@ public interface PlayerInterface extends Remote
 {
 	public String	getName				()											throws RemoteException;
 	public Color	getColor			()											throws RemoteException;
-	public boolean	isHumanPlayer		()											throws RemoteException;
+/*	public boolean	isHumanPlayer		()											throws RemoteException;
 	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;
 	public void		tileHasBeenPlaced	(String playerName, Tile t, Point position)	throws RemoteException;
@@ -25,4 +24,5 @@ public interface PlayerInterface extends Remote
 	public void		placeStop			(Point p)									throws RemoteException;
 	public void		revealLine			(String playerName)							throws RemoteException;
 	public void		revealRoute			(String playerName)							throws RemoteException;
+*/
 }

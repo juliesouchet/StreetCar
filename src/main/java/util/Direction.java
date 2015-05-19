@@ -1,4 +1,4 @@
-package main.java.engine.util;
+package main.java.util;
 
 import java.awt.Point;
 import java.util.Iterator;
