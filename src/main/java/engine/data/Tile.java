@@ -1,8 +1,8 @@
-package main.java.data;
+package main.java.engine.data;
 
 import java.util.LinkedList;
 
-import main.java.util.Direction;
+import main.java.engine.util.Direction;
 
 
 

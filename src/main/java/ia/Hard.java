@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 import main.java.engine.data.Tile;
 import main.java.engine.data.Tile.Path;
-import main.java.player.PlayerInterface;
+import main.java.engine.player.PlayerInterface;
 
 public class Hard implements PlayerInterface {
 	/*======================================*

@@ -1,11 +1,10 @@
-package main.java.data;
+package main.java.engine.data;
 
 
 import java.awt.Point;
 import java.util.LinkedList;
 
-import main.java.data.Tile.Path;
-import main.java.util.Direction;
+import main.java.engine.util.Direction;
 
 public class Data
 {

@@ -1,4 +1,4 @@
-package main.java.util;
+package main.java.engine.util;
 
 import java.io.IOException;
 import java.net.InetAddress;

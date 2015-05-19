@@ -1,11 +1,11 @@
-package main.java.game;
+package main.java.engine.game;
 
 import java.awt.Point;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import main.java.data.Tile;
-import main.java.player.PlayerInterface;
+import main.java.engine.data.Tile;
+import main.java.engine.player.PlayerInterface;
 
 
 
