@@ -5,8 +5,12 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+
+import main.java.gui.application.MainMenuPanelController;
 
 public class FrameController implements KeyListener {
 
@@ -15,6 +19,8 @@ public class FrameController implements KeyListener {
     protected JFrame frame;
     protected JMenuBar menuBar;
     protected PanelController panelController;
+    
+    MainMenuPanelController mainMenuPanelController;
 
     // Constructors
 
@@ -33,7 +39,7 @@ public class FrameController implements KeyListener {
 
     public JFrame createInitialFrame() {
         JFrame frame = new JFrame("Untitled");
-        frame.setSize(600, 600);
+        frame.setSize(1100, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         return frame;
@@ -49,6 +55,10 @@ public class FrameController implements KeyListener {
         return frame;
     }
 
+    public JPanel getFrameContentPane() {
+    	return (JPanel) this.frame.getContentPane();
+    }
+    
     public PanelController getPanelController() {
         return this.panelController;
     }

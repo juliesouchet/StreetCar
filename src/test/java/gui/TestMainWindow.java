@@ -11,7 +11,7 @@ public class TestMainWindow implements Runnable {
     public void run() {
         MainFrameController mainFrameController = new MainFrameController();
         mainFrameController.showFrame();
-        mainFrameController.toggleFullScreenMode();
+        //mainFrameController.toggleFullScreenMode();
     }
 
     // Main
