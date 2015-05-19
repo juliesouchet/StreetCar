@@ -62,9 +62,9 @@ public class Data
 
 		if (!oldT.isReplaceable(t, additionalPath))	return false;										// Check whether t contains the old t (remove Tile and Rule C)
 
-		Tile nt = new Tile(additionalPath, t.isTree(),  t.isBuilding(), t.isTerminus(), t.isStop());	// Check whether the new tile is suitable with the <x, y> neighborhood
+		Tile nt = new Tile(additionalPath, t);
 		accessibleDirection = nt.getAccessibleDirections();
-		for (int d: accessibleDirection)
+		for (int d: accessibleDirection)																// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
 			Point neighbor = Direction.getNeighbour(x, y, d);
 ////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
@@ -173,13 +173,32 @@ public class Data
 // --------------------------------------------
 	private Tile[][] scanBoardFile(String boardName) throws UnknownBoardNameException
 	{
+		Tile[][] res;
 		File f = new File(boardDirectory + boardName);
 		Scanner sc;
+		String tileFileName;
+		int width, height;
 
 		try					{sc = new Scanner(f);}
 		catch(Exception e)	{throw new UnknownBoardNameException();}
 
-		sc.close();
+		try
+		{
+			width	= sc.nextInt();
+			height	= sc.nextInt();
+			res		= new Tile[width][height];
+			for (int y=0; y<height; y++)
+			{
+				for (int x=0; x<width; x++)
+				{
+					tileFileName	= sc.next();
+					res[x][y]		= new Tile(tileFileName);
+				}
+			}
+			sc.close();
+		}
+		catch (Exception e){sc.close(); throw new RuntimeException("Malformed board file");}
+		
 		return null;
 	}
 }

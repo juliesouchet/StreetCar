@@ -41,7 +41,6 @@ public class Hard implements PlayerInterface {
 		return way;		
 	}
 	
-	@SuppressWarnings("unused")
 	/**
 	 * Calculates the best tile to block the opponent's way
 	 */
@@ -55,5 +54,4 @@ public class Hard implements PlayerInterface {
 		// TODO
 		return t;
 	}
-	
 }

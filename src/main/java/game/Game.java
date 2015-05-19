@@ -54,8 +54,8 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 			Naming.rebind(url, this);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
-
-		this.data		= new Data(boardName, gameName);							// Init application
+// TODO
+///		this.data		= new Data(boardName, gameName);							// Init application
 		this.playerList = new HashMap<String, PlayerInterface>();
 
 		System.out.println("\n===========================================================");
