@@ -1,11 +1,14 @@
 
 package main.java.gui.controllers;
 
-import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
-public class FrameController {
+public class FrameController implements KeyListener {
 
     // Properties
 
@@ -21,6 +24,7 @@ public class FrameController {
 
     public FrameController(PanelController panelController) {
         this.frame = this.createInitialFrame();
+        this.frame.addKeyListener(this);
         this.menuBar = this.createInitialMenuBar();
         this.panelController = panelController;
     }
@@ -63,16 +67,47 @@ public class FrameController {
         this.frame.setVisible(false);
     }
 
-    public void toggleFullscreenMode() {
-        if (!this.frame.isUndecorated()) {
-            this.frame.setUndecorated(true);
-            this.frame.setSize(this.frame.getToolkit().getScreenSize());
-        } else {
+    // Full screen mode
+
+    public boolean isInFullScreen() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        return gd.getFullScreenWindow() == this.frame;
+    }
+
+    public void toggleFullScreenMode() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+
+        if (gd.getFullScreenWindow() == this.frame) {
+            this.frame.dispose();
             this.frame.setUndecorated(false);
-            this.frame.setSize(new Dimension(1100, 800));
+            gd.setFullScreenWindow(null);
+            this.frame.setVisible(true);
+
+        } else if (gd.isFullScreenSupported()) {
+            this.frame.dispose();
+            this.frame.setUndecorated(true);
+            gd.setFullScreenWindow(this.frame);
+            this.frame.setVisible(true);
         }
-        this.frame.setLocationRelativeTo(null);
-        this.frame.validate();
+    }
+
+    // MouseListener
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if (e.getKeyCode() == 0 && this.isInFullScreen()) {
+            this.toggleFullScreenMode();
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 
 }
