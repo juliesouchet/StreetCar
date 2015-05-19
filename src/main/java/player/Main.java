@@ -23,15 +23,15 @@ import main.java.util.NetworkTools;
 public class Main implements Runnable
 {
 // --------------------------------------------
-// Attributs:
+// Attributes:
 // --------------------------------------------
-	private GameInterface		game;					// Apps attributs: Are established if the player hosts the application
+	private GameInterface		game;					// Apps attributes: Are established if the player hosts the application
 
-	private TestIHM					ihm;					// Player attributs
+	private TestIHM				ihm;					// Player attributes
 	private PlayerInterface		player;
 
 // --------------------------------------------
-// Local methodes:
+// Local methods:
 // --------------------------------------------
 	public static void main(String[] args) throws RemoteException, UnknownHostException
 	{

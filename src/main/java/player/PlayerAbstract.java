@@ -26,7 +26,7 @@ import main.java.game.GameInterface;
 public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
 // --------------------------------------------
-// Attributs:
+// Attributes:
 // --------------------------------------------
 	protected GameInterface	game;
 	protected TestIHM		ihm;
@@ -50,18 +50,18 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		System.out.println("Street Car player : ready and logged");
 		System.out.println("===========================================================\n");
 
-		this.game.onJoinRequest(this);									// Log the player to the application
+		this.game.onJoinRequest(playerName, this);									// Log the player to the application
 	}
 
 // --------------------------------------------
-// Public methodes: my be called by the remote object
+// Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
 	public String 	getName()	throws RemoteException	{return this.name;}
 	public Color	getColor()	throws RemoteException	{return this.color;}
 
 // --------------------------------------------
-// Local methodes:
+// Local methods:
 // --------------------------------------------
 
 }

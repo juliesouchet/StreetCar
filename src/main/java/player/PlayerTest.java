@@ -1,10 +1,11 @@
 package main.java.player;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.rmi.RemoteException;
 
 import test.java.engine.TestIHM;
-
+import main.java.data.Tile;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -21,7 +22,7 @@ import main.java.game.GameInterface;
 public class PlayerTest extends PlayerAbstract
 {
 // --------------------------------------------
-// Attributs:
+// Attributes:
 // --------------------------------------------
 
 // --------------------------------------------
@@ -40,13 +41,76 @@ public class PlayerTest extends PlayerAbstract
 	}
 
 // --------------------------------------------
-// Public methodes: my be called by the remote object
+// Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
 	public String getName()	throws RemoteException	{return super.name;}
 
+	@Override
+	public boolean isHumanPlayer() throws RemoteException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void distributeLineCard() throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void distributeRouteCard() throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void tileHasBeenPlaced(String playerName, Tile t, Point position)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exchangeTile(String playerName, Tile t, Point p)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void distributeTile(Tile t) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void receiveTileFromPlayer(String chosenPlayer, Tile t)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void placeStop(Point p) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void revealLine(String playerName) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void revealRoute(String playerName) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
 // --------------------------------------------
-// Local methodes:
+// Local methods:
 // --------------------------------------------
 
 }

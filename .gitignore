@@ -39,3 +39,4 @@ Temporary Items
 
 *.Rhistory
 *.html
+/bin/
