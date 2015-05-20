@@ -25,3 +25,13 @@ Implémentation à deux d'un controlleur de fenêtre et de celui d'une vue.
 Puis première utilisation afin de réaliser la fenêtre principale avec le menu principal.
 Louis fait les autres menu et Jeremy complète la partie util.
 
+
+### Jour 3 : Mercredi 20 mai
+
+Implémentation des fenêtres de chaque page (menu de base, salle d'attente, etc...)
+A faire: 
+	- résolution du problème de rafraichisemment lors du changement de la taille de la fenêtre
+	- mettre des listener sur les ComboBox, TextField, boutons des options
+	- afficher les titres de chaque panel
+	- afficher et mettre les avatars cliquables
+
