@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 import main.java.gui.components.Button;
 import main.java.gui.components.Panel;
 
-public class NewGameMenuPanel extends Panel {
+public class JoinGameMenuPanel extends Panel {
 
 	// Properties
 	
@@ -19,7 +19,7 @@ public class NewGameMenuPanel extends Panel {
 
 	// Constructors
 	
-	public NewGameMenuPanel() {
+	public JoinGameMenuPanel() {
 		super();
     	this.setLayout(null);
     	this.setSize(new Dimension(500, 350));
@@ -30,7 +30,7 @@ public class NewGameMenuPanel extends Panel {
 	}
 	
 	private void setupTitle() {
-		//place 'New Game' a the top center of the panel
+		//place 'Join game' a the top center of the panel
 	}	
 	
 	private void setupTextFields() {
@@ -58,7 +58,7 @@ public class NewGameMenuPanel extends Panel {
 	}
 	
 	private void setupButtons() {
-		Button createGameButton = new Button("Create game", this, "createGame");
+		Button createGameButton = new Button("Join game", this, "joinGame");
 		createGameButton.setBounds(new Rectangle(270, 280, 150, 40));
     	this.add(createGameButton);
     	
@@ -80,9 +80,9 @@ public class NewGameMenuPanel extends Panel {
 	
 	// Actions
 	
-	public void createGame() {
+	public void joinGame() {
 		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showHostWaitingRoomPanel();
+		mfc.showClientWaitingRoomPanel();
 	}
 	
 	public void cancelGame() {
