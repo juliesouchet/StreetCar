@@ -14,16 +14,14 @@ public class Constants {
 
 	public static String LANGUAGE_FR = "fr";
 
-	// Files
+	// Files paths
 
 	public static String USER_DEFAULTS_PATH = "temp/userdefaults.txt";
 
-	public static String LOCALIZATION_FOLDER_PATH = "localization/";
+	public static String LOCALIZATION_FOLDER_PATH = "src/main/resources/localization/";
 
-	public static String IMAGES_FOLDER_PATH = "images/";
+	public static String IMAGES_FOLDER_PATH = "src/main/resources/images/";
 
-	public static String SOUNDS_FOLDER_PATH = "sounds/";
-
-	// Images
+	public static String SOUNDS_FOLDER_PATH = "src/main/resources/sounds/";
 
 }

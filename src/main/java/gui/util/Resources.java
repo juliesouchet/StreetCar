@@ -25,7 +25,7 @@ public class Resources {
 	private static void parseLocalizedString(BufferedReader br) throws IOException {
 		String comment = br.readLine();
 		if (comment != null && comment.startsWith("// ")) {
-			comment = comment.substring(2);
+			comment = comment.substring(3);
 		} else {
 			throw new IOException();
 		}
@@ -61,14 +61,16 @@ public class Resources {
 			return;
 		}
 
+		int lineCount = 0;
 		try {
 			String line = "";
 			while (line != null && line.isEmpty()) {
 				Resources.parseLocalizedString(br);
 				line = br.readLine();
+				lineCount++;
 			}
 		} catch (IOException e) {
-			System.out.println("ERROR: localization file is corrupted");
+			System.out.println("ERROR: localization file is corrupted at line " + lineCount);
 			System.out.println("Localization file ==> " + filePath);
 			return;
 		}
@@ -78,9 +80,10 @@ public class Resources {
 		if (Resources.stringsTable == null) {
 			Resources.loadLocalizationFile();
 		}
+		
 		comment = (comment == null) ? "no comment" : comment;
 		Hashtable<String, String> strings = Resources.stringsTable.get(string);
-		if (strings != null && strings.contains(comment)) {
+		if (strings != null && strings.containsKey(comment)) {
 			return strings.get(comment);
 		} else {
 			return string;
