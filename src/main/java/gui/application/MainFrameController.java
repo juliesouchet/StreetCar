@@ -29,14 +29,16 @@ public class MainFrameController extends FrameController implements ComponentLis
 	}
 	
 	public void setCenteredPanel(Panel panel) {
+		Panel contentPanel = (Panel) this.frame.getContentPane();
 		if (this.centeredPanel != null) {
-			this.frame.getContentPane().remove(this.centeredPanel);
+			contentPanel.remove(this.centeredPanel);
 		}
 		this.centeredPanel = panel;
 		if (this.centeredPanel != null) {
-			this.frame.getContentPane().add(this.centeredPanel);
+			contentPanel.add(this.centeredPanel);
 			this.componentResized(null);
 		}
+		contentPanel.repaint();
 	}
 	
 	// Actions
@@ -67,7 +69,7 @@ public class MainFrameController extends FrameController implements ComponentLis
 	}
 	
 	public void quitGame() {
-		
+		System.exit(0);
 	}
 	
 	public void showInGamePanel() {
