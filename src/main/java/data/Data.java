@@ -18,18 +18,29 @@ public class Data
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final	String					boardDirectory	= "src/main/resources/board/";
+	public static final	String		boardDirectory	= "src/main/resources/board/";
+	public static final int			handSize		= 5;
 
-	private Tile[][]							board;
-	private String								gameName;
+	private String					gameName;
+	private Tile[][]				board;
+	private Stack					stack;
 
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public Data(String gameName, String boardName) throws UnknownBoardNameException
+	public Data(String gameName, String boardName) throws UnknownBoardNameException, RuntimeException
 	{
-		this.board		= scanBoardFile(boardName);
+		File f = new File(boardDirectory + boardName);
+		Scanner sc;
+
+		try					{sc = new Scanner(f);}
+		catch(Exception e)	{throw new UnknownBoardNameException();}
+
 		this.gameName	= new String(gameName);
+		this.board		= scanBoardFile(sc);
+		this.stack		= new Stack();
+
+		sc.close();
 	}
 
 // --------------------------------------------
@@ -172,16 +183,11 @@ public class Data
 // --------------------------------------------
 // Private methods:
 // --------------------------------------------
-	private Tile[][] scanBoardFile(String boardName) throws UnknownBoardNameException
+	private Tile[][] scanBoardFile(Scanner sc)
 	{
 		Tile[][] res;
-		File f = new File(boardDirectory + boardName);
-		Scanner sc;
 		String tileFileName;
 		int width, height;
-
-		try					{sc = new Scanner(f);}
-		catch(Exception e)	{throw new UnknownBoardNameException();}
 
 		try
 		{
@@ -196,10 +202,9 @@ public class Data
 					res[x][y]		= new Tile(tileFileName);
 				}
 			}
-			sc.close();
 		}
-		catch (Exception e){sc.close(); throw new RuntimeException("Malformed board file");}
-		
+		catch (Exception e){throw new RuntimeException("Malformed board file");}
+
 		return null;
 	}
 }
