@@ -52,20 +52,39 @@ public class MainFrameController extends FrameController implements ComponentLis
 	}
 	
 	public void showJoinGamePanel() {
-		
+		Panel newPanel = new JoinGameMenuPanel();
+		this.setCenteredPanel(newPanel);		
 	}
 	
 	public void showSettingsPanel() {
-		
+		Panel newPanel = new SettingsMenuPanel();
+		this.setCenteredPanel(newPanel);	
 	}
 	
 	public void showRulesPanel() {
-		
+		Panel newPanel = new RulesMenuPanel();
+		this.setCenteredPanel(newPanel);	
 	}
 	
 	public void quitGame() {
 		
 	}
+	
+	public void showInGamePanel() {
+		Panel newPanel = new InGamePanel();
+		this.setCenteredPanel(newPanel);	
+	}
+	
+	public void showHostWaitingRoomPanel() {
+		Panel newPanel = new HostWaitingRoomPanel();
+		this.setCenteredPanel(newPanel);	
+	}
+	
+	public void showClientWaitingRoomPanel() {
+		Panel newPanel = new ClientWaitingRoomPanel();
+		this.setCenteredPanel(newPanel);	
+	}
+
 	
 	// Mouse listener
 	
