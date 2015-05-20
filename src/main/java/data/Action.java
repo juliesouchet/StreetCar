@@ -10,9 +10,10 @@ public class Action
 // -----------------------------------------------------
 // Attributes
 // -----------------------------------------------------
-	public static final int MOVE			= 0;
-	public static final int BUILD_SIMPLE	= 1;
-	public static final int BUILD_DOUBLE	= 2;
+	public static final int MOVE					= 0;
+	public static final int BUILD_SIMPLE			= 1;
+	public static final int BUILD_DOUBLE			= 2;
+	public static final int START_TRIP_NEXT_TURN	= 3;
 
 	public int		action;
 
@@ -26,6 +27,10 @@ public class Action
 // -----------------------------------------------------
 // Builder
 // -----------------------------------------------------
+	public static Action newStartTripNextTurnAction()
+	{
+		return new Action();
+	}
 	public static Action newMoveAction(LinkedList<Point> tramwayMovement)
 	{
 		Action res			= new Action();
