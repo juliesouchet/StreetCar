@@ -2,6 +2,7 @@
 package test.java.gui;
 
 import javax.swing.SwingUtilities;
+
 import main.java.gui.application.MainFrameController;
 
 public class TestMainWindow implements Runnable {
