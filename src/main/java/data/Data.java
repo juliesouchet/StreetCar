@@ -18,7 +18,7 @@ public class Data
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final	String					boardDirectory	= "src/main/resources/";
+	public static final	String					boardDirectory	= "src/main/resources/board/";
 
 	private Tile[][]							board;
 	private String								gameName;
