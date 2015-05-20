@@ -1,9 +1,9 @@
 package main.java.gui.board;
 
-import javax.swing.JPanel;
+import main.java.gui.components.Panel;
 
 
-public class MovingMapPanel extends JPanel {
+public class MovingMapPanel extends Panel {
 
 	// Properties
 	

@@ -1,5 +1,5 @@
 
-package main.java.gui.controllers;
+package main.java.gui.components;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -8,59 +8,47 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-
-import main.java.gui.application.MainMenuPanelController;
 
 public class FrameController implements KeyListener {
 
     // Properties
 
-    protected JFrame frame;
-    protected JMenuBar menuBar;
+    protected Frame frame;
     
-    MainMenuPanelController mainMenuPanelController;
-
     // Constructors
 
     public FrameController() {
-        this(null);
-    }
-
-    public FrameController(PanelController panelController) {
-        this.frame = this.setupInitialFrame();
-        this.frame.addKeyListener(this);
-        this.menuBar = this.createInitialMenuBar();
-    }
-
-    // Create UI elements
-
-    public JFrame setupInitialFrame() {
-        JFrame frame = new JFrame("Untitled");
+        Frame frame = new Frame("Untitled");
         frame.setSize(1100, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        return frame;
-    }
-
-    public JMenuBar createInitialMenuBar() {
-        return null;
+        frame.addKeyListener(this);
+        frame.setFrameController(this);
+        this.frame = frame;
     }
 
     // Setters / getters
 
-    public JFrame getFrame() {
+    public Frame getFrame() {
         return frame;
     }
 
-    public JPanel getFrameContentPane() {
-    	return (JPanel) this.frame.getContentPane();
+    public Panel getFrameContentPane() {
+    	return (Panel) this.frame.getContentPane();
     }
     
-    public void setFrameContentPane(JPanel panel) {
+    public void setFrameContentPane(Panel panel) {
     	this.frame.setContentPane(panel);
     }
-
+    
+    public JMenuBar getFrameMenuBar() {
+    	return this.frame.getJMenuBar();
+    }
+    
+    public void setFrameMenuBar(JMenuBar menuBar) {
+    	this.frame.setJMenuBar(menuBar);
+    }
+    
     // Show / hide frame
 
     public void showFrame() {
