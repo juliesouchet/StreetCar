@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 
-import main.java.data.Tile;
-import main.java.data.Tile.Path;
 import main.java.player.PlayerInterface;
 
 public class Hard implements PlayerInterface {
@@ -63,14 +61,9 @@ public class Hard implements PlayerInterface {
 	/**
 	 * Calculates the best tile to block the opponent's way
 	 */
-	private Tile blockWay(LinkedList<CoordinatedTile> way) {
-		LinkedList<Path> rails = new LinkedList<Path>();
-		boolean	hasTree = false;
-		boolean	isBuilding = false;
-		boolean	hasStop = false;
-		boolean	isTerminus = false;
-		Tile t = new Tile(rails, hasTree, isBuilding, hasStop, isTerminus);
+	@SuppressWarnings("unused")
+	private CoordinatedTile blockWay(LinkedList<CoordinatedTile> way) {
 		// TODO
-		return t;
+		return null;
 	}
 }

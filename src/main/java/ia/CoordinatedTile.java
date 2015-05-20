@@ -1,27 +1,45 @@
 package main.java.ia;
 
-import java.awt.Point;
 import java.util.LinkedList;
 
 import main.java.data.Tile;
 import main.java.data.Tile.Path;
 
 public class CoordinatedTile {
-	public int x,y;
+	public int x,y, cost;
 	public Tile tile;
 	
+	/**
+	 * Creates an empty tile on (0,0)
+	 */
 	public CoordinatedTile() {
-		x = y = 0;
-		tile = new Tile(new LinkedList<Path>(), false, false, false, false);
+		x = y = cost = 0;
+		try {
+			tile = new Tile(new LinkedList<Path>());
+		}
+		catch (NonExistantTile e) {
+			System.out.println("Error creation empy tile on ("+x+","+y+")");
+		}
+	}
+	/**
+	 * Creates a tile on (x,y) corresponding to the given tracks
+	 * @param x
+	 * @param y
+	 * @param tracks
+	 */
+	public CoordinatedTile(int x, int y, LinkedList<Path> tracks) {
+		this.x = x;
+		this.y = y;
+		try {
+			tile = new Tile(tracks);
+		}
+		catch (NonExistantTile e) {
+			System.out.println("Error creation tile "+tracks+" on ("+x+","+y+")");
+		}
 	}
 	public CoordinatedTile(int x, int y, Tile t) {
 		this.x = x;
 		this.y = y;
-		tile = t;
-	}
-	public CoordinatedTile(Point c, Tile t) {
-		x = c.x;
-		y = c.y;
 		tile = t;
 	}
 }

@@ -57,12 +57,12 @@ public class WayBuilder {
 	/*
 	@SuppressWarnings("unused")
 	private Tile getMinimalTile(LinkedList<Arc> arcs) {
-		LinkedList<Arc> rails = new LinkedList<Arc>();
+		LinkedList<Arc> tracks = new LinkedList<Arc>();
 		boolean	hasTree = false;
 		boolean	isBuilding = false;
 		boolean	hasStop = false;
 		boolean	isTerminus = false;
-		Tile res = new Tile(rails, hasTree, isBuilding, hasStop, isTerminus);
+		Tile res = new Tile(tracks, hasTree, isBuilding, hasStop, isTerminus);
 		// TODO : check the arcs against the various tiles types and take the most common
 		return res;		
 	}*/
