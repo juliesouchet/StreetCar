@@ -1,4 +1,4 @@
-package main.java.gui.util;
+package main.java.gui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

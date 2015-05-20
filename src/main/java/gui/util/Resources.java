@@ -1,0 +1,119 @@
+package main.java.gui.util;
+
+import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Hashtable;
+
+import javax.imageio.ImageIO;
+
+public class Resources {
+
+	// Strings
+
+	private static Hashtable<String, Hashtable<String, String>> stringsTable = null;
+
+	private static String localizationFilePath() {
+		UserDefaults ud = UserDefaults.sharedUserDefaults;
+		String language = ud.getString(Constants.LANGUAGE_KEY);
+		return Constants.LOCALIZATION_FOLDER_PATH + language + ".txt";
+	}
+
+	private static void parseLocalizedString(BufferedReader br) throws IOException {
+		String comment = br.readLine();
+		if (comment != null && comment.startsWith("// ")) {
+			comment = comment.substring(2);
+		} else {
+			throw new IOException();
+		}
+
+		String string = br.readLine();
+		if (string == null || string.isEmpty()) {
+			throw new IOException();
+		}
+
+		String localizedString = br.readLine();
+		if (localizedString == null || localizedString.isEmpty()) {
+			throw new IOException();
+		}
+
+		Hashtable<String, String> commentedStrings = Resources.stringsTable.get(string);
+		if (commentedStrings == null) {
+			commentedStrings = new Hashtable<String, String>();
+		}
+		commentedStrings.put(comment, localizedString);
+		Resources.stringsTable.put(string, commentedStrings);
+	}
+
+	private static void loadLocalizationFile() {
+		Resources.stringsTable = new Hashtable<String, Hashtable<String, String>>();
+
+		String filePath = Resources.localizationFilePath();
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(filePath));
+		} catch (FileNotFoundException e) {
+			System.out.println("ERROR: localization file not found");
+			System.out.println("Localization file ==> " + filePath);
+			return;
+		}
+
+		try {
+			String line = "";
+			while (line != null && line.isEmpty()) {
+				Resources.parseLocalizedString(br);
+				line = br.readLine();
+			}
+		} catch (IOException e) {
+			System.out.println("ERROR: localization file is corrupted");
+			System.out.println("Localization file ==> " + filePath);
+			return;
+		}
+	}
+
+	public static String localizedString(String string, String comment) {
+		if (Resources.stringsTable == null) {
+			Resources.loadLocalizationFile();
+		}
+		comment = (comment == null) ? "no comment" : comment;
+		Hashtable<String, String> strings = Resources.stringsTable.get(string);
+		if (strings != null && strings.contains(comment)) {
+			return strings.get(comment);
+		} else {
+			return string;
+		}
+	}
+
+	// Images
+
+	public static Image imageNamed(String imageName) {
+		String[] extensions = { ".png", ".jpg", "tiff", "gif" };
+		for (String fileExtension : extensions) {
+			String filename = imageName + fileExtension;
+			Image image = Resources.loadImageWithFilename(filename);
+			if (image != null) {
+				return image;
+			}
+		}
+		return null;
+	}
+
+	public static Image localizedImageNamed(String imageName) {
+		UserDefaults ud = UserDefaults.sharedUserDefaults;
+		String userLanguage = ud.getString(Constants.LANGUAGE_KEY);
+		Image image = Resources.imageNamed(imageName + "_" + userLanguage);
+		return (image != null) ? image : Resources.imageNamed(imageName);
+	}
+
+	public static Image loadImageWithFilename(String imageFileName) {
+		String imagePath = Constants.IMAGES_FOLDER_PATH + imageFileName;
+		try {
+			return ImageIO.read(new File(imagePath));
+		} catch (IOException e) {
+			return null;
+		}
+	}
+}
