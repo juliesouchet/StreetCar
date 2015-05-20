@@ -34,7 +34,7 @@ public class Tile
 	public static final int			nbrTerminusDescriptionDigits	= 1;
 	public static final int			nbrCardinalDigits				= 2;
 
-	private String					imageFileName;
+	private String					tileID;
 	private boolean					isTree;
 	private boolean					isBuilding;
 	private boolean					isStop;
@@ -50,11 +50,11 @@ public class Tile
 // --------------------------------------------
 	public Tile(LinkedList<Path> p) throws ExceptionNonExistantTile
 	{
-// TODO
+// TODO peut etre a enlever
 	}
 	public Tile(Tile t)
 	{
-		this.imageFileName			= new String(imageFileName);
+		this.tileID			= new String(tileID);
 		this.isTree					= t.isTree;
 		this.isBuilding				= t.isBuilding;
 		this.isStop					= t.isStop;
@@ -69,7 +69,7 @@ public class Tile
 	{
 		if ((t.isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
 
-		this.imageFileName			= new String(t.imageFileName);
+		this.tileID			= new String(t.tileID);
 		this.isTree					= t.isTree;
 		this.isBuilding				= t.isBuilding;
 		this.isStop					= t.isStop;
@@ -85,13 +85,13 @@ public class Tile
 		String str;
 		int d0, d1;
 
-		this.imageFileName		= new String(imageFileName);										 // Init the non scanned values
-		this.nbrLeftRotation	= 0;
+		this.tileID			= new String(imageFileName);										// Init the non scanned values
+		this.nbrLeftRotation= 0;
 		try
 		{
-			int l = tileNamePrefix.length();														// Ignore the prefix part
+			int l = tileNamePrefix.length();													// Ignore the prefix part
 
-			if		(imageFileName.charAt(l+0) == 'T')	this.isTree = true;							// Scan the boolean part
+			if		(imageFileName.charAt(l+0) == 'T')	this.isTree = true;						// Scan the boolean part
 			else if	(imageFileName.charAt(l+0) == 'F')	this.isTree = false;
 			else	throw new Exception();
 
@@ -107,7 +107,7 @@ public class Tile
 			else if	(imageFileName.charAt(l+3) == 'F')	this.isTerminus = false;
 			else	throw new Exception();
 
-			l += nbrBoolAttrDigits;																	// Scan the buildingDescription
+			l += nbrBoolAttrDigits;																// Scan the buildingDescription
 			str = imageFileName.substring(l, l+nbrBuildingDescriptionDigits);
 			if (this.isBuilding)
 			{
@@ -159,7 +159,7 @@ public class Tile
 // Setters/getters:
 // --------------------------------------------
 	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf();}
-	public String	getImageFileName()	{return new String(this.imageFileName);}
+	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
 	public int		getNbrLeftRotation(){return this.nbrLeftRotation;}
 	public boolean	isTree()			{return this.isTree;}
@@ -232,7 +232,7 @@ public class Tile
 		return false;
 	}
 // --------------------------------------------
-// class Path :
+// Path class :
 // Represents a path between two cardinal directions
 // --------------------------------------------
 	public class Path
