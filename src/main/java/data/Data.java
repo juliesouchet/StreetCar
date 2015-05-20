@@ -19,6 +19,7 @@ public class Data
 // Attributes:
 // --------------------------------------------
 	public static final	String					boardDirectory	= "src/main/resources/";
+
 	private Tile[][]							board;
 	private String								gameName;
 

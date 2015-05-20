@@ -24,6 +24,17 @@ public class Direction
 // --------------------------------------------
 // Local Methods:
 // --------------------------------------------
+	public static String toString(int d)
+	{
+		switch (d)
+		{
+			case WEST	: return "W";
+			case NORTH	: return "N";
+			case EAST	: return "E";
+			case SOUTH	: return "S";
+			default		: throw new RuntimeException("Unknown direction: " + d);
+		}
+	}
 	public static int turnLeft(int d)
 	{
 		checkDirection(d);
