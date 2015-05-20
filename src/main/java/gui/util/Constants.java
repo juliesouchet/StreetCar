@@ -16,7 +16,7 @@ public class Constants {
 
 	// Files
 
-	public static String USER_DEFAULTS_PATH = "userdefaults.txt";
+	public static String USER_DEFAULTS_PATH = "temp/userdefaults.txt";
 
 	public static String LOCALIZATION_FOLDER_PATH = "localization/";
 

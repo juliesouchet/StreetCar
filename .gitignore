@@ -10,6 +10,7 @@
 hs_err_pid*
 *.gitignore
 ./bin
+./temp/*
 
 ##########################
 # Mac OSX hidden files
