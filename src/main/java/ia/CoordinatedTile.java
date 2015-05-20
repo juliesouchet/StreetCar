@@ -2,6 +2,7 @@ package main.java.ia;
 
 import java.util.LinkedList;
 
+import main.java.data.ExceptionNonExistantTile;
 import main.java.data.Tile;
 import main.java.data.Tile.Path;
 
@@ -17,7 +18,7 @@ public class CoordinatedTile {
 		try {
 			tile = new Tile(new LinkedList<Path>());
 		}
-		catch (NonExistantTile e) {
+		catch (ExceptionNonExistantTile e) {
 			System.out.println("Error creation empy tile on ("+x+","+y+")");
 		}
 	}
@@ -33,7 +34,7 @@ public class CoordinatedTile {
 		try {
 			tile = new Tile(tracks);
 		}
-		catch (NonExistantTile e) {
+		catch (ExceptionNonExistantTile e) {
 			System.out.println("Error creation tile "+tracks+" on ("+x+","+y+")");
 		}
 	}
