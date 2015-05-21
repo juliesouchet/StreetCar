@@ -72,7 +72,7 @@ public class Traveler extends PlayerAutomaton {
 	 * @return
 	 */
 	private LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data) {
-		/*
+		/* TODO : ajouté les passages par les arrêts
 		 int[][] distance;
 		 int width, height, arcWeight = 1;
 		 PriorityQueue<WeightedPoint> queue;
