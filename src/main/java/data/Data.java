@@ -1,6 +1,5 @@
 package main.java.data;
 
-
 import java.awt.Point;
 import java.io.File;
 import java.util.Iterator;
@@ -10,6 +9,7 @@ import java.util.Scanner;
 import main.java.data.Tile.Path;
 import main.java.game.UnknownBoardNameException;
 import main.java.util.Direction;
+
 
 
 
@@ -24,6 +24,7 @@ public class Data
 	private String					gameName;
 	private Tile[][]				board;
 	private Stack					stack;
+	private LinkedList<Hand>		handList;
 
 // --------------------------------------------
 // Builder:
@@ -39,6 +40,7 @@ public class Data
 		this.gameName	= new String(gameName);
 		this.board		= scanBoardFile(sc);
 		this.stack		= new Stack();
+		this.handList	= new LinkedList<Hand>();
 
 		sc.close();
 	}

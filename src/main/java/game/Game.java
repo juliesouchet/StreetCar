@@ -1,13 +1,13 @@
 package main.java.game;
 
 import java.awt.Color;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
+
 import main.java.data.Data;
 import main.java.player.PlayerInterface;
 
@@ -40,9 +40,11 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 // --------------------------------------------
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
-	 * @throws FileNotFoundException
+	 * @throws RemoteException			: network trouble	(caught by the IHM)
+	 * @throws UnknownBoardNameException: 					(caught by the IHM)
+	 * @throws RuntimeException 		: 
 	 =========================================================================*/
-	public Game(String gameName, String appIP, String boardName) throws RemoteException, UnknownBoardNameException
+	public Game(String gameName, String appIP, String boardName) throws RemoteException, UnknownBoardNameException, RuntimeException
 	{
 		super();
 		String url = null;
@@ -54,8 +56,8 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 			Naming.rebind(url, this);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
-// TODO
-///		this.data		= new Data(boardName, gameName);							// Init application
+
+		this.data		= new Data(boardName, gameName);							// Init application
 		this.playerList = new HashMap<String, PlayerInterface>();
 
 		System.out.println("\n===========================================================");
@@ -89,22 +91,26 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 // --------------------------------------------
 	public void onJoinRequest(PlayerInterface player) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		System.out.println("\n===========================================================");
-		System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 		if (this.playerList.size() >= maxNbrPlayer)
 		{
+			System.out.println("\n===========================================================");
+			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "Refusing player, party is currently full.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionFullParty();
 		}
 		else if (this.playerList.containsKey(player.getName()))
 		{
+			System.out.println("\n===========================================================");
+			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "Refusing player, name already taken.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionUsedPlayerName();
 		}
 		else if (usedColor(player.getColor()))
 		{
+			System.out.println("\n===========================================================");
+			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "Refusing player, color \"" + player.getColor() + "\"  already taken.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionUsedPlayerColor();
@@ -112,6 +118,9 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		else
 		{
 			this.playerList.put(player.getName(), player);
+			this.data.addPlayer(player.getName());
+			System.out.println("\n===========================================================");
+			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "accepted player");
 			System.out.println("===========================================================\n");
 		}
