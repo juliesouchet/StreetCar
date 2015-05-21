@@ -68,6 +68,7 @@ public class Data
 // --------------------------------------------
 // Getter:
 // --------------------------------------------
+	public Tile[][]				getBoard()										{return boardCopy();}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
@@ -237,6 +238,21 @@ public class Data
 		catch (Exception e){throw new RuntimeException("Malformed board file");}
 
 		return null;
+	}
+	private Tile[][] boardCopy()
+	{
+		int			width	= getWidth();
+		int			height	= getHeight();
+		Tile[][]	res		= new Tile[width][height];
+
+		for (int w=0; w<width; w++)
+		{
+			for (int h=0; h<height; h++)
+			{
+				res[w][h] = new Tile(board[w][h]);
+			}
+		}
+		return res;
 	}
 
 // --------------------------------------------
