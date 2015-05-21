@@ -9,13 +9,13 @@ Souchet Julie
   
   
 #### Critères de choix de l'intelligence artificielle :  
->  construire la voie optimale d'un terminal à l'autre en passant par les arrêts obligatoires  
+* construire la voie optimale d'un terminal à l'autre en passant par les arrêts obligatoires  
 
->  saboter les voies des adversaires  
+* saboter les voies des adversaires  
 
->  bluffer  
+* bluffer  
 
->  protéger sa voie contre les sabotages  
+* protéger sa voie contre les sabotages  
 
 #### Calcul de la voie optimale (pour l'instant sans les arrêts):  
 * On représente le terrain par un graphe, dont les sommets correspondent aux points cardinaux des cases et les arêtes aux rails sur les tuiles.  
@@ -57,5 +57,24 @@ Afin d'améliorer l'algorithme ci-dessus, nous allons, pour chaque combinaison d
 
 * __Code :__  
 Nous avons commencé à construire la structure du code de l'IA, avec toutes les fonctions nécessaires.  
+
+-------------------
+
+### Jour 3 : Mercredi 20 mai  
+
+#### Calcul de la voie optimale avec arrêts :
+
+* __Simplification du modèle :__
+    + les sommets du graphe correspondent aux cases du terrain
+    + les arcs aux connexions entre cases
+    + les poids des arcs dépendent des 2 tuiles formant la connexion (à préciser)
+  
+* __A* :__  
+    + Nous allons calculer directement le chemin, pas segment par segment
+    + Heuristique : chaque case est numérotée avec les distances de Manhattan des différents objectifs (terminus d'arrivée, arrêts). (à préciser)
+  
+* __Code :__  
+    + classe Dumbest : pose aléatoire de tuiles sur le terrain (teste les fonctions de pose et pioche)
+    + classe Traveler : idem + vérification du trajet + voyage à vitesse maximale (teste les fonctions de complétion d'objectifs + algo de recherche de chemin)  
 
 -------------------

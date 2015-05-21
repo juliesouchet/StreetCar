@@ -11,3 +11,7 @@ Le code et les commentaires seront écrits en anglais. Seuls les fichiers à ren
 ## Gestion des journaux
 
 Les journaux sont dans le dossier `diaries`. Pensez à le mettre à jour régulièrement ;). 
+
+## Suivi des commits  
+
+RSS feed : https://github.com/juliesouchet/StreetCar/commits/master.atom

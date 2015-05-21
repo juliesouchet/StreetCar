@@ -60,18 +60,12 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <h3>Jour 1 : Lundi 18 mai</h3>
 <div id="criteres-de-choix-de-lintelligence-artificielle" class="section level4">
 <h4>Critères de choix de l’intelligence artificielle :</h4>
-<blockquote>
-<p>construire la voie optimale d’un terminal à l’autre en passant par les arrêts obligatoires</p>
-</blockquote>
-<blockquote>
-<p>saboter les voies des adversaires</p>
-</blockquote>
-<blockquote>
-<p>bluffer</p>
-</blockquote>
-<blockquote>
-<p>protéger sa voie contre les sabotages</p>
-</blockquote>
+<ul>
+<li><p>construire la voie optimale d’un terminal à l’autre en passant par les arrêts obligatoires</p></li>
+<li><p>saboter les voies des adversaires</p></li>
+<li><p>bluffer</p></li>
+<li><p>protéger sa voie contre les sabotages</p></li>
+</ul>
 </div>
 <div id="calcul-de-la-voie-optimale-pour-linstant-sans-les-arrets" class="section level4">
 <h4>Calcul de la voie optimale (pour l’instant sans les arrêts):</h4>
@@ -108,6 +102,31 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <ul>
 <li><p><strong>Algorithme :</strong><br />Afin d’améliorer l’algorithme ci-dessus, nous allons, pour chaque combinaison des arrêts obligatoires (1-2-3, 2-1-3, 3-2-1…) calculer les chemins les plus courts, puis les mettre bout à bout. Le résultat gagnant sera celui de meilleure qualité.</p></li>
 <li><p><strong>Code :</strong><br />Nous avons commencé à construire la structure du code de l’IA, avec toutes les fonctions nécessaires.</p></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="jour-3-mercredi-20-mai" class="section level3">
+<h3>Jour 3 : Mercredi 20 mai</h3>
+<div id="calcul-de-la-voie-optimale-avec-arrets" class="section level4">
+<h4>Calcul de la voie optimale avec arrêts :</h4>
+<ul>
+<li><strong>Simplification du modèle :</strong>
+<ul>
+<li>les sommets du graphe correspondent aux cases du terrain</li>
+<li>les arcs aux connexions entre cases</li>
+<li>les poids des arcs dépendent des 2 tuiles formant la connexion (à préciser)</li>
+</ul></li>
+<li><strong>A* :</strong>
+<ul>
+<li>Nous allons calculer directement le chemin, pas segment par segment</li>
+<li>Heuristique : chaque case est numérotée avec les distances de Manhattan des différents objectifs (terminus d’arrivée, arrêts). (à préciser)</li>
+</ul></li>
+<li><strong>Code :</strong>
+<ul>
+<li>classe Dumbest : pose aléatoire de tuiles sur le terrain (teste les fonctions de pose et pioche)</li>
+<li>classe Traveler : idem + vérification du trajet + voyage à vitesse maximale (teste les fonctions de complétion d’objectifs + algo de recherche de chemin)</li>
+</ul></li>
 </ul>
 <hr />
 </div>
