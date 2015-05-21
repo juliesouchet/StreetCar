@@ -7,13 +7,14 @@ import main.java.util.Direction;
 
 /**========================================================================
  * @author kassuskley
- * @TileNaming The name of a tile is a fixed length string, composed of the following three part : (prefix)(TBST)(B)(T)(Cardinal)(ab)
+ * @TileNaming The name of a tile is a fixed length string, composed of the following three part : (prefix)(TBST)(B)(T)(Cardinal)(ab)(extension)
  *	@-prefix		: A common prefix to all the tile images 
  *	@-TBST			: A boolean sequence of length nbrBoolAttrDigits representing the attributes: isTree, isBuilding, isStop, isTerminus
  *	@-B				: The building name (between A and M or Z if not a building)
  *	@-T				: The terminus name (between 1 and 6 or Z if not a building)
  *	@-Cardinal		: The number of tiles of the same type in the games. This number must be written on nbrCardinalDigits digits
  *	@-ab			: A sequence of int couples between 0 and 3 representing the paths of the tile
+ *	-@extension		: .jpg / .png  (fixed size)
  ==========================================================================*/
 
 
@@ -29,10 +30,11 @@ public class Tile
 	public static final String		nonTerminusDescription			= "Z";
 	public static final String[]	acceptedBuildingDescription		= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M"};
 	public static final String[]	acceptedTerminusDescription		= {"1", "2", "3", "4", "5", "6"};
-	public static final int			nbrBoolAttrDigits				= 4;
-	public static final int			nbrBuildingDescriptionDigits	= 1;
-	public static final int			nbrTerminusDescriptionDigits	= 1;
-	public static final int			nbrCardinalDigits				= 2;
+	public static final int			nbrBoolAttrChar					= 4;
+	public static final int			nbrBuildingDescriptionChar		= 1;
+	public static final int			nbrTerminusDescriptionChar		= 1;
+	public static final int			nbrCardinalChar					= 2;
+	public static final int			nbrExtensionChar				= 4;
 
 	private String					tileID;
 	private boolean					isTree;
@@ -103,8 +105,8 @@ public class Tile
 			else if	(imageFileName.charAt(l+3) == 'F')	this.isTerminus = false;
 			else	throw new Exception();
 
-			l += nbrBoolAttrDigits;																// Scan the buildingDescription
-			str = imageFileName.substring(l, l+nbrBuildingDescriptionDigits);
+			l += nbrBoolAttrChar;																// Scan the buildingDescription
+			str = imageFileName.substring(l, l+nbrBuildingDescriptionChar);
 			if (this.isBuilding)
 			{
 				if (str.equals(nonBuildingDescription))		throw new Exception();
@@ -117,8 +119,8 @@ public class Tile
 				this.buildingDescription = null;
 			}
 
-			l += nbrBuildingDescriptionDigits;														// Scan the terminusDescription
-			str = imageFileName.substring(l, l+nbrTerminusDescriptionDigits);
+			l += nbrBuildingDescriptionChar;														// Scan the terminusDescription
+			str = imageFileName.substring(l, l+nbrTerminusDescriptionChar);
 			if (this.isTerminus)
 			{
 				if (str.equals(nonTerminusDescription))		throw new Exception();
@@ -131,13 +133,13 @@ public class Tile
 				this.terminusDescription = null;
 			}
 
-			l += nbrTerminusDescriptionDigits;
-			str = imageFileName.substring(l, l+nbrCardinalDigits);
+			l += nbrTerminusDescriptionChar;
+			str = imageFileName.substring(l, l+nbrCardinalChar);
 			this.cardinal = Integer.parseInt(str);													// Scan the tile cardinal
 
-			l += nbrCardinalDigits;
+			l += nbrCardinalChar;
 			this.pathList = new LinkedList<Path>();													// Scan the tile path list
-			for (int i=l; i<imageFileName.length(); i+=2)
+			for (int i=l; i<imageFileName.length() - nbrExtensionChar; i+=2)
 			{
 				d0 = Integer.parseInt(""+imageFileName.charAt(i));
 				d1 = imageFileName.charAt(i+1);
