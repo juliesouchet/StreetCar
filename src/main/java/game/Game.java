@@ -6,7 +6,6 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 
 import main.java.data.Data;
 import main.java.player.PlayerInterface;
@@ -25,15 +24,13 @@ import main.java.player.PlayerInterface;
 public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 {
 // --------------------------------------------
-// Attributs:
+// Attributes:
 // --------------------------------------------
-	public final static int		maxNbrPlayer			= 6;
 	private static final String messageHeader			= "Street Car application: ";
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 
-	private HashMap<String, PlayerInterface>	playerList;
-	private Data								data;
+	private Data data;
 
 // --------------------------------------------
 // Builder:
@@ -58,7 +55,6 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
 		this.data		= new Data(boardName, gameName);							// Init application
-		this.playerList = new HashMap<String, PlayerInterface>();
 
 		System.out.println("\n===========================================================");
 		System.out.println(messageHeader + "URL = " + url);
@@ -85,13 +81,13 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		return null;
 	}
 // --------------------------------------------
-// Public methodes: my be called by the remote object
+// Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
 	public void onJoinRequest(PlayerInterface player) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		if (this.playerList.size() >= maxNbrPlayer)
+		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
 		{
 			System.out.println("\n===========================================================");
 			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
@@ -99,7 +95,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 			System.out.println("===========================================================\n");
 			throw new ExceptionFullParty();
 		}
-		else if (this.playerList.containsKey(player.getName()))
+		else if (this.data.containsPlayer(player.getName()))
 		{
 			System.out.println("\n===========================================================");
 			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
@@ -107,7 +103,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 			System.out.println("===========================================================\n");
 			throw new ExceptionUsedPlayerName();
 		}
-		else if (usedColor(player.getColor()))
+		else if (this.usedColor(player.getColor()))
 		{
 			System.out.println("\n===========================================================");
 			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
@@ -117,8 +113,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		}
 		else
 		{
-			this.playerList.put(player.getName(), player);
-			this.data.addPlayer(player.getName());
+			this.data.addPlayer(player, player.getName());
 			System.out.println("\n===========================================================");
 			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "accepted player");
@@ -127,25 +122,23 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	}
 	public boolean quitGame(String gameName, String playerName) throws RemoteException
 	{
-		String resS = "";
+		String resS = null;
 		boolean res= false;
-		int i, size = this.playerList.size();
 
 		if		(!this.data.getGameName().equals(gameName))		{resS = "Unknown game name"; res = false;}
 		else
 		{
-			for (i=0; i<size; i++)
+			for (String name: this.data.getPlayerNameList())
 			{
-				PlayerInterface p = playerList.get(i);
-				if (p.getName().equals(playerName))
+				if (name.equals(playerName))
 				{
-					playerList.remove(i);
+					this.data.removePlayer(name);
 					resS= "player logged out";
 					res = true;
 					break;
 				}
 			}
-			if (i == size)	{resS = "player not found in the local list";	res = false;}
+			if (resS == null)	{resS = "player not found in the local list";	res = false;}
 		}
 
 		System.out.println("\n===========================================================");
@@ -158,7 +151,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	}
 
 // --------------------------------------------
-// Local methodes:
+// Local methods:
 // --------------------------------------------
 	public void run()
 	{
@@ -166,12 +159,15 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	}
 
 // --------------------------------------------
-// Private methodes:
+// Private methods:
 // --------------------------------------------
 	private boolean usedColor(Color c) throws RemoteException
 	{
-		for (PlayerInterface p: playerList.values())
+		PlayerInterface p;
+
+		for (String name: this.data.getPlayerNameList())
 		{
+			p = this.data.getPlayer(name);
 			if (p.getColor().equals(c))	return true;
 		}
 		return false;

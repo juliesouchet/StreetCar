@@ -5,11 +5,12 @@ import java.util.LinkedList;
 
 
 
+
 public class Hand
 {
 	private LinkedList<Tile> playerTiles;	// Move Attributes
 	private int size;
-	
+public Hand(){}
 	/**
 	 *  @param Tiles
 	 *  basicsTiles les tuiles standard en début de jeu
