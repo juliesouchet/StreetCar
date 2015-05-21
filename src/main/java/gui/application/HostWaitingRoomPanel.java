@@ -73,17 +73,17 @@ public class HostWaitingRoomPanel extends Panel {
 						  	  "Computer (medium)", 
 						  	  "Computer (hard)",						  	  
 						  	  "Closed"};
-		JComboBox adversaryChooser2 = new JComboBox(adversary);
+		JComboBox<String> adversaryChooser2 = new JComboBox<String>(adversary);
 		adversaryChooser2.setBounds(370, 190, 150, 40);
 		adversaryChooser2.setSelectedIndex(1);
 		this.add(adversaryChooser2);
-		JComboBox adversaryChooser3 = new JComboBox(adversary);
+		JComboBox<String> adversaryChooser3 = new JComboBox<String>(adversary);
 		adversaryChooser3.setBounds(370, 240, 150, 40);
 		this.add(adversaryChooser3);
-		JComboBox adversaryChooser4 = new JComboBox(adversary);
+		JComboBox<String> adversaryChooser4 = new JComboBox<String>(adversary);
 		adversaryChooser4.setBounds(370, 290, 150, 40);
 		this.add(adversaryChooser4);
-		JComboBox adversaryChooser5 = new JComboBox(adversary);
+		JComboBox<String> adversaryChooser5 = new JComboBox<String>(adversary);
 		adversaryChooser5.setBounds(370, 340, 150, 40);
 		this.add(adversaryChooser5);
 	}
