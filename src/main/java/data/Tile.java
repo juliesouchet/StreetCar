@@ -165,7 +165,7 @@ public class Tile
 	public boolean	isTerminus()		{return this.isTerminus;}
 	public boolean	isStop()			{return this.isStop;}
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.pathList.isEmpty()));}
-	public boolean	isStackTile()		{return ((!this.isBuilding) && (!this.isTerminus));}
+	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus));}
 	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); nbrLeftRotation = (nbrLeftRotation == 3) ? 0 : nbrLeftRotation+1;}
 	public void		turnRight()			{for (Path p: pathList)	p.turnRight();nbrLeftRotation = (nbrLeftRotation == 0) ? 3 : nbrLeftRotation-1;}
 	public boolean	isPathTo(int dir)

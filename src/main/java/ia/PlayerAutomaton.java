@@ -2,6 +2,7 @@ package main.java.ia;
 
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.data.Hand;
 
 
 /**
@@ -15,12 +16,12 @@ import main.java.data.Data;
  * 	commencer son voyage
  * 	continuer son voyage (et donc faire son déplacement)
  */
-public interface PlayerAutomata {
+public abstract class PlayerAutomaton {
 	
 	/**
 	 * Donne la décision d'action faite par l'automate
 	 */
-	Action makeChoice(Data currentConfig);
+	public abstract Action makeChoice(Hand myHand, Data currentConfig );
 	
 	
 }
