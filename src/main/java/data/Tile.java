@@ -7,14 +7,13 @@ import main.java.util.Direction;
 
 /**========================================================================
  * @author kassuskley
- * @TileNaming The name of a tile is a fixed length string, composed of the following three part : (prefix)(TBST)(B)(T)(Cardinal)(ab)(extension)
+ * @TileNaming The name of a tile is a fixed length string, composed of the following three part : (prefix)(TBST)(B)(T)(Cardinal)(ab)
  *	@-prefix		: A common prefix to all the tile images 
  *	@-TBST			: A boolean sequence of length nbrBoolAttrDigits representing the attributes: isTree, isBuilding, isStop, isTerminus
  *	@-B				: The building name (between A and M or Z if not a building)
  *	@-T				: The terminus name (between 1 and 6 or Z if not a building)
  *	@-Cardinal		: The number of tiles of the same type in the games. This number must be written on nbrCardinalDigits digits
  *	@-ab			: A sequence of int couples between 0 and 3 representing the paths of the tile
- *	-@extension		: .jpg / .png  (fixed size)
  ==========================================================================*/
 
 
@@ -34,7 +33,6 @@ public class Tile
 	public static final int			nbrBuildingDescriptionChar		= 1;
 	public static final int			nbrTerminusDescriptionChar		= 1;
 	public static final int			nbrCardinalChar					= 2;
-	public static final int			nbrExtensionChar				= 4;
 
 	private String					tileID;
 	private boolean					isTree;
@@ -52,7 +50,7 @@ public class Tile
 // --------------------------------------------
 	public Tile(Tile t)
 	{
-		this.tileID			= new String(tileID);
+		this.tileID					= new String(tileID);
 		this.isTree					= t.isTree;
 		this.isBuilding				= t.isBuilding;
 		this.isStop					= t.isStop;
@@ -67,7 +65,7 @@ public class Tile
 	{
 		if ((t.isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
 
-		this.tileID			= new String(t.tileID);
+		this.tileID					= new String(t.tileID);
 		this.isTree					= t.isTree;
 		this.isBuilding				= t.isBuilding;
 		this.isStop					= t.isStop;
@@ -139,14 +137,14 @@ public class Tile
 
 			l += nbrCardinalChar;
 			this.pathList = new LinkedList<Path>();													// Scan the tile path list
-			for (int i=l; i<imageFileName.length() - nbrExtensionChar; i+=2)
+			for (int i=l; i<imageFileName.length(); i+=2)
 			{
 				d0 = Integer.parseInt(""+imageFileName.charAt(i));
-				d1 = imageFileName.charAt(i+1);
+				d1 = Integer.parseInt(""+imageFileName.charAt(i+1));
 				this.pathList.add(new Path(d0, d1));
 			}
 		}
-		catch (Exception e){throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
+		catch (Exception e){e.printStackTrace();}//throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
 	}
 	public Tile cloneTile(Tile t)
 	{

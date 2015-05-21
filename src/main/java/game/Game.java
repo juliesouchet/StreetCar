@@ -41,7 +41,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	 * @throws UnknownBoardNameException: 					(caught by the IHM)
 	 * @throws RuntimeException 		: 
 	 =========================================================================*/
-	public Game(String gameName, String appIP, String boardName) throws RemoteException, UnknownBoardNameException, RuntimeException
+	public Game(String gameName, String appIP, String boardName, int nbrBuildingInLine) throws RemoteException, UnknownBoardNameException, RuntimeException
 	{
 		super();
 		String url = null;
@@ -54,7 +54,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
-		this.data		= new Data(boardName, gameName);							// Init application
+		this.data		= new Data(gameName, boardName, nbrBuildingInLine);			// Init application
 
 		System.out.println("\n===========================================================");
 		System.out.println(messageHeader + "URL = " + url);

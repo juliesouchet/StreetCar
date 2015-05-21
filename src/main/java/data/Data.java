@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -22,29 +23,47 @@ public class Data
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final	String			boardDirectory	= "src/main/resources/board/";
-	public static final int				maxNbrPlayer	= 6;
+	public static final	String			boardDirectory			= "src/main/resources/boards/";
+	public static final int[]			existingLine			= {1, 2, 3, 4, 5, 6};
+	public static final String[]		existingBuilding		= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M"};
+	public static final int				maxNbrPlayer			= 6;
+	public static final int				minNbrBuildingInLine	= 2;
+	public static final int				maxNbrBuildingInLine	= 3;
+
+	private LinkedList<Integer>			remainingLine;
+	private LinkedList<String>			remainingBuilding;
 
 	private String						gameName;
+	private int							nbrBuildingInLine;
 	private Tile[][]					board;
 	private Deck						deck;
 	private HashMap<String, PlayerInfo>	playerInfoList;
+	private int							round;
 
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public Data(String gameName, String boardName) throws UnknownBoardNameException, RuntimeException
+	public Data(String gameName, String boardName, int nbrBuildingInLine) throws UnknownBoardNameException, RuntimeException
 	{
 		File f = new File(boardDirectory + boardName);
 		Scanner sc;
 
-		try					{sc = new Scanner(f);}
-		catch(Exception e)	{throw new UnknownBoardNameException();}
+		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
+			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
-		this.gameName		= new String(gameName);
-		this.board			= scanBoardFile(sc);
-		this.deck			= new Deck();
-		this.playerInfoList	= new HashMap<String, PlayerInfo>();
+		try					{sc = new Scanner(f);}
+		catch(Exception e)	{e.printStackTrace(); throw new UnknownBoardNameException();}
+
+		this.gameName			= new String(gameName);
+		this.nbrBuildingInLine	= nbrBuildingInLine;
+		this.board				= scanBoardFile(sc);
+		this.deck				= new Deck();
+		this.playerInfoList		= new HashMap<String, PlayerInfo>();
+
+		this.remainingLine		= new LinkedList<Integer>();
+		this.remainingBuilding	= new LinkedList<String>();
+		for (int	l: existingLine)		this.remainingLine.addLast(l);
+		for (String	b: existingBuilding)	this.remainingBuilding.addLast(b);
 
 		sc.close();
 	}
@@ -263,14 +282,19 @@ public class Data
 		// Attributes
 		public PlayerInterface		player;
 		public Hand					hand;
+		public int					line;
+		public LinkedList<String>	buildings;
 		public LinkedList<Action>	history;
 
 		// Builder
 		public PlayerInfo(PlayerInterface pi)
 		{
+			int i;
 			this.player = pi;
-			this.hand	= new Hand();
 			this.history= new LinkedList<Action>();
+			this.hand	= new Hand();			// TODO remplire la main a partire de la pioche
+			i = (new Random()).nextInt();
+//TODO			this.line	= 
 		}
 	}
 }

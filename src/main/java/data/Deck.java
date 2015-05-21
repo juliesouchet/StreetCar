@@ -17,7 +17,7 @@ public class Deck
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final String	stackDirectory	= "src/main/resources/stack";
+	public static final String	stackDirectory	= "src/main/resources/images";
 
 	private ArrayList<StackCell>	stack;		// Sorted list using the attribute remaining in a descending order
 

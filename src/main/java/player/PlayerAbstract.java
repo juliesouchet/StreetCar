@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import test.java.player.TestIHM;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
+import test.java.player.TestIHM;
 
 
 
@@ -22,6 +22,7 @@ import main.java.game.GameInterface;
 
 
 
+@SuppressWarnings("serial")
 public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
 // --------------------------------------------
@@ -35,6 +36,10 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
+	public PlayerAbstract() throws RemoteException
+	{
+		super();
+	}
 	public PlayerAbstract(String playerName, Color playerColor, GameInterface game, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super();
@@ -58,6 +63,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // --------------------------------------------
 	public String 	getName()	throws RemoteException	{return this.name;}
 	public Color	getColor()	throws RemoteException	{return this.color;}
+
 
 // --------------------------------------------
 // Local methodes:

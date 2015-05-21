@@ -3,14 +3,14 @@ package test.java.player;
 import java.awt.Color;
 import java.util.Scanner;
 
-import main.java.player.Main;
+import main.java.player.PlayerIHM;
 
 
 
 
 
 
-public class TestIHM
+public class TestIHM 
 {
 // --------------------------------------------
 // Attributs:
@@ -19,7 +19,7 @@ public class TestIHM
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public TestIHM(Main m)
+	public TestIHM(PlayerIHM player)
 	{
 		Scanner sc = new Scanner(System.in);
 		String str, name, gameName, ip;
@@ -42,8 +42,10 @@ public class TestIHM
 		if(!create){System.out.print("\t- IP of the application\t:");	ip			= sc.next();}
 		else															ip			= null;
 String boardName = "newOrleans";	/////// Nom par defaut
-		try					{m.newGame(name, gameName, boardName, color, create, ip);}
-		catch (Exception e)	{e.printStackTrace();}
+int nbrBuildingInLine= 3;	/////// Nom par defaut
+
+		try					{player.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip);}
+		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 		sc.close();
 	}
 
