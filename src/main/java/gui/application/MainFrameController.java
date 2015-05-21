@@ -20,6 +20,7 @@ public class MainFrameController extends FrameController implements ComponentLis
         this.frame.getContentPane().setLayout(null); 
         this.frame.addComponentListener(this);
         this.showWelcomeMenuPanel();
+        frame.setSize(1350, 870);
 	}
 
 	// Setters / getters
@@ -74,7 +75,8 @@ public class MainFrameController extends FrameController implements ComponentLis
 	
 	public void showInGamePanel() {
 		Panel newPanel = new InGamePanel();
-		this.setCenteredPanel(newPanel);	
+		this.setCenteredPanel(null);
+		this.setFrameContentPane(newPanel);
 	}
 	
 	public void showHostWaitingRoomPanel() {
