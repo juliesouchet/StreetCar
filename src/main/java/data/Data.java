@@ -2,12 +2,16 @@ package main.java.data;
 
 import java.awt.Point;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.Set;
 
 import main.java.data.Tile.Path;
+import main.java.game.ExceptionFullParty;
 import main.java.game.UnknownBoardNameException;
+import main.java.player.PlayerInterface;
 import main.java.util.Direction;
 
 
@@ -18,13 +22,13 @@ public class Data
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final	String		boardDirectory	= "src/main/resources/board/";
-	public static final int			handSize		= 5;
+	public static final	String			boardDirectory	= "src/main/resources/board/";
+	public static final int				maxNbrPlayer	= 6;
 
-	private String					gameName;
-	private Tile[][]				board;
-	private Stack					stack;
-	private LinkedList<Hand>		handList;
+	private String						gameName;
+	private Tile[][]					board;
+	private Deck						deck;
+	private HashMap<String, PlayerInfo>	playerInfoList;
 
 // --------------------------------------------
 // Builder:
@@ -37,23 +41,48 @@ public class Data
 		try					{sc = new Scanner(f);}
 		catch(Exception e)	{throw new UnknownBoardNameException();}
 
-		this.gameName	= new String(gameName);
-		this.board		= scanBoardFile(sc);
-		this.stack		= new Stack();
-		this.handList	= new LinkedList<Hand>();
+		this.gameName		= new String(gameName);
+		this.board			= scanBoardFile(sc);
+		this.deck			= new Deck();
+		this.playerInfoList	= new HashMap<String, PlayerInfo>();
 
 		sc.close();
 	}
 
 // --------------------------------------------
-// Getter/Setter:
+// Setter:
 // --------------------------------------------
-	public int		getWidth()										{return this.board.length;}
-	public int		getHeight()										{return this.board[0].length;}
-	public Tile		getTile(int x, int y)							{return new Tile(this.board[x][y]);}
-	public void		setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
-	public String	getGameName()									{return new String(this.gameName);}
-	public boolean	isWithinnBoard(int x, int y)
+	public void addPlayer(PlayerInterface p, String playerName) throws ExceptionFullParty
+	{
+		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
+		PlayerInfo pi = new PlayerInfo(p);
+		this.playerInfoList.put(playerName, pi);
+	}
+	public void removePlayer(String playerName)
+	{
+		PlayerInterface pi = this.playerInfoList.get(playerName).player;
+		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
+		this.playerInfoList.remove(playerName);
+	}
+
+// --------------------------------------------
+// Getter:
+// --------------------------------------------
+	public int					getWidth()										{return this.board.length;}
+	public int					getHeight()										{return this.board[0].length;}
+	public int					getNbrPlayer()									{return this.playerInfoList.size();}
+	public Tile					getTile(int x, int y)							{return new Tile(this.board[x][y]);}
+	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
+	public String				getGameName()									{return new String(this.gameName);}
+	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
+	public PlayerInterface		getPlayer(String playerName)
+	{
+		PlayerInterface pi = this.playerInfoList.get(playerName).player;
+		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
+		return pi;
+	}
+	public boolean				isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
 		if ((y < 0) || (y >= getHeight()))	return false;
@@ -208,5 +237,24 @@ public class Data
 		catch (Exception e){throw new RuntimeException("Malformed board file");}
 
 		return null;
+	}
+
+// --------------------------------------------
+// Player Info class:
+// --------------------------------------------
+	private class PlayerInfo
+	{
+		// Attributes
+		public PlayerInterface		player;
+		public Hand					hand;
+		public LinkedList<Action>	history;
+
+		// Builder
+		public PlayerInfo(PlayerInterface pi)
+		{
+			this.player = pi;
+			this.hand	= new Hand();
+			this.history= new LinkedList<Action>();
+		}
 	}
 }

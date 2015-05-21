@@ -12,7 +12,7 @@ import java.util.Random;
 
 
 
-public class Stack
+public class Deck
 {
 // --------------------------------------------
 // Attributes:
@@ -24,7 +24,7 @@ public class Stack
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public Stack() throws RuntimeException
+	public Deck() throws RuntimeException
 	{
 		File f;
 		String tileList[];
@@ -35,7 +35,7 @@ public class Stack
 		for (String str: tileList)
 		{
 			Tile t = new Tile(str);
-			if (t.isStackTile()) this.stack.add(new StackCell(t));
+			if (t.isDeckTile()) this.stack.add(new StackCell(t));
 		}
 		Collections.sort(this.stack, new StackCell());
 		Collections.reverse(stack);

@@ -1,9 +1,5 @@
 package main.java.data;
 
-
-
-
-public class Hand
-{
+public class Hand {
 
 }
