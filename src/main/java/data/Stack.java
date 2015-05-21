@@ -35,7 +35,7 @@ public class Stack
 		for (String str: tileList)
 		{
 			Tile t = new Tile(str);
-			this.stack.add(new StackCell(t));
+			if (t.isStackTile()) this.stack.add(new StackCell(t));
 		}
 		Collections.sort(this.stack, new StackCell());
 		Collections.reverse(stack);
