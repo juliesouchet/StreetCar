@@ -26,13 +26,11 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public final static int		maxNbrPlayer			= 5;
 	private static final String messageHeader			= "Street Car application: ";
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 
-	private Data	data;
-	private String	name;
+	private Data data;
 
 // --------------------------------------------
 // Builder:
@@ -45,11 +43,26 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	 =========================================================================*/
 	public Game(String gameName, String appIP, String boardName, int nbrBuildingInLine) throws RemoteException, UnknownBoardNameException, RuntimeException
 	{
-		super(); // TODO akwasaser?:   c pour le reseaux
-		name = gameName;
+		super();
+		String url = null;
+
+		try																			// Create the player's remote reference
+		{
+			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
+			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+			Naming.rebind(url, this);
+		}
+		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
+
 		this.data		= new Data(gameName, boardName, nbrBuildingInLine);			// Init application
-		hostGame(appIP);
+
+		System.out.println("\n===========================================================");
+		System.out.println(messageHeader + "URL = " + url);
+		System.out.println(messageHeader + "ready");
+		System.out.println(messageHeader + "Start waiting for connexion request");
+		System.out.println("===========================================================\n");
 	}
+// TODO akwasaser?:   c pour le reseaux
 /*****************	
 	public Game() throws RemoteException
 	{	
@@ -62,26 +75,6 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		}
 	}
 ********************/   /////// Interdit car il ne peut y avoir qu'un seul constructeur
-	public void setName(String name){this.name = name;}	
-	public String getName(){return name;}
-
-	public void hostGame(String appIP) throws RemoteException {
-		String url = null;
-
-		try
-		{
-			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + name;
-			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
-			Naming.rebind(url, this);
-		}
-		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
-		
-		System.out.println("\n===========================================================");
-		System.out.println(messageHeader + "Hosting game on url : " + url);
-		System.out.println(messageHeader + "Waiting for connections...");
-		System.out.println("===========================================================\n");
-	}
-	
 	/**=======================================================================
 	 * @return Creates a remote application cloned to the real application at the given ip
 	 * @throws NotBoundException 		: The web host is not configured	(throw RuntimeException)
@@ -92,7 +85,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	{
 		String url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 
-//////	System.setSecurityManager(new RMISecurityManager());
+////	System.setSecurityManager(new RMISecurityManager());
 		try 
 		{
 			return (GameInterface) Naming.lookup(url);
@@ -105,6 +98,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
+	public Data getData() throws RemoteException	{return this.data;}
 	public void onJoinRequest(PlayerInterface player) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
@@ -168,10 +162,6 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		System.out.println(messageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 		return res;
-	}
-	public Data getData() throws RemoteException
-	{
-		return this.data;
 	}
 
 // --------------------------------------------

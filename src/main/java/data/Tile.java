@@ -214,6 +214,26 @@ public class Tile
 		}
 		return true;
 	}
+	/**=============================================================
+	 * @return if t is a building the function returns its name.  Else it returns null
+	 ===============================================================*/
+	public String getBuildingName()
+	{
+		if (!isBuilding) return null;
+
+		int l = tileNamePrefix.length() + nbrBoolAttrChar;
+		return tileID.substring(l, l+nbrBuildingDescriptionChar);
+	}
+	/**=============================================================
+	 * @return if t is a building the function returns its name(int).  Else it returns -1
+	 ===============================================================*/
+	public int getTerminusName()
+	{
+		if (!isTerminus) return -1;
+
+		int l = tileNamePrefix.length() + nbrBoolAttrChar + nbrBuildingDescriptionChar;
+		return Integer.parseInt(tileID.substring(l, l+nbrTerminusDescriptionChar));
+	}
 
 // --------------------------------------------
 // Private local methods
