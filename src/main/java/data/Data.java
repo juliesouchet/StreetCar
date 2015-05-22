@@ -19,32 +19,32 @@ import main.java.util.Direction;
 
 
 
+@SuppressWarnings("serial")
 public class Data implements Serializable
 {
-/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7042840382794473931L;
-	// --------------------------------------------
+// --------------------------------------------
 // Attributes:
 // --------------------------------------------
 	public static final	String			boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
+	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
 	public static final int				maxNbrPlayer			= 6;
+	public static final int				initialHandSize			= 5;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 
-// TODO AAAAAAAAAAAAAAAAAAA Faire
 	private LinkedList<Integer>			existingLine;
-	private LinkedList<String[]>		existingLineBuildings;
+	private LinkedList<String[][]>		existingBuildingInLine;
 	private LinkedList<Integer>			remainingLine;
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+	private LinkedList<String[][]>		remainingBuildingInLine;
+	private LinkedList<Tile>			initialHand;
 
 	private String						gameName;
 	private Tile[][]					board;
 	private Deck						deck;
 	private HashMap<String, PlayerInfo>	playerInfoList;
 	private int							round;
+// TODO	private int							maxSpeed;
 
 // --------------------------------------------
 // Builder:
@@ -64,17 +64,16 @@ public class Data implements Serializable
 		sc.close();
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
+// TODO		this.maxSpeed
 
-		this.existingLine		= new LinkedList<Integer>();
-		this.remainingLine		= new LinkedList<Integer>();
-		for (int i=1; i<=maxNbrPlayer; i++)
-		{
-			this.existingLine.add(i);
-			this.remainingLine.add(i);
-		}
-// TODO AAAAAAAAAAAAAAAAAAA Faire
-//		this.initExistingLineBuildings(nbrBuildingInLine);
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+		this.existingLine		= new LinkedList<Integer>();						// Init the existing lines
+		for (int i=1; i<=maxNbrPlayer; i++)	this.existingLine.add(i);
+		this.remainingLine		= new LinkedList<Integer>(existingLine);
+
+		this.initExistingBuildingInLine(nbrBuildingInLine);							// Init the existing building
+		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
+
+		this.initInitialHand();
 	}
 
 // --------------------------------------------
@@ -101,7 +100,7 @@ public class Data implements Serializable
 	public int					getHeight()										{return this.board[0].length;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public Tile					getTile(int x, int y)							{return new Tile(this.board[x][y]);}
-	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
+//////////////// TODO	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
@@ -169,7 +168,7 @@ public class Data implements Serializable
 	/**============================================================
 	 * @return the list of the neighbor coordinates that can be acceded from the <x,y> cell
 	 ==============================================================*/
-	public LinkedList<Point> getAccessibleNeighboursCoordinates(int x, int y)
+	public LinkedList<Point> getAccessibleNeighboursPositions(int x, int y)
 	{
 		LinkedList<Point>	res = new LinkedList<Point>();
 		LinkedList<Integer>	ad	= board[x][y].getAccessibleDirections();	// List of the reachable directions
@@ -243,6 +242,9 @@ public class Data implements Serializable
 // --------------------------------------------
 // Private methods:
 // --------------------------------------------
+	/**============================================
+	 * @return Create the board from a file
+	 ==============================================*/
 	private Tile[][] scanBoardFile(Scanner sc)
 	{
 		Tile[][] res;
@@ -267,26 +269,52 @@ public class Data implements Serializable
 
 		return res;
 	}
-// TODO AAAAAAAAAAAAAAAAAAA Faire
-	private void initExistingLineBuildings(int nbrBuildingInLine)
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+	/**============================================
+	 * @return Creates the line cards from the correspending file
+	 ==============================================*/
+	private void initExistingBuildingInLine(int nbrBuildingInLine)
 	{
 		File f = new File(lineFile+nbrBuildingInLine);
 		Scanner sc;
 
-		this.existingLineBuildings = new LinkedList<String[]>();
+		this.existingBuildingInLine = new LinkedList<String[][]>();
 		try
 		{
 			sc = new Scanner(f);
-			for (int i=0; i<maxNbrPlayer; i++)
+			for (int l=0; l<maxNbrPlayer; l++)
 			{
-				String[] strTab = new String[nbrBuildingInLine];
-				for (int j=0; j<nbrBuildingInLine; j++) strTab[j] = sc.next();
-				this.existingLineBuildings.add(strTab);
+				String[][] strTab = new String[maxNbrPlayer][nbrBuildingInLine];
+				for (int p=0; p<maxNbrPlayer; p++)
+				{
+					for (int b=0; b<nbrBuildingInLine; b++) strTab[p][b] = sc.next();
+				}
+				this.existingBuildingInLine.add(strTab);
 			}
 			sc.close();
 		}
 		catch (Exception e){throw new RuntimeException("Malformed line file");}
+	}
+	/**============================================
+	 * @return Creates the initial hand from the correspending file
+	 ==============================================*/
+	private void initInitialHand()
+	{
+		File f = new File(initialHandFile);
+		String tileName;
+		Scanner sc;
+
+		this.initialHand = new LinkedList<Tile>();
+		try
+		{
+			sc = new Scanner(f);
+			for (int i=0; i<initialHandSize; i++)
+			{
+				tileName = sc.next();
+				this.initialHand.add(new Tile(tileName));
+			}
+			sc.close();
+		}
+		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
 	}
 	private Tile[][] boardCopy()
 	{
@@ -314,18 +342,23 @@ public class Data implements Serializable
 		public Hand					hand;
 		public int					line;
 		public LinkedList<Action>	history;
+		public String[]				buildingInLine;
 
 		// Builder
 		public PlayerInfo(PlayerInterface pi)
 		{
+			Random rnd = new Random();
 			int i;
+
 			this.player = pi;
 			this.history= new LinkedList<Action>();
-			this.hand	= new Hand();			// TODO remplire la main a partire de la pioche
-			i = (new Random()).nextInt(remainingLine.size());
+			this.hand	= new Hand(initialHand);
+			i			= rnd.nextInt(remainingLine.size());						// Draw a line
 			this.line	= remainingLine.get(i);
-// TODO AAAAAAAAAAAAAAAAAAA Faire
-// Créer le parcour du joueur
+			remainingLine.remove(i);
+			i			= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
+			this.buildingInLine = remainingBuildingInLine.get(i)[line];
+			remainingBuildingInLine.remove(i);
 		}
 	}
 	/**===============================================================
@@ -367,6 +400,23 @@ public class Data implements Serializable
 	 * @return the player's second terminal (lowest right square)
 	 =================================================================*/
 	public Point secondTerminus(String name) {
+		// TODO Rend la position du premier terminus du joueur (case plus en bas à droite)
+		return null;
+	}
+	/**===============================================================
+	 * @return the list of the neighbors connected to the current tile
+	 * (<x, y> has a path to the neighbor and the neighbor has a path to <x, y>)
+	 =================================================================*/
+	public LinkedList<Point> getConnectedNeighborPositions(int x, int y)
+	{
+		// TODO Rend la position du premier terminus du joueur (case plus en bas à droite)
+		return null;
+	}
+	/**===============================================================
+	 * @return true if the player's track is completed (path between the 2 terminus and through all the stops)
+	 =================================================================*/
+	public Boolean isTrackCompleted(String name)
+	{
 		// TODO Rend la position du premier terminus du joueur (case plus en bas à droite)
 		return null;
 	}

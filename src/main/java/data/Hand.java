@@ -8,26 +8,27 @@ import java.util.LinkedList;
 
 public class Hand
 {
-	private LinkedList<Tile> playerTiles;	// Move Attributes
-	private int size;
-public Hand(){}
-	/**
-	 *  @param Tiles
-	 *  basicsTiles les tuiles standard en début de jeu
-	 */
-	public Hand( LinkedList<Tile> basicsTiles){
-		this.size = basicsTiles.size();
-		this.playerTiles = basicsTiles;
+// --------------------------------------------
+// Builder:
+// --------------------------------------------
+	private LinkedList<Tile>	tileList;
+
+//--------------------------------------------
+// Builder:
+//--------------------------------------------
+	public Hand( LinkedList<Tile> basicsTiles)
+	{
+		this.tileList = new LinkedList<Tile> (basicsTiles);
 	}
-	
-	public int size(){
-		return this.size;
+
+//--------------------------------------------
+// Getter:
+//--------------------------------------------
+	public int size()	{return this.tileList.size();}
+
+	public Tile get(int k) {
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
-	public Tile get(int index){
-		return this.playerTiles.get(index);
-	}
-	
-	
-	
+
 }

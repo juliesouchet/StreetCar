@@ -141,7 +141,7 @@ public class Traveler extends PlayerAutomaton {
 		 		}
 		 		result.addFirst(u);
 		 	}
-		 	for (Point v : data.getConnectedNeighborsPositions(wp.x,wp.y)) {
+		 	for (Point v : data.getConnectedNeighborPositions(wp.x,wp.y)) {
 		 		if(distance[wp.x][wp.y] + arcWeight < distance[v.x][v.y]) {
 		 			distance[v.x][v.y] = distance[wp.x][wp.y] + arcWeight;
 		 			queue.add(new WeightedPoint(v,distance[v.x][v.y] + heuristic(v, destination)));

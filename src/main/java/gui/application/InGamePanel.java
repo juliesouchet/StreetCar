@@ -19,7 +19,7 @@ public class InGamePanel extends Panel {
 	Panel chatPanel;
 	Panel gameMapPanel;
 	Panel playersSidebarPanel;
-	Panel[] playersPanel = new Panel[5];
+	PlayerPanel[] playersPanel = new PlayerPanel[5];
 
 	// Constructors
 	
@@ -34,9 +34,16 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupGameMapPanel() {	
-		this.setBackground(Color.WHITE);
+		gameMapPanel = new Panel();
+		gameMapPanel.setLayout(new BorderLayout());
+		
+		Panel bottomPlayerPanel = new Panel();
+		bottomPlayerPanel.setPreferredSize(new Dimension(300, 500));
+		bottomPlayerPanel.setBackground(Color.BLACK);
+		gameMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
+		
 		MapPanel mapPanel = new MapPanel();
-		this.add(mapPanel, BorderLayout.CENTER);
+		gameMapPanel.add(mapPanel, BorderLayout.CENTER);
 	}
 	
 	private void setupChatPanel() {
@@ -60,7 +67,7 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupPlayersPanel() { 
-		int nbPlayers = 5;
+		int nbPlayers = 4;
     	this.playersSidebarPanel = new Panel();
     	playersSidebarPanel.setLayout(null);
     	playersSidebarPanel.setPreferredSize(new Dimension(330, nbPlayers*160+35));
@@ -68,12 +75,13 @@ public class InGamePanel extends Panel {
     	playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
     	
     	int y = 45;
-    	for (int i=0; i<5; i++) {
-    		Panel panel = new Panel();
-    		playersPanel[i] = panel;
-    		playersPanel[i].setPreferredSize(new Dimension(280, 150));
+    	for (int i=0; i<nbPlayers; i++) {
+    		PlayerPanel playerPanel = new PlayerPanel("Name", "Difficulty");
+    		playersPanel[i] = playerPanel;
+    		if (i<nbPlayers-1) { //last bar not displayed
+    			playersPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+    		}
     		playersPanel[i].setBounds(20, y+(160*i), 280, 150);
-    		playersPanel[i].setBackground(Color.GREEN);
     		playersSidebarPanel.add(playersPanel[i]);
     	}
     	
@@ -85,7 +93,6 @@ public class InGamePanel extends Panel {
 	
 	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawLine(10, 10, 200, 200);
     }
 	
 	// Actions
@@ -93,6 +100,5 @@ public class InGamePanel extends Panel {
 	/*public void quitGame() {
 		MainFrameController mfc = (MainFrameController)this.getFrameController();
 		mfc.showWelcomeMenuPanel();
-	}*/
-	
+	}*/	
 }
