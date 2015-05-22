@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import main.java.data.Data;
+
 
 
 
@@ -14,6 +16,7 @@ public interface PlayerInterface extends Remote
 {
 	public String	getName				()											throws RemoteException;
 	public Color	getColor			()											throws RemoteException;
+	public Data		getGameData			()											throws RemoteException;
 /*	public boolean	isHumanPlayer		()											throws RemoteException;
 	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;

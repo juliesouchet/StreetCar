@@ -2,6 +2,7 @@ package main.java.data;
 
 import java.awt.Point;
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,9 +19,13 @@ import main.java.util.Direction;
 
 
 
-public class Data
+public class Data implements Serializable
 {
-// --------------------------------------------
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7042840382794473931L;
+	// --------------------------------------------
 // Attributes:
 // --------------------------------------------
 	public static final	String			boardDirectory			= "src/main/resources/boards/";
@@ -260,7 +265,7 @@ public class Data
 		}
 		catch (Exception e){throw new RuntimeException("Malformed board file");}
 
-		return null;
+		return res;
 	}
 // TODO AAAAAAAAAAAAAAAAAAA Faire
 	private void initExistingLineBuildings(int nbrBuildingInLine)
