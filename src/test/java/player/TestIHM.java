@@ -1,6 +1,7 @@
 package test.java.player;
 
 import java.awt.Color;
+import java.rmi.RemoteException;
 import java.util.Scanner;
 
 import main.java.player.PlayerIHM;
@@ -49,12 +50,13 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 		try					{player.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip);}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
-		
+
 		// Game data viewer
 		DataViewerFrame frame = new DataViewerFrame();
-		frame.setGameData(player.getGameData());
+		try						{frame.setGameData(player.getGameData());}
+		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
 		frame.setVisible(true);
-		
+
 		sc.close();
 	}
 

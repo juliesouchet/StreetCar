@@ -149,6 +149,11 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		System.out.println("===========================================================\n");
 		return res;
 	}
+	public Data getData() throws RemoteException
+	{
+// TODO: faire une copie avant de rendre
+		return this.data;
+	}
 
 // --------------------------------------------
 // Local methods:

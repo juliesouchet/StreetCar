@@ -50,7 +50,7 @@ public class Tile
 // --------------------------------------------
 	public Tile(Tile t)
 	{
-		this.tileID					= new String(tileID);
+		this.tileID					= new String(t.tileID);
 		this.isTree					= t.isTree;
 		this.isBuilding				= t.isBuilding;
 		this.isStop					= t.isStop;

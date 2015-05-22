@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import main.java.data.Data;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -63,6 +64,10 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // --------------------------------------------
 	public String 	getName()	throws RemoteException	{return this.name;}
 	public Color	getColor()	throws RemoteException	{return this.color;}
+	public Data		getGameData()throws RemoteException
+	{
+		return this.game.getData();
+	}
 
 
 // --------------------------------------------

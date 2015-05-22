@@ -89,12 +89,10 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 
 		new PlayerIHM(playerName, playerColor, game, ihm);						// Player Creation
 	}
-
-
-	public Data getGameData() {
-		return ((Game)this.game).data;
+	public Data getGameData() throws RemoteException
+	{
+		return super.getGameData();
 	}
-	
 // --------------------------------------------
 // Local methodes:
 // --------------------------------------------
