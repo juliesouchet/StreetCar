@@ -69,7 +69,7 @@ public class InGamePanel extends Panel {
     	
     	int y = 45;
     	for (int i=0; i<nbPlayers; i++) {
-    		PlayerPanel playerPanel = new PlayerPanel();
+    		PlayerPanel playerPanel = new PlayerPanel("Name", "Difficulty");
     		playersPanel[i] = playerPanel;
     		if (i<nbPlayers-1) { //last bar not displayed
     			playersPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
