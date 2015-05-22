@@ -10,15 +10,10 @@ import javax.swing.JPanel;
 public class PlayerPanel extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
-
-	public PlayerPanel() {
-		this.setLayout(null);
-		this.setBackground(Color.GRAY);
-		this.setPreferredSize(new Dimension(280, 150));
-	}
 	
-	public PlayerPanel(String nameOfPlayer, String difficultyLevel) {
-		super();
+	public PlayerPanel(String nameOfPlayer, String difficultyLevel) {		
+		this.setBackground(Color.WHITE);
+		this.setPreferredSize(new Dimension(280, 150));
 		this.setLayout(null);
 		JLabel nameOfPlayerLabel = new JLabel(nameOfPlayer);
 		JLabel difficultyLevelLabel = new JLabel(difficultyLevel);
