@@ -22,8 +22,6 @@ public class TestIHM
 // --------------------------------------------
 	public TestIHM(PlayerIHM player)
 	{
-		System.out.println(player);
-		
 		Scanner sc = new Scanner(System.in);
 		String str, name, gameName, ip;
 		boolean create;

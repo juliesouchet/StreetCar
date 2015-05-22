@@ -2,6 +2,7 @@ package main.java.data;
 
 import java.awt.Point;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +33,8 @@ public class Data implements Serializable
 	public static final int				initialHandSize			= 5;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
+	public static final int				minSpeed				= 1;
+	public static final int				maxSpeed				= 10;
 
 	private LinkedList<Integer>			existingLine;
 	private LinkedList<String[][]>		existingBuildingInLine;
@@ -44,7 +47,8 @@ public class Data implements Serializable
 	private Deck						deck;
 	private HashMap<String, PlayerInfo>	playerInfoList;
 	private int							round;
-// TODO	private int							maxSpeed;
+	private int							maxPlayerSpeed;
+	private String						firstPlayer;
 
 // --------------------------------------------
 // Builder:
@@ -64,7 +68,7 @@ public class Data implements Serializable
 		sc.close();
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
-// TODO		this.maxSpeed
+		this.maxPlayerSpeed		= minSpeed;
 
 		this.existingLine		= new LinkedList<Integer>();						// Init the existing lines
 		for (int i=1; i<=maxNbrPlayer; i++)	this.existingLine.add(i);
@@ -99,11 +103,13 @@ public class Data implements Serializable
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
+	public int					maximumSpeed()									{return this.maxPlayerSpeed;}
 	public Tile					getTile(int x, int y)							{return new Tile(this.board[x][y]);}
 //////////////// TODO	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
+	public boolean hasDoneFirstAction(String name)								{return this.firstPlayer.equals(name);}
 	public PlayerInterface		getPlayer(String playerName)
 	{
 		PlayerInterface pi = this.playerInfoList.get(playerName).player;
@@ -153,7 +159,7 @@ public class Data implements Serializable
 	 * @return a list of the neighbor coordinates.  This function
 	 * does not check whether the neighbour is accessible through a path on the current tile
 	 ==============================================================*/
-	public LinkedList<Point> getNeighbourPositions(int x, int y)
+	public LinkedList<Point> getNeighborPositions(int x, int y)
 	{
 		LinkedList<Point> res = new LinkedList<Point>();
 		int w = getWidth();
@@ -168,7 +174,7 @@ public class Data implements Serializable
 	/**============================================================
 	 * @return the list of the neighbor coordinates that can be acceded from the <x,y> cell
 	 ==============================================================*/
-	public LinkedList<Point> getAccessibleNeighboursPositions(int x, int y)
+	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
 	{
 		LinkedList<Point>	res = new LinkedList<Point>();
 		LinkedList<Integer>	ad	= board[x][y].getAccessibleDirections();	// List of the reachable directions
@@ -183,7 +189,7 @@ public class Data implements Serializable
 	/**============================================================
 	 * @return the list of the neighbor tiles that can be acceded from the <x,y> cell
 	 ==============================================================*/
-	public LinkedList<Tile> getAccessibleNeighboursTiles(int x, int y)
+	public LinkedList<Tile> getAccessibleNeighborsTiles(int x, int y)
 	{
 		LinkedList<Tile>	res = new LinkedList<Tile>();
 		LinkedList<Integer>	ad	= board[x][y].getAccessibleDirections();	// List of the reachable directions
@@ -238,14 +244,55 @@ public class Data implements Serializable
 		}
 		return null;
 	}
+	/**===============================================================
+	 * @return the list of the neighbors connected to the current tile
+	 * (<x, y> has a path to the neighbor and the neighbor has a path to <x, y>)
+	 =================================================================*/
+	public LinkedList<Point> getConnectedNeighborPositions(int x, int y)
+	{
+		LinkedList<Point> neighbor	= this.getAccessibleNeighborsPositions(x, y);
+		LinkedList<Point> res		= new LinkedList<Point>();
+		LinkedList<Point> neighbor0;
+		Point p = new Point(x, y);
 
-// --------------------------------------------
-// Private methods:
-// --------------------------------------------
+		for (Point p0: neighbor)
+		{
+			neighbor0 = this.getAccessibleNeighborsPositions(p0.x, p0.y);
+			if (neighbor0.contains(p)) res.add(p0);
+		}
+
+		return res;
+	}
+	/**===============================================================
+	 * @return true if the player is currently building his tracks
+	 =================================================================*/
+	public boolean isContructing(String name)
+	{
+		PlayerInfo pi = this.playerInfoList.get(name);
+
+		if (pi == null) throw new RuntimeException("Unknown player: " + name);
+		return pi.history.getLast().isConstructing();
+	}
+	/**===============================================================
+	 * @return the positions of the buildings in the player's path
+	 =================================================================*/
+	public LinkedList<Point> getBuildings(String name)
+	{
+		PlayerInfo pi = this.playerInfoList.get(name);
+		return new LinkedList<Point> (pi.buildingInLine_position);
+	}
+	/**===============================================================
+	 * @return the player's first terminal (top left square)
+	 =================================================================*/
+	public LinkedList<Point> getTerminus(String name)
+	{
+		PlayerInfo pi = this.playerInfoList.get(name);
+		return new LinkedList<Point>(pi.terminus);
+	}
 	/**============================================
 	 * @return Create the board from a file
 	 ==============================================*/
-	private Tile[][] scanBoardFile(Scanner sc)
+	public Tile[][] scanBoardFile(Scanner sc)
 	{
 		Tile[][] res;
 		String tileFileName;
@@ -269,6 +316,30 @@ public class Data implements Serializable
 
 		return res;
 	}
+	/**============================================
+	 * @return Writes a board in a file
+	 ==============================================*/
+	public void writeBoardInFile(FileWriter fw)
+	{
+		try 
+		{
+			fw.write("" + this.getWidth()	+ "\n");
+			fw.write("" + this.getHeight()	+ "\n");
+			for (int y=0; y<this.getHeight(); y++)
+			{
+				for (int x=0; x<this.getWidth(); x++)
+				{
+					fw.write("" + this.board[x][y].getTileID()	+ "\n");
+				}
+				fw.write("" + this.getHeight()	+ "\n\n");
+			}
+		}
+		catch(Exception e){throw new RuntimeException("Error while writing the board");}
+	}
+
+// --------------------------------------------
+// Private methods:
+// --------------------------------------------
 	/**============================================
 	 * @return Creates the line cards from the correspending file
 	 ==============================================*/
@@ -316,6 +387,51 @@ public class Data implements Serializable
 		}
 		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
 	}
+	/**============================================
+	 * @return the position of the building which name are given
+	 ==============================================*/
+	private LinkedList<Point> getBuildingPosition(String[] buildingNameTab)
+	{
+		LinkedList<Point> res = new LinkedList<Point>();
+		String s0;
+
+		for (String s: buildingNameTab)
+		{
+			for (int x=0; x<this.getWidth(); x++)
+			{
+				for (int y=0; y<this.getWidth(); y++)
+				{
+					s0 = this.board[x][y].getBuildingName();
+					if ((s0 != null) && (s0.equals(s)))	res.addLast(new Point(x, y));
+				}
+			}
+		}
+		return res;
+	}
+	private LinkedList<Point> getTerminusPosition(int line)
+	{
+		LinkedList<Point>res = new LinkedList<Point>();
+		int w = this.getWidth()-1;
+		int h = this.getHeight()-1;
+		int i0, i1;
+
+		for (int x=0; x<w; x++)
+		{
+			i0 = this.board[x][0].getTerminusName();
+			i1 = this.board[x][h].getTerminusName();
+			if (i0 == line) res.addLast(new Point(x, 0));
+			if (i1 == line) res.addLast(new Point(x, h));
+		}
+		for (int y=0; y<h; y++)
+		{
+			i0 = this.board[0][y].getTerminusName();
+			i1 = this.board[w][y].getTerminusName();
+			if (i0 == line) res.addLast(new Point(0, y));
+			if (i1 == line) res.addLast(new Point(w, y));
+		}
+		if (res.size() != 4) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
+		return res;
+	}
 	private Tile[][] boardCopy()
 	{
 		int			width	= getWidth();
@@ -341,8 +457,10 @@ public class Data implements Serializable
 		public PlayerInterface		player;
 		public Hand					hand;
 		public int					line;
+		public String[]				buildingInLine_name;
+		public LinkedList<Point>	buildingInLine_position;
+		public LinkedList<Point>	terminus;
 		public LinkedList<Action>	history;
-		public String[]				buildingInLine;
 
 		// Builder
 		public PlayerInfo(PlayerInterface pi)
@@ -357,60 +475,11 @@ public class Data implements Serializable
 			this.line	= remainingLine.get(i);
 			remainingLine.remove(i);
 			i			= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
-			this.buildingInLine = remainingBuildingInLine.get(i)[line];
+			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
 			remainingBuildingInLine.remove(i);
+			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);// Init the building line position
+			this.terminus= getTerminusPosition(this.line);							// Init the terminus position
 		}
-	}
-	/**===============================================================
-	 * @return the maximum allowed speed
-	 =================================================================*/
-	public int maximumSpeed() {
-		// TODO la limitation de vitesse (commune à tous les joueurs, commence à 1, peut aller jusqu'à 10)
-		return 0;
-	}
-	/**===============================================================
-	 * @return if the player is currently building his tracks
-	 =================================================================*/
-	public boolean isContructing(String name) {
-		// TODO rend vrai si le joueur est en train de construire sa voie, faux s'il fait voyager son tram
-		return false;
-	}
-	/**===============================================================
-	 * @return if the player has already done a simple action this turn
-	 =================================================================*/
-	public boolean hasDoneFirstAction(String name) {
-		// TODO rend vrai si le joueur a déjà fait une action simple
-		return false;
-	}
-	/**===============================================================
-	 * @return the positions of the buildings in the player's path
-	 =================================================================*/
-	public LinkedList<Point> getStops(String name) {
-		// TODO rend les positions des bâtiments à côté desquels le joueur doit passer
-		return null;
-	}
-	/**===============================================================
-	 * @return the player's first terminal (top left square)
-	 =================================================================*/
-	public Point firstTerminus(String name) {
-		// TODO Rend la position du premier terminus du joueur (case plus en haut à gauche)
-		return null;
-	}
-	/**===============================================================
-	 * @return the player's second terminal (lowest right square)
-	 =================================================================*/
-	public Point secondTerminus(String name) {
-		// TODO Rend la position du premier terminus du joueur (case plus en bas à droite)
-		return null;
-	}
-	/**===============================================================
-	 * @return the list of the neighbors connected to the current tile
-	 * (<x, y> has a path to the neighbor and the neighbor has a path to <x, y>)
-	 =================================================================*/
-	public LinkedList<Point> getConnectedNeighborPositions(int x, int y)
-	{
-		// TODO Rend la position du premier terminus du joueur (case plus en bas à droite)
-		return null;
 	}
 	/**===============================================================
 	 * @return true if the player's track is completed (path between the 2 terminus and through all the stops)

@@ -53,4 +53,9 @@ public class Action
 		res.tile2			= new Tile(tile2);
 		return res;
 	}
+
+// -----------------------------------------------------
+// Getter
+// -----------------------------------------------------
+	public boolean isConstructing()	{return ((this.action == BUILD_SIMPLE) || (this.action == BUILD_DOUBLE));}
 }
