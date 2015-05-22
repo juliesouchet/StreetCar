@@ -25,7 +25,6 @@ Implémentation à deux d'un controlleur de fenêtre et de celui d'une vue.
 Puis première utilisation afin de réaliser la fenêtre principale avec le menu principal.
 Louis fait les autres menu et Jeremy complète la partie util.
 
-
 ### Jour 3 : Mercredi 20 mai
 
 Implémentation des fenêtres de chaque page (menu de base, salle d'attente, etc...)
@@ -34,4 +33,15 @@ A faire:
   - mettre des listener sur les ComboBox, TextField, boutons des options
   - afficher les titres de chaque panel
   - afficher et mettre les avatars cliquables
+  
+### Jour 4 : Jeudi 21 mai 
+
+Première implémentation da la vue en jeu faite: répartition de la vue en 3 panels (joueurs, plateau, chat).
+Découpage interne de chaque panel fait.
+A faire:
+  - Faire un panel pour chaque joueur avec son avatar, ses cartes, etc
+  - Affichage de l'avatar avec bulles à chaque message (chat)
+  - Plateau central à découper en case
+  
+### Jour 5 : Vendredi 22 mai 
 
