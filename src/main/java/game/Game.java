@@ -26,11 +26,13 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
+	public final static int		maxNbrPlayer			= 5;
 	private static final String messageHeader			= "Street Car application: ";
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 
 	public Data data; // temporary public for the debug
+	private String name;
 
 // --------------------------------------------
 // Builder:
@@ -43,25 +45,43 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	 =========================================================================*/
 	public Game(String gameName, String appIP, String boardName, int nbrBuildingInLine) throws RemoteException, UnknownBoardNameException, RuntimeException
 	{
-		super();
+		super(); // TODO akwasaser?
+		name = gameName;
+		this.data		= new Data(gameName, boardName, nbrBuildingInLine);			// Init application
+		hostGame(appIP);
+	}
+	
+	public Game() throws RemoteException
+	{	
+		name = "StreetCar";
+		data = new Data(name);
+		try {
+			data.buildBoard(Data.defaultBoardFile);
+		} catch (UnknownBoardNameException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setName(String name){this.name = name;}	
+	public String getName(){return name;}
+
+	public void hostGame(String appIP) throws RemoteException, UnknownBoardNameException {
 		String url = null;
 
-		try																			// Create the player's remote reference
+		try
 		{
-			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
+			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + name;
 			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
 			Naming.rebind(url, this);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
-
-		this.data		= new Data(gameName, boardName, nbrBuildingInLine);			// Init application
-
+		
 		System.out.println("\n===========================================================");
-		System.out.println(messageHeader + "URL = " + url);
-		System.out.println(messageHeader + "ready");
-		System.out.println(messageHeader + "Start waiting for connexion request");
+		System.out.println(messageHeader + "Hosting game on url : " + url);
+		System.out.println(messageHeader + "Waiting for connections...");
 		System.out.println("===========================================================\n");
 	}
+	
 	/**=======================================================================
 	 * @return Creates a remote application cloned to the real application at the given ip
 	 * @throws NotBoundException 		: The web host is not configured	(throw RuntimeException)

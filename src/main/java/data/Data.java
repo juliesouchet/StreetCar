@@ -12,6 +12,7 @@ import java.util.Set;
 
 import main.java.data.Tile.Path;
 import main.java.game.ExceptionFullParty;
+import main.java.game.Game;
 import main.java.game.UnknownBoardNameException;
 import main.java.player.PlayerInterface;
 import main.java.util.Direction;
@@ -21,24 +22,23 @@ import main.java.util.Direction;
 
 public class Data implements Serializable
 {
-/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7042840382794473931L;
 	// --------------------------------------------
-// Attributes:
-// --------------------------------------------
+	// Attributes:
+	// --------------------------------------------
 	public static final	String			boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
-	public static final int				maxNbrPlayer			= 6;
+	public static final int				maxNbrPlayer			= Game.maxNbrPlayer;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
+	public static final int 			nbrOfLines				= 6;
+	public static final String			defaultBoardFile		= boardDirectory + "newOrleans";
 
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+	// TODO AAAAAAAAAAAAAAAAAAA Faire
 	private LinkedList<Integer>			existingLine;
 	private LinkedList<String[]>		existingLineBuildings;
 	private LinkedList<Integer>			remainingLine;
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+	// TODO AAAAAAAAAAAAAAAAAAA Faire
 
 	private String						gameName;
 	private Tile[][]					board;
@@ -46,18 +46,30 @@ public class Data implements Serializable
 	private HashMap<String, PlayerInfo>	playerInfoList;
 	private int							round;
 
-// --------------------------------------------
-// Builder:
-// --------------------------------------------
-	public Data(String gameName, String boardName, int nbrBuildingInLine) throws UnknownBoardNameException, RuntimeException
+	// --------------------------------------------
+	// Builder:
+	// --------------------------------------------
+	public Data(String gameName)
 	{
-		File f = new File(boardDirectory + boardName);
+		this.gameName			= new String(gameName); // TODO akwasaser
+		this.deck				= new Deck();
+		this.playerInfoList		= new HashMap<String, PlayerInfo>();
+
+		this.existingLine		= new LinkedList<Integer>();
+		this.remainingLine		= new LinkedList<Integer>();
+		for (int i=1; i<=nbrOfLines; i++)
+		{
+			this.existingLine.add(i);
+			this.remainingLine.add(i);
+		}
+	}
+
+	public void buildBoard(String boardName) throws UnknownBoardNameException
+	{
 		Scanner sc;
+		File f = new File(boardDirectory + boardName);
 
-		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
-			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
-		this.gameName			= new String(gameName);
 		try						{sc = new Scanner(f);}
 		catch(Exception e)		{e.printStackTrace(); throw new UnknownBoardNameException();}
 		this.board				= scanBoardFile(sc);
@@ -72,17 +84,28 @@ public class Data implements Serializable
 			this.existingLine.add(i);
 			this.remainingLine.add(i);
 		}
-// TODO AAAAAAAAAAAAAAAAAAA Faire
-//		this.initExistingLineBuildings(nbrBuildingInLine);
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+		// TODO AAAAAAAAAAAAAAAAAAA Faire
+		//		this.initExistingLineBuildings(nbrBuildingInLine);
+		// TODO AAAAAAAAAAAAAAAAAAA Faire
 	}
 
-// --------------------------------------------
-// Setter:
-// --------------------------------------------
+	public Data(String gameName, String boardName, int nbrBuildingInLine) throws UnknownBoardNameException, RuntimeException
+	{
+		this(gameName);
+		if ((nbrBuildingInLine > maxNbrBuildingInLine) || // TODO akwasaser?
+				(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
+		buildBoard(boardName);
+		// TODO AAAAAAAAAAAAAAAAAAA Faire
+		//		this.initExistingLineBuildings(nbrBuildingInLine);
+		// TODO AAAAAAAAAAAAAAAAAAA Faire
+	}
+
+	// --------------------------------------------
+	// Setter:
+	// --------------------------------------------
 	public void addPlayer(PlayerInterface p, String playerName) throws ExceptionFullParty
 	{
-		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
+		if (this.playerInfoList.size() > maxNbrPlayer)	throw new ExceptionFullParty();
 		PlayerInfo pi = new PlayerInfo(p);
 		this.playerInfoList.put(playerName, pi);
 	}
@@ -93,9 +116,9 @@ public class Data implements Serializable
 		this.playerInfoList.remove(playerName);
 	}
 
-// --------------------------------------------
-// Getter:
-// --------------------------------------------
+	// --------------------------------------------
+	// Getter:
+	// --------------------------------------------
 	public Tile[][]				getBoard()										{return boardCopy();}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
@@ -139,7 +162,7 @@ public class Data implements Serializable
 		for (int d: accessibleDirection)																// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
 			Point neighbor = Direction.getNeighbour(x, y, d);
-////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
+			////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
 			Tile neighborT = this.board[x][y];
 			if ((this.isOnEdge(neighbor.x, neighbor.y)) && (!neighborT.isTerminus()))	return false;	//		Rule A
 			if (neighborT.isEmpty())													continue;		//		Rule E (step 1)
@@ -240,9 +263,9 @@ public class Data implements Serializable
 		return null;
 	}
 
-// --------------------------------------------
-// Private methods:
-// --------------------------------------------
+	// --------------------------------------------
+	// Private methods:
+	// --------------------------------------------
 	private Tile[][] scanBoardFile(Scanner sc)
 	{
 		Tile[][] res;
@@ -267,9 +290,10 @@ public class Data implements Serializable
 
 		return res;
 	}
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+	
+	// TODO AAAAAAAAAAAAAAAAAAA Faire
 	private void initExistingLineBuildings(int nbrBuildingInLine)
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+	// TODO AAAAAAAAAAAAAAAAAAA Faire
 	{
 		File f = new File(lineFile+nbrBuildingInLine);
 		Scanner sc;
@@ -278,7 +302,7 @@ public class Data implements Serializable
 		try
 		{
 			sc = new Scanner(f);
-			for (int i=0; i<maxNbrPlayer; i++)
+			for (int i=0; i<nbrOfLines; i++)
 			{
 				String[] strTab = new String[nbrBuildingInLine];
 				for (int j=0; j<nbrBuildingInLine; j++) strTab[j] = sc.next();
@@ -288,6 +312,7 @@ public class Data implements Serializable
 		}
 		catch (Exception e){throw new RuntimeException("Malformed line file");}
 	}
+	
 	private Tile[][] boardCopy()
 	{
 		int			width	= getWidth();
@@ -304,9 +329,9 @@ public class Data implements Serializable
 		return res;
 	}
 
-// --------------------------------------------
-// Player Info class:
-// --------------------------------------------
+	// --------------------------------------------
+	// Player Info class:
+	// --------------------------------------------
 	private class PlayerInfo
 	{
 		// Attributes
@@ -324,8 +349,8 @@ public class Data implements Serializable
 			this.hand	= new Hand();			// TODO remplire la main a partire de la pioche
 			i = (new Random()).nextInt(remainingLine.size());
 			this.line	= remainingLine.get(i);
-// TODO AAAAAAAAAAAAAAAAAAA Faire
-// Créer le parcour du joueur
+			// TODO AAAAAAAAAAAAAAAAAAA Faire
+			// Créer le parcour du joueur
 		}
 	}
 	/**===============================================================
