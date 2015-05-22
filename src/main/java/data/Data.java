@@ -2,6 +2,7 @@ package main.java.data;
 
 import java.awt.Point;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -288,14 +289,10 @@ public class Data implements Serializable
 		PlayerInfo pi = this.playerInfoList.get(name);
 		return new LinkedList<Point>(pi.terminus);
 	}
-
-// --------------------------------------------
-// Private methods:
-// --------------------------------------------
 	/**============================================
 	 * @return Create the board from a file
 	 ==============================================*/
-	private Tile[][] scanBoardFile(Scanner sc)
+	public Tile[][] scanBoardFile(Scanner sc)
 	{
 		Tile[][] res;
 		String tileFileName;
@@ -319,6 +316,30 @@ public class Data implements Serializable
 
 		return res;
 	}
+	/**============================================
+	 * @return Writes a board in a file
+	 ==============================================*/
+	public void writeBoardInFile(FileWriter fw)
+	{
+		try 
+		{
+			fw.write("" + this.getWidth()	+ "\n");
+			fw.write("" + this.getHeight()	+ "\n");
+			for (int y=0; y<this.getHeight(); y++)
+			{
+				for (int x=0; x<this.getWidth(); x++)
+				{
+					fw.write("" + this.board[x][y].getTileID()	+ "\n");
+				}
+				fw.write("" + this.getHeight()	+ "\n\n");
+			}
+		}
+		catch(Exception e){throw new RuntimeException("Error while writing the board");}
+	}
+
+// --------------------------------------------
+// Private methods:
+// --------------------------------------------
 	/**============================================
 	 * @return Creates the line cards from the correspending file
 	 ==============================================*/
