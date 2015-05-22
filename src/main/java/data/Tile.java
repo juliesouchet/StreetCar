@@ -144,7 +144,7 @@ public class Tile
 				this.pathList.add(new Path(d0, d1));
 			}
 		}
-		catch (Exception e){e.printStackTrace();}//throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
+		catch (Exception e){throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
 	}
 	public Tile cloneTile(Tile t)
 	{

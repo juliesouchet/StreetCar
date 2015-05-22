@@ -24,17 +24,18 @@ public class Data
 // Attributes:
 // --------------------------------------------
 	public static final	String			boardDirectory			= "src/main/resources/boards/";
-	public static final int[]			existingLine			= {1, 2, 3, 4, 5, 6};
-	public static final String[]		existingBuilding		= {"A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M"};
+	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
 	public static final int				maxNbrPlayer			= 6;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 
+// TODO AAAAAAAAAAAAAAAAAAA Faire
+	private LinkedList<Integer>			existingLine;
+	private LinkedList<String[]>		existingLineBuildings;
 	private LinkedList<Integer>			remainingLine;
-	private LinkedList<String>			remainingBuilding;
+// TODO AAAAAAAAAAAAAAAAAAA Faire
 
 	private String						gameName;
-	private int							nbrBuildingInLine;
 	private Tile[][]					board;
 	private Deck						deck;
 	private HashMap<String, PlayerInfo>	playerInfoList;
@@ -51,21 +52,24 @@ public class Data
 		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
 			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
-		try					{sc = new Scanner(f);}
-		catch(Exception e)	{e.printStackTrace(); throw new UnknownBoardNameException();}
-
 		this.gameName			= new String(gameName);
-		this.nbrBuildingInLine	= nbrBuildingInLine;
+		try						{sc = new Scanner(f);}
+		catch(Exception e)		{e.printStackTrace(); throw new UnknownBoardNameException();}
 		this.board				= scanBoardFile(sc);
+		sc.close();
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
 
+		this.existingLine		= new LinkedList<Integer>();
 		this.remainingLine		= new LinkedList<Integer>();
-		this.remainingBuilding	= new LinkedList<String>();
-		for (int	l: existingLine)		this.remainingLine.addLast(l);
-		for (String	b: existingBuilding)	this.remainingBuilding.addLast(b);
-
-		sc.close();
+		for (int i=1; i<=maxNbrPlayer; i++)
+		{
+			this.existingLine.add(i);
+			this.remainingLine.add(i);
+		}
+// TODO AAAAAAAAAAAAAAAAAAA Faire
+//		this.initExistingLineBuildings(nbrBuildingInLine);
+// TODO AAAAAAAAAAAAAAAAAAA Faire
 	}
 
 // --------------------------------------------
@@ -258,6 +262,27 @@ public class Data
 
 		return null;
 	}
+// TODO AAAAAAAAAAAAAAAAAAA Faire
+	private void initExistingLineBuildings(int nbrBuildingInLine)
+// TODO AAAAAAAAAAAAAAAAAAA Faire
+	{
+		File f = new File(lineFile+nbrBuildingInLine);
+		Scanner sc;
+
+		this.existingLineBuildings = new LinkedList<String[]>();
+		try
+		{
+			sc = new Scanner(f);
+			for (int i=0; i<maxNbrPlayer; i++)
+			{
+				String[] strTab = new String[nbrBuildingInLine];
+				for (int j=0; j<nbrBuildingInLine; j++) strTab[j] = sc.next();
+				this.existingLineBuildings.add(strTab);
+			}
+			sc.close();
+		}
+		catch (Exception e){throw new RuntimeException("Malformed line file");}
+	}
 	private Tile[][] boardCopy()
 	{
 		int			width	= getWidth();
@@ -283,7 +308,6 @@ public class Data
 		public PlayerInterface		player;
 		public Hand					hand;
 		public int					line;
-		public LinkedList<String>	buildings;
 		public LinkedList<Action>	history;
 
 		// Builder
@@ -293,8 +317,10 @@ public class Data
 			this.player = pi;
 			this.history= new LinkedList<Action>();
 			this.hand	= new Hand();			// TODO remplire la main a partire de la pioche
-			i = (new Random()).nextInt();
-//TODO			this.line	= 
+			i = (new Random()).nextInt(remainingLine.size());
+			this.line	= remainingLine.get(i);
+// TODO AAAAAAAAAAAAAAAAAAA Faire
+// Créer le parcour du joueur
 		}
 	}
 }

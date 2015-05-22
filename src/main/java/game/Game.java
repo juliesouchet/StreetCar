@@ -72,7 +72,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	{
 		String url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 
-////	System.setSecurityManager(new RMISecurityManager());
+//////	System.setSecurityManager(new RMISecurityManager());
 		try 
 		{
 			return (GameInterface) Naming.lookup(url);
