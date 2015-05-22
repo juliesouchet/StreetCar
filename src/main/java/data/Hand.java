@@ -26,4 +26,9 @@ public class Hand
 //--------------------------------------------
 	public int size()	{return this.tileList.size();}
 
+	public Tile get(int k) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

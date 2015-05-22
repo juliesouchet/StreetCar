@@ -34,9 +34,18 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupGameMapPanel() {	
-		this.setBackground(Color.WHITE);
+		gameMapPanel = new Panel();
+		gameMapPanel.setLayout(new BorderLayout());
+		this.add(gameMapPanel, BorderLayout.CENTER);
+		
+		Panel bottomPlayerPanel = new Panel();
+		bottomPlayerPanel.setPreferredSize(new Dimension(300, 150));
+		bottomPlayerPanel.setBackground(Color.WHITE);
+		bottomPlayerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+		gameMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
+		
 		MapPanel mapPanel = new MapPanel();
-		this.add(mapPanel, BorderLayout.CENTER);
+		gameMapPanel.add(mapPanel, BorderLayout.CENTER);
 	}
 	
 	private void setupChatPanel() {
@@ -49,7 +58,7 @@ public class InGamePanel extends Panel {
     	
     	Panel chatInputPanel = new Panel();
     	chatInputPanel.setBackground(Color.WHITE);
-    	chatInputPanel.setPreferredSize(new Dimension(280, 130));
+    	chatInputPanel.setPreferredSize(new Dimension(280, 90));
     	chatInputPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     	chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
     	
@@ -60,21 +69,21 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupPlayersPanel() { 
-		int nbPlayers = 5;
+		int nbPlayers = 4;
     	this.playersSidebarPanel = new Panel();
-    	playersSidebarPanel.setLayout(null);
-    	playersSidebarPanel.setPreferredSize(new Dimension(330, nbPlayers*160+35));
-    	playersSidebarPanel.setBackground(Color.WHITE);
-    	playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+    	this.playersSidebarPanel.setLayout(null);
+    	this.playersSidebarPanel.setPreferredSize(new Dimension(330, nbPlayers*185+30));
+    	this.playersSidebarPanel.setBackground(Color.WHITE);
+    	this.playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
     	
-    	int y = 45;
+    	int y = 40;
     	for (int i=0; i<nbPlayers; i++) {
     		PlayerPanel playerPanel = new PlayerPanel("Name", "Difficulty");
     		playersPanel[i] = playerPanel;
     		if (i<nbPlayers-1) { //last bar not displayed
     			playersPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
     		}
-    		playersPanel[i].setBounds(20, y+(160*i), 280, 150);
+    		playersPanel[i].setBounds(15, y+(185*i), 285, 175);
     		playersSidebarPanel.add(playersPanel[i]);
     	}
     	
@@ -93,6 +102,5 @@ public class InGamePanel extends Panel {
 	/*public void quitGame() {
 		MainFrameController mfc = (MainFrameController)this.getFrameController();
 		mfc.showWelcomeMenuPanel();
-	}*/
-	
+	}*/	
 }

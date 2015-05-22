@@ -45,3 +45,8 @@ A faire:
   
 ### Jour 5 : Vendredi 22 mai 
 
+Retour en arrière de la vue principale: affichage des adversaires à gauche et du joueur en bas.  
+Affichage de l'avatar, cartes et stations des adversaires fait.  
+Plateau central découpé en case.  
+
+

@@ -20,7 +20,7 @@ public class MainFrameController extends FrameController implements ComponentLis
         this.frame.getContentPane().setLayout(null); 
         this.frame.addComponentListener(this);
         this.showWelcomeMenuPanel();
-        frame.setSize(1350, 870);
+        frame.setSize(1350, 820);
 	}
 
 	// Setters / getters

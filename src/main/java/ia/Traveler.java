@@ -29,13 +29,13 @@ public class Traveler extends PlayerAutomaton {
 	@Override
 	public Action makeChoice(Hand hand, Data currentConfig) {
 		Action res = null;
-		//TODO Building
-		//if(!currentConfig.objectivesCompleted(this)) {
+		Random rand = new Random();
+		Point p;
+		Tile t;
+		int i,j, k;
+		//
+		if(!currentConfig.isTrackCompleted(name)) {
 			// Random tile and position choice for construction (extracted from Dumbest)
-			Random rand = new Random();
-			Point p;
-			Tile t;
-			int i,j, k;
 			
 			do{
 				// random position choice
@@ -49,13 +49,13 @@ public class Traveler extends PlayerAutomaton {
 			}while( !currentConfig.isAcceptableTilePlacement(i, j, t));
 			
 			res = Action.newBuildSimpleAction(p, t);
-		//}
+		}
 		/**/
 		
 		
 		// Transition to travel
 		
-		//else {
+		else {
 			if(currentConfig.isContructing(name)) {
 				if(currentConfig.hasDoneFirstAction(name)) {
 					// ends current turn and starts traveling next turn
@@ -88,7 +88,7 @@ public class Traveler extends PlayerAutomaton {
 			checkpoints.removeFirst();
 			checkpoints.addFirst(streetcarMovement.getLast());
 			res = Action.newMoveAction(streetcarMovement);
-		//}
+		}
 		
 		
 		return res;
@@ -103,7 +103,7 @@ public class Traveler extends PlayerAutomaton {
 	 * @param data
 	 * @return
 	 */
-	private LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data) {
+	public LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data) {
 		// TODO : ajouter les passages par les arrets
 		 int[][] distance;
 		 int width, height, arcWeight = 1;
@@ -141,7 +141,7 @@ public class Traveler extends PlayerAutomaton {
 		 		}
 		 		result.addFirst(u);
 		 	}
-		 	for (Point v : data.getAccessibleNeighboursCoordinates(wp.x,wp.y)) {
+		 	for (Point v : data.getConnectedNeighborPositions(wp.x,wp.y)) {
 		 		if(distance[wp.x][wp.y] + arcWeight < distance[v.x][v.y]) {
 		 			distance[v.x][v.y] = distance[wp.x][wp.y] + arcWeight;
 		 			queue.add(new WeightedPoint(v,distance[v.x][v.y] + heuristic(v, destination)));
