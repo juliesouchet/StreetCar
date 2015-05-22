@@ -22,8 +22,7 @@ public class PlayerPanel extends JPanel{
 		difficultyLevelLabel.setBounds(70, 25, 50, 30);
 		
 		this.add(nameOfPlayerLabel);
-		this.add(difficultyLevelLabel);
-		
+		this.add(difficultyLevelLabel);		
 	}
 	
 	protected void paintComponent(Graphics g) {

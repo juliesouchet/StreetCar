@@ -1,5 +1,6 @@
 package main.java.gui.board;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 import main.java.gui.components.Panel;
@@ -9,6 +10,9 @@ public class MapPanel extends Panel {
 
 	private static final long serialVersionUID = 1L;
 	
+	public MapPanel() {
+		this.setBackground(Color.WHITE);		
+	}
 	
 	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -22,8 +26,6 @@ public class MapPanel extends Panel {
             g.drawLine(originX+widthPerCase*i+widthPerCase, originY, originX+widthPerCase*i+widthPerCase, originY+width);
         }
         
-        g.drawRect(originX, originY, width, width);
-        
-    }
-    
+        g.drawRect(originX, originY, width, width);        
+    }    
 }

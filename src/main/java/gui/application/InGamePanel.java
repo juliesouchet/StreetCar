@@ -34,9 +34,16 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupGameMapPanel() {	
-		this.setBackground(Color.WHITE);
+		gameMapPanel = new Panel();
+		gameMapPanel.setLayout(new BorderLayout());
+		
+		Panel bottomPlayerPanel = new Panel();
+		bottomPlayerPanel.setPreferredSize(new Dimension(300, 500));
+		bottomPlayerPanel.setBackground(Color.BLACK);
+		gameMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
+		
 		MapPanel mapPanel = new MapPanel();
-		this.add(mapPanel, BorderLayout.CENTER);
+		gameMapPanel.add(mapPanel, BorderLayout.CENTER);
 	}
 	
 	private void setupChatPanel() {
@@ -60,7 +67,7 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupPlayersPanel() { 
-		int nbPlayers = 5;
+		int nbPlayers = 4;
     	this.playersSidebarPanel = new Panel();
     	playersSidebarPanel.setLayout(null);
     	playersSidebarPanel.setPreferredSize(new Dimension(330, nbPlayers*160+35));
@@ -93,6 +100,5 @@ public class InGamePanel extends Panel {
 	/*public void quitGame() {
 		MainFrameController mfc = (MainFrameController)this.getFrameController();
 		mfc.showWelcomeMenuPanel();
-	}*/
-	
+	}*/	
 }
