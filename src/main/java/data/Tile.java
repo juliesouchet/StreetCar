@@ -154,7 +154,6 @@ public class Tile
 // --------------------------------------------
 // Setters/getters:
 // --------------------------------------------
-	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf();}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
 	public int		getNbrLeftRotation(){return this.nbrLeftRotation;}
@@ -166,6 +165,7 @@ public class Tile
 	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus));}
 	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); nbrLeftRotation = (nbrLeftRotation == 3) ? 0 : nbrLeftRotation+1;}
 	public void		turnRight()			{for (Path p: pathList)	p.turnRight();nbrLeftRotation = (nbrLeftRotation == 0) ? 3 : nbrLeftRotation-1;}
+	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf();}
 	public boolean	isPathTo(int dir)
 	{
 		Direction.checkDirection(dir);
