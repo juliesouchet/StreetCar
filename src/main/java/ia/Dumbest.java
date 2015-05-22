@@ -19,7 +19,6 @@ import main.java.data.Tile;
  *
  */
 public class Dumbest extends PlayerAutomaton {
-	String name;
 	
 	Dumbest (){
 		this.name = "Dumbest";
