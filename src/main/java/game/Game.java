@@ -30,7 +30,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 
-	private Data data;
+	public Data data; // temporary public for the debug
 
 // --------------------------------------------
 // Builder:

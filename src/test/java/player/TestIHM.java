@@ -15,12 +15,14 @@ public class TestIHM
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
-
+	
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
 	public TestIHM(PlayerIHM player)
 	{
+		System.out.println(player);
+		
 		Scanner sc = new Scanner(System.in);
 		String str, name, gameName, ip;
 		boolean create;
@@ -44,8 +46,15 @@ public class TestIHM
 String boardName = "newOrleans";	/////// Nom par defaut
 int nbrBuildingInLine= 3;	/////// Nom par defaut
 
+
 		try					{player.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip);}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
+		
+		// Game data viewer
+		DataViewerFrame frame = new DataViewerFrame();
+		frame.setGameData(player.getGameData());
+		frame.setVisible(true);
+		
 		sc.close();
 	}
 
