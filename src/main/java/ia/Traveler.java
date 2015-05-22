@@ -15,12 +15,37 @@ import main.java.data.Hand;
  */
 public class Traveler extends PlayerAutomaton {
 	LinkedList<Point> checkpoints;
+	
+	public Traveler() {
+		name = "Traveler";
+	}
 		
 	@Override
 	public Action makeChoice(Hand hand, Data currentConfig) {
 		Action res = null;
-		// TODO Building
-		// if(!currentConfig.objectivesCompleted(this)) {}
+		/* TODO Building
+		if(!currentConfig.objectivesCompleted(this)) {
+			// Random tile and position choice for construction (extracted from Dumbest)
+			Random rand = new Random();
+			Point p;
+			Tile t;
+			int i,j, k;
+			
+			do{
+				// random position choice
+				i = rand.nextInt(currentconfig.getWidth());
+				j = rand.nextInt(currentconfig.getHeight());
+				p = new Point(i,j);
+				
+				// random tile choice in the player's hand
+				k = rand.nextInt(myHand.size());
+				t = myHand.get(k);
+			}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
+			
+			res = Action.newBuildSimpleAction(p, t);
+		}
+		*/
+		
 		
 		// Transition to travel
 		/*
@@ -72,7 +97,7 @@ public class Traveler extends PlayerAutomaton {
 	 * @return
 	 */
 	private LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data) {
-		/* TODO : ajouté les passages par les arrêts
+		/* TODO : ajoutï¿½ les passages par les arrï¿½ts
 		 int[][] distance;
 		 int width, height, arcWeight = 1;
 		 PriorityQueue<WeightedPoint> queue;
