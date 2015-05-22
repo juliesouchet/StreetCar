@@ -30,7 +30,8 @@ public class DataViewerFrame extends JFrame {
 	public DataViewerFrame() {
 		super();
 		this.setSize(new Dimension(frameWidth, frameHeight));
-		this.setContentPane(this.viewerPanel);
+		//this.setContentPane(this.viewerPanel); -- pour pouvoir ajouter d'autres panels (Julie)
+		this.add(this.viewerPanel);
 	}
 
 	// Setters / getters
@@ -41,6 +42,10 @@ public class DataViewerFrame extends JFrame {
 	
 	public void setGameData(Data data) {
 		this.viewerPanel.gameData = data;
+	}
+	
+	public ViewerPanel getViewerPanel() {
+		return viewerPanel;
 	}
 	
 	// ViewerPanel

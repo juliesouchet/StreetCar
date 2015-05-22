@@ -154,9 +154,10 @@ public class Tile
 // --------------------------------------------
 // Setters/getters:
 // --------------------------------------------
-	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf();}
+	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf(); nbrLeftRotation = (nbrLeftRotation+2)%4;}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
+	/** Number of left rotation of the original image (belongs to [0, 3]) */
 	public int		getNbrLeftRotation(){return this.nbrLeftRotation;}
 	public boolean	isTree()			{return this.isTree;}
 	public boolean	isBuilding()		{return this.isBuilding;}
