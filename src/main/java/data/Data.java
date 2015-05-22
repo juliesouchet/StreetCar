@@ -323,4 +323,46 @@ public class Data
 // Créer le parcour du joueur
 		}
 	}
+	/**===============================================================
+	 * @return the maximum allowed speed
+	 =================================================================*/
+	public int maximumSpeed() {
+		// TODO la limitation de vitesse (commune à tous les joueurs, commence à 1, peut aller jusqu'à 10)
+		return 0;
+	}
+	/**===============================================================
+	 * @return if the player is currently building his tracks
+	 =================================================================*/
+	public boolean isContructing(String name) {
+		// TODO rend vrai si le joueur est en train de construire sa voie, faux s'il fait voyager son tram
+		return false;
+	}
+	/**===============================================================
+	 * @return if the player has already done a simple action this turn
+	 =================================================================*/
+	public boolean hasDoneFirstAction(String name) {
+		// TODO rend vrai si le joueur a déjà fait une action simple
+		return false;
+	}
+	/**===============================================================
+	 * @return the positions of the buildings in the player's path
+	 =================================================================*/
+	public LinkedList<Point> getStops(String name) {
+		// TODO rend les positions des bâtiments à côté desquels le joueur doit passer
+		return null;
+	}
+	/**===============================================================
+	 * @return the player's first terminal (top left square)
+	 =================================================================*/
+	public Point firstTerminus(String name) {
+		// TODO Rend la position du premier terminus du joueur (case plus en haut à gauche)
+		return null;
+	}
+	/**===============================================================
+	 * @return the player's second terminal (lowest right square)
+	 =================================================================*/
+	public Point secondTerminus(String name) {
+		// TODO Rend la position du premier terminus du joueur (case plus en bas à droite)
+		return null;
+	}
 }

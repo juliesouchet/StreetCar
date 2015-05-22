@@ -2,11 +2,16 @@ package main.java.ia;
 
 import java.awt.Point;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.PriorityQueue;
+import java.util.Random;
 
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.Hand;
+import main.java.data.Tile;
 
 /**
  * Acts like the Dumbest one while building, but checks if its objectives are completed. 
@@ -17,14 +22,15 @@ public class Traveler extends PlayerAutomaton {
 	LinkedList<Point> checkpoints;
 	
 	public Traveler() {
+		super();
 		name = "Traveler";
 	}
 		
 	@Override
 	public Action makeChoice(Hand hand, Data currentConfig) {
 		Action res = null;
-		/* TODO Building
-		if(!currentConfig.objectivesCompleted(this)) {
+		//TODO Building
+		//if(!currentConfig.objectivesCompleted(this)) {
 			// Random tile and position choice for construction (extracted from Dumbest)
 			Random rand = new Random();
 			Point p;
@@ -33,62 +39,63 @@ public class Traveler extends PlayerAutomaton {
 			
 			do{
 				// random position choice
-				i = rand.nextInt(currentconfig.getWidth());
-				j = rand.nextInt(currentconfig.getHeight());
+				i = rand.nextInt(currentConfig.getWidth());
+				j = rand.nextInt(currentConfig.getHeight());
 				p = new Point(i,j);
 				
 				// random tile choice in the player's hand
-				k = rand.nextInt(myHand.size());
-				t = myHand.get(k);
-			}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
+				k = rand.nextInt(hand.size());
+				t = hand.get(k);
+			}while( !currentConfig.isAcceptableTilePlacement(i, j, t));
 			
 			res = Action.newBuildSimpleAction(p, t);
-		}
-		*/
+		//}
+		/**/
 		
 		
 		// Transition to travel
-		/*
-		else {
-			if(currentConfig.isContructing(this)) {
-				if(currentConfig.hasDoneFirstAction(this)) {
+		
+		//else {
+			if(currentConfig.isContructing(name)) {
+				if(currentConfig.hasDoneFirstAction(name)) {
 					// ends current turn and starts traveling next turn
-					return newStartTripNextTurnAction();
+					return Action.newStartTripNextTurnAction();
 				}
 				// initializes the itinerary with randomly chosen direction
 				Random r = new Random();
-				checkpoints = currentConfig.getStops(this);
+				checkpoints = currentConfig.getStops(name);
 				if(r.nextInt() == 0) {
-					checkpoints.addFirst(currentConfig.firstTerminus(this));
-					checkpoints.add(currentConfig.secondTerminus(this));
+					checkpoints.addFirst(currentConfig.firstTerminus(name));
+					checkpoints.add(currentConfig.secondTerminus(name));
 				}
 				else {
-					checkpoints.addFirst(currentConfig.secondTerminus(this));
-					checkpoints.add(currentConfig.firstTerminus(this));
+					checkpoints.addFirst(currentConfig.secondTerminus(name));
+					checkpoints.add(currentConfig.firstTerminus(name));
 				}
 			}
 			
 			// Calculates the shortest itinerary
 			LinkedList<Point> itinerary = getShortestItinerary(checkpoints, currentConfig);
 			
-			// Advances
+			// Advances the maximum allowed number of squares
 			ListIterator<Point> iterator = itinerary.listIterator();
 			LinkedList<Point> streetcarMovement = new LinkedList<Point>();
-			int i = 0;
+			i = 0;
 			while(iterator.hasNext() && i < currentConfig.maximumSpeed()) {
 				streetcarMovement.add(iterator.next());
 				i++;
 			}
-			start = streetcarMovement.getLast();
-			return newMoveAction(streetcarMovement);
-		}
+			checkpoints.removeFirst();
+			checkpoints.addFirst(streetcarMovement.getLast());
+			res = Action.newMoveAction(streetcarMovement);
+		//}
 		
-		*/
+		
 		return res;
 	}
 
 	
-	@SuppressWarnings("unused")
+	
 	/**
 	 * Calculates the shortest path that goes through all the checkpoints 
 	 * using only tracks already present on the board
@@ -97,25 +104,25 @@ public class Traveler extends PlayerAutomaton {
 	 * @return
 	 */
 	private LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data) {
-		/* TODO : ajout� les passages par les arr�ts
+		// TODO : ajouter les passages par les arrets
 		 int[][] distance;
 		 int width, height, arcWeight = 1;
 		 PriorityQueue<WeightedPoint> queue;
-		 Point origin, destination, u, v;
+		 Point origin, destination, u;
 		 WeightedPoint wp;
 		 HashMap<Point,Point> previous; // previous.get(p) = the point before p in the final path
-		 LinkedList<Point> ;
+		 LinkedList<Point> result;
 		 
 		 width = data.getWidth();
-		 height = data.getHeight;
-		 distance = int[width][height];
+		 height = data.getHeight();
+		 distance = new int[width][height];
 		 for (int x = 0; x < width; x++) {
 		 	for (int y = 0; y < height; y++) {
-		 		distance = Integer.MAX_VALUE;
+		 		distance[x][y] = Integer.MAX_VALUE;
 		 	}
 		 }
-		 origin = checkpoints.pollFirst();
-		 destination = checkpoints.pollLast();
+		 origin = checkpoints.getFirst();
+		 destination = checkpoints.getLast();
 		 queue = new PriorityQueue<WeightedPoint>(4, new WeightComparator());
 		 queue.add(new WeightedPoint(origin,0));
 		 distance[origin.x][origin.y] = 0;
@@ -129,12 +136,12 @@ public class Traveler extends PlayerAutomaton {
 		 		result.add(destination);
 		 		u = destination;
 		 		while(!u.equals(origin)) {
-		 			v = previous.get(u);
+		 			Point v = previous.get(u);
 		 			result.addFirst(v);
 		 		}
 		 		result.addFirst(u);
 		 	}
-		 	foreach (v : wp.getAccessibleNeighboursCoordinates(wp.x,wp.y)) {
+		 	for (Point v : data.getAccessibleNeighboursCoordinates(wp.x,wp.y)) {
 		 		if(distance[wp.x][wp.y] + arcWeight < distance[v.x][v.y]) {
 		 			distance[v.x][v.y] = distance[wp.x][wp.y] + arcWeight;
 		 			queue.add(new WeightedPoint(v,distance[v.x][v.y] + heuristic(v, destination)));
@@ -144,11 +151,10 @@ public class Traveler extends PlayerAutomaton {
 		 }
 		 
 		 
-		 */// no solution
+		 // no solution
 		return null;		
 	}
 	
-	@SuppressWarnings("unused")
 	private int heuristic(Point p, Point dest) {
 		// TODO : utiliser les distances de manhattan
 		return 0;
@@ -196,7 +202,6 @@ public class Traveler extends PlayerAutomaton {
 		}
 	}
 	
-	@SuppressWarnings("unused")
 	private class WeightComparator implements Comparator<WeightedPoint> {
 		@Override
 		public int compare(WeightedPoint p1, WeightedPoint p2) {
