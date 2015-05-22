@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 import javax.swing.SwingUtilities;
 
+import main.java.data.Data;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -39,8 +40,6 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
-
-
 
 // --------------------------------------------
 // Builder:
@@ -92,7 +91,10 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 	}
 
 
-
+	public Data getGameData() {
+		return ((Game)this.game).data;
+	}
+	
 // --------------------------------------------
 // Local methodes:
 // --------------------------------------------

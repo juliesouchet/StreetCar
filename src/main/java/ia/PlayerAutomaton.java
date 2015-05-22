@@ -17,6 +17,7 @@ import main.java.data.Hand;
  * 	continuer son voyage (et donc faire son déplacement)
  */
 public abstract class PlayerAutomaton {
+	String name;
 	
 	/**
 	 * Donne la décision d'action faite par l'automate
