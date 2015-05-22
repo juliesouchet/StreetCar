@@ -65,7 +65,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	public void setName(String name){this.name = name;}	
 	public String getName(){return name;}
 
-	public void hostGame(String appIP) throws RemoteException, UnknownBoardNameException {
+	public void hostGame(String appIP) throws RemoteException {
 		String url = null;
 
 		try
