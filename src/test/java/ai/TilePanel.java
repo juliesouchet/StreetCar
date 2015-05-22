@@ -9,24 +9,25 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import main.java.data.Tile;
 
-public class TilePanel extends JPanel {
+public class TilePanel extends JComponent {
 	private static final long serialVersionUID = -3553177329312479409L;
+	final int side = 60;
 	Tile tile;
 	String tileName;
 	int tileNumber;
-	boolean mouseOver;
+	boolean isSelected;
 	
 	public TilePanel(String string, int number) {
 		super();
 		tile = new Tile(string);
 		tileName = string;
 		tileNumber = number;
-		mouseOver = false;
-		setSize(60, 60);
+		isSelected = false;
+		//setSize(side, side);
 	}
 	
 	public void setTile(Tile t) {
@@ -38,8 +39,8 @@ public class TilePanel extends JPanel {
 		return tileNumber;
 	}
 	
-	public void setMouseOver(boolean b) {
-		mouseOver = b;
+	public void setSelection(boolean b) {
+		isSelected = b;
 	}
 	
 	public void rotateTile(int orientation) {
@@ -77,10 +78,10 @@ public class TilePanel extends JPanel {
 		catch (IOException e) {e.printStackTrace(); System.exit(0);}
 		g2.drawImage(img, 0, 0, 60, 60, null);
 		
-		if(mouseOver) {
-			g2.setPaint(Color.WHITE);
-			g2.setStroke(new BasicStroke(4));
-			g2.drawRect(2, 2, 58, 58);
+		if(isSelected) {
+			g2.setPaint(Color.white);
+			g2.setStroke(new BasicStroke(5));
+			g2.drawRect(0, 0, side, side);
 		}
 	}
 }

@@ -32,6 +32,7 @@ public class DataViewerFrame extends JFrame {
 		this.setSize(new Dimension(frameWidth, frameHeight));
 		//this.setContentPane(this.viewerPanel); -- pour pouvoir ajouter d'autres panels (Julie)
 		this.add(this.viewerPanel);
+		this.setSize(new Dimension(frameWidth+paddingWidth*4, frameHeight+paddingHeight/2));
 	}
 
 	// Setters / getters
@@ -67,8 +68,8 @@ public class DataViewerFrame extends JFrame {
 			Tile[][] board = this.gameData.getBoard();
 			int tileWidth	= (frameWidth - paddingWidth) / this.gameData.getWidth();
 			int tileHeight	= (frameHeight- paddingHeight)/ this.gameData.getHeight();
-			int x = 0;
-			int y = 0;
+			int x = tileWidth/2;
+			int y = tileHeight/2;
 
 			for (int j=0; j < this.gameData.getHeight(); j++)
 			{
@@ -82,7 +83,7 @@ public class DataViewerFrame extends JFrame {
 					g.drawImage(img, x, y, tileWidth, tileHeight, null);
 					x += tileWidth;
 				}
-				x = 0;
+				x = tileWidth/2;
 				y += tileHeight;
 			}
 		}

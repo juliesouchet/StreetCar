@@ -32,7 +32,7 @@ public class BoardCreator implements Runnable {
 	@Override
 	public void run() {
 		DataViewerFrame frame; 
-		JPanel panelSave, panelTiles;
+		JPanel panelSave, tilesGrid;
 		TilePanel[] individualTile; 
 		JSplitPane verticalPanel, horizontalPanel;
 		JButton buttonSave;
@@ -52,16 +52,17 @@ public class BoardCreator implements Runnable {
 		buttonSave.addMouseListener(new SaveListener());
 		panelSave.add(buttonSave);
 		
-		panelTiles = new JPanel();
-		panelTiles.setLayout(new GridLayout(7,2));
+		tilesGrid = new JPanel();
+		tilesGrid.setLayout(new GridLayout(7,2));
 		individualTile = new TilePanel[13];
 		for(int i = 0; i < 13; i++) {
 			individualTile[i] = new TilePanel(tileID[i], i);
 			individualTile[i].addMouseListener(new TilePanelListener(this, individualTile[i]));
-			panelTiles.add(individualTile[i]);
+			tilesGrid.add(individualTile[i]);
 		}
+		tilesGrid.addMouseListener(new TileGridListener(this, tilesGrid));
 		
-		verticalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelSave, panelTiles);
+		verticalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelSave, tilesGrid);
 		horizontalPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, frame.getViewerPanel(), verticalPanel);
 		horizontalPanel.setDividerLocation(14*60);
 		horizontalPanel.setResizeWeight(0.75);
@@ -72,5 +73,9 @@ public class BoardCreator implements Runnable {
 	
 	public void setCurrentTile(int tileNb) {
 		currentTile = tileNb;
+	}
+	
+	public int getCurrentTile() {
+		return currentTile;
 	}
 }

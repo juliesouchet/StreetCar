@@ -14,19 +14,15 @@ public class TilePanelListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("clic sur "+tp.getTileNumber());
+		System.out.println("clic sur tuile "+tp.getTileNumber());
 		bc.setCurrentTile(tp.getTileNumber());
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		tp.setMouseOver(true);
-	}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		tp.setMouseOver(false);
-	}
+	public void mouseExited(MouseEvent e) {}
 
 	@Override
 	public void mousePressed(MouseEvent e) {}
