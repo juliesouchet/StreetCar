@@ -27,21 +27,24 @@ public class Data implements Serializable
 // --------------------------------------------
 	public static final	String			boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
+	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
 	public static final int				maxNbrPlayer			= 6;
+	public static final int				initialHandSize			= 5;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 
-// TODO AAAAAAAAAAAAAAAAAAA Faire
 	private LinkedList<Integer>			existingLine;
 	private LinkedList<String[][]>		existingBuildingInLine;
 	private LinkedList<Integer>			remainingLine;
-// TODO AAAAAAAAAAAAAAAAAAA Faire
+	private LinkedList<String[][]>		remainingBuildingInLine;
+	private LinkedList<Tile>			initialHand;
 
 	private String						gameName;
 	private Tile[][]					board;
 	private Deck						deck;
 	private HashMap<String, PlayerInfo>	playerInfoList;
 	private int							round;
+// TODO	private int							maxSpeed;
 
 // --------------------------------------------
 // Builder:
@@ -61,12 +64,16 @@ public class Data implements Serializable
 		sc.close();
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
+// TODO		this.maxSpeed
 
-		this.existingLine		= new LinkedList<Integer>();				// Init the existing lines
+		this.existingLine		= new LinkedList<Integer>();						// Init the existing lines
 		for (int i=1; i<=maxNbrPlayer; i++)	this.existingLine.add(i);
 		this.remainingLine		= new LinkedList<Integer>(existingLine);
 
-		this.initExistingBuildingInLine(nbrBuildingInLine);					// Init the existing building
+		this.initExistingBuildingInLine(nbrBuildingInLine);							// Init the existing building
+		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
+
+		this.initInitialHand();
 	}
 
 // --------------------------------------------
@@ -235,6 +242,9 @@ public class Data implements Serializable
 // --------------------------------------------
 // Private methods:
 // --------------------------------------------
+	/**============================================
+	 * @return Create the board from a file
+	 ==============================================*/
 	private Tile[][] scanBoardFile(Scanner sc)
 	{
 		Tile[][] res;
@@ -259,6 +269,9 @@ public class Data implements Serializable
 
 		return res;
 	}
+	/**============================================
+	 * @return Creates the line cards from the correspending file
+	 ==============================================*/
 	private void initExistingBuildingInLine(int nbrBuildingInLine)
 	{
 		File f = new File(lineFile+nbrBuildingInLine);
@@ -280,6 +293,28 @@ public class Data implements Serializable
 			sc.close();
 		}
 		catch (Exception e){throw new RuntimeException("Malformed line file");}
+	}
+	/**============================================
+	 * @return Creates the initial hand from the correspending file
+	 ==============================================*/
+	private void initInitialHand()
+	{
+		File f = new File(initialHandFile);
+		String tileName;
+		Scanner sc;
+
+		this.initialHand = new LinkedList<Tile>();
+		try
+		{
+			sc = new Scanner(f);
+			for (int i=0; i<initialHandSize; i++)
+			{
+				tileName = sc.next();
+				this.initialHand.add(new Tile(tileName));
+			}
+			sc.close();
+		}
+		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
 	}
 	private Tile[][] boardCopy()
 	{
@@ -307,20 +342,23 @@ public class Data implements Serializable
 		public Hand					hand;
 		public int					line;
 		public LinkedList<Action>	history;
-		public String[]				playerBuildings;
+		public String[]				buildingInLine;
 
 		// Builder
 		public PlayerInfo(PlayerInterface pi)
 		{
+			Random rnd = new Random();
 			int i;
+
 			this.player = pi;
 			this.history= new LinkedList<Action>();
-			this.hand	= new Hand();			// TODO remplire la main a partire de la pioche
-			i = (new Random()).nextInt(remainingLine.size());
+			this.hand	= new Hand(initialHand);
+			i			= rnd.nextInt(remainingLine.size());						// Draw a line
 			this.line	= remainingLine.get(i);
 			remainingLine.remove(i);
-// TODO AAAAAAAAAAAAAAAAAAA Faire
-// Créer le parcour du joueur
+			i			= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
+			this.buildingInLine = remainingBuildingInLine.get(i)[line];
+			remainingBuildingInLine.remove(i);
 		}
 	}
 	/**===============================================================
