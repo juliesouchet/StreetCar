@@ -68,10 +68,10 @@ public class InGamePanel extends Panel {
     	playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
     	
     	int y = 45;
-    	for (int i=0; i<5; i++) {
+    	for (int i=0; i<nbPlayers; i++) {
     		PlayerPanel playerPanel = new PlayerPanel();
     		playersPanel[i] = playerPanel;
-    		if (i<4) { //last bar not displayed
+    		if (i<nbPlayers-1) { //last bar not displayed
     			playersPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
     		}
     		playersPanel[i].setBounds(20, y+(160*i), 280, 150);
