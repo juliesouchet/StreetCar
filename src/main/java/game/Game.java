@@ -65,12 +65,13 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 // TODO akwasaser?:   c pour le reseaux
 /*****************	
 	public Game() throws RemoteException
-	{	
+	{
 		name = "StreetCar";
 		data = new Data(name);
 		try {
 			data.buildBoard(Data.defaultBoardFile);
 		} catch (UnknownBoardNameException e) {
+			e.printStackTrace();
 			e.printStackTrace();
 		}
 	}
