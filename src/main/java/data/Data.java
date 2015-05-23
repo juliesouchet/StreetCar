@@ -26,7 +26,7 @@ public class Data implements Serializable
 // Attributes:
 // --------------------------------------------
 	private static final long			serialVersionUID		= -2740586808331187527L;
-	public static final	String			boardDirectory			= "src/main/resources/boards/";
+	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
 	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
 	public static final int				maxNbrPlayer			= 6;
@@ -113,7 +113,8 @@ public class Data implements Serializable
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
-	public boolean hasDoneFirstAction(String name)								{return this.playerOrder[0].equals(name);}
+	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
+	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this.board, p0, p1);}
 	public PlayerInterface		getPlayer(String playerName)
 	{
 		PlayerInterface pi = this.playerInfoList.get(playerName).player;
@@ -418,14 +419,16 @@ public class Data implements Serializable
 		int w = this.getWidth()-1;
 		int h = this.getHeight()-1;
 		int i0, i1;
+		boolean i0F = false, i1F = false;
 
 		for (int x=0; x<w; x++)
 		{
 			i0 = this.board[x][0].getTerminusName();
 			i1 = this.board[x][h].getTerminusName();
-			if (i0 == line) res.addLast(new Point(x, 0));
-			if (i1 == line) res.addLast(new Point(x, h));
+			if ((i0 == line) && (!i0F)) {res.addLast(new Point(x, 0)); i0F = true;}
+			if ((i1 == line) && (!i1F)) {res.addLast(new Point(x, h)); i1F = true;}
 		}
+		if (res.size() == 2) return res;
 		for (int y=0; y<h; y++)
 		{
 			i0 = this.board[0][y].getTerminusName();
@@ -433,7 +436,7 @@ public class Data implements Serializable
 			if (i0 == line) res.addLast(new Point(0, y));
 			if (i1 == line) res.addLast(new Point(w, y));
 		}
-		if (res.size() != 4) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
+		if (res.size() != 2) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
 		return res;
 	}
 	private Tile[][] boardCopy()
@@ -489,9 +492,19 @@ public class Data implements Serializable
 	/**===============================================================
 	 * @return true if the player's track is completed (path between the 2 terminus and through all the stops)
 	 =================================================================*/
-	public Boolean isTrackCompleted(String name)
+	public boolean isTrackCompleted(String name)
 	{
-		// TODO Rend la position du premier terminus du joueur (case plus en bas à droite)
-		return null;
+		LinkedList<Point> path;
+		Point p0, p1;
+
+		path = this.getTerminus(name);
+		path.addAll(this.getBuildings(name));
+		p0 = path.getFirst();
+		for (int i=1; i<path.size(); i++)
+		{
+			p1 = path.get(i);
+			if (this.getShortestPath(p0, p1) == null)	return false;
+		}
+		return true;
 	}
 }
