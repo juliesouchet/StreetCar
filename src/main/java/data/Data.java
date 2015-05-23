@@ -294,6 +294,24 @@ public class Data implements Serializable
 		PlayerInfo pi = this.playerInfoList.get(name);
 		return new LinkedList<Point>(pi.terminus);
 	}
+	/**===============================================================
+	 * @return true if the player's track is completed (path between the 2 terminus and through all the stops)
+	 =================================================================*/
+	public boolean isTrackCompleted(String name)
+	{
+		LinkedList<Point> path;
+		Point p0, p1;
+
+		path = this.getTerminus(name);
+		path.addAll(this.getBuildings(name));
+		p0 = path.getFirst();
+		for (int i=1; i<path.size(); i++)
+		{
+			p1 = path.get(i);
+			if (this.getShortestPath(p0, p1) == null)	return false;
+		}
+		return true;
+	}
 	/**============================================
 	 * @return Create the board from a file
 	 ==============================================*/
@@ -437,8 +455,6 @@ public class Data implements Serializable
 		{
 			i0 = this.board[0][y].getTerminusName();
 			i1 = this.board[w][y].getTerminusName();
-//			if ((i0 == line) res.addLast(new Point(0, y));
-//			if ((i1 == line)  res.addLast(new Point(w, y));
 			if ((i0 == line) && (!i0F)) {res.addLast(new Point(0, y)); i0F = true;}
 			if ((i1 == line) && (!i1F)) {res.addLast(new Point(w, y)); i1F = true;}
 		}
@@ -494,23 +510,5 @@ public class Data implements Serializable
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);// Init the building line position
 			this.terminus= getTerminusPosition(this.line);							// Init the terminus position
 		}
-	}
-	/**===============================================================
-	 * @return true if the player's track is completed (path between the 2 terminus and through all the stops)
-	 =================================================================*/
-	public boolean isTrackCompleted(String name)
-	{
-		LinkedList<Point> path;
-		Point p0, p1;
-
-		path = this.getTerminus(name);
-		path.addAll(this.getBuildings(name));
-		p0 = path.getFirst();
-		for (int i=1; i<path.size(); i++)
-		{
-			p1 = path.get(i);
-			if (this.getShortestPath(p0, p1) == null)	return false;
-		}
-		return true;
 	}
 }
