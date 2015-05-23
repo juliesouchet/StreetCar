@@ -1,5 +1,6 @@
 package test.java.util;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JButton;
@@ -12,20 +13,26 @@ import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.game.UnknownBoardNameException;
 import test.java.player.DataViewerFrame;
+import test.java.player.DataViewerFrame.ViewerPanel;
 
 
-public class BoardCreator implements Runnable {
-	Tile currentTile;
-	TilePanel[] individualTile;
-	DataViewerFrame frame;
-	Data data = null;
-
+public class BoardCreator implements Runnable {	
+	// TODO : la modification du terrain
+	// TODO : rotation de tuiles au clavier
+	static final String boardPath = "src/test/resources/boards/";
 	static final String tilePath = "src/main/resources/images/";
 	static final String[] tileID = {"Tile_FFFFZZ2003", "Tile_FFFFZZ2113", "Tile_FFFFZZ060123",
 			"Tile_FFFFZZ100102", "Tile_FFFFZZ100103", "Tile_FFFFZZ100203",
 			"Tile_TFFFZZ040213", "Tile_TFFFZZ02010213", "Tile_TFFFZZ02021203",
 			"Tile_TFFFZZ06031323", "Tile_TFFFZZ06121323", "Tile_TFFFZZ0401122303",
 			"Tile_FFFFZZ99"};
+	final int padding = 150;
+	
+	Tile currentTile = null;
+	TilePanel[] individualTile;
+	DataViewerFrame frame;
+	Data data = null;
+
 
 	 public static void main(String[] arguments) {
 		 	BoardCreator test = new BoardCreator();
@@ -38,6 +45,7 @@ public class BoardCreator implements Runnable {
 		JPanel panelSave, tilesGrid;
 		JSplitPane verticalPanel, horizontalPanel;
 		JButton buttonSave, buttonLoad;
+		ViewerPanel board;
 		try {
 			data = new Data("Board Creator", "newOrleans", 2);
 		} catch (UnknownBoardNameException | RuntimeException e) {
@@ -47,6 +55,9 @@ public class BoardCreator implements Runnable {
 		frame = new DataViewerFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setGameData(data);
+		
+		board = frame.getViewerPanel();
+		board.addMouseListener(new BoardListener(this));
 		
 		panelSave = new JPanel();
 		buttonSave = new JButton("Save");
@@ -68,9 +79,9 @@ public class BoardCreator implements Runnable {
 		verticalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelSave, tilesGrid);
 		horizontalPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, frame.getViewerPanel(), verticalPanel);
 		horizontalPanel.setDividerLocation(14*60);
-		horizontalPanel.setResizeWeight(0.75);
+		horizontalPanel.setResizeWeight(0.5);
 		frame.add(horizontalPanel);
-		
+		frame.setMinimumSize(new Dimension(frame.getWidth()+padding, frame.getHeight()));
 		frame.setVisible(true);
 	}
 	
@@ -78,9 +89,13 @@ public class BoardCreator implements Runnable {
 		currentTile = tile;
 	}
 	
-	public void setTile(int x,int y) {
-		System.out.println("setTile pas encore implémenté");
-		//data.setTile(x,y,currentTile);
+	public void drawTile(int x,int y) {
+		// TODO setTile ne vérifie pas les règles de pose
+		data.setTile(x,y,currentTile);
+	}
+	
+	public ViewerPanel getViewerPanel() {
+		return frame.getViewerPanel();
 	}
 	
 	public Tile getCurrentTile() {
