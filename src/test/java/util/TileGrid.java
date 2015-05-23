@@ -115,7 +115,7 @@ public class TileGrid extends JComponent {
 				if(i==13) break;
 				BufferedImage img = null;
 				try	{img = ImageIO.read(new File(tilePath+grid[i].getTileID()));}
-				catch (IOException e) {e.printStackTrace(); System.exit(0);}
+				catch (IOException e) {e.printStackTrace(); throw new RuntimeException("sdfqsd");}
 				AffineTransformOp transform = rotation(img, side);
 				g2.drawImage(transform.filter(img,null), x, y, null);
 				

@@ -1,5 +1,6 @@
+
 #
-#Sat May 23 17:57:25 CEST 2015
+#Sat May 23 17:28:03 CEST 2015
 Language=en
-PlayerName=MOI
+PlayerName=
 UseFullScreen=false
