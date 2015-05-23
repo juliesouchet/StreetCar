@@ -2,17 +2,12 @@ package main.java.gui.application;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import main.java.gui.components.Button;
 import main.java.gui.components.Label;
 import main.java.gui.components.TextField;
 import main.java.gui.util.Constants;
-import main.java.gui.util.Resources;
+import main.java.gui.util.IP;
 import main.java.gui.util.UserDefaults;
 
 @SuppressWarnings("serial")
@@ -57,7 +52,7 @@ public class NewGameMenuPanel extends MenuPanel {
 		this.nameField.setBounds(new Rectangle(215, 120, 150, 30));
 		this.add(this.nameField);
 		
-		this.addressField = new TextField(this.getIpAddress());
+		this.addressField = new TextField(IP.getIpAddress());
 		this.addressField.setBounds(new Rectangle(215, 170, 150, 30));
 		this.addressField.setEditable(false);
 		this.add(this.addressField);
@@ -73,28 +68,6 @@ public class NewGameMenuPanel extends MenuPanel {
 		cancelButton.addAction(this, "cancelGame");
 		cancelButton.setBounds(new Rectangle(80, 280, 150, 40));
     	this.add(cancelButton);
-	}
-	
-	// Setters / getters
-	
-	private String getIpAddress() {
-		String ipAddress = null;
-		try {
-			URL checkipURL = new URL("http://checkip.amazonaws.com");
-			InputStreamReader isp = new InputStreamReader(checkipURL.openStream());
-			BufferedReader  br = new BufferedReader(isp);
-			ipAddress = br.readLine();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		if (ipAddress != null) {
-			return ipAddress;
-		} else {
-			return Resources.localizedString("Unknown IP address", null);
-		}
 	}
 	
 	// Actions

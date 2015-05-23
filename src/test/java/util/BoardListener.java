@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 
 import main.java.data.Data;
 import test.java.player.DataViewerFrame;
+import test.java.player.DataViewerFrame.ViewerPanel;
 
 public class BoardListener implements MouseListener {
 	BoardCreator bc;
@@ -17,10 +18,11 @@ public class BoardListener implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if(bc.getCurrentTile() == null) return;
 		
+		ViewerPanel panel = bc.getViewerPanel();
 		Data data = bc.getData();
 		int height, width, x, y, tileWidth, tileHeight;
-		height = bc.getViewerPanel().getHeight();
-		width = bc.getViewerPanel().getWidth();
+		height = panel.getHeight();
+		width = panel.getWidth();
 		tileWidth	= (width - DataViewerFrame.paddingWidth) / data.getWidth();
 		tileHeight	= (height- DataViewerFrame.paddingHeight)/ data.getHeight();
 		
@@ -28,7 +30,7 @@ public class BoardListener implements MouseListener {
 		y = (e.getY()-tileHeight/2)/tileHeight;
 		
 		bc.drawTile(x, y);
-		bc.getViewerPanel().repaint();
+		panel.repaint();
 	}
 
 	@Override
