@@ -301,7 +301,7 @@ public class Data implements Serializable
 	{
 		Tile[][] res;
 		String tileFileName;
-		int width, height;
+		int width, height, rotation;
 
 		try
 		{
@@ -314,6 +314,8 @@ public class Data implements Serializable
 				{
 					tileFileName	= sc.next();
 					res[x][y]		= new Tile(tileFileName);
+					rotation = sc.nextInt();
+					for (int i=0; i<rotation; i++) res[x][y].turnLeft();
 				}
 			}
 		}
@@ -334,9 +336,9 @@ public class Data implements Serializable
 			{
 				for (int x=0; x<this.getWidth(); x++)
 				{
-					fw.write("" + this.board[x][y].getTileID()	+ "\n");
+					fw.write("" + this.board[x][y].getTileID()	+ " " + this.board[x][y].getNbrLeftRotation() + "\n");
 				}
-				fw.write("" + this.getHeight()	+ "\n\n");
+				fw.write("\n\n");
 			}
 		}
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}

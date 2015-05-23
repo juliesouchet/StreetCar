@@ -44,12 +44,12 @@ public class BoardCreator implements Runnable {
 			e.printStackTrace();
 		}
 		frame = new DataViewerFrame();
-		
+
 		// Terrain
 		frame.setGameData(data);
 		board = frame.getViewerPanel();
 		board.addMouseListener(new BoardListener(this));
-		
+
 		// Boutons
 		panelSave = new JPanel();
 		buttonSave = new JButton("Save");
@@ -58,7 +58,7 @@ public class BoardCreator implements Runnable {
 		buttonLoad = new JButton("Load");
 		buttonLoad.addMouseListener(new LoadListener(frame));
 		panelSave.add(buttonLoad);
-		
+
 		// Tuiles � choisir
 		tileGrid = new TileGrid();
 		
@@ -73,7 +73,7 @@ public class BoardCreator implements Runnable {
 		tileGrid.addMouseListener(new TileGridListener(this, tileGrid));
 		tileGrid.addMouseMotionListener(new TileGridListener(null, tileGrid));		
 		frame.addMouseWheelListener(new TileGridListener(null, tileGrid));
-		
+
 		// D�marrage de la fen�tre
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setMinimumSize(new Dimension(frame.getWidth()+padding, frame.getHeight()));
