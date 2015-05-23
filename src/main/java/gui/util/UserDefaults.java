@@ -16,8 +16,15 @@ public class UserDefaults {
 
     // Constructors
 
-    public static UserDefaults sharedUserDefaults = new UserDefaults(Constants.USER_DEFAULTS_PATH);
+    private static UserDefaults sharedInstance = null;
 
+    public static UserDefaults getSharedInstance() {
+    	if (UserDefaults.sharedInstance == null) {
+    		UserDefaults.sharedInstance = new UserDefaults(Constants.USER_DEFAULTS_PATH);
+    	}
+    	return UserDefaults.sharedInstance;
+    }
+    
     public UserDefaults(String filePath) {
         this.filePath = filePath;
         this.properties = new Properties();

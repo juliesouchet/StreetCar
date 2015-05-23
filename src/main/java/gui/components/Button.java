@@ -4,21 +4,22 @@ import javax.swing.JButton;
 
 import main.java.gui.util.Resources;
 
+@SuppressWarnings("serial")
 public class Button extends JButton {
-
-	// Properties
-	
-	private static final long serialVersionUID = 1L;
 
 	// Constructors
 	
 	public Button(String title) {
-		super(Resources.localizedString(title, null));
+		super(title);
 	}
 	
-	public Button(String title, Object target, String action) {
-		this(title);
+	public Button(String title, String comment) {
+		this(Resources.localizedString(title, comment));
+	}
+	
+	// Action performer
+	
+	public void addAction(Object target, String action) {
 		this.addActionListener(new ActionPerformer(target, action));
 	}
-	
 }

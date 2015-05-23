@@ -3,24 +3,59 @@ package main.java.gui.application;
 
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 
-import main.java.gui.board.MovingMapPanel;
+import javax.swing.JMenuBar;
+
 import main.java.gui.components.FrameController;
+import main.java.gui.components.Menu;
+import main.java.gui.components.MenuItem;
 import main.java.gui.components.Panel;
+import main.java.gui.util.Constants;
+import main.java.gui.util.UserDefaults;
 
 public class MainFrameController extends FrameController implements ComponentListener{
 	
-	public Panel centeredPanel = null;
+	// Properties
+	
+	protected Panel centeredPanel = null;
 	
     // Constructors
 	
 	public MainFrameController() {
-        this.frame.setTitle("StreetCar"); 
-        this.frame.setContentPane(new MovingMapPanel());
+		super();
+        this.setupFrame();
+        this.setupMenuBar();
+        this.showWelcomeMenuPanel();
+	}
+	
+	private void setupFrame() {
+		this.frame.setTitle("StreetCar"); 
+        this.frame.setContentPane(new InGamePanel());
         this.frame.getContentPane().setLayout(null); 
         this.frame.addComponentListener(this);
-        this.showWelcomeMenuPanel();
-        frame.setSize(1350, 820);
+        this.frame.setSize(1200, 760);
+	}
+	
+	private void setupMenuBar() {
+		JMenuBar menuBar = new JMenuBar();
+		
+		Menu menu = new Menu("Game", null);
+	    menuBar.add(menu);
+	    
+	    menu = new Menu("Edit", null);
+	    menuBar.add(menu);
+	    
+	    menu = new Menu("Window", null);
+	    MenuItem item = new MenuItem("Toogle Fullscreen", null);
+	    item.addAction(this, "toggleFullScreen", KeyEvent.VK_F);
+	    menu.add(item);
+	    menuBar.add(menu);
+	    
+	    menu = new Menu("Help", null);
+	    menuBar.add(menu);
+
+	    this.setFrameMenuBar(menuBar);
 	}
 
 	// Setters / getters
@@ -39,7 +74,19 @@ public class MainFrameController extends FrameController implements ComponentLis
 			contentPanel.add(this.centeredPanel);
 			this.componentResized(null);
 		}
+		contentPanel.revalidate();
 		contentPanel.repaint();
+	}
+	
+	public void setFrameContentPane(Panel panel) {
+		Panel centeredPanel = this.getCenteredPanel();
+		if (centeredPanel == null) {
+			this.setCenteredPanel(null);
+			super.setFrameContentPane(panel);
+			this.setCenteredPanel(centeredPanel);
+		} else {
+			super.setFrameContentPane(panel);
+		}
 	}
 	
 	// Actions
@@ -70,13 +117,13 @@ public class MainFrameController extends FrameController implements ComponentLis
 	}
 	
 	public void quitGame() {
+		UserDefaults.getSharedInstance().synchronize();
 		System.exit(0);
 	}
 	
 	public void showInGamePanel() {
-		Panel newPanel = new InGamePanel();
 		this.setCenteredPanel(null);
-		this.setFrameContentPane(newPanel);
+		this.setFrameContentPane(new InGamePanel());
 	}
 	
 	public void showHostWaitingRoomPanel() {
@@ -88,17 +135,37 @@ public class MainFrameController extends FrameController implements ComponentLis
 		Panel newPanel = new ClientWaitingRoomPanel();
 		this.setCenteredPanel(newPanel);	
 	}
-
+	
+	// Show / hide frame
+	
+	@Override
+	public void showFrame() {
+        super.showFrame();
+        this.frame.setLocationRelativeTo(null);
+        UserDefaults ud = UserDefaults.getSharedInstance();
+        if (ud.getBool(Constants.USE_FULLSCREEN_KEY)) {
+        	this.toggleFullScreen();
+        }
+    }
+	
+	@Override
+	public void toggleFullScreen() {
+		super.toggleFullScreen();
+		
+        UserDefaults ud = UserDefaults.getSharedInstance();
+        ud.setBool(Constants.USE_FULLSCREEN_KEY, this.isInFullScreen());
+        ud.synchronize();
+	}
 	
 	// Mouse listener
 	
     public void componentResized(ComponentEvent e) {
     	if (this.centeredPanel == null) return;
     	
-		int contentPaneWidth = (int)this.getFrameContentPane().getWidth();
-		int contentPaneHeight = (int)this.getFrameContentPane().getHeight();
-		int panelWidth = (int)this.centeredPanel.getWidth();
-		int panelHeight = (int)this.centeredPanel.getHeight();
+		int contentPaneWidth = this.getFrameContentPane().getWidth();
+		int contentPaneHeight = this.getFrameContentPane().getHeight();
+		int panelWidth = this.centeredPanel.getWidth();
+		int panelHeight = this.centeredPanel.getHeight();
 		int x = (int)(contentPaneWidth - panelWidth)/2;
 		int y = (int)(contentPaneHeight - panelHeight)/2;
 		this.centeredPanel.setBounds(x, y, panelWidth, panelHeight);

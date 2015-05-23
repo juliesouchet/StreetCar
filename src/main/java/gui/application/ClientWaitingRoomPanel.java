@@ -1,99 +1,74 @@
 package main.java.gui.application;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import javax.swing.JLabel;
-
 import main.java.gui.components.Button;
-import main.java.gui.components.Panel;
+import main.java.gui.components.ComboBox;
+import main.java.gui.components.ImagePanel;
+import main.java.gui.components.Label;
+import main.java.gui.util.Resources;
 
-public class ClientWaitingRoomPanel extends Panel {
-
+@SuppressWarnings("serial")
+public class ClientWaitingRoomPanel extends MenuPanel {
+	
 	// Properties
 	
-	private static final long serialVersionUID = 1L;
-
+	private Label[] nameLabels = new Label[5];
+	private ComboBox[] choiceComboBoxes = new ComboBox[5];
+	private ImagePanel[] avaterImagePanels = new ImagePanel[5];
+		
 	// Constructors
 	
 	ClientWaitingRoomPanel() {
 		super();
-    	this.setLayout(null);
-    	this.setSize(new Dimension(700, 500));
-    	this.setBackground(Color.white); 
-    	this.setupTitle();
-		this.setupTextFields();
+		this.setupPanel();
+		this.setupPlayersFields();
 		this.setupButtons();
 	}
 	
-	private void setupTitle() {
-		//place 'New Game' at the top center of the panel
+	private void setupPanel() {
+    	this.setSize(new Dimension(700, 500));
+    	this.setMenuTitle("Client Waiting Room", null);
 	}	
 
-	private void setupTextFields() {
-		JLabel titleLabel = new JLabel();
-		titleLabel.setText("<html><h2>Waiting room</h2></html>");
-		titleLabel.setBounds(120, 20, 300, 100);
-	    this.add(titleLabel);
+	private void setupPlayersFields() {
+	    String defaultName = Resources.localizedString("Name", null);
+	    String[] adversaryChoices = {
+			Resources.localizedString("Player", null),
+			Resources.localizedString("Computer (easy)", null),
+			Resources.localizedString("Computer (medium)", null),
+			Resources.localizedString("Computer (hard)", null),		  	  
+			Resources.localizedString("Closed", null)
+	    };
 	    
-	    JLabel name1Label = new JLabel();
-	    name1Label.setText("<html><h3>Name1</h3></html>");
-	    name1Label.setBounds(210, 140, 100, 40);
-	    this.add(name1Label);	    
-	    JLabel name2Label = new JLabel();
-	    name2Label.setText("<html><h3>Name2</h3></html>");
-	    name2Label.setBounds(210, 190, 100, 40);
-	    this.add(name2Label);	    
-	    JLabel name3Label = new JLabel();
-	    name3Label.setText("<html><h3>Name3</h3></html>");
-	    name3Label.setBounds(210, 240, 100, 40);
-	    this.add(name3Label);	    
-	    JLabel name4Label = new JLabel();
-	    name4Label.setText("<html><h3>Name4</h3></html>");
-	    name4Label.setBounds(210, 290, 100, 40);
-	    this.add(name4Label);	    
-	    JLabel name5Label = new JLabel();
-	    name5Label.setText("<html><h3>Name5</h3></html>");
-	    name5Label.setBounds(210, 340, 100, 40);
-	    this.add(name5Label);
-	    
-	    JLabel player1Label = new JLabel();
-	    player1Label.setText("<html><h3>Player</h3></html>");
-	    player1Label.setBounds(380, 140, 100, 40);
-	    this.add(player1Label);	
-	}	
+	    for (int i = 0, y = 140; i < 5; i++, y += 50) {
+	    	ImagePanel imagePanel = new ImagePanel();
+	    	imagePanel.setBounds(160, y, 40, 40);
+		    this.add(imagePanel);
+		    this.avaterImagePanels[i] = imagePanel;
+		    
+	    	Label nameLabel = new Label(defaultName + " " + i);
+		    nameLabel.setBounds(210, y, 100, 40);
+		    this.add(nameLabel);
+		    this.nameLabels[i] = nameLabel;
+		    
+			ComboBox comboBox = new ComboBox(adversaryChoices);
+			comboBox.setBounds(370, y, 150, 40);
+			comboBox.setSelectedIndex(4);
+			comboBox.setEditable(false);
+			this.add(comboBox);
+		    this.choiceComboBoxes[i] = comboBox;
+	    }
+	}
 	
 	private void setupButtons() {    	
-		Button cancelButton = new Button("Cancel", this, "cancelGame");
+		Button cancelButton = new Button("Cancel");
+		cancelButton.addAction(this, "cancelGame");
 		cancelButton.setBounds(new Rectangle(275, 430, 150, 40));
     	this.add(cancelButton);
 	}
 	
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawLine(0, 30, 700, 30);    
-        g.drawLine(0, 0, 0, 500); //left line
-        g.drawLine(0, 0, 700, 0); //top line
-        g.drawLine(0, 499, 700, 499); //bottom line
-        g.drawLine(699, 0, 699, 499); //right line
-        g.drawLine(50, 90, 650, 90); //underline 'Waiting room'
-        
-        g.drawRect(200, 140, 160, 40); //rectangle of name1
-        g.drawRect(200, 190, 160, 40); //rectangle of name2
-        g.drawRect(200, 240, 160, 40); //rectangle of name3
-        g.drawRect(200, 290, 160, 40); //rectangle of name4
-        g.drawRect(200, 340, 160, 40); //rectangle of name5
-        
-        g.drawRect(370, 140, 150, 40); //rectangle of adversaryChooser1
-        g.drawRect(370, 190, 150, 40); //rectangle of adversaryChooser2
-        g.drawRect(370, 240, 150, 40); //rectangle of adversaryChooser3
-        g.drawRect(370, 290, 150, 40); //rectangle of adversaryChooser4
-        g.drawRect(370, 340, 150, 40); //rectangle of adversaryChooser5
-    }
-		
 	// Actions
 	
 	public void cancelGame() {

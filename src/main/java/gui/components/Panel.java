@@ -4,9 +4,8 @@ import java.awt.Container;
 
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class Panel extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 
 	// Setters / getters
 

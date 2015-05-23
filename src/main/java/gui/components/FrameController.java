@@ -3,13 +3,11 @@ package main.java.gui.components;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
-public class FrameController implements KeyListener {
+public class FrameController {
 
     // Properties
 
@@ -22,7 +20,6 @@ public class FrameController implements KeyListener {
         frame.setSize(1100, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        frame.addKeyListener(this);
         frame.setFrameController(this);
         this.frame = frame;
     }
@@ -39,6 +36,8 @@ public class FrameController implements KeyListener {
     
     public void setFrameContentPane(Panel panel) {
     	this.frame.setContentPane(panel);
+    	this.frame.revalidate();
+    	this.frame.repaint();
     }
     
     public JMenuBar getFrameMenuBar() {
@@ -67,7 +66,7 @@ public class FrameController implements KeyListener {
         return gd.getFullScreenWindow() == this.frame;
     }
 
-    public void toggleFullScreenMode() {
+    public void toggleFullScreen() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
 
@@ -83,23 +82,6 @@ public class FrameController implements KeyListener {
             gd.setFullScreenWindow(this.frame);
             this.frame.setVisible(true);
         }
-    }
-
-    // MouseListener
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        if (e.getKeyCode() == 0 && this.isInFullScreen()) {
-            this.toggleFullScreenMode();
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
     }
 
 }

@@ -7,6 +7,8 @@ public class Constants {
 	public static String LANGUAGE_KEY = "Language";
 
 	public static String USE_FULLSCREEN_KEY = "UseFullScreen";
+	
+	public static String PLAYER_NAME_KEY = "PlayerName";
 
 	// User defaults values
 
@@ -19,6 +21,8 @@ public class Constants {
 	public static String USER_DEFAULTS_PATH = "temp/userdefaults.txt";
 
 	public static String LOCALIZATION_FOLDER_PATH = "src/main/resources/localization/";
+	
+	public static String RULES_FOLDER_PATH = "src/main/resources/rules/";
 
 	public static String IMAGES_FOLDER_PATH = "src/main/resources/images/";
 

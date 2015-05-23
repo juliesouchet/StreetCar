@@ -1,56 +1,112 @@
 package main.java.gui.application;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import main.java.gui.components.Button;
-import main.java.gui.components.Panel;
+import main.java.gui.components.ImagePanel;
+import main.java.gui.util.Resources;
 
-public class RulesMenuPanel extends Panel {
+@SuppressWarnings("serial")
+public class RulesMenuPanel extends MenuPanel {
 
 	// Properties
 	
-	private static final long serialVersionUID = 1L;
-
+	private ImagePanel imagePanel;
+	private Button previousImageButton;
+	private Button nextImageButton;
+	private ArrayList<BufferedImage> ruleImages;
+	private int currentImageIndex;
+	
 	// Constructors
 	
 	RulesMenuPanel() {
 		super();
-    	this.setLayout(null);
-    	this.setSize(new Dimension(700, 500));
-    	this.setBackground(Color.white); 
-    	this.setupTitle();
+		this.setupPanel();
+		this.setupImagePanel();
 		this.setupButtons();
+		this.loadImages();
 	}
 	
-	private void setupTitle() {
-		//place 'Game Rules' a the top center of the panel
+	private void setupPanel() {
+    	this.setSize(new Dimension(700, 500));
+    	this.setMenuTitle("Rules", null);
 	}
 	
-	private void setupButtons() {    	
-		Button cancelButton = new Button("Back to main menu", this, "leaveGame");
-		cancelButton.setBounds(new Rectangle(275, 430, 150, 40));
+	private void setupImagePanel() {
+		this.imagePanel = new ImagePanel();
+		this.imagePanel.setBounds(80, 60, 540, 340);
+		this.add(this.imagePanel);
+	}
+	
+	private void setupButtons() {
+		this.previousImageButton = new Button("Previous", null);
+		this.previousImageButton.addAction(this, "previousImage");
+		this.previousImageButton.setBounds(50, 430, 150, 40);
+    	this.add(this.previousImageButton);
+    	
+    	this.nextImageButton = new Button("Next", null);
+    	this.nextImageButton.addAction(this, "nextImage");
+    	this.nextImageButton.setBounds(500, 430, 150, 40);
+    	this.add(this.nextImageButton);
+    	
+		Button cancelButton = new Button("Back to main menu", null);
+		cancelButton.addAction(this, "leaveGame");
+		cancelButton.setBounds(275, 430, 150, 40);
     	this.add(cancelButton);
 	}
 	
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawLine(0, 30, 700, 30);    
-        g.drawLine(0, 0, 0, 500); //left line
-        g.drawLine(0, 0, 700, 0); //top line
-        g.drawLine(0, 499, 700, 499); //bottom line
-        g.drawLine(699, 0, 699, 500); //right line
-    }
+	private void loadImages() {
+		this.ruleImages = new ArrayList<BufferedImage>();
+		for (int i = 1; ; i++) {
+			BufferedImage image = Resources.localizedImageNamed("rules_" + i);
+			if (image != null) {
+				this.ruleImages.add(image);
+			} else {
+				break;
+			}
+		}
+		this.imagePanel.setImage(this.ruleImages.get(0));
+	}
+	
+	// Setters / getter
+	
+	public int getImagesCount() {
+		return this.ruleImages.size();
+	}
+	
+	public BufferedImage getCurrentImage() {
+		return this.ruleImages.get(this.currentImageIndex);
+	}
+	
+	public int getCurrentImageIndex() {
+		return this.currentImageIndex;
+	}
+	
+	public void setCurrentImageIndex(int index) {
+		if (index == this.currentImageIndex ||
+		    index >= this.ruleImages.size() ||
+		    index < 0) {
+			return;
+		}
 
+		this.currentImageIndex = index;
+		this.imagePanel.setImage(this.getCurrentImage());
+	}
 	
 	// Actions
+	
+	public void previousImage() {
+		this.setCurrentImageIndex(this.currentImageIndex-1);
+	}
+	
+	public void nextImage() {
+		this.setCurrentImageIndex(this.currentImageIndex+1);
+	}
 	
 	public void leaveGame() {
 		MainFrameController mfc = (MainFrameController)this.getFrameController();
 		mfc.showWelcomeMenuPanel();
 	}
-
 }
