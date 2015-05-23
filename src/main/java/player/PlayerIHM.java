@@ -1,7 +1,6 @@
 package main.java.player;
 
 import java.awt.Color;
-import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -28,9 +27,10 @@ import test.java.player.TestIHM;
 @SuppressWarnings("serial")
 public class PlayerIHM extends PlayerAbstract implements Runnable
 {
-	public static void main(String[] args) throws RemoteException, UnknownHostException
+	public static void main(String[] args)
 	{
-		SwingUtilities.invokeLater(new PlayerIHM());
+		try					{SwingUtilities.invokeLater(new PlayerIHM());}
+		catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 	}
 	public void run()
 	{
@@ -55,9 +55,9 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerColor 									(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 									    (caught by IHM)
 	 =======================================================================*/
-	public PlayerIHM(String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		super(playerName, playerColor, app, ihm);
+		super(isHost, playerName, playerColor, app, ihm);
 	}
 
 // --------------------------------------------
@@ -83,11 +83,13 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 		if (gameCreation)														// App thread creation
 		{
 			this.game		= new Game(gameName, localIP, boardName, nbrBuildingInLine);
-			SwingUtilities	.invokeLater((Game)this.game);
+			Thread t		= new Thread((Runnable) this.game);
+			t.start();
+//			SwingUtilities	.invokeLater((Game)this.game);
 		}
 		else	this.game	= Game.getRemoteGame(applicationIP, gameName);		// Remote application pointer
 
-		new PlayerIHM(playerName, playerColor, game, ihm);						// Player Creation
+		new PlayerIHM(gameCreation, playerName, playerColor, game, ihm);		// Player Creation
 	}
 	public Data getGameData() throws RemoteException
 	{

@@ -41,7 +41,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		super();
 	}
-	public PlayerAbstract(String playerName, Color playerColor, GameInterface game, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerAbstract(boolean isHost, String playerName, Color playerColor, GameInterface game, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super();
 
@@ -55,7 +55,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		System.out.println("Street Car player : ready and logged");
 		System.out.println("===========================================================\n");
 
-		this.game.onJoinRequest(this);									// Log the player to the application
+		this.game.onJoinRequest(this, isHost);							// Log the player to the application
 	}
 
 // --------------------------------------------
