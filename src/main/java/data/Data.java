@@ -48,7 +48,8 @@ public class Data implements Serializable
 	private HashMap<String, PlayerInfo>	playerInfoList;
 	private int							round;
 	private int							maxPlayerSpeed;
-	private String						firstPlayer;
+	private String[]					playerOrder;  // TODO a choisir lors du debut de partie
+	private String						host;
 
 // --------------------------------------------
 // Builder:
@@ -83,11 +84,13 @@ public class Data implements Serializable
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
-	public void addPlayer(PlayerInterface p, String playerName) throws ExceptionFullParty
+	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
+		if ((isHost) && (this.host != null))			throw new RuntimeException("The host is already set");
 		PlayerInfo pi = new PlayerInfo(p);
 		this.playerInfoList.put(playerName, pi);
+		if (isHost) this.host = new String(playerName);
 	}
 	public void removePlayer(String playerName)
 	{
@@ -109,7 +112,7 @@ public class Data implements Serializable
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
-	public boolean hasDoneFirstAction(String name)								{return this.firstPlayer.equals(name);}
+	public boolean hasDoneFirstAction(String name)								{return this.playerOrder[0].equals(name);}
 	public PlayerInterface		getPlayer(String playerName)
 	{
 		PlayerInterface pi = this.playerInfoList.get(playerName).player;

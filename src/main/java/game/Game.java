@@ -21,7 +21,7 @@ import main.java.player.PlayerInterface;
 
 
 @SuppressWarnings("serial")
-public class Game extends UnicastRemoteObject implements Runnable, GameInterface
+public class Game extends UnicastRemoteObject implements GameInterface
 {
 // --------------------------------------------
 // Attributes:
@@ -30,7 +30,8 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 
-	private Data data;
+	private Data	data;
+	private boolean	endOfGame;
 
 // --------------------------------------------
 // Builder:
@@ -55,6 +56,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
 		this.data		= new Data(gameName, boardName, nbrBuildingInLine);			// Init application
+		this.endOfGame	= false;
 
 		System.out.println("\n===========================================================");
 		System.out.println(messageHeader + "URL = " + url);
@@ -94,13 +96,34 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 		return null;
 	}
+
+// --------------------------------------------
+// Local methods:
+// --------------------------------------------
+	public void run()
+	{
+		Object sync = new Object();
+
+		synchronized(sync)
+		{
+			while(!endOfGame)
+			{
+				try					{sync.wait();}
+				catch(Exception e)	{e.printStackTrace();}
+				System.out.println("********************************");
+				System.out.println("************ wakeUp ************");
+				System.out.println("********************************");
+			}
+		}
+	}
+
 // --------------------------------------------
 // Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
 	public Data getData() throws RemoteException	{return this.data;}
-	public void onJoinRequest(PlayerInterface player) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public void onJoinRequest(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
 		{
@@ -128,7 +151,7 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		}
 		else
 		{
-			this.data.addPlayer(player, player.getName());
+			this.data.addPlayer(player, player.getName(), isHost);
 			System.out.println("\n===========================================================");
 			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "accepted player");
@@ -163,14 +186,6 @@ public class Game extends UnicastRemoteObject implements Runnable, GameInterface
 		System.out.println(messageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 		return res;
-	}
-
-// --------------------------------------------
-// Local methods:
-// --------------------------------------------
-	public void run()
-	{
-		
 	}
 
 // --------------------------------------------
