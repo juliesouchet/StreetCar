@@ -1,6 +1,5 @@
 package test.java.player;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -29,10 +28,8 @@ public class DataViewerFrame extends JFrame {
 
 	public DataViewerFrame() {
 		super();
-		this.setSize(new Dimension(frameWidth, frameHeight));
-		//this.setContentPane(this.viewerPanel); -- pour pouvoir ajouter d'autres panels (Julie)
+		this.setSize(new Dimension(frameWidth+paddingWidth,frameHeight+paddingHeight));
 		this.add(this.viewerPanel);
-		this.setSize(new Dimension(frameWidth+paddingWidth*4, frameHeight+paddingHeight/2));
 	}
 
 	// Setters / getters
@@ -50,12 +47,11 @@ public class DataViewerFrame extends JFrame {
 	}
 	
 	// ViewerPanel
-	
-	private class ViewerPanel extends JPanel {
+	public class ViewerPanel extends JPanel {
 	
 		private static final long serialVersionUID = 1L;
 		private Data gameData = null;
-
+		
 		protected void paintComponent(Graphics g) {
 			super.paintComponents(g);
 			
@@ -66,8 +62,8 @@ public class DataViewerFrame extends JFrame {
 			BufferedImage img = null;
 			String tileName;
 			Tile[][] board = this.gameData.getBoard();
-			int tileWidth	= (frameWidth - paddingWidth) / this.gameData.getWidth();
-			int tileHeight	= (frameHeight- paddingHeight)/ this.gameData.getHeight();
+			int tileWidth	= (getWidth() - paddingWidth) / this.gameData.getWidth();
+			int tileHeight	= (getHeight()- paddingHeight)/ this.gameData.getHeight();
 			int x = tileWidth/2;
 			int y = tileHeight/2;
 
@@ -75,8 +71,6 @@ public class DataViewerFrame extends JFrame {
 			{
 				for (int i=0; i < this.gameData.getWidth(); i++)
 				{
-					g.setColor(Color.RED);
-					g.drawRect(x, y, tileWidth, tileHeight);
 					tileName = cst + board[i][j].getTileID();
 					try {img = ImageIO.read(new File(tileName));}
 					catch (IOException e) {e.printStackTrace(); System.exit(0);}

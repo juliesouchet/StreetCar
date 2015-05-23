@@ -18,8 +18,7 @@ public class SaveListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO : S'assurer que le FileWriter écrit bien
-		System.out.println("Sauvegarde n'écrivant rien");
+		// TODO : le FileWriter n'écrit rien !
 		String fileName = (String) JOptionPane.showInputDialog(null, null, "Sauvegarde du terrain",
 				JOptionPane.QUESTION_MESSAGE, null, null, "nom_du_terrain");
 		

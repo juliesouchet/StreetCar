@@ -105,7 +105,8 @@ public class Data implements Serializable
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					maximumSpeed()									{return this.maxPlayerSpeed;}
 	public Tile					getTile(int x, int y)							{return new Tile(this.board[x][y]);}
-//////////////// TODO	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
+//////////////// TODO	
+	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
