@@ -1,6 +1,7 @@
 package main.java.data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,12 +13,13 @@ import java.util.Random;
 
 
 
-public class Deck
+public class Deck implements Serializable
 {
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final String	stackDirectory	= "src/main/resources/images";
+	private static final long	serialVersionUID	= 1683108311031397048L;
+	public static final String	stackDirectory		= "src/main/resources/images";
 
 	private ArrayList<StackCell>	stack;		// Sorted list using the attribute remaining in a descending order
 
@@ -122,9 +124,10 @@ public class Deck
 // Stack cell class:
 // Gathers a list of informations corresponding to a tile
 // --------------------------------------------
-	public class StackCell implements Comparator<StackCell>
+	public class StackCell implements Comparator<StackCell>, Serializable
 	{
 		// Attributes
+		private static final long serialVersionUID = -8270266931462832239L;
 		public Tile	t;
 		public int	remaining;
 

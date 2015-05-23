@@ -21,7 +21,7 @@ import main.java.player.PlayerInterface;
 
 
 @SuppressWarnings("serial")
-public class Game extends UnicastRemoteObject implements GameInterface
+public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 {
 // --------------------------------------------
 // Attributes:
@@ -89,7 +89,7 @@ public class Game extends UnicastRemoteObject implements GameInterface
 		String url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 
 ////	System.setSecurityManager(new RMISecurityManager());
-		try 
+		try
 		{
 			return (GameInterface) Naming.lookup(url);
 		}

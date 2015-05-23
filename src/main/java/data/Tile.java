@@ -1,5 +1,6 @@
 package main.java.data;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import main.java.util.Direction;
@@ -19,11 +20,12 @@ import main.java.util.Direction;
 
 
 
-public class Tile
+public class Tile implements Serializable
 {
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
+	private static final long		serialVersionUID				= 2787165577586992226L;
 	public static final String		tileNamePrefix					= "Tile_";
 	public static final String		nonBuildingDescription			= "Z";
 	public static final String		nonTerminusDescription			= "Z";
@@ -253,9 +255,10 @@ public class Tile
 // Path class :
 // Represents a path between two cardinal directions
 // --------------------------------------------
-	public class Path
+	public class Path implements Serializable
 	{
 		// Attributes
+		private static final long serialVersionUID = 1L;
 		public int end0;
 		public int end1;
 

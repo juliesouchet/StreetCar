@@ -1,15 +1,18 @@
 package main.java.data;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 
 
-public class Action
+public class Action implements Serializable
 {
 // -----------------------------------------------------
 // Attributes
 // -----------------------------------------------------
+	private static final long serialVersionUID = -7830218892745210163L;
+
 	public static final int MOVE					= 0;
 	public static final int BUILD_SIMPLE			= 1;
 	public static final int BUILD_DOUBLE			= 2;

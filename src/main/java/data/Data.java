@@ -20,12 +20,12 @@ import main.java.util.Direction;
 
 
 
-@SuppressWarnings("serial")
 public class Data implements Serializable
 {
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
+	private static final long			serialVersionUID		= -2740586808331187527L;
 	public static final	String			boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
 	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
@@ -454,9 +454,10 @@ public class Data implements Serializable
 // --------------------------------------------
 // Player Info class:
 // --------------------------------------------
-	private class PlayerInfo
+	private class PlayerInfo implements Serializable
 	{
 		// Attributes
+		private static final long	serialVersionUID = -7495867115345261352L;
 		public PlayerInterface		player;
 		public Hand					hand;
 		public int					line;
