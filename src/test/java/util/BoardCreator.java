@@ -1,7 +1,6 @@
 package test.java.util;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,20 +15,12 @@ import test.java.player.DataViewerFrame;
 import test.java.player.DataViewerFrame.ViewerPanel;
 
 
-public class BoardCreator implements Runnable {	
-	// TODO : la modification du terrain
-	// TODO : rotation de tuiles au clavier
+public class BoardCreator implements Runnable {
 	static final String boardPath = "src/test/resources/boards/";
-	static final String tilePath = "src/main/resources/images/";
-	static final String[] tileID = {"Tile_FFFFZZ2003", "Tile_FFFFZZ2113", "Tile_FFFFZZ060123",
-			"Tile_FFFFZZ100102", "Tile_FFFFZZ100103", "Tile_FFFFZZ100203",
-			"Tile_TFFFZZ040213", "Tile_TFFFZZ02010213", "Tile_TFFFZZ02021203",
-			"Tile_TFFFZZ06031323", "Tile_TFFFZZ06121323", "Tile_TFFFZZ0401122303",
-			"Tile_FFFFZZ99"};
 	final int padding = 150;
 	
 	Tile currentTile = null;
-	TilePanel[] individualTile;
+	TileGrid tileGrid;
 	DataViewerFrame frame;
 	Data data = null;
 
@@ -42,10 +33,11 @@ public class BoardCreator implements Runnable {
 	 
 	@Override
 	public void run() {
-		JPanel panelSave, tilesGrid;
+		JPanel panelSave;
 		JSplitPane verticalPanel, horizontalPanel;
 		JButton buttonSave, buttonLoad;
 		ViewerPanel board;
+		// Lecture du terrain initial
 		try {
 			data = new Data("Board Creator", "newOrleans", 2);
 		} catch (UnknownBoardNameException | RuntimeException e) {
@@ -53,12 +45,13 @@ public class BoardCreator implements Runnable {
 		}
 		
 		frame = new DataViewerFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setGameData(data);
 		
+		// Terrain
+		frame.setGameData(data);
 		board = frame.getViewerPanel();
 		board.addMouseListener(new BoardListener(this));
 		
+		// Boutons
 		panelSave = new JPanel();
 		buttonSave = new JButton("Save");
 		buttonSave.addMouseListener(new SaveListener(data));
@@ -67,20 +60,23 @@ public class BoardCreator implements Runnable {
 		buttonLoad.addMouseListener(new LoadListener(frame));
 		panelSave.add(buttonLoad);
 		
-		tilesGrid = new JPanel();
-		tilesGrid.setLayout(new GridLayout(7,2));
-		individualTile = new TilePanel[13];
-		for(int i = 0; i < 13; i++) {
-			individualTile[i] = new TilePanel(tileID[i], i);
-			individualTile[i].addMouseListener(new TilePanelListener(this, individualTile[i]));
-			tilesGrid.add(individualTile[i]);
-		}
+		// Tuiles à choisir
+		tileGrid = new TileGrid();
 		
-		verticalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelSave, tilesGrid);
+		// Division de la fenêtre
+		verticalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelSave, tileGrid);
 		horizontalPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, frame.getViewerPanel(), verticalPanel);
 		horizontalPanel.setDividerLocation(14*60);
 		horizontalPanel.setResizeWeight(0.5);
 		frame.add(horizontalPanel);
+		
+		// Manipulation à la souris
+		tileGrid.addMouseListener(new TileGridListener(this, tileGrid));
+		tileGrid.addMouseMotionListener(new TileGridListener(null, tileGrid));		
+		frame.addMouseWheelListener(new TileGridListener(null, tileGrid));
+		
+		// Démarrage de la fenêtre
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setMinimumSize(new Dimension(frame.getWidth()+padding, frame.getHeight()));
 		frame.setVisible(true);
 	}
@@ -90,8 +86,7 @@ public class BoardCreator implements Runnable {
 	}
 	
 	public void drawTile(int x,int y) {
-		// TODO setTile ne vérifie pas les règles de pose
-		data.setTile(x,y,currentTile);
+		data.setTile(x,y, new Tile(currentTile));
 	}
 	
 	public ViewerPanel getViewerPanel() {
@@ -105,12 +100,12 @@ public class BoardCreator implements Runnable {
 	public Data getData() {
 		return data;
 	}
-
+/*
 	public void repaintTilePanels() {
 		for(int i = 0; i < 13; i++) {
-			boolean b = individualTile[i].getTile() == currentTile;
-			individualTile[i].setSelection(b);
-			individualTile[i].repaint();
+			boolean b = tileGrid[i].getTile() == currentTile;
+			tileGrid[i].setSelection(b);
+			tileGrid[i].repaint();
 		}
-	}
+	}*/
 }
