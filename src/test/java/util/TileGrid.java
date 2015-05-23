@@ -118,6 +118,7 @@ public class TileGrid extends JComponent {
 				catch (IOException e) {e.printStackTrace(); System.exit(0);}
 				AffineTransformOp transform = rotation(img, side);
 				g2.drawImage(transform.filter(img,null), x, y, null);
+				
 				if(selected != null && i == selected) {
 					g2.setPaint(Color.BLACK);
 					g2.drawRect(x, y, side, side);

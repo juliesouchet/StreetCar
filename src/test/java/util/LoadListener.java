@@ -23,8 +23,7 @@ public class LoadListener implements MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO : Régler les conflits de path entre main et test
+	public void mouseClicked(MouseEvent e) {		
 		// Building a list of all pre-existing boards
 		Path path = (new File(BoardCreator.boardPath)).toPath();
 		Vector<String> availableBoards = null;
@@ -38,6 +37,9 @@ public class LoadListener implements MouseListener {
 			e2.printStackTrace();
 		}
 		
+		if(availableBoards == null) { // No pre-existing board
+			
+		}
 		
 		// Dialog window to make the user choose
 		String fileName = (String) JOptionPane.showInputDialog(null, null, "Chargement d'un terrain",
@@ -46,6 +48,7 @@ public class LoadListener implements MouseListener {
 		if(fileName != null) {
 			Data data = null;
 			try {
+				Data.boardDirectory = BoardCreator.boardPath;
 				data = new Data("Board Creator", fileName, 2);
 			} catch (UnknownBoardNameException | RuntimeException e1) {
 				e1.printStackTrace();
