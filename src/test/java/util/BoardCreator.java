@@ -54,7 +54,7 @@ public class BoardCreator implements Runnable {
 		// Boutons
 		panelSave = new JPanel();
 		buttonSave = new JButton("Save");
-		buttonSave.addMouseListener(new SaveListener(data));
+		buttonSave.addMouseListener(new SaveListener(frame));
 		panelSave.add(buttonSave);
 		buttonLoad = new JButton("Load");
 		buttonLoad.addMouseListener(new LoadListener(frame));
@@ -100,12 +100,4 @@ public class BoardCreator implements Runnable {
 	public Data getData() {
 		return data;
 	}
-/*
-	public void repaintTilePanels() {
-		for(int i = 0; i < 13; i++) {
-			boolean b = tileGrid[i].getTile() == currentTile;
-			tileGrid[i].setSelection(b);
-			tileGrid[i].repaint();
-		}
-	}*/
 }

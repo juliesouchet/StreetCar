@@ -31,32 +31,32 @@ public class LoadListener implements MouseListener {
 			availableBoards = new Vector<String>();
 			for (Path board: stream) {
 				String boardName = board.toString();
-				System.out.println(boardName);
 				availableBoards.add(boardName);
 			}
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
 		
-		if(availableBoards == null) { // No pre-existing board
+		if(availableBoards.isEmpty()) { // No pre-existing board
+			JOptionPane.showMessageDialog(null, "Nothing to load");
+		}
+		else {
+			// Dialog window to make the user choose
+			String fileName = (String) JOptionPane.showInputDialog(null, null, "Chargement d'un terrain",
+					JOptionPane.QUESTION_MESSAGE, null, availableBoards.toArray(), "nom_du_terrain");
 			
+			if(fileName != null) {
+				Data data = null;
+				try {
+					Data.boardDirectory = "";
+					data = new Data("Board Creator", fileName, 2);
+				} catch (UnknownBoardNameException | RuntimeException e1) {
+					e1.printStackTrace();
+				}		
+				frame.setGameData(data);
+				frame.repaint();
+			}
 		}
-		
-		// Dialog window to make the user choose
-		String fileName = (String) JOptionPane.showInputDialog(null, null, "Chargement d'un terrain",
-				JOptionPane.QUESTION_MESSAGE, null, availableBoards.toArray(), "nom_du_terrain");
-		
-		if(fileName != null) {
-			Data data = null;
-			try {
-				Data.boardDirectory = BoardCreator.boardPath;
-				data = new Data("Board Creator", fileName, 2);
-			} catch (UnknownBoardNameException | RuntimeException e1) {
-				e1.printStackTrace();
-			}		
-			frame.setGameData(data);
-		}
-		
 	}
 
 	@Override

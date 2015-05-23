@@ -336,7 +336,7 @@ public class Data implements Serializable
 				{
 					fw.write("" + this.board[x][y].getTileID()	+ "\n");
 				}
-				fw.write("" + this.getHeight()	+ "\n\n");
+				fw.write("\n\n");
 			}
 		}
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}

@@ -7,13 +7,13 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import main.java.data.Data;
+import test.java.player.DataViewerFrame;
 
 public class SaveListener implements MouseListener {
-	Data data;
+	DataViewerFrame frame;
 	
-	public SaveListener(Data d) {
-		data = d;
+	public SaveListener(DataViewerFrame frame) {
+		this.frame = frame;
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class SaveListener implements MouseListener {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			data.writeBoardInFile(fw);
+			frame.getGameData().writeBoardInFile(fw);
 			try {
 				fw.close();
 			} catch (IOException e1) {
