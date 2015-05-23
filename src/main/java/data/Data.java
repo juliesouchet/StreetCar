@@ -114,7 +114,7 @@ public class Data implements Serializable
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
-	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this.board, p0, p1);}
+	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
 	public PlayerInterface		getPlayer(String playerName)
 	{
 		PlayerInterface pi = this.playerInfoList.get(playerName).player;

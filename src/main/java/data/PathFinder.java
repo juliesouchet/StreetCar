@@ -4,6 +4,11 @@ import java.awt.Point;
 import java.util.LinkedList;
 
 
+
+
+
+
+
 public class PathFinder
 {
 	/**============================================================
@@ -11,46 +16,46 @@ public class PathFinder
 	 * Uses the A* algorithm.
 	 * The source and destination point are returned in the solution.
 	 ==============================================================*/
-	public static LinkedList<Point> getPath(Tile[][] board, Point pSrc, Point pDst)
+	public static LinkedList<Point> getPath(Data data, Point pSrc, Point pDst)
 	{
-		int w = board.length;
-		int h = board[0].length;
+		int w = data.getWidth();
+		int h = data.getHeight();
 		if ((pSrc.x < 0) || (pSrc.x >= w) ||
 			(pSrc.y < 0) || (pSrc.y >= h))	throw new RuntimeException("Source point out of the ground: "		+ pSrc);
 		if ((pDst.x < 0) || (pDst.x >= w) ||
 			(pDst.y < 0) || (pDst.y >= h))	throw new RuntimeException("Destination point out of the ground: "		+ pSrc);
 		if (pSrc.equals(pDst))				throw new RuntimeException("pSrc == pDst == " + pSrc);
 
-		Integer[][]	weight		= new Integer[w][h];
-		Point[][]	previous	= new Point	 [w][h];
-		Fap<Point>	f			= new Fap<Point>();
-		LinkedList<Point> voisin;
-		NoeudAstar<Point> y;
+		Integer[][]		weight		= new Integer[w][h];
+		Point[][]		previous	= new Point	 [w][h];
+		PriorityQueue	pq			= new PriorityQueue();
+		LinkedList<Point> neighbor;
+		Knot y;
 		int pz;
 
-		for (int i=0; i<t.largeur(); i++)								// Initialisation
+		for (int i=0; i<w; i++)											// Initialisation
 		{
-			for (int j=0; j<t.hauteur(); j++)
+			for (int j=0; j<h; j++)
 			{
 				weight	[i][j] = null;
 				previous[i][j] = null;
 			}
 		}
-		f.add(new NoeudAstar<Point>(pSrc, 0, heuristique(pSrc, pDst)));
+		pq.add(new Knot(pSrc, 0, heuristic(pSrc, pDst)));
 		weight[pSrc.x][pSrc.y] = 0;
 
-		while (!f.isEmpty())
+		while (!pq.isEmpty())
 		{
-			y = (NoeudAstar<Point>) f.remove();
+			y =  pq.remove();
 			if (y.equals(pDst))	return reversePath(previous, pSrc, pDst);
-			voisin	= t.voisinLibre(y.getElem());
-			for (Point z: voisin)
+			neighbor = data.getAccessibleNeighborsPositions(y.p.x, y.p.y);
+			for (Point z: neighbor)
 			{
 				pz = y.getDistPrev()+1;
 				if ((weight[z.x][z.y] == null) || (pz < weight[z.x][z.y]))
 				{
 					weight[z.x][z.y] = pz;
-					f.add(new NoeudAstar<Point>(z, pz, heuristique(z, pDst)));
+					pq.add(new Knot(z, pz, heuristic(z, pDst)));
 					previous[z.x][z.y] = new Point(y.getElem().x, y.getElem().y);
 				}
 			}
@@ -61,7 +66,7 @@ public class PathFinder
 // -----------------------------------------
 // Private Methods
 // -----------------------------------------
-	private int heuristic(Point src, Point dst)
+	private static int heuristic(Point src, Point dst)
 	{
 		int dx = dst.x - src.x;
 		int dy = dst.y - src.y;
@@ -71,7 +76,7 @@ public class PathFinder
 	 * @return Goes the way created by the algorithm and returns the 
 	 * list of point if the path exists and nothing if not
 	 ==============================================================*/
-	private LinkedList<Point> reversePath(Point[][] previous, Point pSrc, Point pDst)
+	private static LinkedList<Point> reversePath(Point[][] previous, Point pSrc, Point pDst)
 	{
 		LinkedList<Point> res = new LinkedList<Point>();
 		Point p = pDst;
@@ -87,39 +92,58 @@ public class PathFinder
 	}
 
 // -----------------------------------------
-// Private Methods
+// Private classes
 // -----------------------------------------
-	private class PriorityQueue
+	private static class Knot
 	{
-		// Attributs
+		// Attributes
+		private Point	p;
+		private int		distPrev;
+		private int		distNext;
+
+		// Builder
+		public Knot(Point p, int distPrev, int distNext)
+		{
+			this.p			= p;
+			this.distPrev	= distPrev;
+			this.distNext	= distNext;
+		}
+
+		// Local methods
+		public Point	getElem()		{return p;}
+		public int		getPrio()		{return (distPrev + distNext);}
+		public int		getDistPrev()	{return (distPrev);}
+		public int		getDistNext()	{return (distNext);}
+	}
+	private static class PriorityQueue
+	{
+		// Attributes
 		private LinkedList<Knot>	queue;
 
 		// Builder
 		public PriorityQueue()	{this.queue = new LinkedList<Knot>();}
 
-	// -----------------------------------------
-	// Methode locale
-	// -----------------------------------------
-		public boolean isEmpty()	{return file.isEmpty();}
-		public Noeud<E> remove()
+		// Local methods
+		public boolean isEmpty()	{return queue.isEmpty();}
+		public Knot remove()
 		{
-			if (file.isEmpty())	throw new RuntimeException("File vide");
+			if (queue.isEmpty())	throw new RuntimeException("Empty queue");
 
-			Noeud<E> res = file.get(0);
-			file.remove(0);
+			Knot res = queue.get(0);
+			queue.remove(0);
 			return res;
 		}
-		public void add(Noeud<E> n)
+		public void add(Knot k)
 		{
-			if (file.isEmpty())	{file.add(n); return;}
+			if (queue.isEmpty())	{queue.add(k); return;}
 
-			for (int i=0; i<file.size(); i++)
+			for (int i=0; i<queue.size(); i++)
 			{
-				if (file.get(i).getPrio() < n.getPrio()) continue;
-				file.add(i, n);
+				if (queue.get(i).getPrio() < k.getPrio()) continue;
+				queue.add(i, k);
 				return;
 			}
-			file.addLast(n);
+			queue.addLast(k);
 		}
 	}
 }
