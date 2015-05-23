@@ -12,15 +12,17 @@ public class IP {
 	
 	public static String getIpAddress() {
 		String ipAddress = null;
+		URL checkipURL = null;
 		try {
-			URL checkipURL = new URL("http://checkip.amazonaws.com");
+			checkipURL = new URL("http://checkip.amazonaws.com");
 			InputStreamReader isp = new InputStreamReader(checkipURL.openStream());
 			BufferedReader  br = new BufferedReader(isp);
 			ipAddress = br.readLine();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(checkipURL + " output is invalid");
+			ipAddress = null;
 		}
 		
 		if (ipAddress != null) {
