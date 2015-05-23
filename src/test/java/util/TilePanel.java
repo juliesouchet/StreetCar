@@ -1,4 +1,4 @@
-package test.java.ai;
+package test.java.util;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -19,7 +19,7 @@ public class TilePanel extends JComponent {
 	Tile tile;
 	String tileName;
 	int tileNumber;
-	boolean isSelected;
+	boolean isSelected, mouseOver;
 	
 	public TilePanel(String string, int number) {
 		super();
@@ -27,20 +27,28 @@ public class TilePanel extends JComponent {
 		tileName = string;
 		tileNumber = number;
 		isSelected = false;
-		//setSize(side, side);
+		mouseOver = false;
 	}
 	
 	public void setTile(Tile t) {
 		tile = t;
 		tileName = t.getTileID();
 	}
+		
+	public void setSelection(boolean b) {
+		isSelected = b;
+	}	
+	
+	public void setMouseOver(boolean b) {
+		mouseOver = b;
+	}
 	
 	public int getTileNumber() {
 		return tileNumber;
 	}
 	
-	public void setSelection(boolean b) {
-		isSelected = b;
+	public Tile getTile() {
+		return tile;
 	}
 	
 	public void rotateTile(int orientation) {
@@ -76,10 +84,15 @@ public class TilePanel extends JComponent {
 		BufferedImage img = null;
 		try	{img = ImageIO.read(new File(BoardCreator.tilePath+tileName));}
 		catch (IOException e) {e.printStackTrace(); System.exit(0);}
-		g2.drawImage(img, 0, 0, 60, 60, null);
+		g2.drawImage(img, 0, 0, side, side, null);
 		
 		if(isSelected) {
-			g2.setPaint(Color.white);
+			g2.setPaint(Color.BLACK);
+			g2.setStroke(new BasicStroke(5));
+			g2.drawRect(0, 0, side, side);
+		}
+		if(mouseOver) {
+			g2.setPaint(Color.WHITE);
 			g2.setStroke(new BasicStroke(5));
 			g2.drawRect(0, 0, side, side);
 		}

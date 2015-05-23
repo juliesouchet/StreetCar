@@ -1,4 +1,4 @@
-package test.java.ai;
+package test.java.util;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -14,15 +14,21 @@ public class TilePanelListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("clic sur tuile "+tp.getTileNumber());
-		bc.setCurrentTile(tp.getTileNumber());
+		bc.setCurrentTile(tp.getTile());
+		bc.repaintTilePanels();
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {
+		tp.setMouseOver(true);
+		tp.repaint();
+	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {
+		tp.setMouseOver(false);
+		tp.repaint();
+	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {}

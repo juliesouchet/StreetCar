@@ -63,14 +63,15 @@ public class Traveler extends PlayerAutomaton {
 				}
 				// initializes the itinerary with randomly chosen direction
 				Random r = new Random();
-				checkpoints = currentConfig.getStops(name);
+				checkpoints = currentConfig.getBuildings(name);
+				LinkedList<Point> terminus = currentConfig.getTerminus(name);
 				if(r.nextInt() == 0) {
-					checkpoints.addFirst(currentConfig.firstTerminus(name));
-					checkpoints.add(currentConfig.secondTerminus(name));
+					checkpoints.addFirst(terminus.getFirst());
+					checkpoints.add(terminus.getLast());
 				}
 				else {
-					checkpoints.addFirst(currentConfig.secondTerminus(name));
-					checkpoints.add(currentConfig.firstTerminus(name));
+					checkpoints.addFirst(terminus.getLast());
+					checkpoints.add(terminus.getFirst());
 				}
 			}
 			
