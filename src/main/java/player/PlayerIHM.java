@@ -55,9 +55,9 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerColor 									(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 									    (caught by IHM)
 	 =======================================================================*/
-	public PlayerIHM(String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		super(playerName, playerColor, app, ihm);
+		super(isHost, playerName, playerColor, app, ihm);
 	}
 
 // --------------------------------------------
@@ -89,7 +89,7 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 		}
 		else	this.game	= Game.getRemoteGame(applicationIP, gameName);		// Remote application pointer
 
-		new PlayerIHM(playerName, playerColor, game, ihm);						// Player Creation
+		new PlayerIHM(gameCreation, playerName, playerColor, game, ihm);		// Player Creation
 	}
 	public Data getGameData() throws RemoteException
 	{
