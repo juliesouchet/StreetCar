@@ -21,7 +21,7 @@ import main.java.player.PlayerInterface;
 
 
 @SuppressWarnings("serial")
-public class Game extends UnicastRemoteObject implements GameInterface
+public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 {
 // --------------------------------------------
 // Attributes:
@@ -89,7 +89,7 @@ public class Game extends UnicastRemoteObject implements GameInterface
 		String url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 
 ////	System.setSecurityManager(new RMISecurityManager());
-		try 
+		try
 		{
 			return (GameInterface) Naming.lookup(url);
 		}
@@ -155,6 +155,7 @@ public class Game extends UnicastRemoteObject implements GameInterface
 			System.out.println("\n===========================================================");
 			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "accepted player");
+			System.out.println(messageHeader + "NbrPlayer: " + this.data.getNbrPlayer());
 			System.out.println("===========================================================\n");
 		}
 	}

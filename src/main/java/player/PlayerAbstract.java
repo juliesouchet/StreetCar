@@ -23,12 +23,13 @@ import test.java.player.TestIHM;
 
 
 
-@SuppressWarnings("serial")
 public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
+	private static final long serialVersionUID = -8965945491565879485L;
+
 	protected GameInterface	game;
 	protected TestIHM		ihm;
 	protected String		name;
@@ -62,12 +63,9 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public String 	getName()	throws RemoteException	{return this.name;}
-	public Color	getColor()	throws RemoteException	{return this.color;}
-	public Data		getGameData()throws RemoteException
-	{
-		return this.game.getData();
-	}
+	public String 	getName()		throws RemoteException	{return this.name;}
+	public Color	getColor()		throws RemoteException	{return this.color;}
+	public Data		getGameData()	throws RemoteException	{return this.game.getData();}
 
 
 // --------------------------------------------

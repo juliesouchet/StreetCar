@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 
 import javax.swing.SwingUtilities;
 
-import main.java.data.Data;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -36,10 +35,6 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 	{
 		new TestIHM(this);
 	}
-
-// --------------------------------------------
-// Attributs:
-// --------------------------------------------
 
 // --------------------------------------------
 // Builder:
@@ -82,19 +77,19 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 
 		if (gameCreation)														// App thread creation
 		{
-			this.game		= new Game(gameName, localIP, boardName, nbrBuildingInLine);
-			Thread t		= new Thread((Runnable) this.game);
+			Game game		= new Game(gameName, localIP, boardName, nbrBuildingInLine);
+			Thread t		= new Thread(game);
 			t.start();
-//			SwingUtilities	.invokeLater((Game)this.game);
+			this.game		= Game.getRemoteGame(localIP, gameName);			// Remote application pointer
 		}
 		else	this.game	= Game.getRemoteGame(applicationIP, gameName);		// Remote application pointer
-
 		new PlayerIHM(gameCreation, playerName, playerColor, game, ihm);		// Player Creation
 	}
-	public Data getGameData() throws RemoteException
+/*	public Data getGameData() throws RemoteException
 	{
 		return super.getGameData();
 	}
+*/
 // --------------------------------------------
 // Local methodes:
 // --------------------------------------------
