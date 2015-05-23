@@ -31,6 +31,7 @@ public class LoadListener implements MouseListener {
 			availableBoards = new Vector<String>();
 			for (Path board: stream) {
 				String boardName = board.toString();
+				System.out.println(boardName);
 				availableBoards.add(boardName);
 			}
 		} catch (IOException e2) {

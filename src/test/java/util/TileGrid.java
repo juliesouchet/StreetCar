@@ -20,7 +20,7 @@ public class TileGrid extends JComponent {
 	 *		Attributes
 	 ========================*/
 	private static final long serialVersionUID = -3553177329312479409L;
-	static final String tilePath = "src/main/resources/images/";
+	static final String tilePath = "src/main/resources/images/tiles/";
 	static final String[] tileID = {"Tile_FFFFZZ2003", "Tile_FFFFZZ2113", "Tile_FFFFZZ060123",
 			"Tile_FFFFZZ100102", "Tile_FFFFZZ100103", "Tile_FFFFZZ100203",
 			"Tile_TFFFZZ040213", "Tile_TFFFZZ02010213", "Tile_TFFFZZ02021203",
