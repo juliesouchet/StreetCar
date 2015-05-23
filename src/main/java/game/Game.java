@@ -155,6 +155,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			System.out.println("\n===========================================================");
 			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
 			System.out.println(messageHeader + "accepted player");
+			System.out.println(messageHeader + "NbrPlayer: " + this.data.getNbrPlayer());
 			System.out.println("===========================================================\n");
 		}
 	}
