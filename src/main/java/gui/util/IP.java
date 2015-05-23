@@ -6,11 +6,17 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import main.java.util.NetworkTools;
+
 public class IP {
 
 	// Setters / getters
 	
-	public static String getIpAddress() {
+	public static String getIpAdressFromInet() {
+		return NetworkTools.myIPAddress();
+	}
+	
+	public static String getIpAddressFromWebService() {
 		String ipAddress = null;
 		URL checkipURL = null;
 		try {

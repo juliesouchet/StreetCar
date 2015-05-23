@@ -113,7 +113,6 @@ public class PathFinder
 		public Point	getElem()		{return p;}
 		public int		getPrio()		{return (distPrev + distNext);}
 		public int		getDistPrev()	{return (distPrev);}
-		public int		getDistNext()	{return (distNext);}
 	}
 	private static class PriorityQueue
 	{

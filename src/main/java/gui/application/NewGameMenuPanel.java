@@ -52,7 +52,7 @@ public class NewGameMenuPanel extends MenuPanel {
 		this.nameField.setBounds(new Rectangle(215, 120, 150, 30));
 		this.add(this.nameField);
 		
-		this.addressField = new TextField(IP.getIpAddress());
+		this.addressField = new TextField(IP.getIpAdressFromInet());
 		this.addressField.setBounds(new Rectangle(215, 170, 150, 30));
 		this.addressField.setEditable(false);
 		this.add(this.addressField);

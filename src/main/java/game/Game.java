@@ -31,7 +31,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public final static String	applicationProtocol		= "rmi";
 
 	private Data	data;
-	private boolean	endOfGame;
 
 // --------------------------------------------
 // Builder:
@@ -56,7 +55,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
 		this.data		= new Data(gameName, boardName, nbrBuildingInLine);			// Init application
-		this.endOfGame	= false;
 
 		System.out.println("\n===========================================================");
 		System.out.println(messageHeader + "URL = " + url);
@@ -64,20 +62,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println(messageHeader + "Start waiting for connexion request");
 		System.out.println("===========================================================\n");
 	}
-// TODO akwasaser?:   c pour le reseaux
-/*****************	
-	public Game() throws RemoteException
-	{
-		name = "StreetCar";
-		data = new Data(name);
-		try {
-			data.buildBoard(Data.defaultBoardFile);
-		} catch (UnknownBoardNameException e) {
-			e.printStackTrace();
-			e.printStackTrace();
-		}
-	}
-********************/   /////// Interdit car il ne peut y avoir qu'un seul constructeur
 	/**=======================================================================
 	 * @return Creates a remote application cloned to the real application at the given ip
 	 * @throws NotBoundException 		: The web host is not configured	(throw RuntimeException)
@@ -102,19 +86,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 	public void run()
 	{
-		Object sync = new Object();
-
-		synchronized(sync)
-		{
-			while(!endOfGame)
-			{
-				try					{sync.wait();}
-				catch(Exception e)	{e.printStackTrace();}
-				System.out.println("********************************");
-				System.out.println("************ wakeUp ************");
-				System.out.println("********************************");
-			}
-		}
 	}
 
 // --------------------------------------------
