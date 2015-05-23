@@ -429,12 +429,16 @@ public class Data implements Serializable
 			if ((i1 == line) && (!i1F)) {res.addLast(new Point(x, h)); i1F = true;}
 		}
 		if (res.size() == 2) return res;
+		i0F = false;
+		i1F = false;
 		for (int y=0; y<h; y++)
 		{
 			i0 = this.board[0][y].getTerminusName();
 			i1 = this.board[w][y].getTerminusName();
-			if (i0 == line) res.addLast(new Point(0, y));
-			if (i1 == line) res.addLast(new Point(w, y));
+//			if ((i0 == line) res.addLast(new Point(0, y));
+//			if ((i1 == line)  res.addLast(new Point(w, y));
+			if ((i0 == line) && (!i0F)) {res.addLast(new Point(0, y)); i0F = true;}
+			if ((i1 == line) && (!i1F)) {res.addLast(new Point(w, y)); i1F = true;}
 		}
 		if (res.size() != 2) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
 		return res;

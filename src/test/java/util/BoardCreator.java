@@ -43,7 +43,6 @@ public class BoardCreator implements Runnable {
 		} catch (UnknownBoardNameException | RuntimeException e) {
 			e.printStackTrace();
 		}
-		
 		frame = new DataViewerFrame();
 		
 		// Terrain
@@ -60,22 +59,22 @@ public class BoardCreator implements Runnable {
 		buttonLoad.addMouseListener(new LoadListener(frame));
 		panelSave.add(buttonLoad);
 		
-		// Tuiles à choisir
+		// Tuiles ï¿½ choisir
 		tileGrid = new TileGrid();
 		
-		// Division de la fenêtre
+		// Division de la fenï¿½tre
 		verticalPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, panelSave, tileGrid);
 		horizontalPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, frame.getViewerPanel(), verticalPanel);
 		horizontalPanel.setDividerLocation(14*60);
 		horizontalPanel.setResizeWeight(0.5);
 		frame.add(horizontalPanel);
 		
-		// Manipulation à la souris
+		// Manipulation ï¿½ la souris
 		tileGrid.addMouseListener(new TileGridListener(this, tileGrid));
 		tileGrid.addMouseMotionListener(new TileGridListener(null, tileGrid));		
 		frame.addMouseWheelListener(new TileGridListener(null, tileGrid));
 		
-		// Démarrage de la fenêtre
+		// Dï¿½marrage de la fenï¿½tre
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setMinimumSize(new Dimension(frame.getWidth()+padding, frame.getHeight()));
 		frame.setVisible(true);
