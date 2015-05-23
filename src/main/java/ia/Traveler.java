@@ -104,7 +104,8 @@ public class Traveler extends PlayerAutomaton {
 	 * @param data
 	 * @return
 	 */
-	public LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data) {
+	public LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data)
+	{
 		// TODO : ajouter les passages par les arrets
 		 int[][] distance;
 		 int width, height, arcWeight = 1;

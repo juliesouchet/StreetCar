@@ -60,7 +60,7 @@ public class DataViewerFrame extends JFrame {
 			if (this.gameData == null) {
 				return;
 			}
-			String cst = "src/main/resources/images/";
+			String cst = "src/main/resources/images/tiles/";
 			BufferedImage img = null;
 			String tileName;
 			Tile[][] board = this.gameData.getBoard();
