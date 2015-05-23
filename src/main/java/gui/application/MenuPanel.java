@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.BorderFactory;
+
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
 
@@ -23,7 +25,8 @@ public class MenuPanel extends Panel {
 		
     	this.setLayout(null);
     	this.setSize(new Dimension(500, 450));
-    	this.setBackground(Color.white); 
+    	this.setBackground(Color.white);
+    	this.setBorder(BorderFactory.createLineBorder(Color.black)); 
 	}
 
 	// Setters / getters
@@ -47,14 +50,6 @@ public class MenuPanel extends Panel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        int w = this.getWidth();
-        int h = this.getHeight();
-        g.setColor(Color.BLACK);  
-        g.drawLine(0, 0, 0, h);
-        g.drawLine(0, 0, w, 0);
-        g.drawLine(0, h, w, h);
-        g.drawLine(w, 0, w, h);
-        
         String title = this.getMenuTitle();
         if (title != null) {
         	FontRenderContext frc = new FontRenderContext(null, true, true);
@@ -62,7 +57,8 @@ public class MenuPanel extends Panel {
             
             int barHeight = 30;
             int stringOriginX = (int) (((this.getWidth() - rect.getWidth()) / 2));
-            g.drawLine(0, barHeight, w, barHeight);
+            g.setColor(Color.BLACK); 
+            g.drawLine(0, barHeight, this.getWidth(), barHeight);
             g.drawString(this.getMenuTitle(), stringOriginX, 20);
         }
     }
