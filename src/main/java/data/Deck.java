@@ -19,7 +19,7 @@ public class Deck implements Serializable
 // Attributes:
 // --------------------------------------------
 	private static final long	serialVersionUID	= 1683108311031397048L;
-	public static final String	stackDirectory		= "src/main/resources/images";
+	public static final String	stackDirectory		= "src/main/resources/images/tiles/";
 
 	private ArrayList<StackCell>	stack;		// Sorted list using the attribute remaining in a descending order
 
