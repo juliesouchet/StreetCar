@@ -2,6 +2,8 @@ package test.java.player;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -74,12 +76,26 @@ public class DataViewerFrame extends JFrame {
 					tileName = cst + board[i][j].getTileID();
 					try {img = ImageIO.read(new File(tileName));}
 					catch (IOException e) {e.printStackTrace(); System.exit(0);}
-					g.drawImage(img, x, y, tileWidth, tileHeight, null);
+					AffineTransformOp transform = getRotation(board[i][j], img, tileWidth, tileHeight);
+					g.drawImage(transform.filter(img,null), x, y, null);
 					x += tileWidth;
 				}
 				x = tileWidth/2;
 				y += tileHeight;
 			}
 		}
+	}
+	
+	private AffineTransformOp getRotation(Tile tile, BufferedImage img, int tileWidth, int tileHeight) {
+		int leftRotations = tile.getNbrLeftRotation();
+		double rotationRequired = Math.toRadians(leftRotations*270);
+		double locationX = tileWidth / 2;
+		double locationY = tileHeight / 2;
+		AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+		double xScale = (double)tileWidth/(double)img.getWidth();
+		double yScale = (double)tileHeight/(double)img.getHeight();
+		tx.concatenate(AffineTransform.getScaleInstance(xScale, yScale));
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+		return op;
 	}
 }

@@ -1,6 +1,6 @@
 package main.java.gui.util;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,7 +17,7 @@ public class Resources {
 	private static Hashtable<String, Hashtable<String, String>> stringsTable = null;
 
 	private static String localizationFilePath() {
-		UserDefaults ud = UserDefaults.sharedUserDefaults;
+		UserDefaults ud = UserDefaults.getSharedInstance();
 		String language = ud.getString(Constants.LANGUAGE_KEY);
 		return Constants.LOCALIZATION_FOLDER_PATH + language + ".txt";
 	}
@@ -77,6 +77,9 @@ public class Resources {
 	}
 
 	public static String localizedString(String string, String comment) {
+		if (string == null) {
+			return null;
+		}
 		if (Resources.stringsTable == null) {
 			Resources.loadLocalizationFile();
 		}
@@ -92,11 +95,11 @@ public class Resources {
 
 	// Images
 
-	public static Image imageNamed(String imageName) {
+	public static BufferedImage imageNamed(String imageName) {
 		String[] extensions = { ".png", ".jpg", "tiff", "gif" };
 		for (String fileExtension : extensions) {
 			String filename = imageName + fileExtension;
-			Image image = Resources.loadImageWithFilename(filename);
+			BufferedImage image = Resources.loadImageWithFilename(filename);
 			if (image != null) {
 				return image;
 			}
@@ -104,14 +107,14 @@ public class Resources {
 		return null;
 	}
 
-	public static Image localizedImageNamed(String imageName) {
-		UserDefaults ud = UserDefaults.sharedUserDefaults;
+	public static BufferedImage localizedImageNamed(String imageName) {
+		UserDefaults ud = UserDefaults.getSharedInstance();
 		String userLanguage = ud.getString(Constants.LANGUAGE_KEY);
-		Image image = Resources.imageNamed(imageName + "_" + userLanguage);
+		BufferedImage image = Resources.imageNamed(imageName + "_" + userLanguage);
 		return (image != null) ? image : Resources.imageNamed(imageName);
 	}
 
-	public static Image loadImageWithFilename(String imageFileName) {
+	public static BufferedImage loadImageWithFilename(String imageFileName) {
 		String imagePath = Constants.IMAGES_FOLDER_PATH + imageFileName;
 		try {
 			return ImageIO.read(new File(imagePath));

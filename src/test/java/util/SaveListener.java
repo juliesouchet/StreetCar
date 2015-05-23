@@ -18,11 +18,10 @@ public class SaveListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO : le FileWriter n'écrit rien !
 		String fileName = (String) JOptionPane.showInputDialog(null, null, "Sauvegarde du terrain",
 				JOptionPane.QUESTION_MESSAGE, null, null, "nom_du_terrain");
 		
-		System.out.println("nom choisi : "+fileName);
+		System.out.println("Sauvegarde : "+fileName);
 		if(fileName != null) {
 			FileWriter fw = null;
 			try {
@@ -30,7 +29,12 @@ public class SaveListener implements MouseListener {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			data.writeBoardInFile(fw);;
+			data.writeBoardInFile(fw);
+			try {
+				fw.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
