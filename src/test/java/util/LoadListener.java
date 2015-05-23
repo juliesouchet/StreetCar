@@ -2,6 +2,12 @@ package test.java.util;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -18,12 +24,25 @@ public class LoadListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("Chargement non implémenté");
-		String[] availableBoards = null;
-		String fileName = (String) JOptionPane.showInputDialog(null, null, "Sauvegarde du terrain",
-				JOptionPane.QUESTION_MESSAGE, null, availableBoards, "nom_du_terrain");
+		// TODO : Régler les conflits de path entre main et test
+		// Building a list of all pre-existing boards
+		Path path = (new File(BoardCreator.boardPath)).toPath();
+		Vector<String> availableBoards = null;
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+			availableBoards = new Vector<String>();
+			for (Path board: stream) {
+				String boardName = board.toString();
+				availableBoards.add(boardName);
+			}
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
 		
-		System.out.println("nom choisi : "+fileName);
+		
+		// Dialog window to make the user choose
+		String fileName = (String) JOptionPane.showInputDialog(null, null, "Chargement d'un terrain",
+				JOptionPane.QUESTION_MESSAGE, null, availableBoards.toArray(), "nom_du_terrain");
+		
 		if(fileName != null) {
 			Data data = null;
 			try {

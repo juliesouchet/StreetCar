@@ -2,6 +2,8 @@ package test.java.util;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -16,14 +18,20 @@ public class SaveListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("Sauvegarde non impl√©ment√©e");
-		// TODO sauvegarder le terrain courant en fichier texte + demander un nom de fichier
+		// TODO : S'assurer que le FileWriter Ècrit bien
+		System.out.println("Sauvegarde n'Ècrivant rien");
 		String fileName = (String) JOptionPane.showInputDialog(null, null, "Sauvegarde du terrain",
 				JOptionPane.QUESTION_MESSAGE, null, null, "nom_du_terrain");
 		
 		System.out.println("nom choisi : "+fileName);
 		if(fileName != null) {
-			//data.saveBoard(fileName);
+			FileWriter fw = null;
+			try {
+				fw = new FileWriter(BoardCreator.boardPath+fileName);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			data.writeBoardInFile(fw);;
 		}
 	}
 

@@ -14,18 +14,22 @@ import main.java.game.UnknownBoardNameException;
 import test.java.player.DataViewerFrame;
 
 
-public class BoardCreator implements Runnable {
-	Tile currentTile;
-	TilePanel[] individualTile;
-	DataViewerFrame frame;
-	Data data = null;
-
+public class BoardCreator implements Runnable {	
+	// TODO : la modification du terrain
+	// TODO : rotation de tuiles au clavier
+	static final String boardPath = "src/test/resources/boards/";
 	static final String tilePath = "src/main/resources/images/";
 	static final String[] tileID = {"Tile_FFFFZZ2003", "Tile_FFFFZZ2113", "Tile_FFFFZZ060123",
 			"Tile_FFFFZZ100102", "Tile_FFFFZZ100103", "Tile_FFFFZZ100203",
 			"Tile_TFFFZZ040213", "Tile_TFFFZZ02010213", "Tile_TFFFZZ02021203",
 			"Tile_TFFFZZ06031323", "Tile_TFFFZZ06121323", "Tile_TFFFZZ0401122303",
 			"Tile_FFFFZZ99"};
+	
+	Tile currentTile;
+	TilePanel[] individualTile;
+	DataViewerFrame frame;
+	Data data = null;
+
 
 	 public static void main(String[] arguments) {
 		 	BoardCreator test = new BoardCreator();
