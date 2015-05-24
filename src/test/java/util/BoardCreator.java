@@ -85,7 +85,7 @@ public class BoardCreator implements Runnable {
 	}
 	
 	public void drawTile(int x,int y) {
-		frame.getGameData().setTile(x,y, new Tile(currentTile));
+		frame.getGameData().setTile(x,y, currentTile.getClone());
 	}
 	
 	public ViewerPanel getViewerPanel() {

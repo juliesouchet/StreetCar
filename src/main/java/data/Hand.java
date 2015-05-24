@@ -3,11 +3,14 @@ package main.java.data;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import main.java.util.CloneableInterface;
+import main.java.util.Copier;
 
 
 
 
-public class Hand implements Serializable
+
+public class Hand implements Serializable, CloneableInterface<Hand>
 {
 // --------------------------------------------
 // Builder:
@@ -23,13 +26,22 @@ public class Hand implements Serializable
 	{
 		this.tileList = new LinkedList<Tile> (basicsTiles);
 	}
+	private Hand(){}
+	public Hand getClone()
+	{
+		Hand res = new Hand();
+
+		res.tileList	= (new Copier<Tile>()).copyList(tileList);
+		return res;
+	}
 
 //--------------------------------------------
 // Getter:
 //--------------------------------------------
 	public int size()	{return this.tileList.size();}
 
-	public Tile get(int k) {
+	public Tile get(int k)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -32,7 +32,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 
 	protected GameInterface	game;
 	protected TestIHM		ihm;
-	protected String		name;
+	protected String		playerName;
 	protected Color			color;
 
 // --------------------------------------------
@@ -46,10 +46,10 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		super();
 
-		this.game	= game;												// Init Player
-		this.ihm	= ihm;
-		this.name	= new String(playerName);
-		this.color	= playerColor;
+		this.game		= game;												// Init Player
+		this.ihm		= ihm;
+		this.playerName	= new String(playerName);
+		this.color		= playerColor;
 		System.out.println("\n===========================================================");
 		System.out.println("Street Car player : playerName  = " + playerName);
 		System.out.println("Street Car player : playerColor = " + playerColor);
@@ -63,10 +63,9 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public String 	getName()		throws RemoteException	{return this.name;}
+	public String 	getName()		throws RemoteException	{return this.playerName;}
 	public Color	getColor()		throws RemoteException	{return this.color;}
-	public Data		getGameData()	throws RemoteException	{return this.game.getData();}
-
+	public Data		getGameData()	throws RemoteException	{return this.game.getData(this.playerName);}
 
 // --------------------------------------------
 // Local methodes:

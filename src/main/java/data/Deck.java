@@ -7,18 +7,21 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
 
+import main.java.util.CloneableInterface;
+import main.java.util.Copier;
 
 
 
 
 
 
-public class Deck implements Serializable
+
+public class Deck implements Serializable, CloneableInterface<Deck>
 {
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	private static final long	serialVersionUID	= 1683108311031397048L;
+	public static final long	serialVersionUID	= 1683108311031397048L;
 	public static final String	stackDirectory		= "src/main/resources/images/tiles/";
 
 	private ArrayList<StackCell>	stack;		// Sorted list using the attribute remaining in a descending order
@@ -30,7 +33,6 @@ public class Deck implements Serializable
 	{
 		File f;
 		String tileList[];
-
 		this.stack	= new ArrayList<StackCell>();
 		f			= new File(stackDirectory);
 		tileList	= f.list();
@@ -41,6 +43,14 @@ public class Deck implements Serializable
 		}
 		Collections.sort(this.stack, new StackCell());
 		Collections.reverse(stack);
+	}
+	private Deck(boolean b){}
+	public Deck getClone()
+	{
+		Deck res = new Deck(false);
+		Copier<StackCell> cp = new Copier<StackCell>();
+		res.stack = cp.copyList(this.stack);
+		return res;
 	}
 
 // --------------------------------------------
@@ -78,7 +88,7 @@ public class Deck implements Serializable
 			else break;
 			sc = sc1;
 		}
-		return new Tile(res);
+		return res.getClone();
 	}
 	/**=====================================================
 	 * @return the remaining size of the stack
@@ -124,7 +134,7 @@ public class Deck implements Serializable
 // Stack cell class:
 // Gathers a list of informations corresponding to a tile
 // --------------------------------------------
-	public class StackCell implements Comparator<StackCell>, Serializable
+	public class StackCell implements Comparator<StackCell>, Serializable, CloneableInterface<StackCell>
 	{
 		// Attributes
 		private static final long serialVersionUID = -8270266931462832239L;
@@ -137,6 +147,13 @@ public class Deck implements Serializable
 		{
 			this.t			= t;
 			this.remaining	= t.getCardinal();
+		}
+		public StackCell getClone()
+		{
+			StackCell res = new StackCell();
+			res.t			= this.t.getClone();
+			res.remaining	= this.remaining;
+			return res;
 		}
 
 		// Local methods

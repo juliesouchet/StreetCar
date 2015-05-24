@@ -56,7 +56,7 @@ public class Traveler extends PlayerAutomaton {
 		// Transition to travel
 		
 		else {
-			if(currentConfig.isContructing(name)) {
+			if(!currentConfig.isMoving(name)) {
 				if(currentConfig.hasDoneFirstAction(name)) {
 					// ends current turn and starts traveling next turn
 					return Action.newStartTripNextTurnAction();

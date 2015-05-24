@@ -15,6 +15,7 @@ import main.java.data.Tile.Path;
 import main.java.game.ExceptionFullParty;
 import main.java.game.UnknownBoardNameException;
 import main.java.player.PlayerInterface;
+import main.java.util.Copier;
 import main.java.util.Direction;
 
 
@@ -35,9 +36,9 @@ public class Data implements Serializable
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				minSpeed				= 1;
 	public static final int				maxSpeed				= 10;
+	public static LinkedList<Integer>	existingLine;
+	public static LinkedList<String[][]>existingBuildingInLine;
 
-	private LinkedList<Integer>			existingLine;
-	private LinkedList<String[][]>		existingBuildingInLine;
 	private LinkedList<Integer>			remainingLine;
 	private LinkedList<String[][]>		remainingBuildingInLine;
 	private LinkedList<Tile>			initialHand;
@@ -71,14 +72,36 @@ public class Data implements Serializable
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
 		this.maxPlayerSpeed		= minSpeed;
 
-		this.existingLine		= new LinkedList<Integer>();						// Init the existing lines
-		for (int i=1; i<=maxNbrPlayer; i++)	this.existingLine.add(i);
+		Data.existingLine			= new LinkedList<Integer>();					// Init the existing lines
+		for (int i=1; i<=maxNbrPlayer; i++)	Data.existingLine.add(i);
 		this.remainingLine		= new LinkedList<Integer>(existingLine);
 
 		this.initExistingBuildingInLine(nbrBuildingInLine);							// Init the existing building
 		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
 
 		this.initInitialHand();
+	}
+	private Data(){}
+	public Data getClone(String playerName)
+	{
+		Data res = new Data();
+		Copier<Tile> 		cpT		= new Copier<Tile>();
+		Copier<String> 		cpS		= new Copier<String>();
+
+		res.remainingLine			= null;
+		res.remainingBuildingInLine	= null;
+		res.initialHand				= cpT.copyList(this.initialHand);
+
+		res.gameName				= new String(this.gameName);
+		res.board					= cpT.copyMatrix(this.board);
+		res.deck					= null;
+		res.playerInfoList			= getPlayerCopyOfPlayerInfoList(playerName);
+		res.round					= this.round;
+		res.maxPlayerSpeed			= this.maxPlayerSpeed;
+		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
+		res.host					= (this.host == null)		? null : new String(this.host);
+
+		return res;
 	}
 
 // --------------------------------------------
@@ -88,7 +111,7 @@ public class Data implements Serializable
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
 		if ((isHost) && (this.host != null))			throw new RuntimeException("The host is already set");
-		PlayerInfo pi = new PlayerInfo(p);
+		PlayerInfo pi = new PlayerInfo(p, playerName);
 		this.playerInfoList.put(playerName, pi);
 		if (isHost) this.host = new String(playerName);
 	}
@@ -102,12 +125,12 @@ public class Data implements Serializable
 // --------------------------------------------
 // Getter:
 // --------------------------------------------
-	public Tile[][]				getBoard()										{return boardCopy();}
+	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					maximumSpeed()									{return this.maxPlayerSpeed;}
-	public Tile					getTile(int x, int y)							{return new Tile(this.board[x][y]);}
+	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
 //////////////// TODO	
 	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
 	public String				getGameName()									{return new String(this.gameName);}
@@ -121,7 +144,7 @@ public class Data implements Serializable
 		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
 		return pi;
 	}
-	public boolean				isWithinnBoard(int x, int y)
+	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
 		if ((y < 0) || (y >= getHeight()))	return false;
@@ -202,7 +225,7 @@ public class Data implements Serializable
 		for (int d: ad)														// For each accesible position
 		{
 			Point next = Direction.getNeighbour(x, y, d);
-			if (isWithinnBoard(next.x, next.y))	res.add(new Tile(board[next.x][next.y]));
+			if (isWithinnBoard(next.x, next.y))	res.add(board[next.x][next.y].getClone());
 		}
 		return res;
 	}
@@ -269,14 +292,15 @@ public class Data implements Serializable
 		return res;
 	}
 	/**===============================================================
-	 * @return true if the player is currently building his tracks
+	 * @return true if the player has started his maiden travel
 	 =================================================================*/
-	public boolean isContructing(String name)
+	public boolean isMoving(String name)
 	{
 		PlayerInfo pi = this.playerInfoList.get(name);
 
 		if (pi == null) throw new RuntimeException("Unknown player: " + name);
-		return pi.history.getLast().isConstructing();
+		if (pi.history.isEmpty())	return false;
+		return pi.history.getLast().isMoving();
 	}
 	/**===============================================================
 	 * @return the positions of the buildings in the player's path
@@ -332,7 +356,7 @@ public class Data implements Serializable
 				{
 					tileFileName	= sc.next();
 					res[x][y]		= new Tile(tileFileName);
-					rotation = sc.nextInt();
+					rotation		= sc.nextInt();
 					for (int i=0; i<rotation; i++) res[x][y].turnLeft();
 				}
 			}
@@ -366,14 +390,14 @@ public class Data implements Serializable
 // Private methods:
 // --------------------------------------------
 	/**============================================
-	 * @return Creates the line cards from the correspending file
+	 * @return Creates the line cards from the corresponding file
 	 ==============================================*/
 	private void initExistingBuildingInLine(int nbrBuildingInLine)
 	{
 		File f = new File(lineFile+nbrBuildingInLine);
 		Scanner sc;
 
-		this.existingBuildingInLine = new LinkedList<String[][]>();
+		Data.existingBuildingInLine = new LinkedList<String[][]>();
 		try
 		{
 			sc = new Scanner(f);
@@ -384,7 +408,7 @@ public class Data implements Serializable
 				{
 					for (int b=0; b<nbrBuildingInLine; b++) strTab[p][b] = sc.next();
 				}
-				this.existingBuildingInLine.add(strTab);
+				Data.existingBuildingInLine.add(strTab);
 			}
 			sc.close();
 		}
@@ -461,18 +485,39 @@ public class Data implements Serializable
 		if (res.size() != 2) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
 		return res;
 	}
-	private Tile[][] boardCopy()
+	/**=====================================================================
+	 * @return a copy of the playerInfo list where for each player:
+	 * If the player is player who asks: all the informations are return
+	 * else: only the shared information are shown.  If this player has started his maiden travel, his hand is shown
+	 ========================================================================*/
+	private HashMap<String, PlayerInfo> getPlayerCopyOfPlayerInfoList(String playerName)
 	{
-		int			width	= getWidth();
-		int			height	= getHeight();
-		Tile[][]	res		= new Tile[width][height];
+		HashMap<String, PlayerInfo> res = new HashMap<String, PlayerInfo>();
+		PlayerInfo pi, piRes;
 
-		for (int w=0; w<width; w++)
+		for (String str: this.playerInfoList.keySet())
 		{
-			for (int h=0; h<height; h++)
+			pi				= this.playerInfoList.get(str);
+			piRes			= new PlayerInfo();							// Shared Information
+			piRes.player	= null;
+			piRes.playerName= new String(str);
+			piRes.line		= pi.line;
+			piRes.terminus	= (new Copier<Point>()).copyList(pi.terminus);
+			piRes.history	= (new Copier<Action>()).copyList(pi.history);
+
+			if ((str.equals(playerName)) || (this.isMoving(str)))		// Private Informations
 			{
-				res[w][h] = new Tile(board[w][h]);
+				piRes.hand						= pi.hand.getClone();
+				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
+				piRes.buildingInLine_position	= (new Copier<Point>()).copyList(pi.buildingInLine_position);
 			}
+			else
+			{
+				piRes.hand						= null;
+				piRes.buildingInLine_name		= null;
+				piRes.buildingInLine_position	= null;
+			}
+			res.put(str, piRes);
 		}
 		return res;
 	}
@@ -480,11 +525,12 @@ public class Data implements Serializable
 // --------------------------------------------
 // Player Info class:
 // --------------------------------------------
-	private class PlayerInfo implements Serializable
+	public class PlayerInfo implements Serializable
 	{
 		// Attributes
 		private static final long	serialVersionUID = -7495867115345261352L;
 		public PlayerInterface		player;
+		public String				playerName;
 		public Hand					hand;
 		public int					line;
 		public String[]				buildingInLine_name;
@@ -493,22 +539,24 @@ public class Data implements Serializable
 		public LinkedList<Action>	history;
 
 		// Builder
-		public PlayerInfo(PlayerInterface pi)
+		public PlayerInfo(PlayerInterface pi, String playerName)
 		{
 			Random rnd = new Random();
 			int i;
 
-			this.player = pi;
-			this.history= new LinkedList<Action>();
-			this.hand	= new Hand(initialHand);
-			i			= rnd.nextInt(remainingLine.size());						// Draw a line
-			this.line	= remainingLine.get(i);
+			this.player		= pi;
+			this.playerName	= new String(playerName);
+			this.history	= new LinkedList<Action>();
+			this.hand		= new Hand(initialHand);
+			i				= rnd.nextInt(remainingLine.size());						// Draw a line
+			this.line		= remainingLine.get(i);
 			remainingLine.remove(i);
-			i			= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
+			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
 			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
 			remainingBuildingInLine.remove(i);
-			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);// Init the building line position
-			this.terminus= getTerminusPosition(this.line);							// Init the terminus position
+			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
+			this.terminus= getTerminusPosition(this.line);								// Init the terminus position
 		}
+		public PlayerInfo(){}
 	}
 }

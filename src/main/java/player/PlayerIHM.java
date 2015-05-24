@@ -59,7 +59,6 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public String getName()	throws RemoteException	{return super.name;}
 	/**=========================================================================
 	 * @return Creates a new Game.  If gameCreation==true the application is launched
 	 * @param gameCreation equals true if the player shelters a new game, and false if the player join an existing game
@@ -85,11 +84,7 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 		else	this.game	= Game.getRemoteGame(applicationIP, gameName);		// Remote application pointer
 		new PlayerIHM(gameCreation, playerName, playerColor, game, ihm);		// Player Creation
 	}
-/*	public Data getGameData() throws RemoteException
-	{
-		return super.getGameData();
-	}
-*/
+
 // --------------------------------------------
 // Local methodes:
 // --------------------------------------------

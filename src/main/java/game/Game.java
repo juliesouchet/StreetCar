@@ -93,7 +93,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public Data getData() throws RemoteException	{return this.data;}
+	public Data getData(String playerName) throws RemoteException
+	{
+		return this.data.getClone(playerName);
+	}
 	public void onJoinRequest(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)

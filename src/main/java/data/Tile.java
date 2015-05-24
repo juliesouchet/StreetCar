@@ -3,6 +3,8 @@ package main.java.data;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import main.java.util.CloneableInterface;
+import main.java.util.Copier;
 import main.java.util.Direction;
 
 
@@ -20,7 +22,7 @@ import main.java.util.Direction;
 
 
 
-public class Tile implements Serializable
+public class Tile implements Serializable, CloneableInterface<Tile>
 {
 // --------------------------------------------
 // Attributes:
@@ -50,19 +52,6 @@ public class Tile implements Serializable
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public Tile(Tile t)
-	{
-		this.tileID					= new String(t.tileID);
-		this.isTree					= t.isTree;
-		this.isBuilding				= t.isBuilding;
-		this.isStop					= t.isStop;
-		this.isTerminus				= t.isTerminus;
-		this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
-		this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
-		this.cardinal				= t.cardinal;
-		this.nbrLeftRotation		= t.nbrLeftRotation;
-		this.pathList				= new LinkedList<Path>(t.pathList);
-	}
 	public Tile(LinkedList<Path> pathList, Tile t) throws RuntimeException
 	{
 		if ((t.isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
@@ -77,6 +66,24 @@ public class Tile implements Serializable
 		this.cardinal				= t.cardinal;
 		this.nbrLeftRotation		= t.nbrLeftRotation;
 		this.pathList				= new LinkedList<Path>(pathList);
+	}
+	private Tile(){}
+	public Tile getClone()
+	{
+		Tile res = new Tile();
+		Copier<Path> cp = new Copier<Path>();
+
+		res.tileID				= new String(this.tileID);
+		res.isTree				= this.isTree;
+		res.isBuilding			= this.isBuilding;
+		res.isStop				= this.isStop;
+		res.isTerminus			= this.isTerminus;
+		res.buildingDescription	= (this.buildingDescription == null) ? null : new String(this.buildingDescription);
+		res.terminusDescription	= (this.terminusDescription == null) ? null : new Integer(this.terminusDescription);
+		res.cardinal			= this.cardinal;
+		res.nbrLeftRotation		= this.nbrLeftRotation;
+		res.pathList			= cp.copyList(this.pathList);
+		return res;
 	}
 	public Tile(String imageFileName)
 	{
@@ -147,10 +154,6 @@ public class Tile implements Serializable
 			}
 		}
 		catch (Exception e){throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
-	}
-	public Tile cloneTile(Tile t)
-	{
-		return new Tile(t);
 	}
 
 // --------------------------------------------
@@ -255,7 +258,7 @@ public class Tile implements Serializable
 // Path class :
 // Represents a path between two cardinal directions
 // --------------------------------------------
-	public class Path implements Serializable
+	public class Path implements Serializable, CloneableInterface<Path>
 	{
 		// Attributes
 		private static final long serialVersionUID = 1L;
@@ -269,6 +272,14 @@ public class Tile implements Serializable
 			Direction.checkDirection(d1);
 			this.end0	= d0;
 			this.end1	= d1;
+		}
+		private Path(){}
+		public Path getClone()
+		{
+			Path res = new Path();
+			res.end0 = this.end0;
+			res.end1 = this.end1;
+			return res;
 		}
 		// Setter
 		public void turnLeft()	{end0 = Direction.turnLeft(end0);	end1 = Direction.turnLeft(end1);}
