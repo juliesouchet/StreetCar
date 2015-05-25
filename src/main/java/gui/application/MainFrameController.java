@@ -34,7 +34,8 @@ public class MainFrameController extends FrameController implements ComponentLis
         this.frame.setContentPane(new InGamePanel());
         this.frame.getContentPane().setLayout(null); 
         this.frame.addComponentListener(this);
-        this.frame.setSize(1200, 760);
+        this.frame.setSize(1250, 840);
+        //this.frame.setMinimumSize(new Dimension(1250, 840));
 	}
 	
 	private void setupMenuBar() {
