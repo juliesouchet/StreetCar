@@ -62,6 +62,7 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 	 * The returned element is removed from the stack.
 	 * The stack is kept sorted
 	 =======================================================*/
+	static int test = 0;
 	public Tile drawTile()
 	{
 		StackCell sc = null, sc1;
@@ -81,10 +82,12 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 		}
 		if (s >= size)	throw new RuntimeException();
 		sc.remaining --;											// Remove the element from the stack
+		
+		int test2 = 0;
 		for (int j=i+1; j<size-1; j++)								// Keep the stack sorted
 		{
 			sc1 = this.stack.get(j);
-			if (sc.remaining >= sc.remaining) Collections.swap(stack, j, j+1);
+			if (sc1.remaining > sc.remaining) Collections.swap(stack, j, j+1);
 			else break;
 			sc = sc1;
 		}

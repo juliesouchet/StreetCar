@@ -4,9 +4,11 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
@@ -23,9 +25,9 @@ import main.java.util.Direction;
 
 public class Data implements Serializable
 {
-// --------------------------------------------
-// Attributes:
-// --------------------------------------------
+	// --------------------------------------------
+	// Attributes:
+	// --------------------------------------------
 	private static final long			serialVersionUID		= -2740586808331187527L;
 	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
@@ -52,16 +54,16 @@ public class Data implements Serializable
 	private String[]					playerOrder;  // TODO a choisir lors du debut de partie
 	private String						host;
 
-// --------------------------------------------
-// Builder:
-// --------------------------------------------
+	// --------------------------------------------
+	// Builder:
+	// --------------------------------------------
 	public Data(String gameName, String boardName, int nbrBuildingInLine) throws UnknownBoardNameException, RuntimeException
 	{
 		File f = new File(boardDirectory + boardName);
 		Scanner sc;
 
 		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
-			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
+				(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
 		this.gameName			= new String(gameName);
 		try						{sc = new Scanner(f);}
@@ -104,9 +106,9 @@ public class Data implements Serializable
 		return res;
 	}
 
-// --------------------------------------------
-// Setter:
-// --------------------------------------------
+	// --------------------------------------------
+	// Setter:
+	// --------------------------------------------
 	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
@@ -122,16 +124,16 @@ public class Data implements Serializable
 		this.playerInfoList.remove(playerName);
 	}
 
-// --------------------------------------------
-// Getter:
-// --------------------------------------------
+	// --------------------------------------------
+	// Getter:
+	// --------------------------------------------
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					maximumSpeed()									{return this.maxPlayerSpeed;}
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
-//////////////// TODO	
+	//////////////// TODO	
 	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
@@ -172,7 +174,7 @@ public class Data implements Serializable
 		for (int d: accessibleDirection)																// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
 			Point neighbor = Direction.getNeighbour(x, y, d);
-////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
+			////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
 			Tile neighborT = this.board[x][y];
 			if ((this.isOnEdge(neighbor.x, neighbor.y)) && (!neighborT.isTerminus()))	return false;	//		Rule A
 			if (neighborT.isEmpty())													continue;		//		Rule E (step 1)
@@ -386,9 +388,9 @@ public class Data implements Serializable
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
 
-// --------------------------------------------
-// Private methods:
-// --------------------------------------------
+	// --------------------------------------------
+	// Private methods:
+	// --------------------------------------------
 	/**============================================
 	 * @return Creates the line cards from the corresponding file
 	 ==============================================*/
@@ -522,9 +524,9 @@ public class Data implements Serializable
 		return res;
 	}
 
-// --------------------------------------------
-// Player Info class:
-// --------------------------------------------
+	// --------------------------------------------
+	// Player Info class:
+	// --------------------------------------------
 	public class PlayerInfo implements Serializable
 	{
 		// Attributes
@@ -547,7 +549,8 @@ public class Data implements Serializable
 			this.player		= pi;
 			this.playerName	= new String(playerName);
 			this.history	= new LinkedList<Action>();
-			this.hand		= new Hand(initialHand);
+			//this.hand		= new Hand(initialHand);
+			this.hand		= new Hand();
 			i				= rnd.nextInt(remainingLine.size());						// Draw a line
 			this.line		= remainingLine.get(i);
 			remainingLine.remove(i);
@@ -558,5 +561,33 @@ public class Data implements Serializable
 			this.terminus= getTerminusPosition(this.line);								// Init the terminus position
 		}
 		public PlayerInfo(){}
+	}
+
+	public String getHostName() {
+		return host;
+	}
+	public void randomizePlayerOrder() 
+	{
+		playerOrder = new String[getNbrPlayer()];
+		List<String> tempPlayers = new ArrayList<String>(getPlayerNameList());
+		int orderedIndex = 0;
+		while(!tempPlayers.isEmpty())
+		{
+			Random randomGenerator = new Random();
+			int index = randomGenerator.nextInt(tempPlayers.size());
+			String player = tempPlayers.get(index);
+			tempPlayers.remove(index);
+			playerOrder[orderedIndex] = player;
+			orderedIndex++;
+		}
+	}
+	public String[] getPlayerOrder() {
+		return playerOrder;
+	}
+	public PlayerInfo getPlayerInfo(String player) {
+		return playerInfoList.get(player);
+	}
+	public Deck getDeck() {
+		return deck;
 	}
 }

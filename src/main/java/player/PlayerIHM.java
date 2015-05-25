@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 
 import javax.swing.SwingUtilities;
 
+import main.java.data.Tile;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -14,14 +15,6 @@ import main.java.game.GameInterface;
 import main.java.game.UnknownBoardNameException;
 import main.java.util.NetworkTools;
 import test.java.player.TestIHM;
-
-
-
-
-
-
-
-
 
 @SuppressWarnings("serial")
 public class PlayerIHM extends PlayerAbstract implements Runnable
@@ -50,9 +43,9 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerColor 									(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 									    (caught by IHM)
 	 =======================================================================*/
-	public PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		super(isHost, playerName, playerColor, app, ihm);
+		super(isHost, playerName, playerColor, app);
 	}
 
 // --------------------------------------------
@@ -82,7 +75,13 @@ public class PlayerIHM extends PlayerAbstract implements Runnable
 			this.game		= Game.getRemoteGame(localIP, gameName);			// Remote application pointer
 		}
 		else	this.game	= Game.getRemoteGame(applicationIP, gameName);		// Remote application pointer
-		new PlayerIHM(gameCreation, playerName, playerColor, game, ihm);		// Player Creation
+		new PlayerIHM(gameCreation, playerName, playerColor, game);		// Player Creation
+	}
+	
+	@Override
+	public void distributeTile(Tile t) throws RemoteException {
+		// TODO Auto-generated method stub
+		
 	}
 
 // --------------------------------------------

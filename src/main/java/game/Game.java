@@ -5,10 +5,15 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Set;
 
 import main.java.data.Data;
+import main.java.data.Data.PlayerInfo;
+import main.java.data.Tile;
 import main.java.player.PlayerInterface;
+import main.java.util.NetworkTools;
 
 
 
@@ -49,7 +54,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		try																			// Create the player's remote reference
 		{
 			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
-			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+			
+			try{ java.rmi.registry.LocateRegistry.createRegistry(applicationPort); }
+			catch (ExportException e){} // registry already created
+			
 			Naming.rebind(url, this);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
@@ -62,6 +70,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println(messageHeader + "Start waiting for connexion request");
 		System.out.println("===========================================================\n");
 	}
+	
+	public Game() throws RemoteException, UnknownBoardNameException, RuntimeException
+	{
+		this("StreetCar", NetworkTools.firstFreeSocketInfo().IP, "newOrleans", 3);
+	}
+	
 	/**=======================================================================
 	 * @return Creates a remote application cloned to the real application at the given ip
 	 * @throws NotBoundException 		: The web host is not configured	(throw RuntimeException)
@@ -93,10 +107,16 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public Data getData(String playerName) throws RemoteException
+	public Data getDataClone(String playerName) throws RemoteException
 	{
 		return this.data.getClone(playerName);
 	}
+	
+	public Data getData()
+	{
+		return data;
+	}
+	
 	public void onJoinRequest(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
@@ -176,5 +196,34 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			if (p.getColor().equals(c))	return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void hostStartGame(String playerName) throws RemoteException, ExceptionTooFewPlayers, ExceptionTooManyPlayers, ExceptionOnlyHostCanStartGame {
+		Set<String> dataPlayers = data.getPlayerNameList();
+		int nbOfPlayers = dataPlayers.size();
+		
+		if(nbOfPlayers < 2) throw new ExceptionTooFewPlayers();
+		if(nbOfPlayers > Data.maxNbrPlayer) throw new ExceptionTooManyPlayers();
+		if(!data.getHostName().equals(playerName)) throw new ExceptionOnlyHostCanStartGame();
+		
+		data.randomizePlayerOrder();
+		for(int i = 0; i < Data.initialHandSize; i++)
+		{
+			for(String player : data.getPlayerOrder())
+			{
+				dealATileTo(player);
+			}
+		}
+	}
+
+	private void dealATileTo(String player) throws RemoteException {
+		Tile t = data.getDeck().drawTile();
+
+		PlayerInfo dataPlayer = data.getPlayerInfo(player);
+		dataPlayer.hand.addTile(t);
+		
+		PlayerInterface remotePlayer = data.getPlayer(player);
+		remotePlayer.distributeTile(t);
 	}
 }

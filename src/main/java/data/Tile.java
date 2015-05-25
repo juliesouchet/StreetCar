@@ -240,6 +240,19 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		int l = tileNamePrefix.length() + nbrBoolAttrChar + nbrBuildingDescriptionChar;
 		return Integer.parseInt(tileID.substring(l, l+nbrTerminusDescriptionChar));
 	}
+	
+	public String toString()
+	{
+		String str = "";
+		// TODO better toString that takes into account trees, buildings etc...
+		str += "{ ";
+		for(Path p : pathList)
+		{
+			str += "[" + p.end0 + " ; " + p.end1 + "] ";
+		}
+		str += "}";
+		return str;
+	}
 
 // --------------------------------------------
 // Private local methods

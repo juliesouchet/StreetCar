@@ -14,9 +14,9 @@ public interface GameInterface extends Remote
 {
 	public void		onJoinRequest		(PlayerInterface player, boolean isHost)				throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
 	public boolean	quitGame			(String playerName, String gameName)					throws RemoteException;
-	public Data		getData				(String playerName)										throws RemoteException;
-/*	public void		hostStartGame		(String playerName)										throws RemoteException;
-	public void		undoAttempt			(String playerName)										throws RemoteException;
+	public Data		getDataClone				(String playerName)										throws RemoteException;
+	public void		hostStartGame		(String playerName)										throws RemoteException, ExceptionTooFewPlayers, ExceptionTooManyPlayers, ExceptionOnlyHostCanStartGame;
+/*	public void		undoAttempt			(String playerName)										throws RemoteException;
 	public void		undoTurn			(String playerName)										throws RemoteException;
 	public void		placeTile			(String playerName, Tile t, Point position)				throws RemoteException;
 	public void		moveTram			(String playerName, Point dest)							throws RemoteException;
