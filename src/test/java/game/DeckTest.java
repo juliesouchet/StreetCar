@@ -3,7 +3,8 @@ package test.java.game;
 import main.java.data.Deck;
 import main.java.data.Tile;
 
-public class DeckTest {
+public class DeckTest
+{
 	
 	private static int nbOfCards = 20;
 	
