@@ -11,15 +11,13 @@ import java.util.LinkedList;
 import main.java.data.Data;
 import main.java.data.Hand;
 import main.java.data.Tile;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
-import main.java.game.ExceptionOnlyHostCanStartGame;
-import main.java.game.ExceptionTooFewPlayers;
-import main.java.game.ExceptionTooManyPlayers;
+import main.java.game.ExceptionUnknownBoardName;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.Game;
 import main.java.game.GameInterface;
-import main.java.game.UnknownBoardNameException;
 import main.java.player.PlayerAbstract;
 
 import org.junit.Test;
@@ -39,21 +37,23 @@ public class GameTest {
 		}
 
 		@Override
-		public void distributeTile(Tile t) throws RemoteException {
+		public void dealTile(Tile t) throws RemoteException {
 			hand.addTile(t);
+		}
+
+		@Override
+		public void gameHasChanged(Data data) throws RemoteException {
+			// TODO Auto-generated method stub
+
 		}
 	}
 
 	@Test
-	public void gameAnsPlayerCreationTest()
+	public void gameAndPlayerCreationTest()
 	{
 		Game game = null;
-		try {
-			game = new Game();
-		} catch (RemoteException | UnknownBoardNameException | RuntimeException e) {
-			fail("Exception was called");
-			e.printStackTrace();
-		}
+		try { game = new Game(); } 
+		catch (RemoteException | ExceptionUnknownBoardName | RuntimeException e1) { e1.printStackTrace(); }
 		assertNotNull(game);
 
 		try {
@@ -67,7 +67,7 @@ public class GameTest {
 		}
 
 		try {
-			assertEquals(game.getDataClone("host").getNbrPlayer(), 4);
+			assertEquals(game.getData("host").getNbrPlayer(), 4);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -85,23 +85,23 @@ public class GameTest {
 			new ValzTestPlayer(false, "guest3", Color.orange, game);
 			new ValzTestPlayer(false, "guest4", Color.green, game);
 		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName | ExceptionUsedPlayerColor e) { e.printStackTrace(); }
-		
+
 		try 
 		{
 			game.hostStartGame("guest2");
-			fail("only host should be able to start game");
-		} 
-		catch (RemoteException | ExceptionTooFewPlayers | ExceptionTooManyPlayers e) {e.printStackTrace(); }
-		catch (ExceptionOnlyHostCanStartGame e) {	} // this exception should be raised
+			fail("host wasnt game creator error");
+		}
+		catch (ExceptionForbiddenAction e1) { } // this exception should be raised
+		catch (RemoteException e) { e.printStackTrace(); }
 
 		try { game.hostStartGame("host"); } 
-		catch (RemoteException | ExceptionTooFewPlayers | ExceptionTooManyPlayers | ExceptionOnlyHostCanStartGame e) { e.printStackTrace(); }
+		catch (RemoteException e) { e.printStackTrace(); }
 
 		String[] playerOrder = data.getPlayerOrder();
 		assertNotNull(playerOrder);
 		assertEquals(playerOrder.length, 4);
-		
-		
+
+
 		for(String player : playerOrder)
 		{
 			LinkedList<Tile> playerHand = data.getPlayerInfo(player).hand.getTiles();
@@ -114,21 +114,18 @@ public class GameTest {
 			}
 			System.out.println("");
 		}
-		
-		
-		
+
+
+
 		//TODO test if each player has same hand as game
 	}
 
 	public Game createBasicGame() {
 		Game game = null;
-		try {
-			game = new Game();
-		} catch (RemoteException | UnknownBoardNameException | RuntimeException e) {
-			e.printStackTrace();
-		}
+		try { game = new Game(); } 
+		catch (RemoteException | ExceptionUnknownBoardName | RuntimeException e) { e.printStackTrace(); }
 		assertNotNull(game);
-		
+
 		return game;
 	}
 }

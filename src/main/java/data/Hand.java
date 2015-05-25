@@ -22,7 +22,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 //--------------------------------------------
 // Builder:
 //--------------------------------------------
-	public Hand( LinkedList<Tile> basicsTiles)
+	public Hand(LinkedList<Tile> basicsTiles)
 	{
 		this.tileList = new LinkedList<Tile> (basicsTiles);
 	}

@@ -56,7 +56,7 @@ public class DataViewerFrame extends JFrame {
 		
 		protected void paintComponent(Graphics g) {
 			super.paintComponents(g);
-			
+
 			if (this.gameData == null) {
 				return;
 			}

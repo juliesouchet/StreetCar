@@ -54,16 +54,20 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		System.out.println("Street Car player : ready and logged");
 		System.out.println("===========================================================\n");
 
-		this.game.onJoinRequest(this, isHost);							// Log the player to the application
+		this.game.onJoinGame(this, isHost);								// Log the player to the application
 	}
 
 // --------------------------------------------
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public String 	getName()		throws RemoteException	{return this.playerName;}
+	public String 	getPlayerName()	throws RemoteException	{return this.playerName;}
 	public Color	getColor()		throws RemoteException	{return this.color;}
-	public Data		getGameData()	throws RemoteException	{return this.game.getDataClone(this.playerName);}
+	public Data		getGameData()	throws RemoteException	{return this.game.getData(this.playerName);}
+	public void		hostStartGame()	throws RemoteException
+	{
+		this.game.hostStartGame(playerName);
+	}
 
 // --------------------------------------------
 // Local methodes:
