@@ -88,6 +88,7 @@ public class InGamePanel extends Panel {
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(playersSidebarPanel);
+    	scrollPane.getVerticalScrollBar().setUnitIncrement(16);
     	scrollPane.setHorizontalScrollBar(null);
     	this.add(scrollPane, BorderLayout.WEST);
     	
