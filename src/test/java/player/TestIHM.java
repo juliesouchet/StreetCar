@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
+import main.java.data.Data;
 import main.java.player.PlayerIHM;
 
 
@@ -16,13 +17,15 @@ public class TestIHM
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
-	
+	private DataViewerFrame frame;
+
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public TestIHM(PlayerIHM player)
+	public TestIHM()
 	{
 		Scanner sc = new Scanner(System.in);
+		PlayerIHM player = null;
 		String str, name, gameName, ip;
 		boolean create;
 
@@ -46,18 +49,44 @@ String boardName = "newOrleans";	/////// Nom par defaut
 int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 
-		try					{player.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip);}
+		try					{player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
-		DataViewerFrame frame = new DataViewerFrame();
-		try						{frame.setGameData(player.getGameData());}
+		this.frame = new DataViewerFrame();
+		try						{this.frame.setGameData(player.getGameData());}
 		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
 		frame.setVisible(true);
 
+		if (create)
+		{
+			str = "";
+			while (!str.equals("start"))
+			{
+				System.out.print("\n\n\tEnter \"start\" to start the game: ");
+				str = sc.next();
+			}
+			try					{player.hostStartGame();}
+			catch (Exception e)	{e.printStackTrace();}
+		}
 		sc.close();
 	}
 
+// --------------------------------------------
+// Local methods:
+// --------------------------------------------
+	public void refresh(Data data)
+	{
+		System.out.println("------------------------------------");
+		System.out.println("Refresh");
+		System.out.println("\t Host\t: "	+ data.getHost());
+		System.out.println("\t Round\t: "	+ data.getRound());
+		this.frame.setGameData(data);
+	}
+
+// --------------------------------------------
+// Private Local methods:
+// --------------------------------------------
 	private Color askColor(Scanner sc)
 	{
 		String color;
@@ -71,8 +100,4 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 			else if	(color.equals("gray"))	return Color.gray;
 		}
 	}
-
-// --------------------------------------------
-// Local methodes:
-// --------------------------------------------
 }

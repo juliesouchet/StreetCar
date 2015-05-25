@@ -12,7 +12,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import main.java.data.Data;
-import main.java.game.UnknownBoardNameException;
+import main.java.game.ExceptionUnknownBoardName;
 import test.java.player.DataViewerFrame;
 
 public class LoadListener implements MouseListener {
@@ -50,7 +50,7 @@ public class LoadListener implements MouseListener {
 				try {
 					Data.boardDirectory = "";
 					data = new Data("Board Creator", fileName, 2);
-				} catch (UnknownBoardNameException | RuntimeException e1) {
+				} catch (ExceptionUnknownBoardName | RuntimeException e1) {
 					e1.printStackTrace();
 				}		
 				frame.setGameData(data);

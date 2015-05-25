@@ -82,7 +82,7 @@ public class Traveler extends PlayerAutomaton {
 			ListIterator<Point> iterator = itinerary.listIterator();
 			LinkedList<Point> streetcarMovement = new LinkedList<Point>();
 			i = 0;
-			while(iterator.hasNext() && i < currentConfig.maximumSpeed()) {
+			while(iterator.hasNext() && i < currentConfig.getMaximumSpeed()) {
 				streetcarMovement.add(iterator.next());
 				i++;
 			}

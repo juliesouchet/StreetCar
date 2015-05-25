@@ -26,11 +26,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	private static final String messageHeader			= "Street Car application: ";
+	public static final String	gameMessageHeader		= "Street Car application: ";
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 
 	private Data	data;
+	private Engine	engine;
+	private Thread	engineThread;
+	private Object	engineLock;
 
 // --------------------------------------------
 // Builder:
@@ -38,10 +41,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
-	 * @throws UnknownBoardNameException: 					(caught by the IHM)
+	 * @throws ExceptionUnknownBoardName: 					(caught by the IHM)
 	 * @throws RuntimeException 		: 
 	 =========================================================================*/
-	public Game(String gameName, String appIP, String boardName, int nbrBuildingInLine) throws RemoteException, UnknownBoardNameException, RuntimeException
+	public Game(String gameName, String appIP, String boardName, int nbrBuildingInLine) throws RemoteException, ExceptionUnknownBoardName, RuntimeException
 	{
 		super();
 		String url = null;
@@ -54,12 +57,16 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
-		this.data		= new Data(gameName, boardName, nbrBuildingInLine);			// Init application
+		this.data			= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
+		this.engineLock		= new Object();
+		this.engine			= new Engine(this.engineLock);
+		this.engineThread	= new Thread(this.engine);
+		this.engineThread	.start();
 
 		System.out.println("\n===========================================================");
-		System.out.println(messageHeader + "URL = " + url);
-		System.out.println(messageHeader + "ready");
-		System.out.println(messageHeader + "Start waiting for connexion request");
+		System.out.println(gameMessageHeader + "URL = " + url);
+		System.out.println(gameMessageHeader + "ready");
+		System.out.println(gameMessageHeader + "Start waiting for connexion request");
 		System.out.println("===========================================================\n");
 	}
 	/**=======================================================================
@@ -97,70 +104,76 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	{
 		return this.data.getClone(playerName);
 	}
-	public void onJoinRequest(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
 		{
 			System.out.println("\n===========================================================");
-			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
-			System.out.println(messageHeader + "Refusing player, party is currently full.");
+			System.out.println(gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
+			System.out.println(gameMessageHeader + "Refusing player, party is currently full.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionFullParty();
 		}
-		else if (this.data.containsPlayer(player.getName()))
+		else if (this.data.containsPlayer(player.getPlayerName()))
 		{
 			System.out.println("\n===========================================================");
-			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
-			System.out.println(messageHeader + "Refusing player, name already taken.");
+			System.out.println(gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
+			System.out.println(gameMessageHeader + "Refusing player, name already taken.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionUsedPlayerName();
 		}
 		else if (this.usedColor(player.getColor()))
 		{
 			System.out.println("\n===========================================================");
-			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
-			System.out.println(messageHeader + "Refusing player, color \"" + player.getColor() + "\"  already taken.");
+			System.out.println(gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
+			System.out.println(gameMessageHeader + "Refusing player, color \"" + player.getColor() + "\"  already taken.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionUsedPlayerColor();
 		}
 		else
 		{
-			this.data.addPlayer(player, player.getName(), isHost);
+			this.data.addPlayer(player, player.getPlayerName(), isHost);
 			System.out.println("\n===========================================================");
-			System.out.println(messageHeader + "join request from player : \"" + player.getName() + "\"");
-			System.out.println(messageHeader + "accepted player");
-			System.out.println(messageHeader + "NbrPlayer: " + this.data.getNbrPlayer());
+			System.out.println(Game.gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
+			System.out.println(Game.gameMessageHeader + "accepted player");
+			System.out.println(Game.gameMessageHeader + "NbrPlayer: " + this.data.getNbrPlayer());
 			System.out.println("===========================================================\n");
 		}
 	}
-	public boolean quitGame(String gameName, String playerName) throws RemoteException
+	public boolean onQuitGame(String playerName) throws RemoteException
 	{
 		String resS = null;
 		boolean res= false;
 
-		if		(!this.data.getGameName().equals(gameName))		{resS = "Unknown game name"; res = false;}
-		else
+		for (String name: this.data.getPlayerNameList())
 		{
-			for (String name: this.data.getPlayerNameList())
+			if (name.equals(playerName))
 			{
-				if (name.equals(playerName))
-				{
-					this.data.removePlayer(name);
-					resS= "player logged out";
-					res = true;
-					break;
-				}
+				this.data.removePlayer(name);
+				resS= "player logged out";
+				res = true;
+				break;
 			}
-			if (resS == null)	{resS = "player not found in the local list";	res = false;}
 		}
+		if (resS == null)	{resS = "player not found in the local list";	res = false;}
 
 		System.out.println("\n===========================================================");
-		System.out.println(messageHeader + "quitGame");
-		System.out.println(messageHeader + "logout result : " + resS);
-		System.out.println(messageHeader + "gameName      : " + gameName);
-		System.out.println(messageHeader + "playerName    : " + playerName);
+		System.out.println(gameMessageHeader + "quitGame");
+		System.out.println(gameMessageHeader + "logout result : " + resS);
+		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 		return res;
+	}
+	public void hostStartGame(String playerName) throws RemoteException
+	{
+		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
+
+		this.engine.addAction(playerName, this.data, "hostStartGame");
+		synchronized(this.engineLock)
+		{
+			try					{this.engineLock.notify();}
+			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
+		}
 	}
 
 // --------------------------------------------

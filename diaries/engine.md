@@ -78,3 +78,23 @@ Rencontre avec Mr LACHAIZE Renaud responsable de l'UE Systéme et Réseaux.   Ex
   Déboguage de ces classes en utilisant:
   * L'IHM basique en ligne de commande implanté le lundi 18 mai (test la création et l'initialisation des données).
   * Le créateur de terrain implanté par l'équipe IA.
+
+-------------------
+
+### Jour 7 : Dimanche 24 mai
+
+Nous avons géré le probléme de la communication du modéle (classe Data) aux différentes parties:
+  * La classe Data est instenciée par le thread du jeu (serveur).  Il n'en existe qu'un seul exemplaire.  Pour des raisons de sécurité et de serialisabilité, nous n'avons déclaré qu'un seul constructeur public de cette classe (appelé par le thread de la partie Game (serveur)).
+  * Pour pouvoir communiquer l'état du modéle aux différents joueurs, nous avons créé une méthode de clonage à la classe Data.  Cette méthode, de type deep clone, dépend de l'identifiant du joueur à qui est destinée le clone.  Ainsi, l'ensemble des données partagées par tous les joueurs ainsi que les données privées spécifiques au joueur destinataire sont clonées.   Le fait que ce clonage soit de type deep clone assure la sécurité du modéle à l'intérieur de la classe Game (aucun pointeur sur une adresse mémoire de Game n'est comuniquée).
+  * Pour pouvoir communiquer l'état du modéle aux différents joueur à travers le réseau, nous avons rendu la classe Data, ainsi que les différentes classes de données qu'elle contient, serializable.
+
+-------------------
+
+### Jour 6 : Lundi 25 mai
+  Creation de la classe Engine.java.
+
+  Changement de l'architecture de la partie moteur:
+  * La classe Game reçoit une requête des joueurs.  Si la requête est impossible, une exception est levée.  Sinon, la requête est placée dans une liste d'attente à destination du thread de la classe Engine.
+  * La classe Engine contient une fille d'attente connue par Game.  Le thread de la classe Engine est réveillé lorsqu'un nouvel élément est ajouté à la file.
+
+  Nous avons assuré et testé la cohérence des données du thread Engine.

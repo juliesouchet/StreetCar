@@ -14,9 +14,11 @@ import main.java.data.Data;
 
 public interface PlayerInterface extends Remote
 {
-	public String	getName				()											throws RemoteException;
+	public String	getPlayerName		()											throws RemoteException;
 	public Color	getColor			()											throws RemoteException;
 	public Data		getGameData			()											throws RemoteException;
+	public void		hostStartGame		()											throws RemoteException;
+	public void		gameHasChanged		(Data data)									throws RemoteException;
 /*	public boolean	isHumanPlayer		()											throws RemoteException;
 	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;

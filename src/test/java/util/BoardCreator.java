@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 
 import main.java.data.Data;
 import main.java.data.Tile;
-import main.java.game.UnknownBoardNameException;
+import main.java.game.ExceptionUnknownBoardName;
 import test.java.player.DataViewerFrame;
 import test.java.player.DataViewerFrame.ViewerPanel;
 
@@ -40,7 +40,7 @@ public class BoardCreator implements Runnable {
 		// Lecture du terrain initial
 		try {
 			data = new Data("Board Creator", "newOrleans", 2);
-		} catch (UnknownBoardNameException | RuntimeException e) {
+		} catch (ExceptionUnknownBoardName | RuntimeException e) {
 			e.printStackTrace();
 		}
 		frame = new DataViewerFrame();

@@ -84,7 +84,7 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 		for (int j=i+1; j<size-1; j++)								// Keep the stack sorted
 		{
 			sc1 = this.stack.get(j);
-			if (sc.remaining >= sc.remaining) Collections.swap(stack, j, j+1);
+			if (sc1.remaining > sc.remaining) Collections.swap(stack, j, j+1);
 			else break;
 			sc = sc1;
 		}
