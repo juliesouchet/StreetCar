@@ -381,7 +381,7 @@ public class Data implements Serializable
 				for (int x=0; x<width; x++)
 				{
 					tileFileName	= sc.next();
-					res[x][y]		= new Tile(tileFileName);
+					res[x][y]		= Tile.parseTile(tileFileName);
 					rotation		= sc.nextInt();
 					for (int i=0; i<rotation; i++) res[x][y].turnLeft();
 				}
@@ -456,7 +456,7 @@ public class Data implements Serializable
 			for (int i=0; i<initialHandSize; i++)
 			{
 				tileName = sc.next();
-				this.initialHand.add(new Tile(tileName));
+				this.initialHand.add(Tile.parseTile(tileName));
 			}
 			sc.close();
 		}
