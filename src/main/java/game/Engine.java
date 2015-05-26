@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 import main.java.data.Data;
-import main.java.data.Data.PlayerInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
 
@@ -19,6 +18,7 @@ public class Engine implements Runnable
 	private LinkedList<EngineAction>	actionList;
 	private EngineAction				toExecute;
 	private Data						data;
+	private int                         currentPlayerIndex;
 
 	// --------------------------------------------
 	// Builder:
@@ -83,27 +83,14 @@ public class Engine implements Runnable
 
 	public void hostStartGame() throws RemoteException
 	{
-//		Set<String> dataPlayers = data.getPlayerNameList();
-//		int nbOfPlayers = dataPlayers.size();
-
 		data.randomizePlayerOrder();
-//		for(int i = 0; i < Data.initialHandSize; i++)
-//		{
-//			for(String player : data.getPlayerOrder())
-//			{
-//				dealATileTo(player);
-//			}
-//		}
-	}
-
-	private void dealATileTo(String player) throws RemoteException {
-		Tile t = data.getDeck().drawTile();
-
-		PlayerInfo dataPlayer = data.getPlayerInfo(player);
-		dataPlayer.hand.addTile(t);
-
-		PlayerInterface remotePlayer = data.getPlayer(player);
-		remotePlayer.dealTile(t);
+		currentPlayerIndex = 0;
+		for(String player : data.getPlayerOrder())
+		{
+			PlayerInterface remotePlayer = data.getPlayer(player);
+			remotePlayer.dealLineCard(data.getPlayerInfo(player).line);
+			remotePlayer.dealRouteCard(data.getPlayerInfo(player).buildingInLine_name);
+		}
 	}
 
 	public boolean onQuitGame(String playerName) throws RemoteException 
@@ -113,7 +100,6 @@ public class Engine implements Runnable
 	}
 	public Data getData(String playerName) throws RemoteException
 	{
-		// TODO
 		return data;
 	}
 

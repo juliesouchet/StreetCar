@@ -196,11 +196,15 @@ public class GameTest {
 		for(String player : playerOrder)
 		{
 			int line = data.getPlayerInfo(player).line;
-			String[] buildingInLine_name = data.getPlayerInfo(player).buildingInLine_name;
+			String[] buildingNames = data.getPlayerInfo(player).buildingInLine_name;
 			
 			ValzTestPlayer guestPlayer = guestPlayers.get(player);
 			assertEquals(line, guestPlayer.getLine());
-			if(!Arrays.equals(buildingInLine_name, guestPlayer.getRoute())) fail(" difference between player and data");
+			if(!Arrays.equals(buildingNames, guestPlayer.getRoute())) fail(" difference between player and data");
+			
+			System.out.println(player + "'s line : " + line);
+			System.out.println(player + "'s route : " + Arrays.toString(buildingNames));
+			System.out.println("");
 		}
 		
 		
