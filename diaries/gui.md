@@ -49,4 +49,11 @@ Retour en arrière de la vue principale: affichage des adversaires à gauche et 
 Affichage de l'avatar, cartes et stations des adversaires fait.  
 Plateau central découpé en case.  
 
+### Jour 6 : Mardi 26 mai
+
+Mise en place des titre `Adversaires`  et `Chat`  
+Mise en place du chat  
+Mise en place du listener sur le plateau  
+Mise en place des boutons `Valider` et `Commencer son voyage`  
+
 
