@@ -5,7 +5,11 @@ import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
+import main.java.data.Action;
 import main.java.data.Data;
+import main.java.data.Hand;
+import main.java.ia.Dumbest;
+import main.java.ia.PlayerAutomaton;
 import main.java.player.PlayerIHM;
 
 
@@ -118,10 +122,16 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 		if (create)
 		{
-            
+            PlayerAutomaton edouard = new Dumbest();
 			try	{
 				player.hostStartGame();
-
+				for (int j=0; j<50; j++){
+					Data les_donnees = player.getGameData();
+					Hand main_de_edouard = les_donnees.getHand(name);
+					Action choix_de_edouard = edouard.makeChoice(main_de_edouard, les_donnees);
+					player.getGame().placeTile(name, choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
+					this.frame.setGameData(player.getGameData());
+				}
 			}catch (Exception e)	{e.printStackTrace();}
 		}
 	}	

@@ -38,6 +38,12 @@ public class DataViewerFrame extends JFrame {
 		this.viewerPanel.addMouseListener(new TestMouseListener(game, playerName, paddingWidth, paddingHeight, tileWidth, tileHeight));
 	}
 
+	public DataViewerFrame() {
+		super();
+		this.setSize(new Dimension(frameWidth+paddingWidth,frameHeight+paddingHeight));
+		this.add(this.viewerPanel);
+	}
+	
 	// Setters / getters
 	
 	public Data getGameData() {
