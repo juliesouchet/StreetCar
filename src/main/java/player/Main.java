@@ -2,7 +2,7 @@ package main.java.player;
 
 import javax.swing.SwingUtilities;
 
-import test.java.player.TestIA;
+import test.java.player.Test_IA_Riyane;
 
 
 
@@ -17,7 +17,7 @@ public class Main implements Runnable
 	}
 	public void run()
 	{
-		new TestIA();
+		new Test_IA_Riyane();
 	}
 
 }

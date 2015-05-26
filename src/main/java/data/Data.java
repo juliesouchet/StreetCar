@@ -31,7 +31,7 @@ public class Data implements Serializable
 	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
 	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
-	public static final int				minNbrPlayer			= 1; //TODO modifier par ulysse pour permettre tests basiques des automates. remettre a 2
+	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
 	public static final int				maxNbrPlayer			= 6;
 	public static final int				initialHandSize			= 5;
 	public static final int				minNbrBuildingInLine	= 2;
@@ -51,7 +51,7 @@ public class Data implements Serializable
 	private HashMap<String, PlayerInfo>	playerInfoList;
 	private int							round;
 	private int							maxPlayerSpeed;
-	private String[]					playerOrder;  // TODO a choisir lors du debut de partie
+	private String[]					playerOrder;
 	private String						host;
 
 // --------------------------------------------
@@ -201,21 +201,22 @@ public class Data implements Serializable
 		Tile oldT = this.board[x][y];
 
 		if (!oldT.isReplaceable(t, additionalPath))	return false;										// Check whether t contains the old t (remove Tile and Rule C)
+		if (this.isOnEdge(x, y))					return false;
 
 		Tile nt = new Tile(additionalPath, t);
 		accessibleDirection = nt.getAccessibleDirections();
 		for (int d: accessibleDirection)																// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
 			Point neighbor = Direction.getNeighbour(x, y, d);
-////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
-			Tile neighborT = this.board[x][y];
+
+			Tile neighborT = this.board[neighbor.x][neighbor.y];
 			if ((this.isOnEdge(neighbor.x, neighbor.y)) && (!neighborT.isTerminus()))	return false;	//		Rule A
 			if (neighborT.isEmpty())													continue;		//		Rule E (step 1)
 			if (neighborT.isBuilding())													return false;	//		Rule B
 			if (!neighborT.isPathTo(Direction.turnHalf(d)))								return false;	//		Rule E (step 2)
 		}
 		LinkedList<Integer> plt = this.getPathsLeadingToTile(x, y);										//		Rule D
-		for (int dir: plt)	if (!nt.isPathTo(dir))										return false;
+		for (int dir: plt)	if (!t.isPathTo(dir))										return false;
 		return true;
 	}
 	/**============================================================

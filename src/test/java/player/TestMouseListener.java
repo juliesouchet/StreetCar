@@ -3,7 +3,10 @@ package test.java.player;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.LinkedList;
+import java.util.Random;
 
+import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.game.GameInterface;
 
@@ -11,19 +14,21 @@ public class TestMouseListener implements MouseListener
 {
 	private GameInterface game;
 	private String	playerName;
-	private int x0;
-	private int y0;
-	private int	tileWidth;
-	private int tileHeight;
+	private LinkedList<Tile> tileList;
 
-	public TestMouseListener(GameInterface game, String playerName, int x0, int y0, int tileWidth, int tileHeight)
+	public TestMouseListener(GameInterface game, String playerName)
 	{
 		this.game		= game;
 		this.playerName	= playerName;
-		this.x0			= x0;
-		this.y0			= y0;
-		this.tileHeight	= tileHeight;
-		this.tileWidth	= tileWidth;
+		this.tileList	= new LinkedList<Tile>();
+
+		this.tileList	.add(Tile.parseTile("Tile_FFFFZZ060123"));
+		this.tileList	.add(Tile.parseTile("Tile_FFFFZZ2113"));
+		this.tileList	.add(Tile.parseTile("Tile_FFFFZZ2003"));
+		this.tileList	.add(Tile.parseTile("Tile_FFFFZZ100102"));
+		this.tileList	.add(Tile.parseTile("Tile_TFFFZZ06031323"));
+		this.tileList	.add(Tile.parseTile("Tile_TFFFZZ06121323"));
+		this.tileList	.add(Tile.parseTile("Tile_TFFFZZ040213"));
 	}
 	
 	
@@ -33,12 +38,22 @@ public class TestMouseListener implements MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg0)
 	{
-		int x = (arg0.getX() - x0) / tileWidth;
-		int y = (arg0.getX() - y0) / tileHeight;
-		Tile t = Tile.parseTile("Tile_FFFFZZ060123");
-		
-		try					{this.game.placeTile(playerName, t, new Point(x, y));}
-		catch(Exception e)	{e.printStackTrace(); System.exit(0);}
+		Random rnd = new Random();
+
+		while (true)
+		{
+			try
+			{
+				Data data = this.game.getData(playerName);
+				int x = 1 + rnd.nextInt(data.getWidth()-1);
+				int y = 1 + rnd.nextInt(data.getHeight()-1);
+				Tile t = this.tileList.get(rnd.nextInt(this.tileList.size()));
+				if (!data.isAcceptableTilePlacement(x, y, t)) throw new Exception();
+				this.game.placeTile(playerName, t, new Point(x, y));
+				return;
+			}
+			catch(Exception e)	{}
+		}
 	}
 
 	@Override
