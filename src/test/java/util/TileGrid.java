@@ -21,10 +21,10 @@ public class TileGrid extends JComponent {
 	 ========================*/
 	private static final long serialVersionUID = -3553177329312479409L;
 	static final String tilePath = "src/main/resources/images/tiles/";
-	static final String[] tileID = {"Tile_FFFFZZ2003", "Tile_FFFFZZ2113", "Tile_FFFFZZ060123",
-			"Tile_FFFFZZ100102", "Tile_FFFFZZ100103", "Tile_FFFFZZ100203",
-			"Tile_TFFFZZ040213", "Tile_TFFFZZ02010213", "Tile_TFFFZZ02021203",
-			"Tile_TFFFZZ06031323", "Tile_TFFFZZ06121323", "Tile_TFFFZZ0401122303",
+	static final String[] tileID = {"Tile_FFFFZZ2113", "Tile_FFFFZZ2003", "Tile_FFFFZZ100102",
+			"Tile_FFFFZZ100203", "Tile_FFFFZZ100103", "Tile_FFFFZZ060123",
+			"Tile_TFFFZZ06121323", "Tile_TFFFZZ06031323", "Tile_TFFFZZ0401122303",
+			"Tile_TFFFZZ040213", "Tile_TFFFZZ02010223", "Tile_TFFFZZ02021203",
 			"Tile_FFFFZZ99"};
 	
 	Tile[] grid;
@@ -114,8 +114,8 @@ public class TileGrid extends JComponent {
 			for (int k = 0; k < 2; k++) {
 				if(i==13) break;
 				BufferedImage img = null;
-				try	{img = ImageIO.read(new File(tilePath+grid[i].getTileID()));}
-				catch (IOException e) {e.printStackTrace(); throw new RuntimeException("sdfqsd");}
+				try	{img = ImageIO.read(new File(tilePath+tileID[i]));}
+				catch (IOException e) {e.printStackTrace();System.out.println(tilePath+tileID[i]);}
 				AffineTransformOp transform = rotation(img, side);
 				g2.drawImage(transform.filter(img,null), x, y, null);
 				
