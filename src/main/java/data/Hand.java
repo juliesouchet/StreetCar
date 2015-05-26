@@ -42,8 +42,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 
 	public Tile get(int k)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return this.tileList.get(k); //TODO La tuile n'est pas retiré de la main: il faut décider si on garde comme ca ou pas
 	}
 
 }

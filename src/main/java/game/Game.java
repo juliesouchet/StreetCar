@@ -10,7 +10,6 @@ import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
 import main.java.data.Tile;
-import main.java.player.PlayerIA;
 import main.java.player.PlayerInterface;
 
 
@@ -142,11 +141,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			System.out.println(Game.gameMessageHeader + "NbrPlayer: " + this.data.getNbrPlayer());
 			System.out.println("===========================================================\n");
 		}
-	}
-	public void addIAPlayer(String IAName, Color IAColor, int level) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
-	{
-		PlayerIA pia = new PlayerIA(IAName, IAColor, this, level);
-		this.onJoinGame(pia, false);
 	}
 	public boolean onQuitGame(String playerName) throws RemoteException
 	{

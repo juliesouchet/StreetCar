@@ -35,9 +35,15 @@ public class DataViewerFrame extends JFrame {
 		super();
 		this.setSize(new Dimension(frameWidth+paddingWidth,frameHeight+paddingHeight));
 		this.add(this.viewerPanel);
-		this.viewerPanel.addMouseListener(new TestMouseListener(game, playerName, paddingWidth, paddingHeight, tileWidth, tileHeight));
+		this.viewerPanel.addMouseListener(new TestMouseListener(game, playerName));
 	}
 
+	public DataViewerFrame() {
+		super();
+		this.setSize(new Dimension(frameWidth+paddingWidth,frameHeight+paddingHeight));
+		this.add(this.viewerPanel);
+	}
+	
 	// Setters / getters
 	
 	public Data getGameData() {
@@ -48,6 +54,7 @@ public class DataViewerFrame extends JFrame {
 		this.tileWidth	= (getWidth() - paddingWidth) / data.getWidth();
 		this.tileHeight	= (getHeight()- paddingHeight)/ data.getHeight();
 		this.viewerPanel.gameData = data;
+		this.viewerPanel.repaint();
 	}
 	
 	public ViewerPanel getViewerPanel() {

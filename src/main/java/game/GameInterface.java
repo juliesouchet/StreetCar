@@ -1,6 +1,5 @@
 package main.java.game;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -16,7 +15,6 @@ import main.java.player.PlayerInterface;
 public interface GameInterface extends Remote
 {
 	public void		onJoinGame			(PlayerInterface player, boolean isHost)				throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
-	public void		addIAPlayer			(String IAName, Color IAColor, int level)				throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
 	public boolean	onQuitGame			(String playerName)										throws RemoteException;
 	public Data		getData				(String playerName)										throws RemoteException;
 	public void		hostStartGame		(String playerName)										throws RemoteException, ExceptionForbiddenAction;

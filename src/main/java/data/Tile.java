@@ -200,7 +200,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * @return true if the current tile can be replaced by t
 	 * This function does not check if t is suitable for the current tile neighbors
 	 * @param additionalPath: output parameter (can be null). Is filled with the t's paths that are not in the current tile
-	 ===================================================*/
+	 * ===================================================*/
 	public boolean isReplaceable(Tile t, LinkedList<Path> additionalPath)
 	{
 		LinkedList<Path> lPath	= new LinkedList<Path>(this.pathList);
@@ -209,9 +209,10 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (this.isTree)	 return false;
 		if (this.isBuilding) return false;
 		if (this.isTerminus) return false;
+		if (this.isStop)	 return false;
 
 		for (Path pt: tPath)								// Remove the common paths
-			for (Path pl: tPath)
+			for (Path pl: lPath)
 				if (pt.equals(pl))	{tPath.remove(pt); lPath.remove(pl); break;}
 
 		if (!lPath.isEmpty())	return false;				// Case local tile is not contained in t

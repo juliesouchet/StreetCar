@@ -9,7 +9,7 @@ import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
-import test.java.player.TestIHM;
+import main.java.rubbish.InterfaceIHM;
 
 
 
@@ -31,7 +31,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	private static final long serialVersionUID = -8965945491565879485L;
 
 	protected GameInterface	game;
-	protected TestIHM		ihm;
+	protected InterfaceIHM	ihm;
 	protected String		playerName;
 	protected Color			color;
 
@@ -42,7 +42,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		super();
 	}
-	public PlayerAbstract(String playerName, Color playerColor, GameInterface game, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerAbstract(String playerName, Color playerColor, GameInterface game, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super();
 

@@ -38,13 +38,13 @@ public class Direction
 	public static int turnLeft(int d)
 	{
 		checkDirection(d);
-		if (d != maxVal)	return d++;
+		if (d != maxVal)	return d+1;
 		else				return minVal;
 	}
 	public static int turnRight(int d)
 	{
 		checkDirection(d);
-		if (d != minVal)	return d--;
+		if (d != minVal)	return d-1;
 		else				return maxVal;
 	}
 	public static int turnHalf(int d)
@@ -78,9 +78,15 @@ public class Direction
 // --------------------------------------------
 	private static class MyIterator implements Iterator<Integer>
 	{
-		private int d;
+		private int d = minVal;
 		public boolean hasNext(){return (d <= maxVal);}
-		public Integer next()	{checkDirection(d); d++; return d;}
+		public Integer next()
+		{
+			checkDirection(d);
+			int res = d;
+			d++;
+			return res;
+		}
 		public void remove()	{throw new RuntimeException("Not implemented");}
 	}
 }
