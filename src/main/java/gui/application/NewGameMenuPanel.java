@@ -15,7 +15,8 @@ public class NewGameMenuPanel extends MenuPanel {
 
 	// Properties
 
-	private TextField nameField;
+	private TextField gameNameField;
+	private TextField playerNameField;
 	private TextField addressField;
 	
 	// Constructors
@@ -37,23 +38,33 @@ public class NewGameMenuPanel extends MenuPanel {
 		titleLabel.setBounds(90, 20, 300, 100);
 	    this.add(titleLabel);
 	    
-	    Label nameLabel = new Label("Name", null);
-	    nameLabel.setBounds(140, 115, 100, 40);
-	    this.add(nameLabel);	
+	    Label gameNameLabel = new Label("Game name", null);
+	    gameNameLabel.setBounds(140, 100, 100, 40);
+	    this.add(gameNameLabel);	
+	    
+	    Label playerNameLabel = new Label("Player name", null);
+	    playerNameLabel.setBounds(140, 150, 100, 40);
+	    this.add(playerNameLabel);	
 	    
 	    Label adressLabel = new Label("IP adress", null);
-	    adressLabel.setBounds(140, 164, 100, 40);
+	    adressLabel.setBounds(140, 200, 100, 40);
 	    this.add(adressLabel);
 		
 	    UserDefaults ud = UserDefaults.getSharedInstance();
-	    String lastName = ud.getString(Constants.PLAYER_NAME_KEY);
-		this.nameField = new TextField(lastName);
-		this.nameField.setPlaceholder("Player1", null);
-		this.nameField.setBounds(new Rectangle(215, 120, 150, 30));
-		this.add(this.nameField);
+	    String lastGameName = ud.getString(Constants.GAME_NAME_KEY);
+		this.gameNameField = new TextField(lastGameName);
+		this.gameNameField.setPlaceholder("Game1", null);
+		this.gameNameField.setBounds(new Rectangle(215, 105, 150, 30));
+		this.add(this.gameNameField);
+	    
+	    String lastPlayerName = ud.getString(Constants.PLAYER_NAME_KEY);
+		this.playerNameField = new TextField(lastPlayerName);
+		this.playerNameField.setPlaceholder("Player1", null);
+		this.playerNameField.setBounds(new Rectangle(215, 155, 150, 30));
+		this.add(this.playerNameField);
 		
 		this.addressField = new TextField(IP.getIpAdressFromInet());
-		this.addressField.setBounds(new Rectangle(215, 170, 150, 30));
+		this.addressField.setBounds(new Rectangle(215, 205, 150, 30));
 		this.addressField.setEditable(false);
 		this.add(this.addressField);
 	}
@@ -74,7 +85,8 @@ public class NewGameMenuPanel extends MenuPanel {
 	
 	public void createGame() {
 		UserDefaults ud = UserDefaults.getSharedInstance();
-		ud.setString(Constants.PLAYER_NAME_KEY, this.nameField.getText());
+		ud.setString(Constants.PLAYER_NAME_KEY, this.playerNameField.getText());
+		ud.setString(Constants.GAME_NAME_KEY, this.gameNameField.getText());
 		
 		MainFrameController mfc = (MainFrameController)this.getFrameController();
 		mfc.showHostWaitingRoomPanel();

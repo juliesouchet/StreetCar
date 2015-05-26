@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
+import main.java.gui.board.ChatPanel;
 import main.java.gui.board.MapPanel;
 import main.java.gui.components.Panel;
 
@@ -62,8 +63,7 @@ public class InGamePanel extends Panel {
     	chatInputPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     	chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
     	
-    	Panel chatTextPanel = new Panel();
-    	chatTextPanel.setBackground(Color.WHITE);
+    	ChatPanel chatTextPanel = new ChatPanel();
     	chatPanel.add(chatTextPanel, BorderLayout.CENTER);
     	
 	}

@@ -12,7 +12,8 @@ public class StreetCar {
 		UserDefaults ud = UserDefaults.getSharedInstance();
 		ud.setStringIfNoValue(Constants.LANGUAGE_KEY, Constants.LANGUAGE_EN);
 		ud.setBoolIfNoValue(Constants.USE_FULLSCREEN_KEY, true);
-		ud.setStringIfNoValue(Constants.PLAYER_NAME_KEY, "");
+		ud.setStringIfNoValue(Constants.PLAYER_NAME_KEY, "Player1");
+		ud.setStringIfNoValue(Constants.PLAYER_NAME_KEY, "Untitled");
 		ud.synchronize();
 	}
 	
