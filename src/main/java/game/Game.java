@@ -1,6 +1,7 @@
 package main.java.game;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -8,6 +9,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
+import main.java.data.Tile;
+import main.java.player.PlayerIA;
 import main.java.player.PlayerInterface;
 
 
@@ -140,6 +143,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			System.out.println("===========================================================\n");
 		}
 	}
+	public void addIAPlayer(String IAName, Color IAColor, int level) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	{
+		PlayerIA pia = new PlayerIA(IAName, IAColor, this, level);
+		this.onJoinGame(pia, false);
+	}
 	public boolean onQuitGame(String playerName) throws RemoteException
 	{
 		String resS = null;
@@ -168,13 +176,27 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(playerName, this.data, "hostStartGame");
+		this.engine.addAction(playerName, this.data, "hostStartGame", null, null);
 		synchronized(this.engineLock)
 		{
 			try					{this.engineLock.notify();}
 			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 		}
 	}
+// Version simple pour tester l'ia
+	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
+
+		this.engine.addAction(playerName, this.data, "placeTile", position, t);
+		synchronized(this.engineLock)
+		{
+			try					{this.engineLock.notify();}
+			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
+		}
+}
 
 // --------------------------------------------
 // Private methods:

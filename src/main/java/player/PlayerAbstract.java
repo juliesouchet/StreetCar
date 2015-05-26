@@ -71,6 +71,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		this.game.hostStartGame(playerName);
 	}
 
+
 // --------------------------------------------
 // Local methodes:
 // --------------------------------------------

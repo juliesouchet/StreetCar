@@ -240,6 +240,26 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		int l = tileNamePrefix.length() + nbrBoolAttrChar + nbrBuildingDescriptionChar;
 		return Integer.parseInt(tileID.substring(l, l+nbrTerminusDescriptionChar));
 	}
+	public String toString()
+	{
+		String str = "";
+
+		str += "{ ";
+		if (this.isTree)		str += "Tree | ";
+		else					str += "____ | ";
+		if (this.isBuilding)	str += "Buil | ";
+		else					str += "____ | ";
+		if (this.isStop)		str += "Stop | ";
+		else					str += "____ | ";
+		if (this.isTerminus)	str += "Term | ";
+		else					str += "____ | ";
+		for(Path p : pathList)
+		{
+			str += "[" + p.end0 + " ; " + p.end1 + "] ";
+		}
+		str += "}";
+		return str;
+	}
 
 // --------------------------------------------
 // Private local methods

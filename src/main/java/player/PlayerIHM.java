@@ -72,8 +72,12 @@ public class PlayerIHM extends PlayerAbstract
 // Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
+	public boolean isHumanPlayer() throws RemoteException
+	{
+		return true;
+	}
 	public void gameHasChanged(Data data) throws RemoteException
 	{
-		super.ihm.refresh(data);
+		if (super.ihm != null) super.ihm.refresh(data);
 	}
 }

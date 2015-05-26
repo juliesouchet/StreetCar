@@ -141,7 +141,9 @@ public class Data implements Serializable
 			players.remove(i);
 		}
 	}
-////////////////TODO
+////////////////TODO to remove
+	public void skipTurn(){this.round ++;}
+////////////////TODO 
 	public void	setTile(int x, int y, Tile t)
 	{
 		this.board[x][y] = t;
@@ -164,6 +166,12 @@ public class Data implements Serializable
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
+	public boolean				isGameStarted()									{return this.playerOrder != null;}
+	public boolean				isPlayerTurn(String playerName)
+	{
+		int turn = this.round%this.playerOrder.length;
+		return playerName.equals(playerOrder[turn]);
+	}
 	public PlayerInterface		getPlayer(String playerName)
 	{
 		PlayerInterface pi = this.playerInfoList.get(playerName).player;
