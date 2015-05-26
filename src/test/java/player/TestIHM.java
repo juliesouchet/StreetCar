@@ -6,6 +6,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 import main.java.data.Data;
+import main.java.game.GameInterface;
+import main.java.player.PlayerIA;
 import main.java.player.PlayerIHM;
 
 
@@ -26,9 +28,11 @@ public class TestIHM
 	public TestIHM()
 	{
 		Scanner sc = new Scanner(System.in);
-		PlayerIHM player = null;
-		String str, name, gameName, ip;
+		String str, name, gameName, ip, iaName;
 		boolean create;
+		PlayerIHM playerIHM = null;
+		PlayerIA playerIA = null;
+		GameInterface game = null;
 
 		while (true)
 		{
@@ -51,15 +55,18 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 		try
 		{
-			player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
+			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
+			game		= playerIHM.getGame();
+			iaName		= "IA_DUMB_" + ((new Random()).nextDouble());
+			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
 		try
 		{
-			this.frame = new DataViewerFrame(player.getGame(), name);
-			this.frame.setGameData(player.getGameData());
+			this.frame = new DataViewerFrame(game, name);
+			this.frame.setGameData(playerIHM.getGameData());
 		}
 		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
 		frame.setVisible(true);
@@ -74,8 +81,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 			}
 			try
 			{
-				player.getGame().addIAPlayer("IA_Dumb" + (new Random()).nextFloat(), Color.BLACK, 0);
-				player.hostStartGame();
+				playerIHM.hostStartGame();
 			}
 			catch (Exception e)	{e.printStackTrace();}
 		}
