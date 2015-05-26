@@ -1,6 +1,7 @@
 package main.java.player;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -76,6 +77,54 @@ public class PlayerIHM extends PlayerAbstract
 	}
 	@Override
 	public void dealTile(Tile t) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean isHumanPlayer() throws RemoteException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public void dealRouteCard(String[] route) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void tileHasBeenPlaced(String playerName, Tile t, Point position)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void exchangeTile(String playerName, Tile t, Point p)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void receiveTileFromPlayer(String chosenPlayer, Tile t)
+			throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void placeStop(Point p) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void revealLine(String playerName) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void revealRoute(String playerName) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void dealLineCard(int cardNumber) throws RemoteException {
 		// TODO Auto-generated method stub
 		
 	}

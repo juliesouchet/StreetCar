@@ -1,34 +1,38 @@
 package main.java.game;
 
+import java.awt.Point;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 import main.java.data.Data;
+import main.java.data.Data.PlayerInfo;
+import main.java.data.Tile;
 import main.java.player.PlayerInterface;
 
 public class Engine implements Runnable
 {
-// --------------------------------------------
-// Attributes:
-// --------------------------------------------
+	// --------------------------------------------
+	// Attributes:
+	// --------------------------------------------
 	private Object						lock;
 	private LinkedList<EngineAction>	actionList;
 	private EngineAction				toExecute;
 	private Data						data;
 
-// --------------------------------------------
-// Builder:
-// --------------------------------------------
-	public Engine(Object lock)
+	// --------------------------------------------
+	// Builder:
+	// --------------------------------------------
+	public Engine(Object lock, Data data)
 	{
 		this.lock		= lock;
 		this.actionList	= new LinkedList<EngineAction>();
+		this.data = data;
 	}
 
-// --------------------------------------------
-// Local methods:
-// --------------------------------------------
+	// --------------------------------------------
+	// Local methods:
+	// --------------------------------------------
 	public void run()
 	{
 		LinkedList<EngineAction> actionList;
@@ -72,32 +76,17 @@ public class Engine implements Runnable
 		}
 	}
 
-// --------------------------------------------
-// Private methods:
-// TODO: declare all the private methods as synchronized
-// --------------------------------------------
+	// --------------------------------------------
+	// Private methods:
+	// TODO: declare all the private methods as synchronized
+	// --------------------------------------------
+
 	public void hostStartGame() throws RemoteException
 	{
-		Data	data		= this.toExecute.data;
-		String	playerName	= this.toExecute.playerName;
-		Data	privateData;
-		PlayerInterface pi;
-
-		data.randomizePlayerOrder();
-		for (String name: data.getPlayerNameList())
-		{
-			pi			= data.getPlayer(name);
-			privateData	= data.getClone(name);
-			pi.gameHasChanged(privateData);
-		}
-	}
-	
-//	@Override
-//	public void hostStartGame(String playerName) throws RemoteException, ExceptionTooFewPlayers, ExceptionTooManyPlayers, ExceptionOnlyHostCanStartGame {
 //		Set<String> dataPlayers = data.getPlayerNameList();
 //		int nbOfPlayers = dataPlayers.size();
-//		
-//		data.randomizePlayerOrder();
+
+		data.randomizePlayerOrder();
 //		for(int i = 0; i < Data.initialHandSize; i++)
 //		{
 //			for(String player : data.getPlayerOrder())
@@ -105,21 +94,78 @@ public class Engine implements Runnable
 //				dealATileTo(player);
 //			}
 //		}
-//	}
-//
-//	private void dealATileTo(String player) throws RemoteException {
-//		Tile t = data.getDeck().drawTile();
-//
-//		PlayerInfo dataPlayer = data.getPlayerInfo(player);
-//		dataPlayer.hand.addTile(t);
-//		
-//		PlayerInterface remotePlayer = data.getPlayer(player);
-//		remotePlayer.dealTile(t);
-//	}
+	}
 
-// --------------------------------------------
-// Private class:
-// --------------------------------------------
+	private void dealATileTo(String player) throws RemoteException {
+		Tile t = data.getDeck().drawTile();
+
+		PlayerInfo dataPlayer = data.getPlayerInfo(player);
+		dataPlayer.hand.addTile(t);
+
+		PlayerInterface remotePlayer = data.getPlayer(player);
+		remotePlayer.dealTile(t);
+	}
+
+	public boolean onQuitGame(String playerName) throws RemoteException 
+	{
+		// TODO
+		return false;
+	}
+	public Data getData(String playerName) throws RemoteException
+	{
+		// TODO
+		return data;
+	}
+
+	public void	undoAttempt(String playerName) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	undoTurn(String playerName) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	placeTile(String playerName, Tile t, Point position) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	moveTram(String playerName, Point dest) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	pickTileFromBox(String playerName) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	pickTileFromPlayer(String playerName, String chosenPlayer, Tile car) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	replaceTwoTiles(String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	startMaidenTravel(String playerName, Point terminus) throws RemoteException
+	{
+		// TODO
+	}
+
+	public void	Validate(String playerName) throws RemoteException
+	{
+		// TODO
+	}
+
+
+	// --------------------------------------------
+	// Private class:
+	// --------------------------------------------
 	private class EngineAction
 	{
 		// Attributes
@@ -134,5 +180,15 @@ public class Engine implements Runnable
 			this.data			= data;
 			this.function		= function;
 		}
+	}
+
+
+	public Data getData() {
+		return data;
+	}
+	
+	public void addPlayer(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty
+	{
+		data.addPlayer(player, player.getPlayerName(), isHost);
 	}
 }

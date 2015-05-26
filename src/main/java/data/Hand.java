@@ -27,10 +27,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 		this.tileList = new LinkedList<Tile> (basicsTiles);
 	}
 	
-	public Hand()
-	{
-		this(new LinkedList<Tile>());
-	}
+	private Hand() {}
 	
 	public Hand getClone()
 	{

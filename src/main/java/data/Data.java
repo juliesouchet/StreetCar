@@ -33,6 +33,7 @@ public class Data implements Serializable
 	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
 	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
+	//private static LinkedList<Tile>		initialHand				= getInitialHand();
 	public static final int				minNbrPlayer			= 2;
 	public static final int				maxNbrPlayer			= 6;
 	public static final int				initialHandSize			= 5;
@@ -45,7 +46,6 @@ public class Data implements Serializable
 
 	private LinkedList<Integer>			remainingLine;
 	private LinkedList<String[][]>		remainingBuildingInLine;
-	private LinkedList<Tile>			initialHand;
 
 	private String						gameName;
 	private Tile[][]					board;
@@ -81,7 +81,7 @@ public class Data implements Serializable
 		this.initExistingBuildingInLine(nbrBuildingInLine);							// Init the existing building
 		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
 
-		this.initInitialHand();
+		getInitialHandConfiguration();
 	}
 	private Data(){}
 	public Data getClone(String playerName)
@@ -92,7 +92,7 @@ public class Data implements Serializable
 
 		res.remainingLine			= null;
 		res.remainingBuildingInLine	= null;
-		res.initialHand				= cpT.copyList(this.initialHand);
+//		res.initialHand				= cpT.copyList(this.initialHand);
 
 		res.gameName				= new String(this.gameName);
 		res.board					= cpT.copyMatrix(this.board);
@@ -390,6 +390,30 @@ public class Data implements Serializable
 		}
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
+	 
+	/**============================================
+	 * @return the initial hand configuration from the corresponding file
+	 ==============================================*/
+	public static LinkedList<Tile> getInitialHandConfiguration()
+	{
+		File f = new File(initialHandFile);
+		String tileName;
+		Scanner sc;
+
+		LinkedList<Tile> initialHand = new LinkedList<Tile>();
+		try
+		{
+			sc = new Scanner(f);
+			for (int i=0; i<initialHandSize; i++)
+			{
+				tileName = sc.next();
+				initialHand.add(Tile.parseTile(tileName));
+			}
+			sc.close();
+		}
+		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
+		return initialHand;
+	}
 
 	// --------------------------------------------
 	// Private methods:
@@ -418,28 +442,6 @@ public class Data implements Serializable
 			sc.close();
 		}
 		catch (Exception e){throw new RuntimeException("Malformed line file");}
-	}
-	/**============================================
-	 * @return Creates the initial hand from the corresponding file
-	 ==============================================*/
-	private void initInitialHand()
-	{
-		File f = new File(initialHandFile);
-		String tileName;
-		Scanner sc;
-
-		this.initialHand = new LinkedList<Tile>();
-		try
-		{
-			sc = new Scanner(f);
-			for (int i=0; i<initialHandSize; i++)
-			{
-				tileName = sc.next();
-				this.initialHand.add(Tile.parseTile(tileName));
-			}
-			sc.close();
-		}
-		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
 	}
 	/**============================================
 	 * @return the position of the building which name are given
@@ -555,8 +557,7 @@ public class Data implements Serializable
 			this.player		= pi;
 			this.playerName	= new String(playerName);
 			this.history	= new LinkedList<Action>();
-			//this.hand		= new Hand(initialHand);
-			this.hand		= new Hand();
+			this.hand		= new Hand(getInitialHandConfiguration());
 			i				= rnd.nextInt(remainingLine.size());						// Draw a line
 			this.line		= remainingLine.get(i);
 			remainingLine.remove(i);

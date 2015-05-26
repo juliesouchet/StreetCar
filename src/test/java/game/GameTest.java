@@ -5,19 +5,21 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.Hand;
 import main.java.data.Tile;
-import main.java.game.ExceptionForbiddenAction;
+import main.java.game.Engine;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUnknownBoardName;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.Game;
-import main.java.game.GameInterface;
 import main.java.player.PlayerAbstract;
 
 import org.junit.Test;
@@ -28,12 +30,16 @@ public class GameTest {
 	class ValzTestPlayer extends PlayerAbstract
 	{
 		Hand hand;
+		Engine engine;
+		private int line;
+		private String[] route;
 
-		public ValzTestPlayer(boolean isHost, String playerName, Color playerColor, GameInterface game) 
+		public ValzTestPlayer(boolean isHost, String playerName, Color playerColor, Engine engine) 
 				throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor 
 		{
-			super(isHost, playerName, playerColor, game);
-			hand = new Hand();
+			super(isHost, playerName, playerColor, createBasicGame());
+			hand = new Hand(Data.getInitialHandConfiguration());
+			this.engine = engine;
 		}
 
 		@Override
@@ -46,55 +52,125 @@ public class GameTest {
 			// TODO Auto-generated method stub
 
 		}
+
+		@Override
+		public boolean isHumanPlayer() throws RemoteException {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void dealLineCard(int cardNumber) throws RemoteException {
+			line = cardNumber;
+		}
+
+		@Override
+		public void dealRouteCard(String[] route) throws RemoteException {
+			this.route = route;
+		}
+
+		@Override
+		public void tileHasBeenPlaced(String playerName, Tile t, Point position)
+				throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exchangeTile(String playerName, Tile t, Point p)
+				throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void receiveTileFromPlayer(String chosenPlayer, Tile t)
+				throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void placeStop(Point p) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void revealLine(String playerName) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void revealRoute(String playerName) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public Tile getHandTile(int index) {
+			return hand.get(index);
+		}
+
+		public int getLine() {
+			return line;
+		}
+
+		public String[] getRoute() {
+			return route;
+		}
+		
 	}
+
+	//	@Test
+	//	public void gameAndPlayerCreationTest()
+	//	{
+	//		Game game = null;
+	//		try { game = new Game(); } 
+	//		catch (RemoteException | ExceptionUnknownBoardName | RuntimeException e1) { e1.printStackTrace(); }
+	//		assertNotNull(game);
+	//
+	//		try {
+	//			new ValzTestPlayer(true, "host", Color.red, game);
+	//			new ValzTestPlayer(false, "guest2", Color.blue, game);
+	//			new ValzTestPlayer(false, "guest3", Color.orange, game);
+	//			new ValzTestPlayer(false, "guest4", Color.green, game);
+	//		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName
+	//				| ExceptionUsedPlayerColor e) {
+	//			e.printStackTrace();
+	//		}
+	//
+	//		try {
+	//			assertEquals(game.getData("host").getNbrPlayer(), 4);
+	//		} catch (RemoteException e) {
+	//			e.printStackTrace();
+	//		}
+	//	}
 
 	@Test
 	public void gameAndPlayerCreationTest()
 	{
-		Game game = null;
-		try { game = new Game(); } 
-		catch (RemoteException | ExceptionUnknownBoardName | RuntimeException e1) { e1.printStackTrace(); }
-		assertNotNull(game);
+		Data data = null;
+		try { data = new Data("StreetCar", "newOrleans", 3); } 
+		catch (Exception e) { e.printStackTrace(); }
+		assertNotNull(data);
+		Engine engine = new Engine(null, data);
+		assertNotNull(engine);
 
-		try {
-			new ValzTestPlayer(true, "host", Color.red, game);
-			new ValzTestPlayer(false, "guest2", Color.blue, game);
-			new ValzTestPlayer(false, "guest3", Color.orange, game);
-			new ValzTestPlayer(false, "guest4", Color.green, game);
-		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName
-				| ExceptionUsedPlayerColor e) {
-			e.printStackTrace();
-		}
+		fillWithPlayers(engine, new HashMap<String, GameTest.ValzTestPlayer>());
 
-		try {
-			assertEquals(game.getData("host").getNbrPlayer(), 4);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		assertEquals(engine.getData().getNbrPlayer(), 4);
 	}
 
 	@Test
 	public void hostStartGameTest() {
-		Game game = createBasicGame();
-		Data data = game.getData();
-		assertNotNull(data);
+		Engine engine = createBasicEngine();
+		Data data = engine.getData();
 
-		try {
-			new ValzTestPlayer(true, "host", Color.red, game);
-			new ValzTestPlayer(false, "guest2", Color.blue, game);
-			new ValzTestPlayer(false, "guest3", Color.orange, game);
-			new ValzTestPlayer(false, "guest4", Color.green, game);
-		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName | ExceptionUsedPlayerColor e) { e.printStackTrace(); }
+		HashMap<String, ValzTestPlayer> guestPlayers = new HashMap<String, ValzTestPlayer>();
+		fillWithPlayers(engine, guestPlayers);
 
-		try 
-		{
-			game.hostStartGame("guest2");
-			fail("host wasnt game creator error");
-		}
-		catch (ExceptionForbiddenAction e1) { } // this exception should be raised
-		catch (RemoteException e) { e.printStackTrace(); }
-
-		try { game.hostStartGame("host"); } 
+		try { engine.hostStartGame(); } 
 		catch (RemoteException e) { e.printStackTrace(); }
 
 		String[] playerOrder = data.getPlayerOrder();
@@ -102,30 +178,68 @@ public class GameTest {
 		assertEquals(playerOrder.length, 4);
 
 
-		for(String player : playerOrder)
+		for(String playerName : playerOrder)
 		{
-			LinkedList<Tile> playerHand = data.getPlayerInfo(player).hand.getTiles();
+			LinkedList<Tile> playerHand = data.getPlayerInfo(playerName).hand.getTiles();
 			assertEquals(playerHand.size(), Data.initialHandSize);
 
-			System.out.println(player + "'s hand :");
-			for(Tile t : playerHand)
+			System.out.println(playerName + "'s hand :");
+			for(int i = 0; i < playerHand.size(); i++)
 			{
+				Tile t = playerHand.get(i);
 				System.out.println(t.toString());
+				assertEquals(t.toString(), ((ValzTestPlayer)guestPlayers.get(playerName)).getHandTile(i).toString());
 			}
 			System.out.println("");
 		}
-
-
-
+		
+		for(String player : playerOrder)
+		{
+			int line = data.getPlayerInfo(player).line;
+			String[] buildingInLine_name = data.getPlayerInfo(player).buildingInLine_name;
+			
+			ValzTestPlayer guestPlayer = guestPlayers.get(player);
+			assertEquals(line, guestPlayer.getLine());
+			if(!Arrays.equals(buildingInLine_name, guestPlayer.getRoute())) fail(" difference between player and data");
+		}
+		
+		
 		//TODO test if each player has same hand as game
 	}
 
-	public Game createBasicGame() {
+	private void fillWithPlayers(Engine engine, HashMap<String, ValzTestPlayer> players) {
+		try {
+			players.put("host", new ValzTestPlayer(true, "host", Color.red, engine));
+			players.put("guest2", new ValzTestPlayer(false, "guest2", Color.blue, engine));
+			players.put("guest3", new ValzTestPlayer(false, "guest3", Color.orange, engine));
+			players.put("guest4", new ValzTestPlayer(false, "guest4", Color.green, engine));
+			
+			for(ValzTestPlayer player : players.values())
+			{
+				boolean isHost = player.getPlayerName().equals("host");
+				engine.addPlayer(player, isHost);
+			}
+		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName | ExceptionUsedPlayerColor e) { e.printStackTrace(); }
+	}
+
+	private Game createBasicGame() {
 		Game game = null;
 		try { game = new Game(); } 
 		catch (RemoteException | ExceptionUnknownBoardName | RuntimeException e) { e.printStackTrace(); }
 		assertNotNull(game);
 
 		return game;
+	}
+
+	private Engine createBasicEngine()
+	{
+		Data data = null;
+		try { data = new Data("StreetCar", "newOrleans", 3); } 
+		catch (Exception e) { e.printStackTrace(); }
+		assertNotNull(data);
+
+		Engine engine = new Engine(null, data);
+		assertNotNull(engine);
+		return engine;
 	}
 }

@@ -64,7 +64,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		this.data			= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.engineLock		= new Object();
-		this.engine			= new Engine(this.engineLock);
+		this.engine			= new Engine(this.engineLock, data);
 		this.engineThread	= new Thread(this.engine);
 		this.engineThread	.start();
 
