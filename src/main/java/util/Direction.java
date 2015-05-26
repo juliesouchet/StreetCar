@@ -79,7 +79,7 @@ public class Direction
 	private static class MyIterator implements Iterator<Integer>
 	{
 		private int d;
-		public boolean hasNext(){return (d <= maxVal);}
+		public boolean hasNext(){return (d < maxVal);}
 		public Integer next()	{checkDirection(d); d++; return d;}
 		public void remove()	{throw new RuntimeException("Not implemented");}
 	}

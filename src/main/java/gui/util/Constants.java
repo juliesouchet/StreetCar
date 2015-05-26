@@ -10,6 +10,8 @@ public class Constants {
 	
 	public static String PLAYER_NAME_KEY = "PlayerName";
 
+	public static String GAME_NAME_KEY = "GameName";
+
 	// User defaults values
 
 	public static String LANGUAGE_EN = "en";

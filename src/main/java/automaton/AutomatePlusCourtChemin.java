@@ -1,4 +1,4 @@
-package main.java.ia;
+package main.java.automaton;
 
 import java.awt.Point;
 

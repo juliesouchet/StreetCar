@@ -5,9 +5,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
-public class PlayerPanel extends JPanel{
+import main.java.gui.components.Panel;
+
+public class PlayerPanel extends Panel{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -18,8 +19,8 @@ public class PlayerPanel extends JPanel{
 		JLabel nameOfPlayerLabel = new JLabel(nameOfPlayer);
 		JLabel difficultyLevelLabel = new JLabel(difficultyLevel);
 
-		nameOfPlayerLabel.setBounds(70, 5, 50, 30);
-		difficultyLevelLabel.setBounds(70, 25, 50, 30);
+		nameOfPlayerLabel.setBounds(70, 5, 80, 30);
+		difficultyLevelLabel.setBounds(70, 25, 80, 30);
 		
 		this.add(nameOfPlayerLabel);
 		this.add(difficultyLevelLabel);		
@@ -36,6 +37,12 @@ public class PlayerPanel extends JPanel{
         g.drawRect(sizeOfCard*2 + spaceBetween*3, 60, sizeOfCard, sizeOfCard); //card3
         g.drawRect(sizeOfCard*3 + spaceBetween*4, 60, sizeOfCard, sizeOfCard); //card4
         g.drawRect(sizeOfCard*4 + spaceBetween*5, 60, sizeOfCard, sizeOfCard); //card5
+        
+        //g.drawRect(230, 5, 46, 46); //rectangle for diamond
+        g.drawLine(230, 28, 253, 5); //line1 for diamond
+        g.drawLine(253, 5, 276, 28); //line2 for diamond
+        g.drawLine(276, 28, 253, 51); //line3 for diamond
+        g.drawLine(253, 51, 230, 28); //line4 for diamond
         
         g.drawRect(10, 115, 45, 45); //station1
         g.drawRect(65, 115, 45, 45); //station2

@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
+import main.java.gui.board.ChatPanel;
 import main.java.gui.board.MapPanel;
 import main.java.gui.components.Panel;
 
@@ -17,8 +18,9 @@ public class InGamePanel extends Panel {
 	
 	private static final long serialVersionUID = 1L;
 	Panel chatPanel;
-	Panel gameMapPanel;
+	Panel centerMapPanel;
 	Panel playersSidebarPanel;
+	Panel deckAndTurnPanel;
 	PlayerPanel[] playersPanel = new PlayerPanel[5];
 
 	// Constructors
@@ -34,18 +36,33 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupGameMapPanel() {	
-		gameMapPanel = new Panel();
-		gameMapPanel.setLayout(new BorderLayout());
-		this.add(gameMapPanel, BorderLayout.CENTER);
+		centerMapPanel = new Panel();
+		centerMapPanel.setLayout(new BorderLayout());
+		this.add(centerMapPanel, BorderLayout.CENTER);
 		
-		Panel bottomPlayerPanel = new Panel();
-		bottomPlayerPanel.setPreferredSize(new Dimension(300, 150));
-		bottomPlayerPanel.setBackground(Color.WHITE);
-		bottomPlayerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
-		gameMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
+		//deckAndTurnPanel = new Panel();
+		//centerMapPanel.add(deckAndTurnPanel, BorderLayout.NORTH);
+		
+		Panel bigMapPanel = new Panel();
+		bigMapPanel.setLayout(new BorderLayout());	
+		centerMapPanel.add(bigMapPanel, BorderLayout.CENTER);
+		
+		Panel eastTestPanel = new Panel();
+		Panel westTestPanel = new Panel();
+		eastTestPanel.setPreferredSize(new Dimension(18, 0));
+		westTestPanel.setPreferredSize(new Dimension(18, 0));
+		eastTestPanel.setBackground(Color.WHITE);
+		westTestPanel.setBackground(Color.WHITE);
+		bigMapPanel.add(eastTestPanel, BorderLayout.EAST);
+		bigMapPanel.add(westTestPanel, BorderLayout.WEST);
 		
 		MapPanel mapPanel = new MapPanel();
-		gameMapPanel.add(mapPanel, BorderLayout.CENTER);
+		bigMapPanel.add(mapPanel, BorderLayout.CENTER);
+		
+		mapPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+		
+		BottomPlayerPanel bottomPlayerPanel = new BottomPlayerPanel();
+		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);		
 	}
 	
 	private void setupChatPanel() {
@@ -62,8 +79,7 @@ public class InGamePanel extends Panel {
     	chatInputPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     	chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
     	
-    	Panel chatTextPanel = new Panel();
-    	chatTextPanel.setBackground(Color.WHITE);
+    	ChatPanel chatTextPanel = new ChatPanel();
     	chatPanel.add(chatTextPanel, BorderLayout.CENTER);
     	
 	}
@@ -89,8 +105,8 @@ public class InGamePanel extends Panel {
     	
     	JScrollPane scrollPane = new JScrollPane(playersSidebarPanel);
     	scrollPane.setHorizontalScrollBar(null);
-    	this.add(scrollPane, BorderLayout.WEST);
-    	
+    	scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    	this.add(scrollPane, BorderLayout.WEST);    	
 	}
 	
 	protected void paintComponent(Graphics g) {

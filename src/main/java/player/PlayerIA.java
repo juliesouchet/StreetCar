@@ -3,6 +3,8 @@ package main.java.player;
 import java.awt.Color;
 import java.rmi.RemoteException;
 
+import main.java.automaton.Dumbest;
+import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.Hand;
@@ -10,8 +12,6 @@ import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
-import main.java.ia.Dumbest;
-import main.java.ia.PlayerAutomaton;
 
 
 
