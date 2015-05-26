@@ -5,11 +5,11 @@ import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
+import main.java.automaton.Dumbest;
+import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.Hand;
-import main.java.ia.Dumbest;
-import main.java.ia.PlayerAutomaton;
 import main.java.player.PlayerIHM;
 
 
@@ -17,7 +17,7 @@ import main.java.player.PlayerIHM;
 
 
 
-public class TestIHM 
+public class TestIA 
 {
 // --------------------------------------------
 // Attributs:
@@ -27,7 +27,7 @@ public class TestIHM
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public TestIHM()
+	public TestIA()
 	{
 		Scanner sc = new Scanner(System.in);
 		PlayerIHM player = null;
@@ -91,7 +91,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 	*	si i=1 => J joueurB jeu blue 127.0.0.1
 	*
 	*/
-	public TestIHM(int i)
+	public TestIA(int i)
 	{
 		PlayerIHM player = null;
 		String name, gameName, ip;

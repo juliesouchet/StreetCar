@@ -1,8 +1,8 @@
-package main.java.ia;
+package main.java.automaton;
 
 import javax.swing.SwingUtilities;
 
-import test.java.player.TestIHM;
+import test.java.player.TestIA;
 
 
 
@@ -17,6 +17,6 @@ public class TestDumbest implements Runnable
 	}
 	public void run()
 	{
-		new TestIHM(0);
+		new TestIA(0);
 	}
 }

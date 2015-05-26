@@ -13,7 +13,7 @@ import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.util.NetworkTools;
-import test.java.player.TestIHM;
+import test.java.player.TestIA;
 
 
 
@@ -41,7 +41,7 @@ public class PlayerIHM extends PlayerAbstract
 	 * @throws ExceptionUsedPlayerName
 	 * @throws ExceptionHostAlreadyExists
  	 ===========================================================================*/
-	public static PlayerIHM launchPlayer(String playerName, String gameName, String boardName, int nbrBuildingInLine, Color playerColor, boolean gameCreation, String applicationIP, TestIHM ihm) throws RemoteException, NotBoundException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionUnknownBoardName, ExceptionHostAlreadyExists
+	public static PlayerIHM launchPlayer(String playerName, String gameName, String boardName, int nbrBuildingInLine, Color playerColor, boolean gameCreation, String applicationIP, TestIA ihm) throws RemoteException, NotBoundException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionUnknownBoardName, ExceptionHostAlreadyExists
 	{
 		String localIP = NetworkTools.firstFreeSocketInfo().IP;
 		GameInterface game;
@@ -63,7 +63,7 @@ public class PlayerIHM extends PlayerAbstract
 	 * @throws ExceptionUsedPlayerColor 									(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 									    (caught by IHM)
 	 =======================================================================*/
-	private PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	private PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, TestIA ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);
 		super.game.onJoinGame(this, isHost);						// Log the player to the application
