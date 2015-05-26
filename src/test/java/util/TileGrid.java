@@ -38,7 +38,7 @@ public class TileGrid extends JComponent {
 		super();
 		grid = new Tile[13];
 		for(int i = 0 ; i < 13; i++) {
-			grid[i] = new Tile(tileID[i]);
+			grid[i] = Tile.parseTile(tileID[i]);
 		}
 		selected = mouseOver = null;
 		slowRotate = true;

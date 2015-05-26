@@ -65,15 +65,20 @@ public class PlayerIHM extends PlayerAbstract
 	 =======================================================================*/
 	private PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, TestIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		super(isHost, playerName, playerColor, app, ihm);
+		super(playerName, playerColor, app, ihm);
+		super.game.onJoinGame(this, isHost);						// Log the player to the application
 	}
 
 // --------------------------------------------
 // Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
+	public boolean isHumanPlayer() throws RemoteException
+	{
+		return true;
+	}
 	public void gameHasChanged(Data data) throws RemoteException
 	{
-		super.ihm.refresh(data);
+		if (super.ihm != null) super.ihm.refresh(data);
 	}
 }

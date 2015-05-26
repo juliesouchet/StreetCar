@@ -43,7 +43,7 @@ public class BoardCreator implements Runnable {
 		} catch (ExceptionUnknownBoardName | RuntimeException e) {
 			e.printStackTrace();
 		}
-		frame = new DataViewerFrame();
+		frame = new DataViewerFrame(null, null);
 
 		// Terrain
 		frame.setGameData(data);
