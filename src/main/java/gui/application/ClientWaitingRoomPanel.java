@@ -29,7 +29,7 @@ public class ClientWaitingRoomPanel extends MenuPanel {
 	
 	private void setupPanel() {
     	this.setSize(new Dimension(700, 500));
-    	this.setMenuTitle("Client Waiting Room", null);
+    	this.setMenuTitle("Join Game", null);
 	}	
 
 	private void setupPlayersFields() {
