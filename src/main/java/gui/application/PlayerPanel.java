@@ -39,10 +39,14 @@ public class PlayerPanel extends Panel{
         g.drawRect(sizeOfCard*4 + spaceBetween*5, 60, sizeOfCard, sizeOfCard); //card5
         
         //g.drawRect(230, 5, 46, 46); //rectangle for diamond
-        g.drawLine(230, 28, 253, 5); //line1 for diamond
-        g.drawLine(253, 5, 276, 28); //line2 for diamond
-        g.drawLine(276, 28, 253, 51); //line3 for diamond
-        g.drawLine(253, 51, 230, 28); //line4 for diamond
+        //g.drawLine(230, 28, 253, 5); //line1 for diamond
+        //g.drawLine(253, 5, 276, 28); //line2 for diamond
+        //g.drawLine(276, 28, 253, 51); //line3 for diamond
+        //g.drawLine(253, 51, 230, 28); //line4 for diamond
+        
+        int[] xPoints = {230, 253, 276, 253};
+        int[] yPoints = {28, 5, 28, 51};
+        g.drawPolygon(xPoints, yPoints, 4);
         
         g.drawRect(10, 115, 45, 45); //station1
         g.drawRect(65, 115, 45, 45); //station2
