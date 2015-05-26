@@ -21,6 +21,7 @@ public class InGamePanel extends Panel {
 	Panel centerMapPanel;
 	Panel playersSidebarPanel;
 	Panel deckAndTurnPanel;
+	TitlePanel titlePanel;
 	PlayerPanel[] playersPanel = new PlayerPanel[5];
 
 	// Constructors
@@ -84,13 +85,18 @@ public class InGamePanel extends Panel {
     	
 	}
 	
-	private void setupPlayersPanel() { 
+	private void setupPlayersPanel() { 		
 		int nbPlayers = 4;
     	this.playersSidebarPanel = new Panel();
     	this.playersSidebarPanel.setLayout(null);
     	this.playersSidebarPanel.setPreferredSize(new Dimension(330, nbPlayers*185+30));
     	this.playersSidebarPanel.setBackground(Color.WHITE);
     	this.playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+    	
+		titlePanel = new TitlePanel("Adversaries");
+		titlePanel.setBounds(10, 0, 298, 30);
+		//titlePanel.setBackground(Color.GREEN);
+		playersSidebarPanel.add(titlePanel);
     	
     	int y = 40;
     	for (int i=0; i<nbPlayers; i++) {
