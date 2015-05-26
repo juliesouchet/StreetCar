@@ -85,75 +85,73 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		res.pathList			= cp.copyList(this.pathList);
 		return res;
 	}
-	public static Tile parseTile(String imageFileName)
+	public Tile(String imageFileName)
 	{
-		Tile res = new Tile();
 		String str;
 		int d0, d1;
 
-		res.tileID			= new String(imageFileName);										// Init the non scanned values
-		res.nbrLeftRotation= 0;
+		this.tileID			= new String(imageFileName);										// Init the non scanned values
+		this.nbrLeftRotation= 0;
 		try
 		{
 			int l = tileNamePrefix.length();													// Ignore the prefix part
 
-			if		(imageFileName.charAt(l+0) == 'T')	res.isTree = true;						// Scan the boolean part
-			else if	(imageFileName.charAt(l+0) == 'F')	res.isTree = false;
+			if		(imageFileName.charAt(l+0) == 'T')	this.isTree = true;						// Scan the boolean part
+			else if	(imageFileName.charAt(l+0) == 'F')	this.isTree = false;
 			else	throw new Exception();
 
-			if		(imageFileName.charAt(l+1) == 'T')	res.isBuilding = true;
-			else if	(imageFileName.charAt(l+1) == 'F')	res.isBuilding = false;
+			if		(imageFileName.charAt(l+1) == 'T')	this.isBuilding = true;
+			else if	(imageFileName.charAt(l+1) == 'F')	this.isBuilding = false;
 			else	throw new Exception();
 
-			if		(imageFileName.charAt(l+2) == 'T')	res.isStop = true;
-			else if	(imageFileName.charAt(l+2) == 'F')	res.isStop = false;
+			if		(imageFileName.charAt(l+2) == 'T')	this.isStop = true;
+			else if	(imageFileName.charAt(l+2) == 'F')	this.isStop = false;
 			else	throw new Exception();
 
-			if		(imageFileName.charAt(l+3) == 'T')	res.isTerminus = true;
-			else if	(imageFileName.charAt(l+3) == 'F')	res.isTerminus = false;
+			if		(imageFileName.charAt(l+3) == 'T')	this.isTerminus = true;
+			else if	(imageFileName.charAt(l+3) == 'F')	this.isTerminus = false;
 			else	throw new Exception();
 
 			l += nbrBoolAttrChar;																// Scan the buildingDescription
 			str = imageFileName.substring(l, l+nbrBuildingDescriptionChar);
-			if (res.isBuilding)
+			if (this.isBuilding)
 			{
 				if (str.equals(nonBuildingDescription))		throw new Exception();
 				if (!isAcceptableBuildingDescription(str))	throw new Exception();
-				res.buildingDescription = new String(str);
+				this.buildingDescription = new String(str);
 			}
 			else
 			{
 				if (!str.equals(nonBuildingDescription))throw new Exception();
-				res.buildingDescription = null;
+				this.buildingDescription = null;
 			}
 
 			l += nbrBuildingDescriptionChar;														// Scan the terminusDescription
 			str = imageFileName.substring(l, l+nbrTerminusDescriptionChar);
-			if (res.isTerminus)
+			if (this.isTerminus)
 			{
 				if (str.equals(nonTerminusDescription))		throw new Exception();
 				if (!isAcceptableTerminusDescription(str))	throw new Exception();
-				res.terminusDescription = new Integer(Integer.parseInt(str));
+				this.terminusDescription = new Integer(Integer.parseInt(str));
 			}
 			else
 			{
 				if (!str.equals(nonTerminusDescription))	throw new Exception();
-				res.terminusDescription = null;
+				this.terminusDescription = null;
 			}
 
 			l += nbrTerminusDescriptionChar;
 			str = imageFileName.substring(l, l+nbrCardinalChar);
-			res.cardinal = Integer.parseInt(str);													// Scan the tile cardinal
+			this.cardinal = Integer.parseInt(str);													// Scan the tile cardinal
 
 			l += nbrCardinalChar;
-			res.pathList = new LinkedList<Path>();													// Scan the tile path list
+			this.pathList = new LinkedList<Path>();													// Scan the tile path list
 			for (int i=l; i<imageFileName.length(); i+=2)
 			{
 				d0 = Integer.parseInt(""+imageFileName.charAt(i));
 				d1 = Integer.parseInt(""+imageFileName.charAt(i+1));
-				res.pathList.add(new Path(d0, d1));
+				this.pathList.add(new Path(d0, d1));
 			}
-			return res;
 		}
 		catch (Exception e){throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
 	}
@@ -171,7 +169,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public boolean	isTerminus()		{return this.isTerminus;}
 	public boolean	isStop()			{return this.isStop;}
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.pathList.isEmpty()));}
-	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (!this.pathList.isEmpty()));}
+	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus));}
 	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); nbrLeftRotation = (nbrLeftRotation == 3) ? 0 : nbrLeftRotation+1;}
 	public void		turnRight()			{for (Path p: pathList)	p.turnRight();nbrLeftRotation = (nbrLeftRotation == 0) ? 3 : nbrLeftRotation-1;}
 	public boolean	isPathTo(int dir)
@@ -243,36 +241,15 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return Integer.parseInt(tileID.substring(l, l+nbrTerminusDescriptionChar));
 	}
 
-	public String toString()
-	{
-		String str = "";
-
-		str += "{ ";
-		if (this.isTree)		str += "Tree | ";
-		else					str += "____ | ";
-		if (this.isBuilding)	str += "Buil | ";
-		else					str += "____ | ";
-		if (this.isStop)		str += "Stop | ";
-		else					str += "____ | ";
-		if (this.isTerminus)	str += "Term | ";
-		else					str += "____ | ";
-		for(Path p : pathList)
-		{
-			str += "[" + p.end0 + " ; " + p.end1 + "] ";
-		}
-		str += "}";
-		return str;
-	}
-
 // --------------------------------------------
 // Private local methods
 // --------------------------------------------
-	private static boolean isAcceptableBuildingDescription(String bd)
+	private boolean isAcceptableBuildingDescription(String bd)
 	{
 		for (String s: acceptedBuildingDescription) if (bd.equals(s)) return true;
 		return false;
 	}
-	private static boolean isAcceptableTerminusDescription(String td)
+	private boolean isAcceptableTerminusDescription(String td)
 	{
 		for (String s: acceptedTerminusDescription) if (td.equals(s)) return true;
 		return false;
@@ -281,7 +258,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // Path class :
 // Represents a path between two cardinal directions
 // --------------------------------------------
-	public static class Path implements Serializable, CloneableInterface<Path>
+	public class Path implements Serializable, CloneableInterface<Path>
 	{
 		// Attributes
 		private static final long serialVersionUID = 1L;

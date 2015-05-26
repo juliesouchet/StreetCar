@@ -5,12 +5,10 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
 import main.java.player.PlayerInterface;
-import main.java.util.NetworkTools;
 
 
 
@@ -54,17 +52,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		try																			// Create the player's remote reference
 		{
 			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
-			
-			try{ java.rmi.registry.LocateRegistry.createRegistry(applicationPort); }
-			catch (ExportException e){} // registry already created
-			
+			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
 			Naming.rebind(url, this);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
 		this.data			= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.engineLock		= new Object();
-		this.engine			= new Engine(this.engineLock, data);
+		this.engine			= new Engine(this.engineLock);
 		this.engineThread	= new Thread(this.engine);
 		this.engineThread	.start();
 
@@ -74,12 +69,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println(gameMessageHeader + "Start waiting for connexion request");
 		System.out.println("===========================================================\n");
 	}
-	
-	public Game() throws RemoteException, ExceptionUnknownBoardName, RuntimeException
-	{
-		this("StreetCar", NetworkTools.firstFreeSocketInfo().IP, "newOrleans", 3);
-	}
-	
 	/**=======================================================================
 	 * @return Creates a remote application cloned to the real application at the given ip
 	 * @throws NotBoundException 		: The web host is not configured	(throw RuntimeException)
@@ -115,14 +104,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	{
 		return this.data.getClone(playerName);
 	}
-	
-	public Data getData()
-	{
-		return data;
-	}
-	
 	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
-
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
 		{
@@ -182,12 +164,9 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println("===========================================================\n");
 		return res;
 	}
-	public void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction
+	public void hostStartGame(String playerName) throws RemoteException
 	{
-		int nbOfPlayers = data.getPlayerNameList().size();
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if(nbOfPlayers < 2) throw new ExceptionForbiddenAction();
-		if(nbOfPlayers > Data.maxNbrPlayer) throw new ExceptionForbiddenAction();
 
 		this.engine.addAction(playerName, this.data, "hostStartGame");
 		synchronized(this.engineLock)

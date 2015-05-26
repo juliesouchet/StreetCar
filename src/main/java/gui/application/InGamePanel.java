@@ -17,9 +17,9 @@ public class InGamePanel extends Panel {
 	
 	private static final long serialVersionUID = 1L;
 	Panel chatPanel;
-	Panel gameCenterPanel;
+	Panel gameMapPanel;
 	Panel playersSidebarPanel;
-	PlayerPanel[] playersPanel = new PlayerPanel[4];
+	PlayerPanel[] playersPanel = new PlayerPanel[5];
 
 	// Constructors
 	
@@ -34,15 +34,18 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupGameMapPanel() {	
-		gameCenterPanel = new Panel();
-		gameCenterPanel.setLayout(new BorderLayout());
-		this.add(gameCenterPanel, BorderLayout.CENTER);
+		gameMapPanel = new Panel();
+		gameMapPanel.setLayout(new BorderLayout());
+		this.add(gameMapPanel, BorderLayout.CENTER);
 		
-		BottomPlayerPanel bottomPlayerPanel = new BottomPlayerPanel();
-		gameCenterPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
+		Panel bottomPlayerPanel = new Panel();
+		bottomPlayerPanel.setPreferredSize(new Dimension(300, 150));
+		bottomPlayerPanel.setBackground(Color.WHITE);
+		bottomPlayerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+		gameMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
 		
 		MapPanel mapPanel = new MapPanel();
-		gameCenterPanel.add(mapPanel, BorderLayout.CENTER);
+		gameMapPanel.add(mapPanel, BorderLayout.CENTER);
 	}
 	
 	private void setupChatPanel() {
@@ -85,7 +88,6 @@ public class InGamePanel extends Panel {
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(playersSidebarPanel);
-    	scrollPane.getVerticalScrollBar().setUnitIncrement(16);
     	scrollPane.setHorizontalScrollBar(null);
     	this.add(scrollPane, BorderLayout.WEST);
     	

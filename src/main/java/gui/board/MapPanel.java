@@ -2,13 +2,11 @@ package main.java.gui.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import main.java.gui.components.Panel;
 
 
-public class MapPanel extends Panel implements MouseListener {
+public class MapPanel extends Panel {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -18,50 +16,16 @@ public class MapPanel extends Panel implements MouseListener {
 	
 	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        int width = (int) (0.9 * Math.min(this.getWidth(), this.getHeight()));
+        int widthPerCase = width/12;
+        int originX = (this.getWidth() - width) / 2;
+        int originY = (this.getHeight() - width) / 2;
         
-        float min = Math.min(this.getWidth(), this.getHeight());
-        float width = (float) (0.9 * min);
-        float widthPerCase = width/12;
-        int originX = (this.getWidth() - Math.round(width)) / 2;
-        int originY = (this.getHeight() - Math.round(width)) / 2;
-        
-        for (float i=0; i<11; i++) {    
-            g.drawLine(originX, 
-            		   originY + Math.round(widthPerCase*i) + Math.round(widthPerCase),
-                       originX + Math.round(width),
-                       originY + Math.round(widthPerCase*i) + Math.round(widthPerCase)); 
-            
-            g.drawLine(originX + Math.round(widthPerCase*i) + Math.round(widthPerCase), 
-            		   originY, 
-            		   originX + Math.round(widthPerCase*i) + Math.round(widthPerCase), 
-            		   originY + Math.round(width));
+        for (int i=0; i<11; i++) {
+            g.drawLine(originX, originY+widthPerCase*i+widthPerCase, originX+width, originY+widthPerCase*i+widthPerCase); 
+            g.drawLine(originX+widthPerCase*i+widthPerCase, originY, originX+widthPerCase*i+widthPerCase, originY+width);
         }
         
-        g.drawRect(originX, originY, (int)width+1, (int)width+1);        
-    }
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		System.out.println("Mouse clicked");
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		System.out.println("Mouse entered");
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		System.out.println("Mouse exited");		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		System.out.println("Mouse pressed");		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		System.out.println("Mouse released");		
-	}    
+        g.drawRect(originX, originY, width, width);        
+    }    
 }

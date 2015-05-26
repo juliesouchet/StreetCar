@@ -37,12 +37,6 @@ public class PlayerPanel extends JPanel{
         g.drawRect(sizeOfCard*3 + spaceBetween*4, 60, sizeOfCard, sizeOfCard); //card4
         g.drawRect(sizeOfCard*4 + spaceBetween*5, 60, sizeOfCard, sizeOfCard); //card5
         
-        //g.drawRect(230, 5, 46, 46); //rectangle for diamond
-        g.drawLine(230, 28, 253, 5); //line1 for diamond
-        g.drawLine(253, 5, 276, 28); //line2 for diamond
-        g.drawLine(276, 28, 253, 51); //line3 for diamond
-        g.drawLine(253, 51, 230, 28); //line4 for diamond
-        
         g.drawRect(10, 115, 45, 45); //station1
         g.drawRect(65, 115, 45, 45); //station2
     }

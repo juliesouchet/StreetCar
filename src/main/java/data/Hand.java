@@ -26,9 +26,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	{
 		this.tileList = new LinkedList<Tile> (basicsTiles);
 	}
-	
-	private Hand() {}
-	
+	private Hand(){}
 	public Hand getClone()
 	{
 		Hand res = new Hand();
@@ -44,17 +42,8 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 
 	public Tile get(int k)
 	{
-		return tileList.get(k);
-	}
-	
-	public void addTile(Tile t)
-	{
-		tileList.add(t);
-	}
-	
-	public LinkedList<Tile> getTiles()
-	{
-		return tileList;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

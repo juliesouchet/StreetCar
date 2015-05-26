@@ -4,11 +4,9 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
@@ -26,14 +24,13 @@ import main.java.util.Direction;
 
 public class Data implements Serializable
 {
-	// --------------------------------------------
-	// Attributes:
-	// --------------------------------------------
+// --------------------------------------------
+// Attributes:
+// --------------------------------------------
 	private static final long			serialVersionUID		= -2740586808331187527L;
 	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
 	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
-	//private static LinkedList<Tile>		initialHand				= getInitialHand();
 	public static final int				minNbrPlayer			= 2;
 	public static final int				maxNbrPlayer			= 6;
 	public static final int				initialHandSize			= 5;
@@ -46,6 +43,7 @@ public class Data implements Serializable
 
 	private LinkedList<Integer>			remainingLine;
 	private LinkedList<String[][]>		remainingBuildingInLine;
+	private LinkedList<Tile>			initialHand;
 
 	private String						gameName;
 	private Tile[][]					board;
@@ -53,17 +51,19 @@ public class Data implements Serializable
 	private HashMap<String, PlayerInfo>	playerInfoList;
 	private int							round;
 	private int							maxPlayerSpeed;
-	private String[]					playerOrder;
+	private String[]					playerOrder;  // TODO a choisir lors du debut de partie
 	private String						host;
 
-
+// --------------------------------------------
+// Builder:
+// --------------------------------------------
 	public Data(String gameName, String boardName, int nbrBuildingInLine) throws ExceptionUnknownBoardName, RuntimeException
 	{
 		File f = new File(boardDirectory + boardName);
 		Scanner sc;
 
 		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
-				(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
+			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
 		this.gameName			= new String(gameName);
 		try						{sc = new Scanner(f);}
@@ -81,7 +81,7 @@ public class Data implements Serializable
 		this.initExistingBuildingInLine(nbrBuildingInLine);							// Init the existing building
 		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
 
-		getInitialHandConfiguration();
+		this.initInitialHand();
 	}
 	private Data(){}
 	public Data getClone(String playerName)
@@ -92,7 +92,7 @@ public class Data implements Serializable
 
 		res.remainingLine			= null;
 		res.remainingBuildingInLine	= null;
-//		res.initialHand				= cpT.copyList(this.initialHand);
+		res.initialHand				= cpT.copyList(this.initialHand);
 
 		res.gameName				= new String(this.gameName);
 		res.board					= cpT.copyMatrix(this.board);
@@ -106,9 +106,9 @@ public class Data implements Serializable
 		return res;
 	}
 
-	// --------------------------------------------
-	// Setter:
-	// --------------------------------------------
+// --------------------------------------------
+// Setter:
+// --------------------------------------------
 	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
@@ -123,10 +123,33 @@ public class Data implements Serializable
 		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
 		this.playerInfoList.remove(playerName);
 	}
+	public void hostStartGame(String host)
+	{
+		if (!this.gameCanStart())	throw new RuntimeException("The game definition is not complete"); 
+		if (!this.host.equals(host))throw new RuntimeException("The starting host does not correspond the Data known host");
 
-	// --------------------------------------------
-	// Getter:
-	// --------------------------------------------
+		LinkedList<String> players = new LinkedList<String> (this.getPlayerNameList());
+		Random rnd = new Random();
+		int i, size = players.size();
+
+		this.round			= 0;
+		this.playerOrder	= new String[size];
+		for (int s=size-1; s>=0; s--)
+		{
+			i = rnd.nextInt(s+1);
+			playerOrder[s] = players.get(i);
+			players.remove(i);
+		}
+	}
+////////////////TODO
+	public void	setTile(int x, int y, Tile t)
+	{
+		this.board[x][y] = t;
+	}
+
+// --------------------------------------------
+// Getter:
+// --------------------------------------------
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public String				getHost()										{return new String(this.host);}
 	public int					getWidth()										{return this.board.length;}
@@ -135,8 +158,6 @@ public class Data implements Serializable
 	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
 	public int					getRound()										{return this.round;}
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
-
-	public void					setTile(int x, int y, Tile t)					{this.board[x][y] = t;}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
@@ -177,7 +198,7 @@ public class Data implements Serializable
 		for (int d: accessibleDirection)																// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
 			Point neighbor = Direction.getNeighbour(x, y, d);
-			////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
+////////	if (!this.isWithinnBoard(neighbor.x, neighbor.y))							return false;	//		Neighbor tile out of board
 			Tile neighborT = this.board[x][y];
 			if ((this.isOnEdge(neighbor.x, neighbor.y)) && (!neighborT.isTerminus()))	return false;	//		Rule A
 			if (neighborT.isEmpty())													continue;		//		Rule E (step 1)
@@ -360,7 +381,7 @@ public class Data implements Serializable
 				for (int x=0; x<width; x++)
 				{
 					tileFileName	= sc.next();
-					res[x][y]		= Tile.parseTile(tileFileName);
+					res[x][y]		= new Tile(tileFileName);
 					rotation		= sc.nextInt();
 					for (int i=0; i<rotation; i++) res[x][y].turnLeft();
 				}
@@ -390,34 +411,10 @@ public class Data implements Serializable
 		}
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
-	 
-	/**============================================
-	 * @return the initial hand configuration from the corresponding file
-	 ==============================================*/
-	public static LinkedList<Tile> getInitialHandConfiguration()
-	{
-		File f = new File(initialHandFile);
-		String tileName;
-		Scanner sc;
 
-		LinkedList<Tile> initialHand = new LinkedList<Tile>();
-		try
-		{
-			sc = new Scanner(f);
-			for (int i=0; i<initialHandSize; i++)
-			{
-				tileName = sc.next();
-				initialHand.add(Tile.parseTile(tileName));
-			}
-			sc.close();
-		}
-		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
-		return initialHand;
-	}
-
-	// --------------------------------------------
-	// Private methods:
-	// --------------------------------------------
+// --------------------------------------------
+// Private methods:
+// --------------------------------------------
 	/**============================================
 	 * @return Creates the line cards from the corresponding file
 	 ==============================================*/
@@ -442,6 +439,28 @@ public class Data implements Serializable
 			sc.close();
 		}
 		catch (Exception e){throw new RuntimeException("Malformed line file");}
+	}
+	/**============================================
+	 * @return Creates the initial hand from the corresponding file
+	 ==============================================*/
+	private void initInitialHand()
+	{
+		File f = new File(initialHandFile);
+		String tileName;
+		Scanner sc;
+
+		this.initialHand = new LinkedList<Tile>();
+		try
+		{
+			sc = new Scanner(f);
+			for (int i=0; i<initialHandSize; i++)
+			{
+				tileName = sc.next();
+				this.initialHand.add(new Tile(tileName));
+			}
+			sc.close();
+		}
+		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
 	}
 	/**============================================
 	 * @return the position of the building which name are given
@@ -532,9 +551,9 @@ public class Data implements Serializable
 		return res;
 	}
 
-	// --------------------------------------------
-	// Player Info class:
-	// --------------------------------------------
+// --------------------------------------------
+// Player Info class:
+// --------------------------------------------
 	public class PlayerInfo implements Serializable
 	{
 		// Attributes
@@ -557,7 +576,7 @@ public class Data implements Serializable
 			this.player		= pi;
 			this.playerName	= new String(playerName);
 			this.history	= new LinkedList<Action>();
-			this.hand		= new Hand(getInitialHandConfiguration());
+			this.hand		= new Hand(initialHand);
 			i				= rnd.nextInt(remainingLine.size());						// Draw a line
 			this.line		= remainingLine.get(i);
 			remainingLine.remove(i);
@@ -568,33 +587,5 @@ public class Data implements Serializable
 			this.terminus= getTerminusPosition(this.line);								// Init the terminus position
 		}
 		public PlayerInfo(){}
-	}
-
-	public String getHostName() {
-		return host;
-	}
-	public void randomizePlayerOrder() 
-	{
-		playerOrder = new String[getNbrPlayer()];
-		List<String> tempPlayers = new ArrayList<String>(getPlayerNameList());
-		int orderedIndex = 0;
-		while(!tempPlayers.isEmpty())
-		{
-			Random randomGenerator = new Random();
-			int index = randomGenerator.nextInt(tempPlayers.size());
-			String player = tempPlayers.get(index);
-			tempPlayers.remove(index);
-			playerOrder[orderedIndex] = player;
-			orderedIndex++;
-		}
-	}
-	public String[] getPlayerOrder() {
-		return playerOrder;
-	}
-	public PlayerInfo getPlayerInfo(String player) {
-		return playerInfoList.get(player);
-	}
-	public Deck getDeck() {
-		return deck;
 	}
 }
