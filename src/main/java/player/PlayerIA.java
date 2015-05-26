@@ -36,6 +36,7 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerColor 							(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
 	 =======================================================================*/
+// TODO: remove the ihm parameter
 	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);

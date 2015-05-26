@@ -63,7 +63,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
 			game		= playerIHM.getGame();
 			iaName		= "IA_DUMB_" + ((new Random()).nextDouble());
-			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0);
+			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, null);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
