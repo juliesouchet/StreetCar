@@ -31,7 +31,7 @@ public class Data implements Serializable
 	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
 	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
-	public static final int				minNbrPlayer			= 2;
+	public static final int				minNbrPlayer			= 1; //TODO modifier par ulysse pour permettre tests basiques des automates. remettre a 2
 	public static final int				maxNbrPlayer			= 6;
 	public static final int				initialHandSize			= 5;
 	public static final int				minNbrBuildingInLine	= 2;

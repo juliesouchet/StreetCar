@@ -72,6 +72,51 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 		sc.close();
 	}
 
+	/** Autre constructeur, l'argument sert juste a surcharger le constructeur avec des valeurs par default
+	*	Si i=0 => C joueurA jeu red
+	*	si i=1 => J joueurB jeu blue 127.0.0.1
+	*
+	*/
+	public TestIHM(int i)
+	{
+		PlayerIHM player = null;
+		String name, gameName, ip;
+		boolean create;
+		Color color;
+		
+		if ( i== 0)	{
+			create = true; name = "joueurA"; gameName = "jeu"; color = Color.red; ip = null;
+		} else { //if ( i== 1) {
+			create = false; name = "joueurB"; gameName = "jeu"; color = Color.blue; ip = "127.0.0.1";
+		}
+
+
+		String boardName = "newOrleans";	/////// Nom par defaut
+		int nbrBuildingInLine= 3;	/////// Nom par defaut
+
+
+		try{
+			player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine, color, create, ip, this);
+			}
+		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
+
+		// Game data viewer
+		this.frame = new DataViewerFrame();
+		try	{this.frame.setGameData(player.getGameData());}
+		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
+		frame.setVisible(true);
+
+		if (create)
+		{
+            
+			try	{
+				player.hostStartGame();
+
+			}catch (Exception e)	{e.printStackTrace();}
+		}
+	}	
+	
+	
 // --------------------------------------------
 // Local methods:
 // --------------------------------------------
