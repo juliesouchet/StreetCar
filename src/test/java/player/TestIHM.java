@@ -2,6 +2,7 @@ package test.java.player;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.Random;
 import java.util.Scanner;
 
 import main.java.data.Data;
@@ -48,13 +49,18 @@ public class TestIHM
 String boardName = "newOrleans";	/////// Nom par defaut
 int nbrBuildingInLine= 3;	/////// Nom par defaut
 
-
-		try					{player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);}
+		try
+		{
+			player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
+		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
-		this.frame = new DataViewerFrame();
-		try						{this.frame.setGameData(player.getGameData());}
+		try
+		{
+			this.frame = new DataViewerFrame(player.getGame(), name);
+			this.frame.setGameData(player.getGameData());
+		}
 		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
 		frame.setVisible(true);
 
@@ -66,7 +72,11 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 				System.out.print("\n\n\tEnter \"start\" to start the game: ");
 				str = sc.next();
 			}
-			try					{player.hostStartGame();}
+			try
+			{
+				player.getGame().addIAPlayer("IA_Dumb" + (new Random()).nextFloat(), Color.BLACK, 0);
+				player.hostStartGame();
+			}
 			catch (Exception e)	{e.printStackTrace();}
 		}
 		sc.close();

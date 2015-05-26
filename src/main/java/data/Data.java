@@ -162,10 +162,11 @@ public class Data implements Serializable
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
-	public boolean				containsPlayer(String playerName)				{return this.playerInfoList.containsKey(playerName);}
+	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
+	public Hand					getHand(String name)							{return this.playerInfoList.get(name).hand;}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean				isPlayerTurn(String playerName)
 	{
@@ -389,7 +390,7 @@ public class Data implements Serializable
 				for (int x=0; x<width; x++)
 				{
 					tileFileName	= sc.next();
-					res[x][y]		= new Tile(tileFileName);
+					res[x][y]		= Tile.parseTile(tileFileName);
 					rotation		= sc.nextInt();
 					for (int i=0; i<rotation; i++) res[x][y].turnLeft();
 				}
@@ -464,7 +465,7 @@ public class Data implements Serializable
 			for (int i=0; i<initialHandSize; i++)
 			{
 				tileName = sc.next();
-				this.initialHand.add(new Tile(tileName));
+				this.initialHand.add(Tile.parseTile(tileName));
 			}
 			sc.close();
 		}

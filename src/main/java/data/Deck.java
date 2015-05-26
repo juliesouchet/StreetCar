@@ -38,7 +38,7 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 		tileList	= f.list();
 		for (String str: tileList)
 		{
-			Tile t = new Tile(str);
+			Tile t = Tile.parseTile(str);
 			if (t.isDeckTile()) this.stack.add(new StackCell(t));
 		}
 		Collections.sort(this.stack, new StackCell());
