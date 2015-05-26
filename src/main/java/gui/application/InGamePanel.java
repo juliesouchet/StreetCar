@@ -17,9 +17,9 @@ public class InGamePanel extends Panel {
 	
 	private static final long serialVersionUID = 1L;
 	Panel chatPanel;
-	Panel gameMapPanel;
+	Panel gameCenterPanel;
 	Panel playersSidebarPanel;
-	PlayerPanel[] playersPanel = new PlayerPanel[5];
+	PlayerPanel[] playersPanel = new PlayerPanel[4];
 
 	// Constructors
 	
@@ -34,18 +34,15 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupGameMapPanel() {	
-		gameMapPanel = new Panel();
-		gameMapPanel.setLayout(new BorderLayout());
-		this.add(gameMapPanel, BorderLayout.CENTER);
+		gameCenterPanel = new Panel();
+		gameCenterPanel.setLayout(new BorderLayout());
+		this.add(gameCenterPanel, BorderLayout.CENTER);
 		
-		Panel bottomPlayerPanel = new Panel();
-		bottomPlayerPanel.setPreferredSize(new Dimension(300, 150));
-		bottomPlayerPanel.setBackground(Color.WHITE);
-		bottomPlayerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
-		gameMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
+		BottomPlayerPanel bottomPlayerPanel = new BottomPlayerPanel();
+		gameCenterPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
 		
 		MapPanel mapPanel = new MapPanel();
-		gameMapPanel.add(mapPanel, BorderLayout.CENTER);
+		gameCenterPanel.add(mapPanel, BorderLayout.CENTER);
 	}
 	
 	private void setupChatPanel() {
