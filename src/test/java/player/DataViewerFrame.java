@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import main.java.data.Data;
 import main.java.data.Tile;
+import main.java.game.GameInterface;
 
 public class DataViewerFrame extends JFrame {
 
@@ -24,14 +25,17 @@ public class DataViewerFrame extends JFrame {
 	public static final int	paddingHeight= 50;
 
 	private static final long serialVersionUID = 1L;
+	private int tileWidth;
+	private int tileHeight;
 	ViewerPanel viewerPanel = new ViewerPanel();
 
 	// Constructors
 
-	public DataViewerFrame() {
+	public DataViewerFrame(GameInterface game, String playerName) {
 		super();
 		this.setSize(new Dimension(frameWidth+paddingWidth,frameHeight+paddingHeight));
 		this.add(this.viewerPanel);
+		this.viewerPanel.addMouseListener(new TestMouseListener(game, playerName, paddingWidth, paddingHeight, tileWidth, tileHeight));
 	}
 
 	// Setters / getters
@@ -41,6 +45,8 @@ public class DataViewerFrame extends JFrame {
 	}
 	
 	public void setGameData(Data data) {
+		this.tileWidth	= (getWidth() - paddingWidth) / data.getWidth();
+		this.tileHeight	= (getHeight()- paddingHeight)/ data.getHeight();
 		this.viewerPanel.gameData = data;
 	}
 	
@@ -64,8 +70,6 @@ public class DataViewerFrame extends JFrame {
 			BufferedImage img = null;
 			String tileName;
 			Tile[][] board = this.gameData.getBoard();
-			int tileWidth	= (getWidth() - paddingWidth) / this.gameData.getWidth();
-			int tileHeight	= (getHeight()- paddingHeight)/ this.gameData.getHeight();
 			int x = tileWidth/2;
 			int y = tileHeight/2;
 

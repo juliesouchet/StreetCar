@@ -3,7 +3,9 @@ package main.java.player;
 import java.awt.Color;
 import java.rmi.RemoteException;
 
+import main.java.data.Action;
 import main.java.data.Data;
+import main.java.data.Hand;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -35,7 +37,8 @@ public class PlayerIA extends PlayerAbstract
 	 =======================================================================*/
 	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		super(false, playerName, playerColor, app, null);
+		super(playerName, playerColor, app, null);
+		this.game.onJoinGame(this, false);						// Log the player to the application
 		this.automaton	= new Dumbest();
 	}
 
@@ -49,6 +52,11 @@ public class PlayerIA extends PlayerAbstract
 	}
 	public void gameHasChanged(Data data) throws RemoteException
 	{
-		if (data.isPlayerTurn(playerName));
+		if (!data.isPlayerTurn(playerName)) return;
+
+		Hand myHand = data.getHand(playerName);
+		Action a = this.automaton.makeChoice(myHand, data);
+		try {this.game.placeTile(playerName, a.tile1, a.positionTile1);}
+		catch (Exception e) {e.printStackTrace(); System.exit(0);}
 	}
 }
