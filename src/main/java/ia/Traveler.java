@@ -76,7 +76,8 @@ public class Traveler extends PlayerAutomaton {
 			}
 			
 			// Calculates the shortest itinerary
-			LinkedList<Point> itinerary = getShortestItinerary(checkpoints, currentConfig);
+			LinkedList<Point> itinerary = currentConfig.getShortestPath(checkpoints.getFirst(), checkpoints.getLast());
+					//getShortestItinerary(checkpoints, currentConfig);
 			
 			// Advances the maximum allowed number of squares
 			ListIterator<Point> iterator = itinerary.listIterator();
@@ -108,7 +109,7 @@ public class Traveler extends PlayerAutomaton {
 	{
 		// TODO : ajouter les passages par les arrets
 		 int[][] distance;
-		 int width, height, arcWeight = 1;
+		 int width, height, arcWeight = 1; // TODO : préciser le poids des tuiles
 		 PriorityQueue<WeightedPoint> queue;
 		 Point origin, destination, u;
 		 WeightedPoint wp;
@@ -158,8 +159,7 @@ public class Traveler extends PlayerAutomaton {
 	}
 	
 	private int heuristic(Point p, Point dest) {
-		// TODO : utiliser les distances de manhattan
-		return 0;
+		return Math.abs(dest.x-p.x)+Math.abs(dest.y-p.y);
 	}
 	
 	

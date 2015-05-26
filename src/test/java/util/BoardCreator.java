@@ -16,7 +16,7 @@ import test.java.player.DataViewerFrame.ViewerPanel;
 
 
 public class BoardCreator implements Runnable {
-	static final String boardPath = "src/test/resources/boards/";
+	public static final String boardPath = "src/test/resources/boards/";
 	final int padding = 150;
 	
 	Tile currentTile = null;
