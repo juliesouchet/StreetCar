@@ -13,13 +13,14 @@ import main.java.data.Hand;
 import main.java.game.GameInterface;
 import main.java.player.PlayerIA;
 import main.java.player.PlayerIHM;
+import main.java.rubbish.InterfaceIHM;
 
 
 
 
 
 
-public class TestIA
+public class TestIA implements InterfaceIHM
 {
 // --------------------------------------------
 // Attributs:

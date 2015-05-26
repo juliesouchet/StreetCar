@@ -2,12 +2,10 @@ package test.java.player;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
-import java.util.Random;
 import java.util.Scanner;
 
 import main.java.data.Data;
 import main.java.game.GameInterface;
-import main.java.player.PlayerIA;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
 
@@ -15,8 +13,7 @@ import main.java.rubbish.InterfaceIHM;
 
 
 
-
-public class TestIHM implements InterfaceIHM
+public class Test_IHM implements InterfaceIHM
 {
 // --------------------------------------------
 // Attributs:
@@ -26,13 +23,13 @@ public class TestIHM implements InterfaceIHM
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public TestIHM()
+	public Test_IHM()
 	{
 		Scanner sc = new Scanner(System.in);
-		String str, name, gameName, ip, iaName;
+		Color color;
+		String str, name, gameName, ip;
 		boolean create;
 		PlayerIHM playerIHM = null;
-		PlayerIA playerIA = null;
 		GameInterface game = null;
 
 		while (true)
@@ -48,7 +45,7 @@ public class TestIHM implements InterfaceIHM
 		System.out.print("\n\n");
 		System.out.print("\t- Player name\t\t :");						name		= sc.next();
 		System.out.print("\t- Game name\t\t :");						gameName	= sc.next();
-		Color color = askColor(sc);
+		color = askColor(sc);
 		if(!create){System.out.print("\t- IP of the application\t:");	ip			= sc.next();}
 		else															ip			= null;
 String boardName = "newOrleans";	/////// Nom par defaut
@@ -58,8 +55,6 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 		{
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
 			game		= playerIHM.getGame();
-			iaName		= "IA_DUMB_" + ((new Random()).nextDouble());
-			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
@@ -80,6 +75,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 				System.out.print("\n\n\tEnter \"start\" to start the game: ");
 				str = sc.next();
 			}
+
 			try
 			{
 				playerIHM.hostStartGame();
@@ -110,11 +106,13 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 		while(true)
 		{
 			System.out.print("\t- Color\t\t\t :"); color = sc.next();
-			if		(color.equals("red"))	return Color.red;
-			else if	(color.equals("green"))	return Color.green;
-			else if	(color.equals("blue"))	return Color.blue;
-			else if	(color.equals("cyan"))	return Color.cyan;
-			else if	(color.equals("gray"))	return Color.gray;
+			if		(color.equals("red"))		return Color.red;
+			else if	(color.equals("green"))		return Color.green;
+			else if	(color.equals("blue"))		return Color.blue;
+			else if	(color.equals("cyan"))		return Color.cyan;
+			else if	(color.equals("gray"))		return Color.gray;
+			else if	(color.equals("yellow"))	return Color.yellow;
+			}
 		}
-	}
+
 }

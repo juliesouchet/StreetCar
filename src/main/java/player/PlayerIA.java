@@ -12,6 +12,7 @@ import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
+import main.java.rubbish.InterfaceIHM;
 
 
 
@@ -35,9 +36,9 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerColor 							(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
 	 =======================================================================*/
-	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
-		super(playerName, playerColor, app, null);
+		super(playerName, playerColor, app, ihm);
 		this.automaton	= new Dumbest();
 		super.game.onJoinGame(this, false);						// Log the player to the application
 	}
@@ -52,11 +53,15 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 	}
 	public void gameHasChanged(Data data) throws RemoteException
 	{
+		if (this.ihm != null) this.ihm.refresh(data);
 		if (!data.isPlayerTurn(playerName)) return;
 
 		Hand myHand = data.getHand(playerName);
 		Action a = this.automaton.makeChoice(myHand, data);
-		try {this.game.placeTile(playerName, a.tile1, a.positionTile1);}
+		try
+		{
+			this.game.placeTile(playerName, a.tile1, a.positionTile1);
+		}
 		catch (Exception e) {e.printStackTrace(); System.exit(0);}
 	}
 

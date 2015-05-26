@@ -79,7 +79,7 @@ public class Engine implements Runnable
 
 // --------------------------------------------
 // Private methods:
-// TODO: declare all the private methods as synchronized
+// Declare all the private methods as synchronized
 // --------------------------------------------
 	public void hostStartGame() throws RemoteException
 	{
@@ -92,10 +92,9 @@ public class Engine implements Runnable
 	public void placeTile() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
-		String	playerName	= this.toExecute.playerName;
 		Point	position	= this.toExecute.position;
 		Tile	tile		= this.toExecute.tile;
-//TODO pas fini
+
 		data.setTile(position.x, position.y, tile);
 		data.skipTurn();
 		this.notifyAllPlayers(data);
