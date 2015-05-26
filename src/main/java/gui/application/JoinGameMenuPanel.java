@@ -54,7 +54,7 @@ public class JoinGameMenuPanel extends MenuPanel {
 		this.addressField = new TextField("");
 		addressField.setBounds(new Rectangle(215, 170, 150, 30));
 		addressField.setPlaceholder("ex: 88.183.84.182", null);
-		addressField.setEditable(false);
+		addressField.setEditable(true);
 		this.add(this.addressField);
 	}
 	
