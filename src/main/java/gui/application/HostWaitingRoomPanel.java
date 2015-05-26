@@ -29,7 +29,7 @@ public class HostWaitingRoomPanel extends MenuPanel {
 	
 	private void setupPanel() {
     	this.setSize(new Dimension(700, 500));
-    	this.setMenuTitle("New Game", null);
+    	this.setMenuTitle("Host Waiting Room", null);
 
 		Label titleLabel = new Label("Waiting room", null);
 		titleLabel.setBounds(120, 20, 300, 100);
