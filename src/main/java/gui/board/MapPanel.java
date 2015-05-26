@@ -34,7 +34,7 @@ public class MapPanel extends Panel implements MouseListener {
 	protected void changeGlobalValues() {
 		this.min = Math.min(this.getWidth(), this.getHeight());
 		this.width = (float) (0.96 * min);
-		this.widthPerCase = width/12;
+		this.widthPerCase = width/14;
 	    this.originX = (this.getWidth() - Math.round(width)) / 2;
 	    this.originY = (this.getHeight() - Math.round(width)) / 2;
 	}
@@ -46,7 +46,7 @@ public class MapPanel extends Panel implements MouseListener {
         
         changeGlobalValues();
         
-        for (float i=0; i<11; i++) {
+        for (float i=0; i<13; i++) {
         g.drawLine(originX,
         		   originY + Math.round(widthPerCase*i) + Math.round(widthPerCase),
         		   originX + Math.round(width),
