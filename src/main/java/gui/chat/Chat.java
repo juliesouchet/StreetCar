@@ -1,4 +1,4 @@
-package main.java.gui.board;
+package main.java.gui.chat;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
