@@ -1,4 +1,4 @@
-package main.java.gui.application;
+package main.java.gui.components;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,9 +6,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
-
-import main.java.gui.components.Label;
-import main.java.gui.components.Panel;
 
 @SuppressWarnings("serial")
 public class TitlePanel extends Panel{

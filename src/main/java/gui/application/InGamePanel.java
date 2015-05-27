@@ -8,9 +8,10 @@ import java.awt.Graphics;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
-import main.java.gui.board.ChatPanel;
 import main.java.gui.board.MapPanel;
+import main.java.gui.chat.ChatPanel;
 import main.java.gui.components.Panel;
+import main.java.gui.components.TitlePanel;
 
 public class InGamePanel extends Panel {
 
