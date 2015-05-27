@@ -178,6 +178,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 	}
 // Version simple pour tester l'ia
+//TODO Remplacer par public void placeTile(String playerName, int indexInHand, Point position, Direction rotation)
 	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
@@ -190,7 +191,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			try					{this.engineLock.notify();}
 			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 		}
-}
+	}
+// TODO public LoginInfo[] getLoginInfo()
+// TODO public void getLoginInfo(String playerName, int indexInLogTable, LogInfo li)
+
+
 
 // --------------------------------------------
 // Private methods:

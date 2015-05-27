@@ -42,7 +42,10 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 
 	public Tile get(int k)
 	{
-		return this.tileList.get(k); //TODO La tuile n'est pas retiré de la main: il faut décider si on garde comme ca ou pas
+		Tile res = this.tileList.get(k);
+
+		this.tileList.remove(k);
+		return res;
 	}
 
 }
