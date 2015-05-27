@@ -1,15 +1,16 @@
-package main.java.gui.application;
+package main.java.gui.menus;
 
 import java.awt.Rectangle;
 
+import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 
 @SuppressWarnings("serial")
-public class MainMenuPanel extends MenuPanel {
+public class WelcomeMenuPanel extends MenuPanel {
 
 	// Constructors
 	
-	MainMenuPanel() {
+	public WelcomeMenuPanel() {
 		super();
     	this.setupPanel();
 		this.setupButtons();
@@ -49,28 +50,28 @@ public class MainMenuPanel extends MenuPanel {
 	// Actions
 	
 	public void newGameAction() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showNewGamePanel();
+		GameController gc = (GameController)this.getFrameController();
+		gc.showNewGamePanel();
 	}
 
 	public void joinGameAction() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showJoinGamePanel();
+		GameController gc = (GameController)this.getFrameController();
+		gc.showJoinGamePanel();
 	}
 
 	public void settingsAction() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showSettingsPanel();
+		GameController gc = (GameController)this.getFrameController();
+		gc.showSettingsPanel();
 	}
 
 	public void gameRulesAction() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showRulesPanel();
+		GameController gc = (GameController)this.getFrameController();
+		gc.showRulesPanel();
 	}
 
 	public void quitAction() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.quitGame();
+		GameController gc = (GameController)this.getFrameController();
+		gc.quitGame();
 	}
 	
 }

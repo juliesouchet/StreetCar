@@ -1,8 +1,9 @@
-package main.java.gui.application;
+package main.java.gui.menus;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.util.UserDefaults;
 
@@ -11,7 +12,7 @@ public class SettingsMenuPanel extends MenuPanel {
 
 	// Constructors
 	
-	SettingsMenuPanel() {
+	public SettingsMenuPanel() {
 		super();
     	this.setupPanel();
 		this.setupButtons();
@@ -33,8 +34,8 @@ public class SettingsMenuPanel extends MenuPanel {
 	
 	public void saveAndQuitGame() {
 		UserDefaults.getSharedInstance().synchronize();
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showWelcomeMenuPanel();
+		GameController gc = (GameController)this.getFrameController();
+		gc.showWelcomeMenuPanel();
 	}
 
 }

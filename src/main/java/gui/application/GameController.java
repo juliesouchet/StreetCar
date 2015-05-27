@@ -4,27 +4,38 @@ package main.java.gui.application;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.rmi.RemoteException;
 
 import javax.swing.JMenuBar;
 
+import main.java.data.Data;
 import main.java.gui.components.FrameController;
 import main.java.gui.components.Menu;
 import main.java.gui.components.MenuItem;
 import main.java.gui.components.Panel;
+import main.java.gui.menus.ClientRoomMenuPanel;
+import main.java.gui.menus.HostRoomMenuPanel;
+import main.java.gui.menus.JoinGameMenuPanel;
+import main.java.gui.menus.MenuPanel;
+import main.java.gui.menus.NewGameMenuPanel;
+import main.java.gui.menus.RulesMenuPanel;
+import main.java.gui.menus.SettingsMenuPanel;
+import main.java.gui.menus.WelcomeMenuPanel;
 import main.java.gui.util.Constants;
 import main.java.gui.util.UserDefaults;
 import main.java.player.PlayerIHM;
+import main.java.rubbish.InterfaceIHM;
 
-public class MainFrameController extends FrameController implements ComponentListener{
+public class GameController extends FrameController implements InterfaceIHM, ComponentListener {
 	
 	// Properties
 	
-	protected Panel centeredPanel = null;
+	protected MenuPanel menuPanel = null;
 	public PlayerIHM player = null;
 	
     // Constructors
 	
-	public MainFrameController() {
+	public GameController() {
 		super();
         this.setupFrame();
         this.setupMenuBar();
@@ -37,7 +48,6 @@ public class MainFrameController extends FrameController implements ComponentLis
         this.frame.getContentPane().setLayout(null); 
         this.frame.addComponentListener(this);
         this.frame.setSize(1250, 830);
-        //this.frame.setMinimumSize(new Dimension(1250, 840));
 	}
 	
 	private void setupMenuBar() {
@@ -61,32 +71,35 @@ public class MainFrameController extends FrameController implements ComponentLis
 	    this.setFrameMenuBar(menuBar);
 	}
 
-	// Setters / getters
+	// Getters
 	
-	public Panel getCenteredPanel() {
-		return this.centeredPanel;
+	public MenuPanel getMenuPanel() {
+		return this.menuPanel;
 	}
 	
-	public void setCenteredPanel(Panel panel) {
-		Panel contentPanel = (Panel) this.frame.getContentPane();
-		if (this.centeredPanel != null) {
-			contentPanel.remove(this.centeredPanel);
+	// Setters
+	
+	public void setMenuPanel(MenuPanel menuPanel) {
+		Panel contentPanel = this.getFrameContentPane();
+		if (this.menuPanel != null) {
+			contentPanel.remove(this.menuPanel);
 		}
-		this.centeredPanel = panel;
-		if (this.centeredPanel != null) {
-			contentPanel.add(this.centeredPanel);
+		this.menuPanel = menuPanel;
+		if (this.menuPanel != null) {
+			contentPanel.add(this.menuPanel);
 			this.componentResized(null);
+			this.forceRefresh();
 		}
 		contentPanel.revalidate();
 		contentPanel.repaint();
 	}
 	
 	public void setFrameContentPane(Panel panel) {
-		Panel centeredPanel = this.getCenteredPanel();
-		if (centeredPanel == null) {
-			this.setCenteredPanel(null);
+		MenuPanel menuPanel = this.getMenuPanel();
+		if (menuPanel == null) {
+			this.setMenuPanel(null);
 			super.setFrameContentPane(panel);
-			this.setCenteredPanel(centeredPanel);
+			this.setMenuPanel(menuPanel);
 		} else {
 			super.setFrameContentPane(panel);
 		}
@@ -95,28 +108,28 @@ public class MainFrameController extends FrameController implements ComponentLis
 	// Actions
 	
 	public void showWelcomeMenuPanel() {
-		Panel newPanel = new MainMenuPanel();
-		this.setCenteredPanel(newPanel);
+		MenuPanel newPanel = new WelcomeMenuPanel();
+		this.setMenuPanel(newPanel);
 	}
 	
 	public void showNewGamePanel() {
-		Panel newPanel = new NewGameMenuPanel();
-		this.setCenteredPanel(newPanel);
+		MenuPanel newPanel = new NewGameMenuPanel();
+		this.setMenuPanel(newPanel);
 	}
 	
 	public void showJoinGamePanel() {
-		Panel newPanel = new JoinGameMenuPanel();
-		this.setCenteredPanel(newPanel);		
+		MenuPanel newPanel = new JoinGameMenuPanel();
+		this.setMenuPanel(newPanel);		
 	}
 	
 	public void showSettingsPanel() {
-		Panel newPanel = new SettingsMenuPanel();
-		this.setCenteredPanel(newPanel);	
+		MenuPanel newPanel = new SettingsMenuPanel();
+		this.setMenuPanel(newPanel);	
 	}
 	
 	public void showRulesPanel() {
-		Panel newPanel = new RulesMenuPanel();
-		this.setCenteredPanel(newPanel);	
+		MenuPanel newPanel = new RulesMenuPanel();
+		this.setMenuPanel(newPanel);	
 	}
 	
 	public void quitGame() {
@@ -125,18 +138,18 @@ public class MainFrameController extends FrameController implements ComponentLis
 	}
 	
 	public void showInGamePanel() {
-		this.setCenteredPanel(null);
+		this.setMenuPanel(null);
 		this.setFrameContentPane(new InGamePanel());
 	}
 	
 	public void showHostWaitingRoomPanel() {
-		Panel newPanel = new HostWaitingRoomPanel();
-		this.setCenteredPanel(newPanel);	
+		MenuPanel newPanel = new HostRoomMenuPanel();
+		this.setMenuPanel(newPanel);	
 	}
 	
 	public void showClientWaitingRoomPanel() {
-		Panel newPanel = new ClientWaitingRoomPanel();
-		this.setCenteredPanel(newPanel);	
+		MenuPanel newPanel = new ClientRoomMenuPanel();
+		this.setMenuPanel(newPanel);	
 	}
 	
 	// Show / hide frame
@@ -163,19 +176,46 @@ public class MainFrameController extends FrameController implements ComponentLis
 	// Mouse listener
 	
     public void componentResized(ComponentEvent e) {
-    	if (this.centeredPanel == null) return;
+    	if (this.menuPanel == null) return;
     	
 		int contentPaneWidth = this.getFrameContentPane().getWidth();
 		int contentPaneHeight = this.getFrameContentPane().getHeight();
-		int panelWidth = this.centeredPanel.getWidth();
-		int panelHeight = this.centeredPanel.getHeight();
+		int panelWidth = this.menuPanel.getWidth();
+		int panelHeight = this.menuPanel.getHeight();
 		int x = (int)(contentPaneWidth - panelWidth)/2;
 		int y = (int)(contentPaneHeight - panelHeight)/2;
-		this.centeredPanel.setBounds(x, y, panelWidth, panelHeight);
+		this.menuPanel.setBounds(x, y, panelWidth, panelHeight);
 	}
 	
-	public void componentHidden(ComponentEvent e) { }
-	public void componentMoved(ComponentEvent e) { }
-	public void componentShown(ComponentEvent e) { }
+	public void componentHidden(ComponentEvent e) {}
+	public void componentMoved(ComponentEvent e) {}
+	public void componentShown(ComponentEvent e) {}
 
+	// Interface IHM
+
+	@Override
+	public void refresh(Data data) {
+		System.out.println("RESFRESH");
+		if (this.menuPanel != null) {
+			this.menuPanel.refresh(data);
+		}
+	}
+	
+	public void forceRefresh() {
+		if (this.player == null) return;
+		
+		try {
+			Data data = this.player.getGameData();
+			if (this.menuPanel != null) {
+				this.menuPanel.refresh(data);
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void stopGame() {
+		this.player = null;
+	}
+	
 }

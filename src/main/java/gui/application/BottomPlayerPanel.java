@@ -13,7 +13,7 @@ public class BottomPlayerPanel extends Panel {
 
 	// Properties
 
-	Panel cardsPanel;
+	BottomPlayerCardsPanel cardsPanel;
 	Panel buttonsPanel;
 	
 	Button validateButton;
@@ -31,13 +31,10 @@ public class BottomPlayerPanel extends Panel {
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(0, 150));
 		this.setBackground(Color.WHITE);
-		//this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
 	}
 	
 	protected void setupBottomPlayerCardsPanel() {		
-		this.cardsPanel = new Panel();
-		this.cardsPanel.setBackground(Color.WHITE);
-		//this.cardsPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.black));
+		this.cardsPanel = new BottomPlayerCardsPanel();
 		this.add(cardsPanel, BorderLayout.CENTER);
 	}
 	

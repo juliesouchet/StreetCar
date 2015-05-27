@@ -414,7 +414,7 @@ public class Data implements Serializable
 			{
 				for (int x=0; x<this.getWidth(); x++)
 				{
-					fw.write("" + this.board[x][y].getTileID()	+ " " + this.board[x][y].getNbrLeftRotation() + "\n");
+					fw.write("" + this.board[x][y].getTileID()	+ " " + this.board[x][y].getNbrRightRotation() + "\n");
 				}
 				fw.write("\n\n");
 			}

@@ -1,4 +1,4 @@
-package main.java.gui.application;
+package main.java.gui.menus;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,11 +8,13 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.BorderFactory;
 
+import main.java.data.Data;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
+import main.java.rubbish.InterfaceIHM;
 
 @SuppressWarnings("serial")
-public class MenuPanel extends Panel {
+public class MenuPanel extends Panel implements InterfaceIHM {
 
 	// Properties
 	
@@ -29,11 +31,13 @@ public class MenuPanel extends Panel {
     	this.setBorder(BorderFactory.createLineBorder(Color.black)); 
 	}
 
-	// Setters / getters
+	// Getters
 	
 	public String getMenuTitle() {
 		return this.menuTitle;
 	}
+	
+	// Setters
 	
 	public void setMenuTitle(String title) {
 		this.menuTitle = title;
@@ -62,5 +66,9 @@ public class MenuPanel extends Panel {
             g.drawString(this.getMenuTitle(), stringOriginX, 20);
         }
     }
+
+	// Interface IHM
+	
+	public void refresh(Data data) {}
 	
 }

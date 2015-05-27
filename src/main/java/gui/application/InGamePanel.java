@@ -8,15 +8,17 @@ import java.awt.Graphics;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
-import main.java.gui.board.ChatPanel;
 import main.java.gui.board.MapPanel;
+import main.java.gui.chat.ChatPanel;
 import main.java.gui.components.Panel;
+import main.java.gui.components.TitlePanel;
 
 public class InGamePanel extends Panel {
 
 	// Properties
 	
 	private static final long serialVersionUID = 1L;
+	Panel bigChatPanel;	
 	Panel chatPanel;
 	Panel centerMapPanel;
 	Panel playersSidebarPanel;
@@ -67,22 +69,25 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupChatPanel() {
-    	this.chatPanel = new Panel();
-    	chatPanel.setLayout(new BorderLayout());
-    	chatPanel.setPreferredSize(new Dimension(280, 870));
-    	chatPanel.setBackground(Color.WHITE);
-    	chatPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK));
-    	this.add(chatPanel, BorderLayout.EAST);
+    	this.bigChatPanel = new Panel();
+    	this.bigChatPanel.setLayout(new BorderLayout());
+    	this.bigChatPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK));    	    	
+    	this.bigChatPanel.setPreferredSize(new Dimension(280, 870));
+    	this.bigChatPanel.setBackground(Color.WHITE);
+    	this.add(bigChatPanel, BorderLayout.EAST);
     	
     	Panel chatInputPanel = new Panel();
     	chatInputPanel.setBackground(Color.WHITE);
     	chatInputPanel.setPreferredSize(new Dimension(280, 90));
     	chatInputPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
-    	chatPanel.add(chatInputPanel, BorderLayout.SOUTH);
+    	this.bigChatPanel.add(chatInputPanel, BorderLayout.SOUTH);
     	
     	ChatPanel chatTextPanel = new ChatPanel();
-    	chatPanel.add(chatTextPanel, BorderLayout.CENTER);
+    	bigChatPanel.add(chatTextPanel, BorderLayout.CENTER);
+    	chatTextPanel.setBackground(Color.WHITE);
     	
+    	TitlePanel titlePanel = new TitlePanel("Chat");
+    	this.bigChatPanel.add(titlePanel, BorderLayout.NORTH);
 	}
 	
 	private void setupPlayersPanel() { 		
@@ -94,8 +99,7 @@ public class InGamePanel extends Panel {
     	this.playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
     	
 		titlePanel = new TitlePanel("Adversaries");
-		titlePanel.setBounds(10, 0, 298, 30);
-		//titlePanel.setBackground(Color.GREEN);
+		titlePanel.setBounds(0, 0, 329, 30);
 		playersSidebarPanel.add(titlePanel);
     	
     	int y = 40;

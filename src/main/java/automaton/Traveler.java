@@ -23,7 +23,7 @@ public class Traveler extends PlayerAutomaton {
 	
 	public Traveler() {
 		super();
-		name = "Traveler";
+		setName("Traveler");
 	}
 		
 	@Override
@@ -34,7 +34,7 @@ public class Traveler extends PlayerAutomaton {
 		Tile t;
 		int i,j, k;
 		//
-		if(!currentConfig.isTrackCompleted(name)) {
+		if(!currentConfig.isTrackCompleted(getName())) {
 			// Random tile and position choice for construction (extracted from Dumbest)
 			
 			do{
@@ -56,15 +56,15 @@ public class Traveler extends PlayerAutomaton {
 		// Transition to travel
 		
 		else {
-			if(!currentConfig.isMoving(name)) {
-				if(currentConfig.hasDoneFirstAction(name)) {
+			if(!currentConfig.isMoving(getName())) {
+				if(currentConfig.hasDoneFirstAction(getName())) {
 					// ends current turn and starts traveling next turn
 					return Action.newStartTripNextTurnAction();
 				}
 				// initializes the itinerary with randomly chosen direction
 				Random r = new Random();
-				checkpoints = currentConfig.getBuildings(name);
-				LinkedList<Point> terminus = currentConfig.getTerminus(name);
+				checkpoints = currentConfig.getBuildings(getName());
+				LinkedList<Point> terminus = currentConfig.getTerminus(getName());
 				if(r.nextInt() == 0) {
 					checkpoints.addFirst(terminus.getFirst());
 					checkpoints.add(terminus.getLast());
