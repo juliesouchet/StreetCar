@@ -3,14 +3,14 @@ package test.java.gui;
 
 import javax.swing.SwingUtilities;
 
-import main.java.gui.application.MainFrameController;
+import main.java.gui.application.GameController;
 
 public class TestMainWindow implements Runnable {
 
     // Runnable
 
     public void run() {
-        MainFrameController mainFrameController = new MainFrameController();
+        GameController mainFrameController = new GameController();
         mainFrameController.showFrame();
         //mainFrameController.toggleFullScreenMode();
     }

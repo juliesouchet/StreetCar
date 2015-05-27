@@ -1,9 +1,10 @@
-package main.java.gui.application;
+package main.java.gui.menus;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.ImagePanel;
 import main.java.gui.util.Resources;
@@ -21,7 +22,7 @@ public class RulesMenuPanel extends MenuPanel {
 	
 	// Constructors
 	
-	RulesMenuPanel() {
+	public RulesMenuPanel() {
 		super();
 		this.setupPanel();
 		this.setupImagePanel();
@@ -106,7 +107,7 @@ public class RulesMenuPanel extends MenuPanel {
 	}
 	
 	public void leaveGame() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
+		GameController mfc = (GameController)this.getFrameController();
 		mfc.showWelcomeMenuPanel();
 	}
 }

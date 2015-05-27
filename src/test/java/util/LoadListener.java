@@ -26,9 +26,9 @@ public class LoadListener implements MouseListener {
 	public void mouseClicked(MouseEvent e) {		
 		// Building a list of all pre-existing boards
 		Path path = (new File(BoardCreator.boardPath)).toPath();
-		Vector<String> availableBoards = null;
+		Vector<String> availableBoards = new Vector<String>();
+		availableBoards.add("src/main/resources/boards/newOrleans");
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-			availableBoards = new Vector<String>();
 			for (Path board: stream) {
 				String boardName = board.toString();
 				availableBoards.add(boardName);
@@ -36,27 +36,25 @@ public class LoadListener implements MouseListener {
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
+
+
+		// Dialog window to make the user choose
+		String fileName = (String) JOptionPane.showInputDialog(null, null, "Chargement d'un terrain",
+				JOptionPane.QUESTION_MESSAGE, null, availableBoards.toArray(), "nom_du_terrain");
 		
-		if(availableBoards.isEmpty()) { // No pre-existing board
-			JOptionPane.showMessageDialog(null, "Nothing to load");
+		if(fileName != null) {
+			Data data = null;
+			try {
+				Data.boardDirectory = "";
+				data = new Data("Board Creator", fileName, 2);
+			} catch (ExceptionUnknownBoardName | RuntimeException e1) {
+				e1.printStackTrace();
+			}		
+			frame.setGameData(data);
+			frame.repaint();
 		}
-		else {
-			// Dialog window to make the user choose
-			String fileName = (String) JOptionPane.showInputDialog(null, null, "Chargement d'un terrain",
-					JOptionPane.QUESTION_MESSAGE, null, availableBoards.toArray(), "nom_du_terrain");
-			
-			if(fileName != null) {
-				Data data = null;
-				try {
-					Data.boardDirectory = "";
-					data = new Data("Board Creator", fileName, 2);
-				} catch (ExceptionUnknownBoardName | RuntimeException e1) {
-					e1.printStackTrace();
-				}		
-				frame.setGameData(data);
-				frame.repaint();
-			}
-		}
+	
+	
 	}
 
 	@Override

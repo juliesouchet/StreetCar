@@ -17,12 +17,20 @@ import main.java.data.Hand;
  * 	continuer son voyage (et donc faire son déplacement)
  */
 public abstract class PlayerAutomaton {
-	String name;
+	private String name;
 	
 	/**
 	 * Donne la décision d'action faite par l'automate
 	 */
 	public abstract Action makeChoice(Hand myHand, Data currentConfig );
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 	
 }

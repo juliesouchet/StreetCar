@@ -1,4 +1,4 @@
-package main.java.gui.board;
+package main.java.gui.chat;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -47,10 +47,10 @@ public class ChatPanel extends Panel {
 		
 		this.setBackground(Color.WHITE);
 		this.chat = new Chat();
-		this.chat.addMessage(null, "Test1", "Message 1Message 3 de fou hyper lang de la mort qui tueMessage 3 de fou hyper lang de la mort qui tue");
+		this.chat.addMessage(null, "Test1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
 		this.chat.addMessage(null, "Test2", "Message 2");
-		this.chat.addMessage(null, "Test3", "Message 3 de fou hyper lang de la mort qui tueMessage 3 de fou hyper long de la mort qui tueMessage 3 de fou hyper lang de la mort qui tueMessage 3 de fou hyper lang de la mort qui tue ");
-		this.chat.addMessage(null, "Test4", "MessagMessage 3 de fou hyper lang de la mort qui tuee 4uyfhh");
+		this.chat.addMessage(null, "Test3", "Nunc accumsan tincidunt dui eget hendrerit. Sed eget lacus velit. Donec laoreet venenatis suscipit. Morbi gravida justo nibh, at vestibulum nisl blandit et. Fusce posuere pellentesque nulla nec luctus. Nullam molestie condimentum dui, quis venenatis leo iaculis vel.");
+		this.chat.addMessage(null, "Test4", "Nullam a orci nec enim suscipit consequat. Nunc a malesuada neque, sit amet facilisis est. Maecenas rhoncus lobortis libero sed posuere. ");
 		this.sender = "Test3";
 	}
 	

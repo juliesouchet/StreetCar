@@ -11,6 +11,7 @@ public class Label extends JLabel {
 	
 	public Label(String text) {
 		super(text);
+		
 	}
 	
 	public Label(String text, String comment) {

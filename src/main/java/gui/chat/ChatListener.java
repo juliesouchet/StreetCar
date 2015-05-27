@@ -1,4 +1,4 @@
-package main.java.gui.board;
+package main.java.gui.chat;
 
 public interface ChatListener {
 	
