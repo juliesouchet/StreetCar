@@ -1,7 +1,9 @@
 package main.java.automaton.test;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -103,7 +105,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 	{
 		PlayerIHM player = null;
 		String name, gameName, ip;
-		boolean create;
+		boolean create, win = false;
 		Color color;
 		
 		if ( i== 0)	{
@@ -133,14 +135,26 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
             PlayerAutomaton edouard = new Dumbest();
 			try	{
 				player.hostStartGame();
-				for (int j=0; j<144; j++){
+				for (int j=0; j<1000; j++){
 					Data les_donnees = player.getGameData();
 					Hand main_de_edouard = les_donnees.getHand(name);
 					Action choix_de_edouard = edouard.makeChoice(main_de_edouard, les_donnees);
 					player.getGame().placeTile(name, choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
 					this.frame.setGameData(player.getGameData());
+					if(les_donnees.isTrackCompleted(name) && !win) {
+						System.out.println("Chemin completé (tour " + j + ")");
+						win = true;
+						break;
+					}
 				}
 			}catch (Exception e)	{e.printStackTrace();}
+			LinkedList<Point> objectifs = null;
+			try {
+				objectifs = player.getGameData().getTerminus(name);
+				objectifs.addAll(player.getGameData().getBuildings(name));
+			} catch (RemoteException e) {e.printStackTrace();}
+			System.out.println("Objectifs : " + objectifs);
+			if(!win) System.out.println("Chemin non complété");
 		}
 	}	
 	

@@ -89,7 +89,6 @@ Implémenté dans Traveler avec `A*`, l'algorithme cherche le chemin le plus cou
 
 #### Calcul du plus court chemin sur un terrain vierge :  
 Implémenté dans AutomatePlusCourtChemin, calcule le plus court chemin d'une origine à une destination pour une IA seule  
-*Testé*  
 
 -------------------
 
@@ -103,4 +102,19 @@ Implémentation d'un outil de création de terrains (pas complètement fonctionn
 ### Jour 6 : Samedi 23 mai  
 
 #### Tests :  
-Complété le créateur de terrain avec options de sauvegarde et chargement sous forme de fichiers texte.
+Complété le créateur de terrain avec options de sauvegarde et chargement sous forme de fichiers texte.  
+  
+
+-------------------
+
+### Jour 9 : Mardi 26 mai  
+
+#### Tests :
+Débugué l'affichage des terrains et début des tests avec Dumbest : IA posant des tuiles au hasard sur le terrain à partir de la main de départ (sans les retirer), en respectant les règles de jeu
+
+-------------------
+
+### Jour 10 : Mercredi 27 mai  
+
+#### Choix de tuiles :  
+Suite à l'audit IA, nous avons choisi d'utiliser un algorithme Minimax pour décider des actions de nos IA. Ulysse se chargera d'impléter Minimax, Julie la fonction d'évaluation. Celle-ci consiste à simuler un certain nombre de parties à partir de la configuration actuelle du terrain, et d'en déduire une probabilité de victoire.
