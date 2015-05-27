@@ -33,6 +33,7 @@ A faire:
   - mettre des listener sur les ComboBox, TextField, boutons des options
   - afficher les titres de chaque panel
   - afficher et mettre les avatars cliquables
+Implémentation des utilitaires permettant de sauvegarder les préferences utilisateurs et de traduire les chaines de caractères au Runtime.
   
 ### Jour 4 : Jeudi 21 mai 
 
@@ -42,11 +43,25 @@ A faire:
   - Faire un panel pour chaque joueur avec son avatar, ses cartes, etc
   - Affichage de l'avatar avec bulles à chaque message (chat)
   - Plateau central à découper en case
+Création de chaque components pouvant être facilement redessiné en vue de la customisation finale et étant directement traduit à l'initialisation.
+Tentative d'implémentation d'un visualiseur de terrain permettant aux groupes de pouvoir debuguer (fini le vendredi par Riyane).
   
 ### Jour 5 : Vendredi 22 mai 
 
 Retour en arrière de la vue principale: affichage des adversaires à gauche et du joueur en bas.  
 Affichage de l'avatar, cartes et stations des adversaires fait.  
-Plateau central découpé en case.  
+Plateau central découpé en case. 
+Nettoyage de l'implementation des menus, utilisation des components implémentés le jeudi.
+Factorisation du code et ajout des connexions en vue de l'intégration du moteur.
+
+### Jour 6 : Mardi 26 mai
+
+Mise en place des titre `Adversaires`  et `Chat`  
+Mise en place du chat  
+Mise en place du listener sur le plateau  
+Mise en place des boutons `Valider` et `Commencer son voyage`
+Debut de l'implementation du chatpanel (modèle, listener, dessin faits)
+
+
 
 

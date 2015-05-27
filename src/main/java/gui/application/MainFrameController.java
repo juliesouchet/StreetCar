@@ -13,12 +13,14 @@ import main.java.gui.components.MenuItem;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Constants;
 import main.java.gui.util.UserDefaults;
+import main.java.player.PlayerIHM;
 
 public class MainFrameController extends FrameController implements ComponentListener{
 	
 	// Properties
 	
 	protected Panel centeredPanel = null;
+	public PlayerIHM player = null;
 	
     // Constructors
 	
