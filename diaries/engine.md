@@ -98,3 +98,12 @@ Nous avons géré le probléme de la communication du modéle (classe Data) aux 
   * La classe Engine contient une fille d'attente connue par Game.  Le thread de la classe Engine est réveillé lorsqu'un nouvel élément est ajouté à la file.
 
   Nous avons assuré et testé la cohérence des données du thread Engine.
+
+-------------------
+
+### Jour 7 : Lundi 26 mai
+Creation des joueurs de types IA:
+  - Soucouche de la classe InterfacePlayer (joueur a distant), specifique aux joueur IA.
+  - Cette classe qui implante Runable est lancée dans un thread indépendant.  Elle est instancié par le joueur hébergeur.  Elle commence par se loguer à une partie qui lui est passée en parametre.  Puis elle réagie à chaque changement de l'etat du jeux en jouant un coup seulement si c son tour.   Les coup joué est déterminer par l'algorithme d'IA choisi en début.
+  
+  Création des test de joueur (IHM vs IHM, IHM vs IA, et IA vs IA)

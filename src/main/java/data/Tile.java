@@ -46,7 +46,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	private String					buildingDescription;
 	private Integer					terminusDescription;
 	private int						cardinal;
-	private int						nbrLeftRotation;	// Number of left rotation of the original image (belongs to [0, 3])
+	private int						nbrRightRotation;	// Number of left rotation of the original image (belongs to [0, 3])
 	private LinkedList<Path>		pathList;
 
 // --------------------------------------------
@@ -64,7 +64,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
 		this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
 		this.cardinal				= t.cardinal;
-		this.nbrLeftRotation		= t.nbrLeftRotation;
+		this.nbrRightRotation		= t.nbrRightRotation;
 		this.pathList				= new LinkedList<Path>(pathList);
 	}
 	private Tile(){}
@@ -81,7 +81,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		res.buildingDescription	= (this.buildingDescription == null) ? null : new String(this.buildingDescription);
 		res.terminusDescription	= (this.terminusDescription == null) ? null : new Integer(this.terminusDescription);
 		res.cardinal			= this.cardinal;
-		res.nbrLeftRotation		= this.nbrLeftRotation;
+		res.nbrRightRotation		= this.nbrRightRotation;
 		res.pathList			= cp.copyList(this.pathList);
 		return res;
 	}
@@ -92,7 +92,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		Tile res = new Tile();
 
 		res.tileID			= new String(imageFileName);										// Init the non scanned values
-		res.nbrLeftRotation= 0;
+		res.nbrRightRotation= 0;
 		try
 		{
 			int l = tileNamePrefix.length();													// Ignore the prefix part
@@ -161,19 +161,19 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Setters/getters:
 // --------------------------------------------
-	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf(); nbrLeftRotation = (nbrLeftRotation+2)%4;}
+	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf(); nbrRightRotation = (nbrRightRotation+2)%4;}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
 	/** Number of left rotation of the original image (belongs to [0, 3]) */
-	public int		getNbrLeftRotation(){return this.nbrLeftRotation;}
+	public int		getNbrRightRotation(){return this.nbrRightRotation;}
 	public boolean	isTree()			{return this.isTree;}
 	public boolean	isBuilding()		{return this.isBuilding;}
 	public boolean	isTerminus()		{return this.isTerminus;}
 	public boolean	isStop()			{return this.isStop;}
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.pathList.isEmpty()));}
 	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (!this.pathList.isEmpty()));}
-	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); nbrLeftRotation = (nbrLeftRotation == 3) ? 0 : nbrLeftRotation+1;}
-	public void		turnRight()			{for (Path p: pathList)	p.turnRight();nbrLeftRotation = (nbrLeftRotation == 0) ? 3 : nbrLeftRotation-1;}
+	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); nbrRightRotation = (nbrRightRotation == 3) ? 0 : nbrRightRotation+1;}
+	public void		turnRight()			{for (Path p: pathList)	p.turnRight();nbrRightRotation = (nbrRightRotation == 0) ? 3 : nbrRightRotation-1;}
 	public boolean	isPathTo(int dir)
 	{
 		Direction.checkDirection(dir);
