@@ -1,4 +1,4 @@
-package test.java.player;
+package main.java.automaton.test;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
@@ -14,13 +14,14 @@ import main.java.game.GameInterface;
 import main.java.player.PlayerIA;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
+import test.java.player.DataViewerFrame;
 
 
 
 
 
 
-public class TestIA implements InterfaceIHM
+public class PlayerAutomata implements InterfaceIHM
 {
 // --------------------------------------------
 // Attributs:
@@ -30,7 +31,7 @@ public class TestIA implements InterfaceIHM
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public TestIA()
+	public PlayerAutomata()
 	{
 		Scanner sc = new Scanner(System.in);
 		String str, name, gameName, ip, iaName;
@@ -98,7 +99,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 	*	si i=1 => J joueurB jeu blue 127.0.0.1
 	*
 	*/
-	public TestIA(int i)
+	public PlayerAutomata(int i)
 	{
 		PlayerIHM player = null;
 		String name, gameName, ip;
@@ -132,7 +133,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
             PlayerAutomaton edouard = new Dumbest();
 			try	{
 				player.hostStartGame();
-				for (int j=0; j<50; j++){
+				for (int j=0; j<144; j++){
 					Data les_donnees = player.getGameData();
 					Hand main_de_edouard = les_donnees.getHand(name);
 					Action choix_de_edouard = edouard.makeChoice(main_de_edouard, les_donnees);
