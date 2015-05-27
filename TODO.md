@@ -20,22 +20,23 @@ est-ce qu'on informe un joueur qui veut commencer son voyage d'inauguration qu'i
     + ~~data.hasPlayedFirstAction(player) : boolean~~  
     + ~~data.firstTerminus(player) : Point (les coordonnées du 1er terminus de la ligne (le plus en haut à gauche))~~  
     + ~~data.secondTerminus(player) : Point (l'autre terminus)~~
-  * Limitation de vitesse (qui est commune à tous les joueurs)  
+ * Limitation de vitesse (qui est commune à tous les joueurs)  
     + ~~data.maximumSpeed( ) : int~~  
-  * Manipulation des tuiles :
-    1. les tuiles posées sont retirées de la main
-    2. pouvoir piocher une carte et l'ajouter à sa main
-    3. une tuile échangée est remise dans la main  
-    (8. pouvoir se servir dans la main des joueurs en voyage et l'ajouter à sa main)
-  * Voyage des trams :
-    4. suivre la position des trams des joueurs
-    5. pouvoir les faire avancer
-    6. suivre la limite de vitesse (commune à tous les joueurs, et évoluant)
-    7. prendre en compte les arrêts
+ * Manipulation des tuiles :  
+    I. les tuiles posées sont retirées de la main  
+    II. pouvoir piocher une carte et l'ajouter à sa main  
+    III. une tuile échangée est remise dans la main    
+    (VIII. pouvoir se servir dans la main des joueurs en voyage et l'ajouter à sa main)  
+ * Voyage des trams :  
+    IV. suivre la position des trams des joueurs  
+    V. pouvoir les faire avancer  
+    VI. suivre la limite de vitesse (commune à tous les joueurs, et évoluant)  
+    VII. prendre en compte les arrêts  
+ * Fin de partie : soit un joueur a complété son voyage, soit tous les joueurs ont posé leurs tuiles et la pioche est vide, mais aucun n'a complété son trajet
     
 # IA :
  * ~~Automate jouant aléatoirement~~
- * Automate vérifiant les conditions de victoire
+ * Automate vérifiant la complétion du trajet et commençant son voyage
  * Algorithme minimax
  * Fonction d'évaluation : 
     + faire tourner x parties avec des automates et regarder les probabilités de victoire
