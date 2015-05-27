@@ -65,7 +65,7 @@ Pour des raisons liées à l'IHM, le serveur pourra être un thread lancé par l
   Implantation d'une méthode de recherche de chemin dans le terrain (inspiré de l'algorithme A*)
 -------------------
 
-### Jour 5 : Vendredi 22 mai  
+### Jour 6 : Vendredi 22 mai  
 
 Rencontre avec Mr LACHAIZE Renaud responsable de l'UE Systéme et Réseaux.   Explication ...............
 
@@ -73,7 +73,7 @@ Rencontre avec Mr LACHAIZE Renaud responsable de l'UE Systéme et Réseaux.   Ex
 
 -------------------
 
-### Jour 6 : Samedi 23 mai  
+### Jour 7 : Samedi 23 mai  
   Suite de l'implantation du modéle (classe Data et sous classes Tile, Deck, Hand) en réponse aux attentes décrites le jeudi 21 mai.
   Déboguage de ces classes en utilisant:
   * L'IHM basique en ligne de commande implanté le lundi 18 mai (test la création et l'initialisation des données).
@@ -81,7 +81,7 @@ Rencontre avec Mr LACHAIZE Renaud responsable de l'UE Systéme et Réseaux.   Ex
 
 -------------------
 
-### Jour 7 : Dimanche 24 mai
+### Jour 8 : Dimanche 24 mai
 
 Nous avons géré le probléme de la communication du modéle (classe Data) aux différentes parties:
   * La classe Data est instenciée par le thread du jeu (serveur).  Il n'en existe qu'un seul exemplaire.  Pour des raisons de sécurité et de serialisabilité, nous n'avons déclaré qu'un seul constructeur public de cette classe (appelé par le thread de la partie Game (serveur)).
@@ -90,7 +90,7 @@ Nous avons géré le probléme de la communication du modéle (classe Data) aux 
 
 -------------------
 
-### Jour 6 : Lundi 25 mai
+### Jour 9 : Lundi 25 mai
   Creation de la classe Engine.java.
 
   Changement de l'architecture de la partie moteur:
@@ -101,9 +101,16 @@ Nous avons géré le probléme de la communication du modéle (classe Data) aux 
 
 -------------------
 
-### Jour 7 : Lundi 26 mai
+### Jour 10 : Mardi 26 mai
 Creation des joueurs de types IA:
   - Soucouche de la classe InterfacePlayer (joueur a distant), specifique aux joueur IA.
   - Cette classe qui implante Runable est lancée dans un thread indépendant.  Elle est instancié par le joueur hébergeur.  Elle commence par se loguer à une partie qui lui est passée en parametre.  Puis elle réagie à chaque changement de l'etat du jeux en jouant un coup seulement si c son tour.   Les coup joué est déterminer par l'algorithme d'IA choisi en début.
-  
+
   Création des test de joueur (IHM vs IHM, IHM vs IA, et IA vs IA)
+
+-------------------
+
+### Jour 11 : Mardi 26 mai
+
+Suite de l'integration du (moteur + joueurs) avec l'IHM (gui)
+Optimisation des classe Direction et Data pour les besoins de l'IA (trés grand nombre d'appel aux methodes de DATA)
