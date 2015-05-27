@@ -84,7 +84,8 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 ////	System.setSecurityManager(new RMISecurityManager());
 		try
 		{
-			return (GameInterface) Naming.lookup(url);
+			GameInterface res = (GameInterface)Naming.lookup(url);
+			return res;
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 		return null;

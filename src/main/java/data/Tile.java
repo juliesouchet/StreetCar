@@ -216,6 +216,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 				if (pt.equals(pl))	{tPath.remove(pt); lPath.remove(pl); break;}
 
 		if (!lPath.isEmpty())	return false;				// Case local tile is not contained in t
+		if (tPath.isEmpty())	return false;				// Case local tile is equal to t
 		if (additionalPath != null)							// Cas replaceable
 		{
 			additionalPath.clear();
