@@ -41,7 +41,15 @@ public class Dumbest extends PlayerAutomaton {
 			// On choisit une tuile parmi les 5 de notre main
 			k = rand.nextInt(myHand.size());
 			t = myHand.get(k);
+			
+			//On la fait tourner
+			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
+				t.turnLeft();
+			}
+			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
+		
+		System.out.println("Pose tuile "+ t.toString()+" a la position:"+ p);
 		
 		choix = Action.newBuildSimpleAction(p, t);
 		

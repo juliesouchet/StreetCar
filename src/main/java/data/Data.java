@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
@@ -197,7 +196,7 @@ public class Data implements Serializable
 	public boolean isAcceptableTilePlacement(int x, int y, Tile t)
 	{
 		LinkedList<Path> additionalPath = new LinkedList<Path>();
-		LinkedList<Integer> accessibleDirection;
+		LinkedList<Direction> accessibleDirection;
 		Tile oldT = this.board[x][y];
 
 		if (!oldT.isReplaceable(t, additionalPath))	return false;										// Check whether t contains the old t (remove Tile and Rule C)
@@ -205,18 +204,19 @@ public class Data implements Serializable
 
 		Tile nt = new Tile(additionalPath, t);
 		accessibleDirection = nt.getAccessibleDirections();
-		for (int d: accessibleDirection)																// Check whether the new tile is suitable with the <x, y> neighborhood
+		for (Direction d: accessibleDirection)															// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
-			Point neighbor = Direction.getNeighbour(x, y, d);
+			Point neighbor = d.getNeighbour(x, y);
 
 			Tile neighborT = this.board[neighbor.x][neighbor.y];
 			if ((this.isOnEdge(neighbor.x, neighbor.y)) && (!neighborT.isTerminus()))	return false;	//		Rule A
 			if (neighborT.isEmpty())													continue;		//		Rule E (step 1)
 			if (neighborT.isBuilding())													return false;	//		Rule B
-			if (!neighborT.isPathTo(Direction.turnHalf(d)))								return false;	//		Rule E (step 2)
+			d.turnHalf();
+			if (!neighborT.isPathTo(d))													return false;	//		Rule E (step 2)
 		}
-		LinkedList<Integer> plt = this.getPathsLeadingToTile(x, y);										//		Rule D
-		for (int dir: plt)	if (!t.isPathTo(dir))										return false;
+		LinkedList<Direction> plt = this.getPathsLeadingToTile(x, y);									//		Rule D
+		for (Direction dir: plt)	if (!t.isPathTo(dir))								return false;
 		return true;
 	}
 	/**============================================================
@@ -240,12 +240,12 @@ public class Data implements Serializable
 	 ==============================================================*/
 	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
 	{
-		LinkedList<Point>	res = new LinkedList<Point>();
-		LinkedList<Integer>	ad	= board[x][y].getAccessibleDirections();	// List of the reachable directions
+		LinkedList<Point>		res = new LinkedList<Point>();
+		LinkedList<Direction>	ad	= board[x][y].getAccessibleDirections();			// List of the reachable directions
 
-		for (int d: ad)														// For each accesible position
+		for (Direction d: ad)															// For each accesible position
 		{
-			Point next = Direction.getNeighbour(x, y, d);
+			Point next = d.getNeighbour(x, y);
 			if (isWithinnBoard(next.x, next.y))	res.add(next);
 		}
 		return res;
@@ -255,12 +255,12 @@ public class Data implements Serializable
 	 ==============================================================*/
 	public LinkedList<Tile> getAccessibleNeighborsTiles(int x, int y)
 	{
-		LinkedList<Tile>	res = new LinkedList<Tile>();
-		LinkedList<Integer>	ad	= board[x][y].getAccessibleDirections();	// List of the reachable directions
+		LinkedList<Tile>		res = new LinkedList<Tile>();
+		LinkedList<Direction>	ad	= board[x][y].getAccessibleDirections();		// List of the reachable directions
 
-		for (int d: ad)														// For each accesible position
+		for (Direction d: ad)														// For each accesible position
 		{
-			Point next = Direction.getNeighbour(x, y, d);
+			Point next = d.getNeighbour(x, y);
 			if (isWithinnBoard(next.x, next.y))	res.add(board[next.x][next.y].getClone());
 		}
 		return res;
@@ -268,22 +268,19 @@ public class Data implements Serializable
 	/**============================================================
 	 * @returns the list of directions d such as the neighbor d has a path to the current tile <x, y>
 	 ==============================================================*/
-	public LinkedList<Integer> getPathsLeadingToTile(int x, int y)
+	public LinkedList<Direction> getPathsLeadingToTile(int x, int y)
 	{
-		LinkedList<Integer>	res	= new LinkedList<Integer>();
-		Iterator<Integer>	di	= Direction.getIterator();
-		int direction, neighborDir;
+		LinkedList<Direction> res	= new LinkedList<Direction>();
 		Point neighbor;
 		Tile neighborTile;
 
-		while (di.hasNext())
+		for (Direction dir: Direction.DIRECTION_LIST)
 		{
-			direction	= di.next();
-			neighbor	= Direction.getNeighbour(x, y, direction);
+			neighbor	= dir.getNeighbour(x, y);
 			if (!this.isWithinnBoard(neighbor.x, neighbor.y))	continue;
 			neighborTile= board[neighbor.x][neighbor.y];
-			neighborDir	= Direction.turnHalf(direction);
-			if (neighborTile.isPathTo(neighborDir)) res.add(direction);
+			dir.turnHalf();
+			if (neighborTile.isPathTo(dir)) {dir.turnHalf();res.add(dir);}
 		}
 		return res;
 	}
@@ -295,13 +292,12 @@ public class Data implements Serializable
 	public Point hasStopNextToBuilding(Point building)
 	{
 		Tile t = this.board[building.x][building.y];
-		Iterator<Integer> dirIt = Direction.getIterator();
 		Point p;
 
 		if (!t.isBuilding())	throw new RuntimeException("The point " + building + " is not a building");
-		while(dirIt.hasNext())
+		for (Direction dir: Direction.DIRECTION_LIST)
 		{
-			p = Direction.getNeighbour(building.x, building.y, dirIt.next());
+			p = dir.getNeighbour(building.x, building.y);
 			if (this.isWithinnBoard(p.x, p.y))	continue;
 			t = this.board[p.x][p.y];
 			if (t.isStop())	return p;
@@ -379,7 +375,8 @@ public class Data implements Serializable
 	{
 		Tile[][] res;
 		String tileFileName;
-		int width, height, rotation;
+		int width, height;
+		Direction dir;
 
 		try
 		{
@@ -392,8 +389,8 @@ public class Data implements Serializable
 				{
 					tileFileName	= sc.next();
 					res[x][y]		= Tile.parseTile(tileFileName);
-					rotation		= sc.nextInt();
-					for (int i=0; i<rotation; i++) res[x][y].turnLeft();
+					dir				= Direction.parse(sc.nextInt());
+					res[x][y]		.setDirection(dir);
 				}
 			}
 		}
@@ -414,7 +411,7 @@ public class Data implements Serializable
 			{
 				for (int x=0; x<this.getWidth(); x++)
 				{
-					fw.write("" + this.board[x][y].getTileID()	+ " " + this.board[x][y].getNbrLeftRotation() + "\n");
+					fw.write("" + this.board[x][y].getTileID()	+ " " + this.board[x][y].getTileDirection() + "\n");
 				}
 				fw.write("\n\n");
 			}

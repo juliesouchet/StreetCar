@@ -1,92 +1,115 @@
 package main.java.util;
 
 import java.awt.Point;
-import java.util.Iterator;
 
 
 
 
 
 
-public class Direction
+public enum Direction implements CloneableInterface<Direction>
 {
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final int	WEST	= 0;		// Must keep this order
-	public static final int	NORTH	= 1;
-	public static final int	EAST	= 2;
-	public static final int	SOUTH	= 3;
+	WEST	(0),
+	NORTH	(1),
+	EAST	(2),
+	SOUTH	(3);
+	public static final Direction[] DIRECTION_LIST = {WEST, NORTH, EAST, SOUTH};
 
-	private static int minVal		= 0;
-	private static int maxVal		= 3;
+	public int dir;
+
+// --------------------------------------------
+// Builder:
+// --------------------------------------------
+	private Direction(int dir){this.dir = dir;}
 
 // --------------------------------------------
 // Local Methods:
 // --------------------------------------------
-	public static String toString(int d)
+	public Direction getClone()
 	{
-		switch (d)
+		Direction res = WEST;
+		res.dir = this.dir;
+		return res;
+	}
+	public String toNiceString()
+	{
+		switch (this)
 		{
-			case WEST	: return "W";
-			case NORTH	: return "N";
-			case EAST	: return "E";
-			case SOUTH	: return "S";
-			default		: throw new RuntimeException("Unknown direction: " + d);
+			case WEST	: return "WEST";
+			case NORTH	: return "NORTH";
+			case EAST	: return "EAST";
+			case SOUTH	: return "SOUTH";
+			default		: throw new RuntimeException("Unknown direction: " + this);
 		}
 	}
-	public static int turnLeft(int d)
+	public String toString()
 	{
-		checkDirection(d);
-		if (d != maxVal)	return d+1;
-		else				return minVal;
-	}
-	public static int turnRight(int d)
-	{
-		checkDirection(d);
-		if (d != minVal)	return d-1;
-		else				return maxVal;
-	}
-	public static int turnHalf(int d)
-	{
-		checkDirection(d);
-		int res = turnLeft(d);
-		return turnLeft(res);
-	}
-	public static void checkDirection(int d)
-	{
-		if ((d < minVal) || (d > maxVal)) throw new RuntimeException("Unknown direction: " + d);
-	}
-	public static Point getNeighbour(int x, int y, int d)
-	{
-		checkDirection(d);
-		switch(d)
+		switch (this.dir)
 		{
-			case NORTH:	return new Point(x,	y-1);	// North
-			case SOUTH:	return new Point(x,	y+1);	// South
-			case WEST:	return new Point(x-1,	y);	// West
-			default:	return new Point(x+1,	y);	// East
+			case 0	: return "0";
+			case 1	: return "1";
+			case 2	: return "2";
+			case 3	: return "3";
+			default	: throw new RuntimeException("Unknown direction: " + this);
 		}
 	}
-	public static Iterator<Integer> getIterator()
+	public void turnLeft()
 	{
-		return new MyIterator();
+		switch(this.dir)
+		{
+			case 0	: this.dir = SOUTH.dir;	break;
+			case 1	: this.dir = WEST.dir;	break;
+			case 2	: this.dir = NORTH.dir;	break;
+			case 3	: this.dir = EAST.dir;	break;
+			default	: throw new RuntimeException("Unknown direction: " + this);
+		}
+	}
+	public void turnRight()
+	{
+		switch(this.dir)
+		{
+			case 0	: this.dir = NORTH.dir;	break;
+			case 1	: this.dir = EAST.dir;	break;
+			case 2	: this.dir = SOUTH.dir;	break;
+			case 3	: this.dir = WEST.dir;	break;
+			default	: throw new RuntimeException("Unknown direction: " + this);
+		}
+	}
+	public void turnHalf()
+	{
+		switch(this.dir)
+		{
+			case 0	: this.dir = EAST.dir;	break;
+			case 1	: this.dir = SOUTH.dir;	break;
+			case 2	: this.dir = WEST.dir;	break;
+			case 3	: this.dir = NORTH.dir;	break;
+			default	: throw new RuntimeException("Unknown direction: " + this);
+		}
+	}
+	public Point getNeighbour(int x, int y)
+	{
+		switch(this.dir)
+		{
+			case 1	: return new Point(x,	y-1);	// North
+			case 3	: return new Point(x,	y+1);	// South
+			case 0	: return new Point(x-1,	y);		// West
+			case 2	: return new Point(x+1,	y);		// East
+			default	: throw new RuntimeException("Unknown direction: " + this);
+		}
 	}
 
-// --------------------------------------------
-// Direction Iterator:
-// --------------------------------------------
-	private static class MyIterator implements Iterator<Integer>
+	public static Direction parse(int d)
 	{
-		private int d = minVal;
-		public boolean hasNext(){return (d <= maxVal);}
-		public Integer next()
+		switch(d)
 		{
-			checkDirection(d);
-			int res = d;
-			d++;
-			return res;
+			case 0: return WEST;
+			case 1: return NORTH;
+			case 2: return EAST;
+			case 3: return SOUTH;
+			default		: throw new RuntimeException("Unknown direction: " + d);
 		}
-		public void remove()	{throw new RuntimeException("Not implemented");}
 	}
 }
