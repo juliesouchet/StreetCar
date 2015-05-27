@@ -46,7 +46,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	private String					buildingDescription;
 	private Integer					terminusDescription;
 	private int						cardinal;
-	private int						nbrRightRotation;	// Number of left rotation of the original image (belongs to [0, 3])
+	private Direction				tileDirection;
 	private LinkedList<Path>		pathList;
 
 // --------------------------------------------
@@ -64,7 +64,8 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
 		this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
 		this.cardinal				= t.cardinal;
-		this.nbrRightRotation		= t.nbrRightRotation;
+// TODO
+		this.tileDirection			= t.tileDirection;
 		this.pathList				= new LinkedList<Path>(pathList);
 	}
 	private Tile(){}
@@ -81,18 +82,19 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		res.buildingDescription	= (this.buildingDescription == null) ? null : new String(this.buildingDescription);
 		res.terminusDescription	= (this.terminusDescription == null) ? null : new Integer(this.terminusDescription);
 		res.cardinal			= this.cardinal;
-		res.nbrRightRotation		= this.nbrRightRotation;
+		res.tileDirection		= this.tileDirection;
 		res.pathList			= cp.copyList(this.pathList);
 		return res;
 	}
 	public static Tile parseTile(String imageFileName)
 	{
 		String str;
-		int d0, d1;
+		Direction d0, d1;
 		Tile res = new Tile();
 
 		res.tileID			= new String(imageFileName);										// Init the non scanned values
-		res.nbrRightRotation= 0;
+		res.tileDirection	= Direction.WEST;
+
 		try
 		{
 			int l = tileNamePrefix.length();													// Ignore the prefix part
@@ -149,8 +151,8 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			res.pathList = new LinkedList<Path>();													// Scan the tile path list
 			for (int i=l; i<imageFileName.length(); i+=2)
 			{
-				d0 = Integer.parseInt(""+imageFileName.charAt(i));
-				d1 = Integer.parseInt(""+imageFileName.charAt(i+1));
+				d0 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i)));
+				d1 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i+1)));
 				res.pathList.add(new Path(d0, d1));
 			}
 			return res;
@@ -161,22 +163,22 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Setters/getters:
 // --------------------------------------------
-	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf(); nbrRightRotation = (nbrRightRotation+2)%4;}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
-	/** Number of left rotation of the original image (belongs to [0, 3]) */
-	public int		getNbrRightRotation(){return this.nbrRightRotation;}
+	public Direction getTileDirection()	{return this.tileDirection;}
 	public boolean	isTree()			{return this.isTree;}
 	public boolean	isBuilding()		{return this.isBuilding;}
 	public boolean	isTerminus()		{return this.isTerminus;}
 	public boolean	isStop()			{return this.isStop;}
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.pathList.isEmpty()));}
 	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (!this.pathList.isEmpty()));}
-	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); nbrRightRotation = (nbrRightRotation == 3) ? 0 : nbrRightRotation+1;}
-	public void		turnRight()			{for (Path p: pathList)	p.turnRight();nbrRightRotation = (nbrRightRotation == 0) ? 3 : nbrRightRotation-1;}
-	public boolean	isPathTo(int dir)
+	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft();	this.tileDirection = this.tileDirection.turnLeft();}
+	public void		turnRight()			{for (Path p: pathList)	p.turnRight();	this.tileDirection = this.tileDirection.turnRight();}
+	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
+	public void		setDirection(Direction dir)	{this.tileDirection = dir;}
+
+	public boolean	isPathTo(Direction dir)
 	{
-		Direction.checkDirection(dir);
 		for (Path p: this.pathList)
 		{
 			if (p.end0 == dir)	return true;
@@ -185,9 +187,9 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return false;
 	}
 
-	public LinkedList<Integer> getAccessibleDirections()
+	public LinkedList<Direction> getAccessibleDirections()
 	{
-		LinkedList<Integer> res = new LinkedList<Integer>();
+		LinkedList<Direction> res = new LinkedList<Direction>();
 
 		for (Path p: pathList)
 		{
@@ -216,6 +218,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 				if (pt.equals(pl))	{tPath.remove(pt); lPath.remove(pl); break;}
 
 		if (!lPath.isEmpty())	return false;				// Case local tile is not contained in t
+		if (tPath.isEmpty())	return false;				// Case local tile is equal to t
 		if (additionalPath != null)							// Cas replaceable
 		{
 			additionalPath.clear();
@@ -248,18 +251,11 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		String str = "";
 
 		str += "{ ";
-		if (this.isTree)		str += "Tree | ";
-		else					str += "____ | ";
-		if (this.isBuilding)	str += "Buil | ";
-		else					str += "____ | ";
-		if (this.isStop)		str += "Stop | ";
-		else					str += "____ | ";
-		if (this.isTerminus)	str += "Term | ";
-		else					str += "____ | ";
-		for(Path p : pathList)
-		{
-			str += "[" + p.end0 + " ; " + p.end1 + "] ";
-		}
+		str += (this.isTree)		? "Tree | ": "____ | ";
+		str += (this.isBuilding)	? "Buil | ": "____ | ";
+		str += (this.isStop)		? "Stop | ": "____ | ";
+		str += (this.isTerminus)	? "Term | ": "____ | ";
+		for(Path p : pathList)	str += "[" + p.end0 + " ; " + p.end1 + "] ";
 		str += "}";
 		return str;
 	}
@@ -285,14 +281,12 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	{
 		// Attributes
 		private static final long serialVersionUID = 1L;
-		public int end0;
-		public int end1;
+		public Direction	end0;
+		public Direction	end1;
 
 		// Builder
-		public Path(int d0, int d1)
+		public Path(Direction d0, Direction d1)
 		{
-			Direction.checkDirection(d0);
-			Direction.checkDirection(d1);
 			this.end0	= d0;
 			this.end1	= d1;
 		}
@@ -305,16 +299,10 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			return res;
 		}
 		// Setter
-		public void turnLeft()	{end0 = Direction.turnLeft(end0);	end1 = Direction.turnLeft(end1);}
-		public void turnRight()	{end0 = Direction.turnRight(end0);	end1 = Direction.turnRight(end1);}
-		public void turnHalf()
-		{
-			end0 = Direction.turnLeft(end0);
-			end0 = Direction.turnLeft(end0);
-			end1 = Direction.turnRight(end1);
-			end1 = Direction.turnRight(end1);
-		}
-		public String	toString()		{return "(" + Direction.toString(end0) + ", " + Direction.toString(end1) + ')';}
-		public boolean	equals(Path p)	{return ((end0 == p.end0) && (end1 == p.end1));}
+		public void turnLeft()	{end0 = end0.turnLeft();	end1 = end1.turnLeft();}
+		public void turnRight()	{end0 = end0.turnRight();	end1 = end1.turnRight();}
+		public void turnHalf()	{end0 = end0.turnHalf();	end1 = end1.turnHalf();}
+		public String	toString()		{return "(" + end0 + ", " + end1 + ')';}
+		public boolean	equals(Path p)	{return ((end0.equals(p.end0)) && (end1.equals(p.end1)));}
 	}
 }
