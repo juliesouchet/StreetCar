@@ -575,6 +575,8 @@ public class Data implements Serializable
 		public String[]				buildingInLine_name;
 		public LinkedList<Point>	buildingInLine_position;
 		public LinkedList<Point>	terminus;
+//TODO a init public boolean				hasStartedMaidenTravel;
+//TODO public jfdgl;
 		public LinkedList<Action>	history;
 
 		// Builder
