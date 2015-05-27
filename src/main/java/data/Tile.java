@@ -94,6 +94,8 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 
 		res.tileID			= new String(imageFileName);										// Init the non scanned values
 		res.tileDirection	= Direction.WEST;
+		System.out.println(" TD : " + res.tileDirection + ", SB : " + Direction.WEST.getVal());
+System.out.println("parseTileRes: " + res.tileDirection + ", dir value : " + res.tileDirection.getVal());
 		try
 		{
 			int l = tileNamePrefix.length();													// Ignore the prefix part
@@ -172,8 +174,8 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.pathList.isEmpty()));}
 	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (!this.pathList.isEmpty()));}
 // TODO
-	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); this.tileDirection.turnLeft();}
-	public void		turnRight()			{for (Path p: pathList)	p.turnRight(); this.tileDirection.turnRight();}
+	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft();	this.tileDirection.turnLeft();}
+	public void		turnRight()			{for (Path p: pathList)	p.turnRight();	this.tileDirection.turnRight();}
 	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
 	public void		setDirection(Direction dir)	{this.tileDirection = dir.getClone();}
 

@@ -18,7 +18,7 @@ public enum Direction implements CloneableInterface<Direction>
 	SOUTH	(3);
 	public static final Direction[] DIRECTION_LIST = {WEST, NORTH, EAST, SOUTH};
 
-	public int dir;
+	private int dir;
 
 // --------------------------------------------
 // Builder:
@@ -33,6 +33,10 @@ public enum Direction implements CloneableInterface<Direction>
 		Direction res = WEST;
 		res.dir = this.dir;
 		return res;
+	}
+	public int getVal()
+	{
+		return this.dir;
 	}
 	public String toNiceString()
 	{

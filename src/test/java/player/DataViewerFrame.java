@@ -98,7 +98,7 @@ public class DataViewerFrame extends JFrame {
 	}
 	
 	private AffineTransformOp getRotation(Tile tile, BufferedImage img, int tileWidth, int tileHeight) {
-		int rightRotations = tile.getTileDirection().dir;
+		int rightRotations = tile.getTileDirection().getVal();
 		double rotationRequired = Math.toRadians(rightRotations*90);
 		double locationX = tileWidth / 2;
 		double locationY = tileHeight / 2;

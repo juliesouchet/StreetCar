@@ -159,7 +159,7 @@ public class TileGrid extends JComponent {
 	
 	private AffineTransformOp rotation(BufferedImage img, int side)
 	{
-		int rightRotations = grid[0].getTileDirection().dir;
+		int rightRotations = grid[0].getTileDirection().getVal();
 		double rotationRequired = Math.toRadians(rightRotations*270);
 		double locationX = side / 2;
 		double locationY = side / 2;

@@ -43,9 +43,9 @@ public class Dumbest extends PlayerAutomaton {
 			t = myHand.get(k);
 			
 			//On la fait tourner
-			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
-				t.turnLeft();
-			}
+//			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
+//				t.turnLeft();
+//			}
 			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
 		

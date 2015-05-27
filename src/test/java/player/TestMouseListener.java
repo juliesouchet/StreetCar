@@ -48,7 +48,7 @@ public class TestMouseListener implements MouseListener
 				int x = 1 + rnd.nextInt(data.getWidth()-1);
 				int y = 1 + rnd.nextInt(data.getHeight()-1);
 				Tile t = this.tileList.get(rnd.nextInt(this.tileList.size()));
-				for (int i=0; i<rnd.nextInt(4); i++)t.turnLeft();
+//				for (int i=0; i<rnd.nextInt(4); i++)t.turnLeft();
 				if (!data.isAcceptableTilePlacement(x, y, t)) throw new Exception();
 				this.game.placeTile(playerName, t, new Point(x, y));
 				return;

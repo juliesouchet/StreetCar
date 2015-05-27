@@ -390,7 +390,8 @@ public class Data implements Serializable
 					tileFileName	= sc.next();
 					res[x][y]		= Tile.parseTile(tileFileName);
 					dir				= Direction.parse(sc.nextInt());
-					res[x][y]		.setDirection(dir);
+System.out.println("dir  = " + dir);
+//TODO					res[x][y]		.setDirection(dir);
 				}
 			}
 		}
@@ -411,7 +412,7 @@ public class Data implements Serializable
 			{
 				for (int x=0; x<this.getWidth(); x++)
 				{
-					fw.write("" + this.board[x][y].getTileID()	+ " " + this.board[x][y].getTileDirection() + "\n");
+// TODO					fw.write("" + this.board[x][y].getTileID()	+ " " + this.board[x][y].getTileDirection() + "\n");
 				}
 				fw.write("\n\n");
 			}
