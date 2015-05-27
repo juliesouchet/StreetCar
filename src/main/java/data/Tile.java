@@ -161,10 +161,8 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Setters/getters:
 // --------------------------------------------
-	public void		turnHalf()			{for (Path p: pathList)	p.turnHalf(); nbrLeftRotation = (nbrLeftRotation+2)%4;}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
-	/** Number of left rotation of the original image (belongs to [0, 3]) */
 	public int		getNbrLeftRotation(){return this.nbrLeftRotation;}
 	public boolean	isTree()			{return this.isTree;}
 	public boolean	isBuilding()		{return this.isBuilding;}
@@ -174,6 +172,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (!this.pathList.isEmpty()));}
 	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft(); nbrLeftRotation = (nbrLeftRotation == 3) ? 0 : nbrLeftRotation+1;}
 	public void		turnRight()			{for (Path p: pathList)	p.turnRight();nbrLeftRotation = (nbrLeftRotation == 0) ? 3 : nbrLeftRotation-1;}
+	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
 	public boolean	isPathTo(int dir)
 	{
 		Direction.checkDirection(dir);
