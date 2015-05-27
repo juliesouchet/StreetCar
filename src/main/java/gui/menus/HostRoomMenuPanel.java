@@ -1,8 +1,10 @@
-package main.java.gui.application;
+package main.java.gui.menus;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import main.java.data.Data;
+import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.ComboBox;
 import main.java.gui.components.ImagePanel;
@@ -10,17 +12,17 @@ import main.java.gui.components.Label;
 import main.java.gui.util.Resources;
 
 @SuppressWarnings("serial")
-public class ClientWaitingRoomPanel extends MenuPanel {
-	
+public class HostRoomMenuPanel extends MenuPanel {
+
 	// Properties
 	
 	private Label[] nameLabels = new Label[5];
 	private ComboBox[] choiceComboBoxes = new ComboBox[5];
 	private ImagePanel[] avaterImagePanels = new ImagePanel[5];
-		
+	
 	// Constructors
 	
-	ClientWaitingRoomPanel() {
+	public HostRoomMenuPanel() {
 		super();
 		this.setupPanel();
 		this.setupPlayersFields();
@@ -29,9 +31,13 @@ public class ClientWaitingRoomPanel extends MenuPanel {
 	
 	private void setupPanel() {
     	this.setSize(new Dimension(700, 500));
-    	this.setMenuTitle("Join Game", null);
-	}	
+    	this.setMenuTitle("New Game", null);
 
+		Label titleLabel = new Label("Waiting room", null);
+		titleLabel.setBounds(120, 20, 300, 100);
+	    this.add(titleLabel);
+	}
+	
 	private void setupPlayersFields() {
 	    String defaultName = Resources.localizedString("Name", null);
 	    String[] adversaryChoices = {
@@ -56,23 +62,46 @@ public class ClientWaitingRoomPanel extends MenuPanel {
 			ComboBox comboBox = new ComboBox(adversaryChoices);
 			comboBox.setBounds(370, y, 150, 40);
 			comboBox.setSelectedIndex(4);
-			comboBox.setEditable(false);
 			this.add(comboBox);
 		    this.choiceComboBoxes[i] = comboBox;
 	    }
+	    
+	    ComboBox hostComboBox = this.choiceComboBoxes[0];
+	    hostComboBox.setEditable(false);
+	    hostComboBox.setSelectedIndex(0);
 	}
-	
-	private void setupButtons() {    	
-		Button cancelButton = new Button("Cancel");
+
+	private void setupButtons() {
+		Button playGameButton = new Button("Play", null);
+		playGameButton.addAction(this, "playGame");
+		playGameButton.setBounds(new Rectangle(370, 430, 150, 40));
+    	this.add(playGameButton);
+    	
+		Button cancelButton = new Button("Cancel", null);
 		cancelButton.addAction(this, "cancelGame");
-		cancelButton.setBounds(new Rectangle(275, 430, 150, 40));
+		cancelButton.setBounds(new Rectangle(180, 430, 150, 40));
     	this.add(cancelButton);
 	}
-	
+		
 	// Actions
 	
-	public void cancelGame() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showWelcomeMenuPanel();
+	public void playGame() {
+		GameController gc = (GameController)this.getFrameController();
+		gc.showInGamePanel();
 	}
+	
+	public void cancelGame() {
+		GameController gc = (GameController)this.getFrameController();
+		gc.player = null;
+		gc.showWelcomeMenuPanel();
+	}
+	
+	// InterfaceIHM
+	
+	public void refresh(Data data) {
+		super.refresh(data);
+		
+		System.out.println("nb player " + data.getNbrPlayer());
+	}
+	
 }

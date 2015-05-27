@@ -50,7 +50,7 @@ public class ChatPanel extends Panel {
 		this.chat.addMessage(null, "Test1", "Message 1Message 3 de fou hyper lang de la mort qui tueMessage 3 de fou hyper lang de la mort qui tue");
 		this.chat.addMessage(null, "Test2", "Message 2");
 		this.chat.addMessage(null, "Test3", "Message 3 de fou hyper lang de la mort qui tueMessage 3 de fou hyper long de la mort qui tueMessage 3 de fou hyper lang de la mort qui tueMessage 3 de fou hyper lang de la mort qui tue ");
-		this.chat.addMessage(null, "Test4", "MessagMessage 3 de fou hyper lang de la mort qui tuee 4uyfhh");
+		this.chat.addMessage(null, "Test4", "Nulla vitae elit libero, a pharetra augue. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultriciesat eros. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Aenean lacinia bibendum nulla sed consectetur. Nullam id dolor id nibh ultricies vehicula ut id elit. Etiam porta sem malesuada magna mollis euismod.");
 		this.sender = "Test3";
 	}
 	

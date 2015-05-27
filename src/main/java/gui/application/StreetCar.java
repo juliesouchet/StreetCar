@@ -24,7 +24,7 @@ public class StreetCar {
 	}
 	
 	public static void launchGUI() {
-		MainFrameController mainFrameController = new MainFrameController();
+		GameController mainFrameController = new GameController();
 		mainFrameController.showFrame();
 	}
 	

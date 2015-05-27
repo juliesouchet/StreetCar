@@ -1,8 +1,9 @@
-package main.java.gui.application;
+package main.java.gui.menus;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.Label;
 import main.java.gui.components.TextField;
@@ -73,13 +74,13 @@ public class JoinGameMenuPanel extends MenuPanel {
 	// Actions
 	
 	public void joinGame() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showClientWaitingRoomPanel();
+		GameController gc = (GameController)this.getFrameController();
+		gc.showClientWaitingRoomPanel();
 	}
 	
 	public void cancelGame() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showWelcomeMenuPanel();
+		GameController gc = (GameController)this.getFrameController();
+		gc.showWelcomeMenuPanel();
 	}
 
 }
