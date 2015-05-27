@@ -133,7 +133,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
             PlayerAutomaton edouard = new Dumbest();
 			try	{
 				player.hostStartGame();
-				for (int j=0; j<144; j++){
+				for (int j=0; j<1000; j++){
 					Data les_donnees = player.getGameData();
 					Hand main_de_edouard = les_donnees.getHand(name);
 					Action choix_de_edouard = edouard.makeChoice(main_de_edouard, les_donnees);
