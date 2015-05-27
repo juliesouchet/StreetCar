@@ -58,17 +58,17 @@ public class NewGameMenuPanel extends MenuPanel {
 	    String lastPlayerName = ud.getString(Constants.PLAYER_NAME_KEY);
 		this.playerNameField = new TextField(lastPlayerName);
 		this.playerNameField.setPlaceholder("Player1", null);
-		this.playerNameField.setBounds(new Rectangle(215, 105, 150, 30));
+		this.playerNameField.setBounds(new Rectangle(230, 105, 150, 30));
 		this.add(this.playerNameField);
 
 	    String lastGameName = ud.getString(Constants.GAME_NAME_KEY);
 		this.gameNameField = new TextField(lastGameName);
 		this.gameNameField.setPlaceholder("Game1", null);
-		this.gameNameField.setBounds(new Rectangle(215, 155, 150, 30));
+		this.gameNameField.setBounds(new Rectangle(230, 155, 150, 30));
 		this.add(this.gameNameField);
 		
 		this.addressField = new TextField(IP.getIpAdressFromInet());
-		this.addressField.setBounds(new Rectangle(215, 205, 150, 30));
+		this.addressField.setBounds(new Rectangle(230, 205, 150, 30));
 		this.addressField.setEditable(false);
 		this.add(this.addressField);
 	}
