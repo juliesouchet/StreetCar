@@ -1,6 +1,5 @@
 package main.java.gui.application;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
@@ -10,7 +9,6 @@ import main.java.gui.components.TextField;
 import main.java.gui.util.Constants;
 import main.java.gui.util.IP;
 import main.java.gui.util.UserDefaults;
-import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
 public class NewGameMenuPanel extends MenuPanel {
@@ -79,18 +77,18 @@ public class NewGameMenuPanel extends MenuPanel {
 		ud.setString(Constants.PLAYER_NAME_KEY, this.nameField.getText());
 		
 		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		try {
-			mfc.player = PlayerIHM.launchPlayer(this.playerNameField.getText(),
-					                            this.gameNameField.getText(),
-					                            "newOrleans",
-					                            2,
-					                            Color.BLACK,
-					                            true,
-					                            null,
-					                            mfc);
-		}
-		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
-		mfc.showHostWaitingRoomPanel();
+//		try {
+//			mfc.player = PlayerIHM.launchPlayer(this.playerNameField.getText(),
+//					                            this.gameNameField.getText(),
+//					                            "newOrleans",
+//					                            2,
+//					                            Color.BLACK,
+//					                            true,
+//					                            null,
+//					                            mfc);
+//		}
+//		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
+//		mfc.showHostWaitingRoomPanel();
 	}
 	
 	public void cancelGame() {
