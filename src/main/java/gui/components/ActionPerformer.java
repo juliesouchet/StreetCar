@@ -44,11 +44,15 @@ public class ActionPerformer implements ActionListener {
 		try {
 			method.invoke(this.target);
 		} catch (IllegalArgumentException exception) {
-			System.out.println(exception);
+			System.out.println("TARGET = " + this.target);
+			System.out.println("ACTION = " + this.action);
+			exception.printStackTrace();
 		} catch (IllegalAccessException exception) {
-			System.out.println(exception);
+			System.out.println("TARGET = " + this.target);
+			System.out.println("ACTION = " + this.action);
+			exception.printStackTrace();
 		} catch (InvocationTargetException exception) {
-			System.out.println(exception);
+			exception.printStackTrace();
 		}
 	}	
 }
