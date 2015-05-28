@@ -20,8 +20,8 @@ public class JoinGameMenuPanel extends MenuPanel {
 	
 	// Constructors
 	
-	public JoinGameMenuPanel() {
-		super(); 
+	public JoinGameMenuPanel(GameController gc) {
+		super(gc);
     	this.setupPanel();
 		this.setupTextFields();
 		this.setupButtons();

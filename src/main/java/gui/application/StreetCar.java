@@ -15,6 +15,12 @@ public class StreetCar {
 		ud.setStringIfNoValue(Constants.PLAYER_NAME_KEY, "Player1");
 		ud.setStringIfNoValue(Constants.PLAYER_NAME_KEY, "Untitled");
 		ud.synchronize();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				UserDefaults.getSharedInstance().synchronize();
+			}
+		});
 	}
 	
 	public static void setupNativeUI() {

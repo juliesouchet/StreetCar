@@ -21,8 +21,8 @@ public class ClientRoomMenuPanel extends MenuPanel {
 		
 	// Constructors
 	
-	public ClientRoomMenuPanel() {
-		super();
+	public ClientRoomMenuPanel(GameController gc) {
+		super(gc);
 		this.setupPanel();
 		this.setupPlayersFields();
 		this.setupButtons();

@@ -6,12 +6,14 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
+import main.java.util.Copier;
 
 
 
@@ -56,7 +58,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		try																				// Create the player's remote reference
 		{
 			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
-			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+			try {
+				java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+			} catch(ExportException e) { // registry is already created
+				// TODO: Close registry instead
+			}
 			Naming.rebind(url, this);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
@@ -105,9 +111,23 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public Data getData(String playerName) throws RemoteException
+	public Data	getData(String playerName) throws RemoteException
 	{
 		return this.data.getClone(playerName);
+	}
+	public LoginInfo[]getLoginInfo(String playerName) throws RemoteException
+	{
+		Copier<LoginInfo> cp = new Copier<LoginInfo>();
+
+		return cp.copyTab(loggedPlayerTable);
+	}
+	public void setLoginInfo(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
+	{
+		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
+		if  (playerToChangeIndex <= 1)					throw new ExceptionForbiddenHostModification();
+
+		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
+////// TODO avertire le joueur qui a ete modife
 	}
 	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
@@ -137,7 +157,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 		else
 		{
-			this.data.addPlayer(player, player.getPlayerName(), isHost);
+			this.data.addPlayer(player, player.getPlayerName(), player.getColor(), isHost);
 			System.out.println("\n===========================================================");
 			System.out.println(Game.gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
 			System.out.println(Game.gameMessageHeader + "accepted player");
@@ -169,7 +189,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println("===========================================================\n");
 		return res;
 	}
-	public void hostStartGame(String playerName) throws RemoteException
+	public void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 
@@ -182,7 +202,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	}
 // Version simple pour tester l'ia
 //TODO Remplacer par public void placeTile(String playerName, int indexInHand, Point position, Direction rotation)
-	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
@@ -211,10 +231,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		
 		return t;
 	}
-// TODO public LoginInfo[] getLoginInfo()
-// TODO public void getLoginInfo(String playerName, int indexInLogTable, LogInfo li)
-
-
 
 // --------------------------------------------
 // Private methods:

@@ -10,8 +10,8 @@ public class WelcomeMenuPanel extends MenuPanel {
 
 	// Constructors
 	
-	public WelcomeMenuPanel() {
-		super();
+	public WelcomeMenuPanel(GameController gc) {
+		super(gc);
     	this.setupPanel();
 		this.setupButtons();
 	}

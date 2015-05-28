@@ -194,4 +194,10 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 			else if	(color.equals("gray"))	return Color.gray;
 		}
 	}
+
+	@Override
+	public void excludePlayer() {
+		// TODO Auto-generated method stub
+		
+	}
 }

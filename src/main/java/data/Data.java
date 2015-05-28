@@ -111,11 +111,11 @@ public class Data implements Serializable
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
-	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
+	public void addPlayer(PlayerInterface p, String playerName, Color playerColor, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
 		if ((isHost) && (this.host != null))			throw new ExceptionHostAlreadyExists();
-		PlayerInfo pi = new PlayerInfo(p, playerName);
+		PlayerInfo pi = new PlayerInfo(p, playerName, playerColor);
 		this.playerInfoList.put(playerName, pi);
 		if (isHost) this.host = new String(playerName);
 	}
@@ -583,6 +583,13 @@ public class Data implements Serializable
 		}
 		return res;
 	}
+	private int getRemainingColorIndex(Color color)
+	{
+		for (int i=0; i<existingColors.size(); i++)
+			if (color.equals(existingColors.get(i))) return i;
+
+		throw new RuntimeException("Unknown Color: " + color);
+	}
 
 // --------------------------------------------
 // Player Info class:
@@ -601,7 +608,7 @@ public class Data implements Serializable
 		public LinkedList<Action>	history;
 
 		// Builder
-		public PlayerInfo(PlayerInterface pi, String playerName)
+		public PlayerInfo(PlayerInterface pi, String playerName, Color playerColor)
 		{
 			Random rnd = new Random();
 			int i;
@@ -610,9 +617,8 @@ public class Data implements Serializable
 			this.playerName	= new String(playerName);
 			this.history	= new LinkedList<Action>();
 			this.hand		= new Hand(initialHand);
-			i				= rnd.nextInt(remainingLine.size());						// Draw a line
-			this.line		= remainingLine.get(i);
-			remainingLine.remove(i);
+			this.line		= 1 + getRemainingColorIndex(playerColor);
+			remainingLine.remove(this.line-1);
 			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
 			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
 			remainingBuildingInLine.remove(i);
