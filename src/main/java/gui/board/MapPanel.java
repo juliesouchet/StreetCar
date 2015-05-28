@@ -3,6 +3,7 @@ package main.java.gui.board;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.dnd.DropTarget;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -20,13 +21,15 @@ public class MapPanel extends Panel implements MouseListener {
     float widthPerCase;
     int originX;
     int originY;
-    Point caseofGrid = new Point();
     
     // Constructors
     
 	public MapPanel() {
 		this.setBackground(Color.WHITE);
 		this.addMouseListener(this);
+
+		MapPanelDropTargetListener dropTarget = new MapPanelDropTargetListener(this);
+        this.setDropTarget(new DropTarget(this, dropTarget));
 	}
 	
 	//
@@ -37,6 +40,20 @@ public class MapPanel extends Panel implements MouseListener {
 		this.widthPerCase = width/14;
 	    this.originX = (this.getWidth() - Math.round(width)) / 2;
 	    this.originY = (this.getHeight() - Math.round(width)) / 2;
+	}
+	
+	// Cells
+	
+	public Point cellPositionForLocation(Point location) {
+		if (location.x >= originX &&  location.x <= originX + width &&
+			location.y >= originY &&  location.y <= originY + width) {
+			Point cellPosition = new Point();
+			cellPosition.x = (int)((float)(location.x - originX) / widthPerCase);
+			cellPosition.y = (int)((float)(location.y - originY) / widthPerCase);
+			return cellPosition;
+		} else {
+			return null;
+		}
 	}
 	
 	// Paint Component
@@ -66,16 +83,10 @@ public class MapPanel extends Panel implements MouseListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getX() >= originX && 
-			e.getY() >= originY && 
-			e.getX() <= originX + width && 
-			e.getY() <= originY + width) {
-				int indexX = (int)((float)(e.getX() - originX) / widthPerCase);
-				int indexY = (int)((float)(e.getY() - originY) / widthPerCase);	
-				System.out.println("(" + indexX + "," + indexY + ")");
-				this.caseofGrid.x = indexX;
-				this.caseofGrid.y = indexY;				
-			}		
+		Point p = this.cellPositionForLocation(e.getPoint());
+		if (p != null) {
+			System.out.println(p);
+		}
 	}
 
 
