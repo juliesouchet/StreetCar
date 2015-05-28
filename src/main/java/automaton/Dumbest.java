@@ -20,17 +20,19 @@ import main.java.data.Tile;
  */
 public class Dumbest extends PlayerAutomaton {
 	
-	public Dumbest (){
-		this.setName("Dumbest");
+	public Dumbest() {
+		super();
+		name = "Dumbest";
 	}
 	
 	
-	public Action makeChoice(Hand myHand, Data currentconfig) {
+	public Action makeChoice(Data currentconfig) {
+		Hand myHand;
 		Action choix ;
 		Random rand = new Random();
 		Point p;
 		Tile t;
-		int i,j, k;
+		int i, j, k, n;
 		
 		do{
 			// On choisit un emplacement au hasard
@@ -39,7 +41,9 @@ public class Dumbest extends PlayerAutomaton {
 			p = new Point(i,j);
 			
 			// On choisit une tuile parmi les 5 de notre main
-			k = rand.nextInt(myHand.size());
+			myHand = currentconfig.getHand(name);
+			n = myHand.size();			
+			k = rand.nextInt(n);
 			t = myHand.get(k);
 			
 			//On la fait tourner

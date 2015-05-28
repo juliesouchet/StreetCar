@@ -58,7 +58,7 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 		if (!data.isPlayerTurn(playerName)) return;
 
 		Hand myHand = data.getHand(playerName);
-		Action a = this.automaton.makeChoice(myHand, data);
+		Action a = this.automaton.makeChoice(data);
 		try
 		{
 			this.game.placeTile(playerName, a.tile1, a.positionTile1);

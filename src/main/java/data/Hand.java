@@ -47,5 +47,12 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 		this.tileList.remove(k);
 		return res;
 	}
+	
+//--------------------------------------------
+// Setter:
+//--------------------------------------------
+	public void add(Tile t) {
+		tileList.add(t);		
+	}
 
 }
