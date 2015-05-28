@@ -65,4 +65,9 @@ public class Test_IA_Riyane implements InterfaceIHM
 		System.out.println("\t Round\t: "	+ data.getRound());
 		this.frame.setGameData(data);
 	}
+	@Override
+	public void excludePlayer() {
+		// TODO Auto-generated method stub
+		
+	}
 }
