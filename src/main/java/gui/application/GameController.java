@@ -133,7 +133,6 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 	
 	public void quitGame() {
-		UserDefaults.getSharedInstance().synchronize();
 		System.exit(0);
 	}
 	
