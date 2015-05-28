@@ -12,6 +12,7 @@ import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
+import main.java.util.Copier;
 
 
 
@@ -105,12 +106,25 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public Data	getData(String playerName) throws RemoteException{return this.data.getClone(playerName);}
-/*	public LoginInfo[]getjhdsfjlkhdsqjlkfhData(String playerName) throws RemoteException
+	public Data	getData(String playerName) throws RemoteException
 	{
 		return this.data.getClone(playerName);
 	}
-*/	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public LoginInfo[]getLoginInfo(String playerName) throws RemoteException
+	{
+		Copier<LoginInfo> cp = new Copier<LoginInfo>();
+
+		return cp.copyTab(loggedPlayerTable);
+	}
+	public void setLoginInfo(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
+	{
+		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
+		if  (playerToChangeIndex <= 1)					throw new ExceptionForbiddenHostModification();
+
+		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
+////// TODO avertire le joueur qui a ete modife
+	}
+	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
 		{
@@ -170,7 +184,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println("===========================================================\n");
 		return res;
 	}
-	public void hostStartGame(String playerName) throws RemoteException
+	public void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 
@@ -183,7 +197,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	}
 // Version simple pour tester l'ia
 //TODO Remplacer par public void placeTile(String playerName, int indexInHand, Point position, Direction rotation)
-	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
@@ -204,10 +218,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Rajouter d'autres exceptions
 		return this.data.drawCard();
 	}
-// TODO public LoginInfo[] getLoginInfo()
-// TODO public void getLoginInfo(String playerName, int indexInLogTable, LogInfo li)
-
-
 
 // --------------------------------------------
 // Private methods:
