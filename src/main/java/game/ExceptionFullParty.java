@@ -4,6 +4,6 @@ package main.java.game;
 
 
 @SuppressWarnings("serial")
-public class ExceptionFullParty extends Exception
+public class ExceptionFullParty extends RuntimeException
 {
 }

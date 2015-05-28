@@ -110,7 +110,7 @@ Creation des joueurs de types IA:
 
 -------------------
 
-### Jour 11 : Mardi 26 mai
+### Jour 11 : Mercredi 27 mai
 
 Suite de l'integration du (moteur + joueurs) avec l'IHM (gui)
 Optimisation des classe Direction et Data pour les besoins de l'IA (trés grand nombre d'appel aux methodes de DATA)

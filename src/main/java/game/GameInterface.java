@@ -15,8 +15,8 @@ import main.java.player.PlayerInterface;
 
 public interface GameInterface extends Remote
 {
-	public void		onJoinGame			(PlayerInterface player, boolean isHost)				throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
-	public boolean	onQuitGame			(String playerName)										throws RemoteException;
+	public void		onJoinGame			(PlayerInterface player, boolean isHost, int iaLevel)	throws RemoteException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
+	public void		onQuitGame			(String playerName)										throws RemoteException, ExceptionForbiddenAction;
 
 	public Data		getData				(String playerName)										throws RemoteException;
 	public LoginInfo[]getLoginInfo		(String playerName)										throws RemoteException;

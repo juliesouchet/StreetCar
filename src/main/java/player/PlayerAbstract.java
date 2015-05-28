@@ -1,12 +1,16 @@
 package main.java.player;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
+import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -35,6 +39,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	protected InterfaceIHM	ihm;
 	protected String		playerName;
 	protected Color			color;
+	protected Data			data;
 
 // --------------------------------------------
 // Builder:
@@ -51,6 +56,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		this.ihm		= ihm;
 		this.playerName	= new String(playerName);
 		this.color		= playerColor;
+		this.data		= null;
 		System.out.println("\n===========================================================");
 		System.out.println("Street Car player : playerName  = " + playerName);
 		System.out.println("Street Car player : playerColor = " + playerColor);
@@ -62,20 +68,20 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
+	public Data		getGameData()							{return (this.data == null) ? null : this.data.getClone(playerName);}
 	public String 	getPlayerName()	throws RemoteException	{return this.playerName;}
-	public Color	getColor()		throws RemoteException	{return this.color;}
-	public Data		getGameData()	throws RemoteException	{return this.game.getData(this.playerName);}
-	public void		hostStartGame()	throws RemoteException, ExceptionForbiddenAction
+	public Color	getPlayerColor()throws RemoteException	{return this.color;}
+	public void		gameHasChanged(Data data) throws RemoteException
+	{
+		this.data = data;
+		if (this.ihm != null) this.ihm.refresh(data);
+	}
+	public void	hostStartGame()	throws RemoteException, ExceptionForbiddenAction
 	{
 		this.game.hostStartGame(playerName);
 	}
-
-
-// --------------------------------------------
-// Local methodes:
-// --------------------------------------------
-	public GameInterface getGame()throws RemoteException
+	public void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
-		return this.game;
+		this.game.placeTile(playerName, t, position);
 	}
 }

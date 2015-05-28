@@ -8,18 +8,16 @@ import java.util.Random;
 
 import main.java.data.Data;
 import main.java.data.Tile;
-import main.java.game.GameInterface;
+import main.java.player.PlayerInterface;
 
 public class TestMouseListener implements MouseListener
 {
-	private GameInterface game;
-	private String	playerName;
+	private PlayerInterface player;
 	private LinkedList<Tile> tileList;
 
-	public TestMouseListener(GameInterface game, String playerName)
+	public TestMouseListener(PlayerInterface player)
 	{
-		this.game		= game;
-		this.playerName	= playerName;
+		this.player		= player;
 		this.tileList	= new LinkedList<Tile>();
 
 		this.tileList	.add(Tile.parseTile("Tile_FFFFZZ060123"));
@@ -44,12 +42,12 @@ public class TestMouseListener implements MouseListener
 		{
 			try
 			{
-				Data data = this.game.getData(playerName);
+				Data data = this.player.getGameData();
 				int x = 1 + rnd.nextInt(data.getWidth()-1);
 				int y = 1 + rnd.nextInt(data.getHeight()-1);
 				Tile t = this.tileList.get(rnd.nextInt(this.tileList.size()));
 				if (!data.isAcceptableTilePlacement(x, y, t)) throw new Exception();
-				this.game.placeTile(playerName, t, new Point(x, y));
+				this.player.placeTile(t, new Point(x, y));
 				return;
 			}
 			catch(Exception e)	{}
