@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
@@ -57,7 +58,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		try																				// Create the player's remote reference
 		{
 			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
-			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+			try {
+				java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+			} catch(ExportException e) { // registry is already created
+				// TODO: Close registry instead
+			}
 			Naming.rebind(url, this);
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
