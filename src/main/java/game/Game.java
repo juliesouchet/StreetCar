@@ -105,11 +105,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public Data getData(String playerName) throws RemoteException
+	public Data	getData(String playerName) throws RemoteException{return this.data.getClone(playerName);}
+/*	public LoginInfo[]getjhdsfjlkhdsqjlkfhData(String playerName) throws RemoteException
 	{
 		return this.data.getClone(playerName);
 	}
-	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+*/	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
 		{
@@ -137,7 +138,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 		else
 		{
-			this.data.addPlayer(player, player.getPlayerName(), isHost);
+			this.data.addPlayer(player, player.getPlayerName(), player.getColor(), isHost);
 			System.out.println("\n===========================================================");
 			System.out.println(Game.gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
 			System.out.println(Game.gameMessageHeader + "accepted player");
