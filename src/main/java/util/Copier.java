@@ -102,6 +102,8 @@ public class Copier <T>
 	{
 		if (elem instanceof String)	return (T) new String((String)elem);
 		if (elem instanceof Point)	return (T) new Point((Point)elem);
+		if (elem instanceof ArrayList) return (T) new ArrayList<>((ArrayList<?>)elem);
+		if (elem instanceof LinkedList) return (T) new LinkedList<>((LinkedList<?>)elem);
 		else throw new RuntimeException("Cloneable cast unexpected: " + elem.getClass());
 	}
 }

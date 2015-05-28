@@ -7,8 +7,10 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.LinkedList;
 
 import main.java.data.Data;
+import main.java.data.Data.PlayerInfo;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
@@ -173,12 +175,8 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(playerName, this.data, "hostStartGame", null, null);
-		synchronized(this.engineLock)
-		{
-			try					{this.engineLock.notify();}
-			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
-		}
+		this.engine.addAction(playerName, this.data, "hostStartGame", null, null, null);
+		notifyEngine();
 	}
 // Version simple pour tester l'ia
 //TODO Remplacer par public void placeTile(String playerName, int indexInHand, Point position, Direction rotation)
@@ -188,13 +186,61 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(playerName, this.data, "placeTile", position, t);
+		this.engine.addAction(playerName, this.data, "placeTile", position, t, null);
+		notifyEngine();
+	}
+	private void notifyEngine() {
 		synchronized(this.engineLock)
 		{
 			try					{this.engineLock.notify();}
 			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 		}
 	}
+	
+	public void  moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	{
+		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+
+		PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
+		if(!dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
+		// TODO test if tram can reach (both regarding existing path and allowed number of movement)
+		// TODO test if tram must stop at a stopping 
+		// TODO maybe more tests?
+		// TODO verify stoped at a stop sign
+		// TODO instead of a Point, pass a list of Points (easyer to check)
+		// TODO check that tram isn't goint backwards
+		// TODO check if tramMovement is linked to current tram position
+		// TODO check if each tramMovement is linked together
+		// TODO check if args are null
+		// TODO check if null (for method)
+		// TODO check if maidenTravel has started (for every method)
+
+		
+		this.engine.addAction(playerName, this.data, "moveTram", null, null, tramMovement);
+		notifyEngine();
+	}
+	
+	public void	startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	{
+		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+
+		PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
+		if(!dataPlayer.terminus.contains(terminus)) throw new ExceptionForbiddenAction();
+		
+		// TODO if(dataPlayer.numberOfTilesPlacedThisTurn > 0) throw new ExceptionForbiddenAction();
+		// TODO if(dataPlayer.numberOfTilesDrawnThisTurn > 0) throw new ExceptionForbiddenAction();
+		
+		if(dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
+		
+		dataPlayer.startedMaidenTravel = true;
+		dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
+
+		this.engine.addAction(playerName, this.data, "startMaidenTravel", null, null, null);
+		notifyEngine();
+	}
+	
 // TODO Version simple pour tester l'ia
 	public Tile drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{

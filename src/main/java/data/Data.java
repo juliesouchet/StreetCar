@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -25,9 +26,9 @@ import main.java.util.Util;
 
 public class Data implements Serializable
 {
-// --------------------------------------------
-// Attributes:
-// --------------------------------------------
+	// --------------------------------------------
+	// Attributes:
+	// --------------------------------------------
 	private static final long			serialVersionUID		= -2740586808331187527L;
 	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription";
@@ -57,16 +58,16 @@ public class Data implements Serializable
 	private String[]					playerOrder;
 	private String						host;
 
-// --------------------------------------------
-// Builder:
-// --------------------------------------------
+	// --------------------------------------------
+	// Builder:
+	// --------------------------------------------
 	public Data(String gameName, String boardName, int nbrBuildingInLine) throws ExceptionUnknownBoardName, RuntimeException
 	{
 		File f = new File(boardDirectory + boardName);
 		Scanner sc;
 
 		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
-			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
+				(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
 		this.gameName			= new String(gameName);
 		try						{sc = new Scanner(f);}
@@ -108,9 +109,9 @@ public class Data implements Serializable
 		return res;
 	}
 
-// --------------------------------------------
-// Setter:
-// --------------------------------------------
+	// --------------------------------------------
+	// Setter:
+	// --------------------------------------------
 	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
@@ -143,17 +144,17 @@ public class Data implements Serializable
 			players.remove(i);
 		}
 	}
-////////////////TODO to remove
-	public void skipTurn(){this.round ++;}
-////////////////TODO 
+	////////////////TODO to remove
+	public void skipTurn(){this.round ++;} // goes to the next player's turn
+	////////////////TODO 
 	public void	setTile(int x, int y, Tile t)
 	{
 		this.board[x][y] = t;
 	}
 
-// --------------------------------------------
-// Getter:
-// --------------------------------------------
+	// --------------------------------------------
+	// Getter:
+	// --------------------------------------------
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public String				getHost()										{return new String(this.host);}
 	public int					getWidth()										{return this.board.length;}
@@ -330,13 +331,12 @@ public class Data implements Serializable
 	/**===============================================================
 	 * @return true if the player has started his maiden travel
 	 =================================================================*/
-	public boolean isMoving(String name)
+	public boolean startedMaidenTravel(String name)
 	{
 		PlayerInfo pi = this.playerInfoList.get(name);
 
 		if (pi == null) throw new RuntimeException("Unknown player: " + name);
-		if (pi.history.isEmpty())	return false;
-		return pi.history.getLast().isMoving();
+		return pi.startedMaidenTravel;
 	}
 	/**===============================================================
 	 * @return the positions of the buildings in the player's path
@@ -423,9 +423,9 @@ public class Data implements Serializable
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
 
-// --------------------------------------------
-// Private methods:
-// --------------------------------------------
+	// --------------------------------------------
+	// Private methods:
+	// --------------------------------------------
 	/**============================================
 	 * @return Creates the line cards from the corresponding file
 	 ==============================================*/
@@ -435,7 +435,7 @@ public class Data implements Serializable
 		String color;
 		File f;
 		Scanner sc;
-// TODO
+		// TODO
 		Data.existingLine			= new LinkedList<Integer>();						// Scab the existing lines and corresponding colors
 		Data.existingColors			= new LinkedList<Color>();
 		try
@@ -565,9 +565,9 @@ public class Data implements Serializable
 			piRes.line		= pi.line;
 			piRes.hand		= pi.hand.getClone();
 			piRes.terminus	= (new Copier<Point>()).copyList(pi.terminus);
-			piRes.history	= (new Copier<Action>()).copyList(pi.history);
+			piRes.history	= (new Copier<LinkedList<Action>>()).copyList(pi.history);
 
-			if ((str.equals(playerName)) || (this.isMoving(str)))		// Private Informations
+			if ((str.equals(playerName)) || (this.startedMaidenTravel(str)))		// Private Informations
 			{
 				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
 				piRes.buildingInLine_position	= (new Copier<Point>()).copyList(pi.buildingInLine_position);
@@ -582,9 +582,14 @@ public class Data implements Serializable
 		return res;
 	}
 
-// --------------------------------------------
-// Player Info class:
-// --------------------------------------------
+	public PlayerInfo getPlayerInfo(String playerName)
+	{
+		return playerInfoList.get(playerName); 
+	}
+
+	// --------------------------------------------
+	// Player Info class:
+	// --------------------------------------------
 	public class PlayerInfo implements Serializable
 	{
 		// Attributes
@@ -596,7 +601,12 @@ public class Data implements Serializable
 		public String[]				buildingInLine_name;
 		public LinkedList<Point>	buildingInLine_position;
 		public LinkedList<Point>	terminus;
-		public LinkedList<Action>	history;
+		public ArrayList<LinkedList<Action>>	history; // organized by turns
+
+		public boolean startedMaidenTravel = false;
+		public Point tramPosition = new Point();
+		public Point startTerminus = new Point();
+		public LinkedList<Point> endTermini = new LinkedList<>();
 
 		// Builder
 		public PlayerInfo(PlayerInterface pi, String playerName)
@@ -606,7 +616,7 @@ public class Data implements Serializable
 
 			this.player		= pi;
 			this.playerName	= new String(playerName);
-			this.history	= new LinkedList<Action>();
+			this.history	= new ArrayList<LinkedList<Action>>();
 			this.hand		= new Hand(initialHand);
 			i				= rnd.nextInt(remainingLine.size());						// Draw a line
 			this.line		= remainingLine.get(i);
