@@ -25,8 +25,8 @@ public class NewGameMenuPanel extends MenuPanel {
 	
 	// Constructors
 	
-	public NewGameMenuPanel() {
-		super();
+	public NewGameMenuPanel(GameController gc) {
+		super(gc);
 		this.setupPanel();
 		this.setupTextFields();
 		this.setupButtons();
@@ -100,7 +100,7 @@ public class NewGameMenuPanel extends MenuPanel {
 		ud.setString(Constants.PLAYER_NAME_KEY, playerName);
 		ud.setString(Constants.GAME_NAME_KEY, gameName);
 		
-		GameController gc = (GameController)this.getFrameController();
+		GameController gc = this.getGameController();
 		try {
 			gc.player = PlayerIHM.launchPlayer(playerName,
 					                           gameName,
@@ -118,7 +118,7 @@ public class NewGameMenuPanel extends MenuPanel {
 	}
 	
 	public void cancelGame() {
-		GameController gc = (GameController)this.getFrameController();
+		GameController gc = this.getGameController();
 		gc.showWelcomeMenuPanel();
 	}
 }

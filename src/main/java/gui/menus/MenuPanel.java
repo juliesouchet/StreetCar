@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.BorderFactory;
 
 import main.java.data.Data;
+import main.java.gui.application.GameController;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
 import main.java.rubbish.InterfaceIHM;
@@ -19,12 +20,14 @@ public class MenuPanel extends Panel implements InterfaceIHM {
 	// Properties
 	
 	protected String menuTitle;
+	protected GameController gc;
 	
 	// Constructors
 	
-	public MenuPanel() {
+	public MenuPanel(GameController gameController) {
 		super();
 		
+		this.gc = gameController;
     	this.setLayout(null);
     	this.setSize(new Dimension(500, 450));
     	this.setBackground(Color.white);
@@ -35,6 +38,10 @@ public class MenuPanel extends Panel implements InterfaceIHM {
 	
 	public String getMenuTitle() {
 		return this.menuTitle;
+	}
+	
+	public GameController getGameController() {
+		return this.gc;
 	}
 	
 	// Setters
@@ -70,5 +77,7 @@ public class MenuPanel extends Panel implements InterfaceIHM {
 	// Interface IHM
 	
 	public void refresh(Data data) {}
+
+	public void excludePlayer() {}
 	
 }
