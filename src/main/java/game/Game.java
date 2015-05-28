@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
+import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
 
@@ -32,10 +33,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public final static int		applicationPort			= 5000;
 	public final static String	applicationProtocol		= "rmi";
 
-	private Data	data;
-	private Engine	engine;
-	private Thread	engineThread;
-	private Object	engineLock;
+	private Data		data;
+	private LoginInfo[]	loggedPlayerTable;
+	private Engine		engine;
+	private Thread		engineThread;
+	private Object		engineLock;
 
 // --------------------------------------------
 // Builder:
@@ -51,7 +53,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		super();
 		String url = null;
 
-		try																			// Create the player's remote reference
+		try																				// Create the player's remote reference
 		{
 			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
@@ -59,11 +61,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
-		this.data			= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
-		this.engineLock		= new Object();
-		this.engine			= new Engine(this.engineLock);
-		this.engineThread	= new Thread(this.engine);
-		this.engineThread	.start();
+		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
+		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
+		this.engineLock			= new Object();
+		this.engine				= new Engine(this.engineLock);
+		this.engineThread		= new Thread(this.engine);
+		this.engineThread		.start();
 
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "URL = " + url);
@@ -191,6 +194,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			try					{this.engineLock.notify();}
 			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 		}
+	}
+// TODO Version simple pour tester l'ia
+	public Tile drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+// Rajouter d'autres exceptions
+		return this.data.drawCard();
 	}
 // TODO public LoginInfo[] getLoginInfo()
 // TODO public void getLoginInfo(String playerName, int indexInLogTable, LogInfo li)

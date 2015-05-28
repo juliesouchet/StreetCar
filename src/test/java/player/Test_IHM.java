@@ -8,6 +8,7 @@ import main.java.data.Data;
 import main.java.game.GameInterface;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
+import main.java.util.Util;
 
 
 
@@ -106,13 +107,11 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 		while(true)
 		{
 			System.out.print("\t- Color\t\t\t :"); color = sc.next();
-			if		(color.equals("red"))		return Color.red;
-			else if	(color.equals("green"))		return Color.green;
-			else if	(color.equals("blue"))		return Color.blue;
-			else if	(color.equals("cyan"))		return Color.cyan;
-			else if	(color.equals("gray"))		return Color.gray;
-			else if	(color.equals("yellow"))	return Color.yellow;
+			try
+			{
+				return Util.parseColor(color);
 			}
+			catch(Exception e){}
 		}
-
+	}
 }

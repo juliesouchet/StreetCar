@@ -19,6 +19,8 @@ public interface GameInterface extends Remote
 	public Data		getData				(String playerName)										throws RemoteException;
 	public void		hostStartGame		(String playerName)										throws RemoteException, ExceptionForbiddenAction;
 	public void		placeTile			(String playerName, Tile t, Point position)				throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
+// TODO: remove this
+	public Tile		drawCard			(String playerName, int nbrCards)						throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 /*	public void		undoAttempt			(String playerName)										throws RemoteException;
 	public void		undoTurn			(String playerName)										throws RemoteException;
 	public void		moveTram			(String playerName, Point dest)							throws RemoteException;
