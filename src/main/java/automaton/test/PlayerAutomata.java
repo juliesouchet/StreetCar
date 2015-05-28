@@ -11,6 +11,7 @@ import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.data.Tile;
 import main.java.game.GameInterface;
 import main.java.player.PlayerIA;
 import main.java.player.PlayerIHM;
@@ -132,14 +133,21 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 		if (create)
 		{
             PlayerAutomaton edouard = new Dumbest();
+            edouard.setName(name);
 			try	{
 				player.hostStartGame();
 				for (int j=0; j<100; j++){
+			System.out.println(" TOUR " + (j+1));
+			System.out.println("Main :" + player.getGameData().getHand(name));
+			System.out.println();
 					Action choix_de_edouard = edouard.makeChoice(player.getGameData());
 					player.getGame().placeTile(name, choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
-					player.getGameData().getHand(name).add(player.getGame().drawCard(name, 1));
+					Tile t = player.getGame().drawCard(name, 1);
+			System.out.println();
+			System.out.println("Tire " + t);
 					this.frame.setGameData(player.getGameData());
-					if(player.getGameData().isTrackCompleted(name) && !win) {
+			System.out.println("============================\n");
+					if(player.getGameData().isTrackCompleted(name)) {
 						System.out.println("Chemin completé (tour " + j + ")");
 						win = true;
 						break;
@@ -163,10 +171,10 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 // --------------------------------------------
 	public void refresh(Data data)
 	{
-		System.out.println("------------------------------------");
+		/*System.out.println("------------------------------------");
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
-		System.out.println("\t Round\t: "	+ data.getRound());
+		System.out.println("\t Round\t: "	+ data.getRound());*/
 		this.frame.setGameData(data);
 	}
 

@@ -621,4 +621,14 @@ public class Data implements Serializable
 		}
 		public PlayerInfo(){}
 	}
+
+	
+	
+// TODO méthodes ajoutées par Julie pour faire fonctionner les tests IA	
+	public void removeTileFromHand(String playerName, Tile t) {
+		this.getHand(playerName).remove(t);
+	}
+	public void addTileToHand(String playerName, Tile t) {
+		this.getHand(playerName).add(t);
+	}
 }

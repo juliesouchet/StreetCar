@@ -187,7 +187,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
-
+		
+		// TODO (fait) retirer la carte de la main du joueur --Julie
+		data.removeTileFromHand(playerName, t.getClone());
+		
 		this.engine.addAction(playerName, this.data, "placeTile", position, t);
 		synchronized(this.engineLock)
 		{
@@ -195,13 +198,18 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 		}
 	}
-// TODO Version simple pour tester l'ia
+// TODO Version simple pour tester l'ia 
 	public Tile drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 // Rajouter d'autres exceptions
-		return this.data.drawCard();
+		Tile t = this.data.drawCard();
+
+		// TODO (fait) la tuile tirée est ajoutée à la main du joueur directement --Julie
+		this.data.addTileToHand(playerName, t);
+		
+		return t;
 	}
 // TODO public LoginInfo[] getLoginInfo()
 // TODO public void getLoginInfo(String playerName, int indexInLogTable, LogInfo li)
