@@ -2,7 +2,6 @@ package main.java.automaton;
 
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Hand;
 
 
 /**
@@ -17,12 +16,12 @@ import main.java.data.Hand;
  * 	continuer son voyage (et donc faire son déplacement)
  */
 public abstract class PlayerAutomaton {
-	private String name;
+	protected String name;
 	
 	/**
 	 * Donne la décision d'action faite par l'automate
 	 */
-	public abstract Action makeChoice(Hand myHand, Data currentConfig );
+	public abstract Action makeChoice(Data currentConfig);
 
 	public String getName() {
 		return name;

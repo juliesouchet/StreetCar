@@ -111,11 +111,11 @@ public class Data implements Serializable
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
-	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
+	public void addPlayer(PlayerInterface p, String playerName, Color playerColor, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
 		if ((isHost) && (this.host != null))			throw new ExceptionHostAlreadyExists();
-		PlayerInfo pi = new PlayerInfo(p, playerName);
+		PlayerInfo pi = new PlayerInfo(p, playerName, playerColor);
 		this.playerInfoList.put(playerName, pi);
 		if (isHost) this.host = new String(playerName);
 	}
@@ -164,6 +164,8 @@ public class Data implements Serializable
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
+	public Color				getPlayerColor(String playerName)				{return Data.existingColors.get(this.playerInfoList.get(playerName).line);}
 	public Tile					drawCard()										{return this.deck.drawTile();}
 	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
@@ -427,7 +429,7 @@ public class Data implements Serializable
 // Private methods:
 // --------------------------------------------
 	/**============================================
-	 * @return Creates the line cards from the corresponding file
+	 * @return Creates the line cards from the corresponding files
 	 ==============================================*/
 	private void parseStaticGameInformations(int nbrBuildingInLine)
 	{
@@ -581,6 +583,13 @@ public class Data implements Serializable
 		}
 		return res;
 	}
+	private int getRemainingColorIndex(Color color)
+	{
+		for (int i=0; i<existingColors.size(); i++)
+			if (color.equals(existingColors.get(i))) return i;
+
+		throw new RuntimeException("Unknown Color: " + color);
+	}
 
 // --------------------------------------------
 // Player Info class:
@@ -599,7 +608,7 @@ public class Data implements Serializable
 		public LinkedList<Action>	history;
 
 		// Builder
-		public PlayerInfo(PlayerInterface pi, String playerName)
+		public PlayerInfo(PlayerInterface pi, String playerName, Color playerColor)
 		{
 			Random rnd = new Random();
 			int i;
@@ -608,9 +617,8 @@ public class Data implements Serializable
 			this.playerName	= new String(playerName);
 			this.history	= new LinkedList<Action>();
 			this.hand		= new Hand(initialHand);
-			i				= rnd.nextInt(remainingLine.size());						// Draw a line
-			this.line		= remainingLine.get(i);
-			remainingLine.remove(i);
+			this.line		= 1 + getRemainingColorIndex(playerColor);
+			remainingLine.remove(this.line-1);
 			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
 			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
 			remainingBuildingInLine.remove(i);

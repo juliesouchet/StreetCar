@@ -5,6 +5,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import main.java.data.Data;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.game.GameInterface;
 
 
@@ -22,7 +23,7 @@ public interface PlayerInterface extends Remote
 	public Data		getGameData			()											throws RemoteException;
 	public boolean	isHumanPlayer		()											throws RemoteException;
 
-	public void		hostStartGame		()											throws RemoteException;
+	public void		hostStartGame		()											throws RemoteException, ExceptionForbiddenAction;
 	public void		gameHasChanged		(Data data)									throws RemoteException;
 /*	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;

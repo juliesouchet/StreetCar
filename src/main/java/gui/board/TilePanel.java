@@ -4,11 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JComponent;
-import javax.swing.TransferHandler;
 
 import main.java.gui.components.Panel;
 
@@ -19,21 +14,9 @@ public class TilePanel extends Panel implements Transferable {
 	
 	public TilePanel() {
 		super();
-		this.setTransferHandler(new DragTransferHandler());
-		this.addMouseListener(new DraggableMouseListener());
+		this.setTransferHandler(new TilePanelDragTransferHandler());
+		this.addMouseListener(new TilePanelDragMouseListener());
 		
-	}
-	
-	class DraggableMouseListener extends MouseAdapter {
-
-		@Override()
-		public void mousePressed(MouseEvent e) {
-			System.out.println("Step 1 of 7: Mouse pressed. Going to export our RandomDragAndDropPanel so that it is draggable.");
-			
-			JComponent c = (JComponent) e.getSource();
-			TransferHandler handler = c.getTransferHandler();
-			handler.exportAsDrag(c, e, TransferHandler.COPY);
-		}
 	}
 	
 	// Drawings
@@ -49,7 +32,7 @@ public class TilePanel extends Panel implements Transferable {
 		DataFlavor thisFlavor = null;
 
 		try {
-			thisFlavor = TilePanel.getDragAndDropPanelDataFlavor();
+			thisFlavor = TilePanel.getDragDataFlavor();
 		} catch (Exception ex) {
 			System.err.println("Problem lazy loading: " + ex.getMessage());
 			ex.printStackTrace(System.err);
@@ -57,16 +40,15 @@ public class TilePanel extends Panel implements Transferable {
 		}
 
 		if (thisFlavor != null && flavor.equals(thisFlavor)) {
-			return TilePanel.this;
+			return "NOM DE LA TUILE";
 		}
-
 		return null;
 	}
 
 	public DataFlavor[] getTransferDataFlavors() {
 		DataFlavor[] flavors = {null};
 		try {
-			flavors[0] = TilePanel.getDragAndDropPanelDataFlavor();
+			flavors[0] = TilePanel.getDragDataFlavor();
 		} catch (Exception ex) {
 			System.err.println("Problem lazy loading: " + ex.getMessage());
 			ex.printStackTrace(System.err);
@@ -78,7 +60,7 @@ public class TilePanel extends Panel implements Transferable {
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		DataFlavor[] flavors = {null};
 		try {
-			flavors[0] = TilePanel.getDragAndDropPanelDataFlavor();
+			flavors[0] = TilePanel.getDragDataFlavor();
 		} catch (Exception ex) {
 			System.err.println("Problem lazy loading: " + ex.getMessage());
 			ex.printStackTrace(System.err);
@@ -96,13 +78,13 @@ public class TilePanel extends Panel implements Transferable {
 	
 	// Data flavor
 	
-	private static DataFlavor dragAndDropPanelDataFlavor = null;
+	private static DataFlavor dragDataFlavor = null;
 	
-	public static DataFlavor getDragAndDropPanelDataFlavor() throws Exception {
-		if (dragAndDropPanelDataFlavor == null) {
-			dragAndDropPanelDataFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=TilePanel");
+	public static DataFlavor getDragDataFlavor() throws Exception {
+		if (dragDataFlavor == null) {
+			dragDataFlavor = new DataFlavor(TilePanel.class, "TilePanel");
 		}
-		return dragAndDropPanelDataFlavor;
+		return dragDataFlavor;
 	}
 	
 }

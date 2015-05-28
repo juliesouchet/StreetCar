@@ -11,7 +11,6 @@ import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Hand;
 import main.java.game.GameInterface;
 import main.java.player.PlayerIA;
 import main.java.player.PlayerIHM;
@@ -135,19 +134,19 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
             PlayerAutomaton edouard = new Dumbest();
 			try	{
 				player.hostStartGame();
-				for (int j=0; j<1000; j++){
-					Data les_donnees = player.getGameData();
-					Hand main_de_edouard = les_donnees.getHand(name);
-					Action choix_de_edouard = edouard.makeChoice(main_de_edouard, les_donnees);
+				for (int j=0; j<100; j++){
+					Action choix_de_edouard = edouard.makeChoice(player.getGameData());
 					player.getGame().placeTile(name, choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
+					player.getGameData().getHand(name).add(player.getGame().drawCard(name, 1));
 					this.frame.setGameData(player.getGameData());
-					if(les_donnees.isTrackCompleted(name) && !win) {
+					if(player.getGameData().isTrackCompleted(name) && !win) {
 						System.out.println("Chemin completé (tour " + j + ")");
 						win = true;
 						break;
 					}
 				}
 			}catch (Exception e)	{e.printStackTrace();}
+			
 			LinkedList<Point> objectifs = null;
 			try {
 				objectifs = player.getGameData().getTerminus(name);

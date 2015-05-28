@@ -3,12 +3,7 @@ package main.java.automaton;
 import main.java.data.Action;
 import main.java.data.Data;
 
-public class Eval {
-	PlayerAutomaton automaton;
-	
-	public Eval(PlayerAutomaton player) {
-		automaton = player;
-	}
+public class Evaluator {
 	
 	/**
 	 * Simulates gamesNumber games between the player of the game starting with currentConfig. 
@@ -18,7 +13,7 @@ public class Eval {
 	 * @param difficulty
 	 * @return
 	 */
-	int evaluateSituationQuality(int gamesNumber, Data config, String difficulty) {
+	static int evaluateSituationQuality(String playerName, int gamesNumber, Data config, String difficulty) {
 		int nbVictories = 0;
 		Data currentConfig, prevConfig;
 		String[] playerNameList = (String[]) config.getPlayerNameList().toArray();
@@ -45,15 +40,16 @@ public class Eval {
 			
 		// Simulating the games
 		for(int i = 0; i < gamesNumber; i++) {
-			currentConfig = config.getClone(automaton.getName());
+			// TODO enlever les clones
+			currentConfig = config.getClone(playerName);
 			String winnerName = null;
 			// A game
 			while(winnerName == null) {
-				prevConfig = currentConfig.getClone(automaton.getName());
+				prevConfig = currentConfig.getClone(playerName);
 				// A round
 				for (int j = 0; j < automatonList.length; j++) {
 					// A player's turn
-					Action action = automatonList[j].makeChoice(currentConfig.getHand(playerNameList[j]), currentConfig);
+					Action action = automatonList[j].makeChoice(currentConfig);
 					if(action.isConstructing()) {
 						// Building action
 						currentConfig.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
@@ -78,7 +74,7 @@ public class Eval {
 			}
 			
 			// Have we won ?
-			if(automaton.getName().equals(winnerName)) nbVictories++;
+			if(playerName.equals(winnerName)) nbVictories++;
 		}
 		
 		return nbVictories;
