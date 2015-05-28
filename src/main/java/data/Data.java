@@ -1,5 +1,6 @@
 package main.java.data;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,6 +18,7 @@ import main.java.game.ExceptionUnknownBoardName;
 import main.java.player.PlayerInterface;
 import main.java.util.Copier;
 import main.java.util.Direction;
+import main.java.util.Util;
 
 
 
@@ -28,7 +30,8 @@ public class Data implements Serializable
 // --------------------------------------------
 	private static final long			serialVersionUID		= -2740586808331187527L;
 	public static String				boardDirectory			= "src/main/resources/boards/";
-	public static final	String			lineFile				= "src/main/resources/line/lineDescription_";
+	public static final	String			lineFile				= "src/main/resources/line/lineDescription";
+	public static final	String			buildingInLineFile		= "src/main/resources/line/buildingInLineDescription_";
 	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
 	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
 	public static final int				maxNbrPlayer			= 6;
@@ -39,6 +42,7 @@ public class Data implements Serializable
 	public static final int				maxSpeed				= 10;
 	public static LinkedList<Integer>	existingLine;
 	public static LinkedList<String[][]>existingBuildingInLine;
+	public static LinkedList<Color>		existingColors;
 
 	private LinkedList<Integer>			remainingLine;
 	private LinkedList<String[][]>		remainingBuildingInLine;
@@ -73,12 +77,11 @@ public class Data implements Serializable
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
 		this.maxPlayerSpeed		= minSpeed;
 
-		Data.existingLine			= new LinkedList<Integer>();					// Init the existing lines
-		for (int i=1; i<=maxNbrPlayer; i++)	Data.existingLine.add(i);
-		this.remainingLine		= new LinkedList<Integer>(existingLine);
+		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
 
-		this.initExistingBuildingInLine(nbrBuildingInLine);							// Init the existing building
+		this.remainingLine		= new LinkedList<Integer>(existingLine);
 		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
+
 
 		this.initInitialHand();
 	}
@@ -426,14 +429,35 @@ public class Data implements Serializable
 	/**============================================
 	 * @return Creates the line cards from the corresponding file
 	 ==============================================*/
-	private void initExistingBuildingInLine(int nbrBuildingInLine)
+	private void parseStaticGameInformations(int nbrBuildingInLine)
 	{
-		File f = new File(lineFile+nbrBuildingInLine);
+		int line;
+		String color;
+		File f;
 		Scanner sc;
-
-		Data.existingBuildingInLine = new LinkedList<String[][]>();
+// TODO
+		Data.existingLine			= new LinkedList<Integer>();						// Scab the existing lines and corresponding colors
+		Data.existingColors			= new LinkedList<Color>();
 		try
 		{
+			f = new File(lineFile);
+			sc = new Scanner(f);
+			for (int i=1; i<=maxNbrPlayer; i++)
+			{
+				Data.existingLine	.add(i);
+				line = sc.nextInt();
+				if (line != i) {sc.close();throw new Exception();}
+				color = sc.next();
+				Data.existingColors.add(Util.parseColor(color));
+			}
+			sc.close();
+		}
+		catch (Exception e){throw new RuntimeException("Malformed line file");}
+
+		Data.existingBuildingInLine	= new LinkedList<String[][]>();						// Scan the existing building in line cards
+		try
+		{
+			f = new File(buildingInLineFile+nbrBuildingInLine);
 			sc = new Scanner(f);
 			for (int l=0; l<maxNbrPlayer; l++)
 			{
@@ -446,7 +470,7 @@ public class Data implements Serializable
 			}
 			sc.close();
 		}
-		catch (Exception e){throw new RuntimeException("Malformed line file");}
+		catch (Exception e){throw new RuntimeException("Malformed building in line file");}
 	}
 	/**============================================
 	 * @return Creates the initial hand from the corresponding file
