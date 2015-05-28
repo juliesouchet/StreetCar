@@ -192,6 +192,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 		}
 	}
+	
+	public Tile drawCard() throws RemoteException
+	{
+		return this.data.drawCard();
+	}
 // TODO public LoginInfo[] getLoginInfo()
 // TODO public void getLoginInfo(String playerName, int indexInLogTable, LogInfo li)
 

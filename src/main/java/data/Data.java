@@ -161,6 +161,7 @@ public class Data implements Serializable
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	public Tile					drawCard()										{return this.deck.drawTile();}
 	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}

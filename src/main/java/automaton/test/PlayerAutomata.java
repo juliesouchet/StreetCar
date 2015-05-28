@@ -140,6 +140,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 					Hand main_de_edouard = les_donnees.getHand(name);
 					Action choix_de_edouard = edouard.makeChoice(main_de_edouard, les_donnees);
 					player.getGame().placeTile(name, choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
+					player.getGame().drawCard();
 					this.frame.setGameData(player.getGameData());
 					if(les_donnees.isTrackCompleted(name) && !win) {
 						System.out.println("Chemin completé (tour " + j + ")");
