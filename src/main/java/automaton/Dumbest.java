@@ -19,9 +19,9 @@ import main.java.data.Tile;
  */
 public class Dumbest extends PlayerAutomaton {
 	
-	public Dumbest() {
+	public Dumbest(String playerName) {
 		super();
-		name = "Dumbest";
+		name = new String(playerName);
 	}
 	
 

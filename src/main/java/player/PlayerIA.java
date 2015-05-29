@@ -42,8 +42,8 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 		super(playerName, playerColor, app, ihm);
 		switch (iaLevel)
 		{
-			case 1 :	this.automaton	= new Dumbest();	break;
-			case 2 :	this.automaton = new Traveler();	break;
+			case 1 :	this.automaton	= new Dumbest(playerName);	break;
+			case 2 :	this.automaton = new Traveler();			break;
 			default :	throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		
