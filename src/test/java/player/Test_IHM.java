@@ -26,6 +26,8 @@ public class Test_IHM implements InterfaceIHM
 	{
 		Scanner sc = new Scanner(System.in);
 		Color color;
+		String boardName;
+		int nbrBuildingInLine;
 		String str, name, gameName, ip;
 		boolean create;
 		PlayerIHM playerIHM = null;
@@ -40,15 +42,26 @@ public class Test_IHM implements InterfaceIHM
 			if (str.equals("C"))	{create = true;		break;}
 			System.out.println("Unhandeled choice");
 		}
+if (!create)
+{
 		System.out.print("\n\n");
 		System.out.print("\t- Player name\t\t :");						name		= sc.next();
 		System.out.print("\t- Game name\t\t :");						gameName	= sc.next();
 		color = askColor(sc);
 		if(!create){System.out.print("\t- IP of the application\t:");	ip			= sc.next();}
 		else															ip			= null;
-		String boardName = "newOrleans";	/////// Nom par defaut
-		int nbrBuildingInLine= 3;			/////// Nom par defaut
-
+		boardName = "newOrleans";	/////// Nom par defaut
+		nbrBuildingInLine= 3;			/////// Nom par defaut
+}
+else
+{
+name = "Riyane";
+gameName = "game";
+color = Color.red;
+ip = null;
+boardName = "newOrleans";	/////// Nom par defaut
+nbrBuildingInLine= 3;			/////// Nom par defaut
+}
 		try
 		{
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);

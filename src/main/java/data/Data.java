@@ -86,16 +86,16 @@ public class Data implements Serializable
 	private String[]					playerOrder;
 	private String						host;
 
-	// --------------------------------------------
-	// Builder:
-	// --------------------------------------------
+// --------------------------------------------
+// Builder:
+// --------------------------------------------
 	public Data(String gameName, String boardName, int nbrBuildingInLine) throws ExceptionUnknownBoardName, RuntimeException
 	{
 		File f = new File(boardDirectory + boardName);
 		Scanner sc;
 
 		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
-				(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
+			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
 		this.gameName			= new String(gameName);
 		try						{sc = new Scanner(f);}
@@ -181,20 +181,32 @@ public class Data implements Serializable
 		}
 	}
 
-	public void removeTileFromHand(String playerName, Tile t)	{this.getHand(playerName).remove(t);}
-	public void addTileToHand(String playerName, Tile t)		{this.getHand(playerName).add(t);}
 ////////////////TODO to remove
 	public void skipTurn(){this.round ++;} // goes to the next player's turn
 ////////////////TODO 
 	
-	public void	setTile(int x, int y, Tile t)
+	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
+		Hand hand = this.playerInfoList.get(playerName).hand;
+
 		this.board[x][y] = t;
+		hand.remove(t);
+	}
+	public void drawCard(String playerName, int nbrCards)
+	{
+		Hand hand = this.playerInfoList.get(playerName).hand;
+		Tile t;
+
+		for (int i=0; i<nbrCards; i++)
+		{
+			t = this.deck.drawTile();
+			hand.add(t);
+		}
 	}
 
-	// --------------------------------------------
-	// Getter:
-	// --------------------------------------------
+// --------------------------------------------
+// Getter:
+// --------------------------------------------
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public String				getHost()										{return new String(this.host);}
 	public int					getWidth()										{return this.board.length;}
@@ -207,7 +219,6 @@ public class Data implements Serializable
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
-	public Tile					drawCard()										{return this.deck.drawTile();}
 	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
@@ -374,11 +385,11 @@ public class Data implements Serializable
 	/**===============================================================
 	 * @return true if the player has started his maiden travel
 	 =================================================================*/
-	public boolean startedMaidenTravel(String name)
+	public boolean hasStartedMaidenTravel(String playerName)
 	{
-		PlayerInfo pi = this.playerInfoList.get(name);
-
-		if (pi == null) throw new RuntimeException("Unknown player: " + name);
+		PlayerInfo pi = this.playerInfoList.get(playerName);
+//TODO
+		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
 		return pi.startedMaidenTravel;
 	}
 	/**===============================================================
@@ -610,8 +621,8 @@ public class Data implements Serializable
 			piRes.hand		= pi.hand.getClone();
 			piRes.terminus	= (new Copier<Point>()).copyList(pi.terminus);
 			piRes.history	= (new Copier<LinkedList<Action>>()).copyList(pi.history);
-
-			if ((str.equals(playerName)) || (this.startedMaidenTravel(str)))		// Private Informations
+// TODO ajouter les nouveaux attributes de valentin
+			if ((str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
 			{
 				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
 				piRes.buildingInLine_position	= (new Copier<Point>()).copyList(pi.buildingInLine_position);
@@ -632,7 +643,7 @@ public class Data implements Serializable
 
 		throw new RuntimeException("Unknown Color: " + color);
 	}
-
+// PB: rend un pointeur sur la structure locale (peut etre changé de l'exterieur)
 	public PlayerInfo getPlayerInfo(String playerName)
 	{
 		return playerInfoList.get(playerName); 
@@ -655,9 +666,11 @@ public class Data implements Serializable
 		public LinkedList<Point>	terminus;
 		public ArrayList<LinkedList<Action>>	history; // organized by turns
 
+// TODO: PB de l'init de ces 2 attributes
 		public boolean startedMaidenTravel = false;
 		public Point tramPosition = new Point();
 		public Point startTerminus = new Point();
+// TODO ???
 		public LinkedList<Point> endTermini = new LinkedList<>();
 
 		// Builder
