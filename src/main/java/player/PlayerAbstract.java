@@ -100,4 +100,8 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		game.onQuitGame(playerName);
 	}
+	public void onExcludePlayer	(String playerExcluded) throws RemoteException, ExceptionForbiddenAction
+	{
+		game.onExcludePlayer(playerName, playerExcluded);
+	}
 }
