@@ -10,7 +10,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
 
 import main.java.data.Data;
-import main.java.data.Data.PlayerInfo;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
@@ -253,8 +252,8 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 
-		PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
-		if(!dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
+		//PlayerInfo dataPlayer = data.getPlayerInfo(playerName); TODO this
+		//if(!dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction(); TODO this
 		// TODO test if tram can reach (both regarding existing path and allowed number of movement)
 		// TODO test if tram must stop at a stopping 
 		// TODO maybe more tests?
@@ -277,16 +276,16 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 
-		PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
-		if(!dataPlayer.terminus.contains(terminus)) throw new ExceptionForbiddenAction();
+		// TODO this PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
+		// TODO this if(!dataPlayer.terminus.contains(terminus)) throw new ExceptionForbiddenAction();
 
 		// TODO if(dataPlayer.numberOfTilesPlacedThisTurn > 0) throw new ExceptionForbiddenAction();
 		// TODO if(dataPlayer.numberOfTilesDrawnThisTurn > 0) throw new ExceptionForbiddenAction();
 		
-		if(dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
+		// TODO if(dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
 		
-		dataPlayer.startedMaidenTravel = true;
-		dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
+		// TODO dataPlayer.startedMaidenTravel = true;
+		// TODO dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
 
 		this.engine.addAction(playerName, this.data, "startMaidenTravel", null, null, null, -1);
 	}
