@@ -21,9 +21,10 @@ import main.java.data.Tile;
 public class Traveler extends PlayerAutomaton {
 	LinkedList<Point> checkpoints;
 	
-	public Traveler() {
+	public Traveler(String name) {
 		super();
-		name = "Traveler";
+		if(name == null) this.name = "Traveler";
+		else this.name = name;
 	}
 		
 	@Override

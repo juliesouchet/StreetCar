@@ -26,7 +26,6 @@ public class Dumbest extends PlayerAutomaton {
 	}
 	
 
-
 	public Action makeChoice(Data currentconfig) {
 		Hand myHand = currentconfig.getHand(name);
 		Action choix ;

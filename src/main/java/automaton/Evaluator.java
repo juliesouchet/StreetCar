@@ -23,25 +23,23 @@ public class Evaluator {
 		switch (difficulty) {
 			case "Dumbest" :
 				for (int j = 0; j < automatonList.length; j++) {
-					automatonList[j] = new Dumbest(playerName);
+					automatonList[j] = new Dumbest(playerNameList[j]);
 				}
 				break;
 			case "Traveler" :
 				for (int j = 0; j < automatonList.length; j++) {
-					automatonList[j] = new Traveler();
+					automatonList[j] = new Traveler(playerNameList[j]);
 				}
 				break;
 			default :
 				throw new RuntimeException("Undefined difficulty");
 		}
-		for (int j = 0; j < automatonList.length; j++) {
-			automatonList[j].setName(playerNameList[j]);
-		}
-			
+		
 		// Simulating the games
-		for(int i = 0; i < gamesNumber; i++) {
+		//for(int i = 0; i < gamesNumber; i++) {
 			// TODO enlever les clones
 			currentConfig = config.getClone(playerName);
+			
 			String winnerName = null;
 			// A game
 			while(winnerName == null) {
@@ -75,7 +73,7 @@ public class Evaluator {
 			
 			// Have we won ?
 			if(playerName.equals(winnerName)) nbVictories++;
-		}
+		//}
 		
 		return nbVictories;
 	}

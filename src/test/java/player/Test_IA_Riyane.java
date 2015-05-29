@@ -5,17 +5,13 @@ import java.util.Random;
 
 import main.java.data.Data;
 import main.java.game.Game;
-import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
-import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
 
 
 
 
-
-
-public class Test_IHM_IA implements InterfaceIHM
+public class Test_IA_Riyane implements InterfaceIHM
 {
 // --------------------------------------------
 // Attributs:
@@ -25,32 +21,35 @@ public class Test_IHM_IA implements InterfaceIHM
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public Test_IHM_IA()
+	public Test_IA_Riyane()
 	{
-		String iaName = "IA_DUMB_" + ((new Random()).nextInt());
-		PlayerIHM playerIHM = null;
-		GameInterface game;
+		PlayerAI playerIA	= null;
+		Game	game		= null;
+		String	ip			= "127.0.0.1";
+		String	gameName	= "jeux";
+		String 	iaName		= "IA_DUMB_" + ((new Random()).nextInt());
 
 		try
 		{
-			playerIHM	= PlayerIHM.launchPlayer("riyane", "jeux", "newOrleans", 3,  Color.red, true, null, this);
-			game		= Game.getRemoteGame("127.0.0.1", "jeux");
-			new PlayerAI(iaName, false, Color.BLACK, game, 1, null);
+			game		= new Game(gameName, ip, "newOrleans", 3);
+			Thread t	= new Thread(game);
+			t.start();
+			playerIA	= new PlayerAI(iaName, false, Color.BLACK, game, 0, this);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
-		this.frame = new DataViewerFrame(playerIHM);
-		this.frame.setGameData(playerIHM.getGameData());
-		this.frame.setVisible(true);
+
+		this.frame = new DataViewerFrame(playerIA);
+		this.frame.setGameData(playerIA.getGameData());
+		frame.setVisible(true);
 
 		try
 		{
-			playerIHM.hostStartGame();
+			playerIA.hostStartGame();
 		}
 		catch (Exception e)	{e.printStackTrace();}
 	}
-
 // --------------------------------------------
 // Local methods:
 // --------------------------------------------
