@@ -192,6 +192,11 @@ public class Data implements Serializable
 
 		if (!this.board[x][y].isEmpty()) oldT = this.board[x][y];
 		this.board[x][y] = t;
+		
+System.out.println(playerName);
+System.out.println(hand);
+System.out.println("\n\tPose la tuile " + t.getTileID() + " en ("+x+","+y+")");
+
 		hand.remove(t);
 		if (oldT != null) hand.add(oldT);
 	}
@@ -204,6 +209,11 @@ public class Data implements Serializable
 		{
 			t = this.deck.drawTile();
 			hand.add(t);
+			
+System.out.println("\tTire la tuile " + t.getTileID());
+System.out.println(hand);
+System.out.println("\n==================");
+
 		}
 	}
 
