@@ -1,6 +1,5 @@
-
 #
-#Sat May 23 17:28:03 CEST 2015
+#Sat May 23 23:23:26 CEST 2015
 Language=en
-PlayerName=
+PlayerName=Louis
 UseFullScreen=false
