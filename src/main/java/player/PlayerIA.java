@@ -8,7 +8,6 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Hand;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -38,43 +37,47 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
 	 =======================================================================*/
 // TODO: remove the ihm parameter
-	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm, String difficulty) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);
-		switch (difficulty) {
-			case "Dumbest" :
+		switch (iaLevel) {
+			case 0 :
 				this.automaton	= new Dumbest();
 				break;
-			case "Traveler" :
+			case 1 :
 				this.automaton = new Traveler();
 				break;
 			default :
-				throw new RuntimeException("Undefined AI difficulty : " + difficulty);
+				throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		
-		super.game.onJoinGame(this, false);						// Log the player to the application
+		super.game.onJoinGame(this, false, iaLevel);						// Log the player to the application
 	}
 
 // --------------------------------------------
 // Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public boolean isHumanPlayer() throws RemoteException
+	public boolean isHumanPlayer()
 	{
 		return false;
 	}
 	public void gameHasChanged(Data data) throws RemoteException
 	{
-		if (this.ihm != null) this.ihm.refresh(data);
+		super.gameHasChanged(data);
+		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
 
-		Hand myHand = data.getHand(playerName);
 		Action a = this.automaton.makeChoice(data);
 		try
 		{
 			this.game.placeTile(playerName, a.tile1, a.positionTile1);
 		}
 		catch (Exception e) {e.printStackTrace(); System.exit(0);}
+	}
+	public void excludePlayer() throws RemoteException
+	{
+		if (super.ihm != null)	super.ihm.excludePlayer();
 	}
 
 // --------------------------------------------

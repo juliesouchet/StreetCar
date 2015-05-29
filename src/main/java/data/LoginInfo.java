@@ -12,14 +12,16 @@ public class LoginInfo implements CloneableInterface<LoginInfo>
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final LoginInfo	initialFirstCell	= new LoginInfo(false, null, true, true, -1);
-	public static final LoginInfo	initialNonFirstCell	= new LoginInfo(false, null, false, true, -1);
+	public static final LoginInfo	initialCell0	= new LoginInfo(false,	null,	true,	true,	-1);
+	public static final LoginInfo	initialCell1	= new LoginInfo(false,	null,	false,	true,	-1);
+	public static final LoginInfo	initialCell2	= new LoginInfo(false,	null,	false,	false,	0);
+	public static final LoginInfo	initialCell3	= new LoginInfo(false,	null,	false,	false,	1);
 
 	private boolean		isClosed;
 	private String		playerName;
 	private boolean		isHost;
 	private boolean		isHuman;
-	private int			iaLevel;
+	private int			aiLevel	= -1;
 
 // --------------------------------------------
 // Builder:
@@ -31,7 +33,7 @@ public class LoginInfo implements CloneableInterface<LoginInfo>
 		this.isHost		= isHost;
 		this.isHost		= isHost;
 		this.isHuman	= isHuman;
-		this.iaLevel	= iaLevel;
+		this.aiLevel	= iaLevel;
 	}
 	private LoginInfo(){}
 	public LoginInfo getClone()
@@ -42,9 +44,20 @@ public class LoginInfo implements CloneableInterface<LoginInfo>
 		res.playerName	= (this.playerName == null) ? null : new String(this.playerName);
 		res.isHost		= this.isHost;
 		res.isHuman		= this.isHuman;
-		res.iaLevel		= this.iaLevel;
+		res.aiLevel		= this.aiLevel;
 		return res;
 	}
+
+// --------------------------------------------
+// Getter / setter:
+// --------------------------------------------
+	public void		setIsClosed(boolean isClosed)	{this.isClosed = isClosed;}
+	public boolean	isClosed()						{return this.isClosed;}
+	public String	getPlayerName()					{return (this.playerName == null) ? null : new String(this.playerName);}
+	public boolean	isHost()						{return this.isHost;}
+	public boolean	isHuman()						{return this.isHuman;}
+	public int		getAiLevel()					{return this.aiLevel;}
+	public boolean	isOccupiedCell()				{return (this.playerName != null);}
 
 // --------------------------------------------
 // Local Methodes:
@@ -53,8 +66,23 @@ public class LoginInfo implements CloneableInterface<LoginInfo>
 	{
 		LoginInfo[]	res = new LoginInfo[Data.maxNbrPlayer];
 
-		res[0] = initialFirstCell.getClone();
-		for (int i=1; i<Data.maxNbrPlayer; i++) res[i] = initialNonFirstCell.getClone();
+		res[0] = initialCell0.getClone();
+		res[1] = initialCell1.getClone();
+		res[2] = initialCell2.getClone();
+		res[3] = initialCell3.getClone();
+		for (int i=4; i<Data.maxNbrPlayer; i++) res[i] = initialCell3.getClone();
+		return res;
+	}
+	public String toString()
+	{
+		String res = "";
+
+		res += "LoginInfo:";
+		res += "\n\t- isClosed\t:"		+ this.isClosed;
+		res += "\n\t- playerName\t:"	+ this.playerName;
+		res += "\n\t- isHost\t:"		+ this.isHost;
+		res += "\n\t- isHuman\t:"		+ this.isHuman;
+		res += "\n\t- AI_level\t:"		+ this.aiLevel;
 		return res;
 	}
 }

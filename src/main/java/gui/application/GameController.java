@@ -4,7 +4,6 @@ package main.java.gui.application;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
-import java.rmi.RemoteException;
 
 import javax.swing.JMenuBar;
 
@@ -195,13 +194,9 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void forceRefresh() {
 		if (this.player == null) return;
 		
-		try {
-			Data data = this.player.getGameData();
-			if (this.menuPanel != null) {
-				this.menuPanel.refresh(data);
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		Data data = this.player.getGameData();
+		if (this.menuPanel != null) {
+			this.menuPanel.refresh(data);
 		}
 	}
 	

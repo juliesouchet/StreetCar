@@ -1,7 +1,6 @@
 package test.java.player;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.Random;
 
 import main.java.data.Data;
@@ -35,17 +34,14 @@ public class Test_IA_Riyane implements InterfaceIHM
 			game		= new Game(gameName, ip, "newOrleans", 3);
 			Thread t	= new Thread(game);
 			t.start();
-			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, this, "Dumbest");
+			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, this);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
-		try
-		{
-			this.frame = new DataViewerFrame(game, "riyane");
-			this.frame.setGameData(playerIA.getGameData());
-		}
-		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
+
+		this.frame = new DataViewerFrame(playerIA);
+		this.frame.setGameData(playerIA.getGameData());
 		frame.setVisible(true);
 
 		try
@@ -63,11 +59,12 @@ public class Test_IA_Riyane implements InterfaceIHM
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
 		System.out.println("\t Round\t: "	+ data.getRound());
-		this.frame.setGameData(data);
+		if (this.frame != null) this.frame.setGameData(data);
 	}
-	@Override
-	public void excludePlayer() {
-		// TODO Auto-generated method stub
-		
+	public void excludePlayer()
+	{
+		System.out.println("------------------------------------");
+		System.out.println("excludePlayer");
+		System.out.println("Not managed yet");
 	}
 }

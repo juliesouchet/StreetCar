@@ -1,11 +1,9 @@
 package test.java.player;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.Scanner;
 
 import main.java.data.Data;
-import main.java.game.GameInterface;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
 import main.java.util.Util;
@@ -31,7 +29,6 @@ public class Test_IHM implements InterfaceIHM
 		String str, name, gameName, ip;
 		boolean create;
 		PlayerIHM playerIHM = null;
-		GameInterface game = null;
 
 		while (true)
 		{
@@ -49,24 +46,19 @@ public class Test_IHM implements InterfaceIHM
 		color = askColor(sc);
 		if(!create){System.out.print("\t- IP of the application\t:");	ip			= sc.next();}
 		else															ip			= null;
-String boardName = "newOrleans";	/////// Nom par defaut
-int nbrBuildingInLine= 3;	/////// Nom par defaut
+		String boardName = "newOrleans";	/////// Nom par defaut
+		int nbrBuildingInLine= 3;			/////// Nom par defaut
 
 		try
 		{
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
-			game		= playerIHM.getGame();
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
-		try
-		{
-			this.frame = new DataViewerFrame(game, name);
-			this.frame.setGameData(playerIHM.getGameData());
-		}
-		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
-		frame.setVisible(true);
+		this.frame = new DataViewerFrame(playerIHM);
+		this.frame.setGameData(playerIHM.getGameData());
+		this.frame.setVisible(true);
 
 		if (create)
 		{
@@ -95,7 +87,13 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
 		System.out.println("\t Round\t: "	+ data.getRound());
-		this.frame.setGameData(data);
+		if (this.frame != null) this.frame.setGameData(data);
+	}
+	public void excludePlayer()
+	{
+		System.out.println("------------------------------------");
+		System.out.println("excludePlayer");
+		System.out.println("Not managed yet");
 	}
 
 // --------------------------------------------
@@ -113,11 +111,5 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 			}
 			catch(Exception e){}
 		}
-	}
-
-	@Override
-	public void excludePlayer() {
-		// TODO Auto-generated method stub
-		
 	}
 }
