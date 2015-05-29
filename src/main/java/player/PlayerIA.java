@@ -40,15 +40,11 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);
-		switch (iaLevel) {
-			case 0 :
-				this.automaton	= new Dumbest();
-				break;
-			case 1 :
-				this.automaton = new Traveler();
-				break;
-			default :
-				throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
+		switch (iaLevel)
+		{
+			case 1 :	this.automaton	= new Dumbest();	break;
+			case 2 :	this.automaton = new Traveler();	break;
+			default :	throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		
 		super.game.onJoinGame(this, false, iaLevel);						// Log the player to the application
