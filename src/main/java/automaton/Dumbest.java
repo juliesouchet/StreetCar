@@ -19,19 +19,12 @@ import main.java.data.Tile;
  */
 public class Dumbest extends PlayerAutomaton {
 	
-	public Dumbest() {
+
+	public Dumbest(String playerName) {
 		super();
-		name = "Dumbest";
+		this.name = new String(playerName);
 	}
 	
-
-
-	public Dumbest(String name) {
-		super();
-		this.name = name;
-	}
-
-
 
 	public Action makeChoice(Data currentconfig) {
 		Hand myHand = currentconfig.getHand(name);

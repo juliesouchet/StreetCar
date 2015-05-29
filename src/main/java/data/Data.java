@@ -699,6 +699,7 @@ public class Data implements Serializable
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
 			this.terminus= getTerminusPosition(this.line);								// Init the terminus position
 		}
+// TODO ???
 		public PlayerInfo(){}
 	}
 }

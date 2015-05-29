@@ -16,7 +16,7 @@ import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.Game;
 import main.java.game.GameInterface;
-import main.java.player.PlayerIA;
+import main.java.player.PlayerAI;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
 import test.java.player.DataViewerFrame;
@@ -47,7 +47,7 @@ public class PlayerAutomata implements InterfaceIHM
 		String str, name, gameName, ip, iaName;
 		boolean create;
 		PlayerIHM playerIHM = null;
-		PlayerIA playerIA = null;
+		PlayerAI playerIA = null;
 		GameInterface game = null;
 
 		while (true)
@@ -74,7 +74,7 @@ public class PlayerAutomata implements InterfaceIHM
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
 			game		= Game.getRemoteGame("127.0.0.1", gameName);
 			iaName		= "IA_DUMB_" + ((new Random()).nextDouble());
-			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, null);
+			playerIA	= new PlayerAI(iaName, Color.BLACK, game, 0, null);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
@@ -180,7 +180,7 @@ public class PlayerAutomata implements InterfaceIHM
 				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
 				try {
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
-					//player.drawCard(1);
+					player.drawCard(1);
 				} catch (RemoteException | ExceptionGameHasNotStarted
 						| ExceptionNotYourTurn | ExceptionForbiddenAction e) {
 					// TODO Auto-generated catch block

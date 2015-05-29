@@ -47,7 +47,10 @@ public class DataViewerFrame extends JFrame {
 	public Data getGameData() {
 		return this.viewerPanel.gameData;
 	}
-	
+	/**
+	 * ecrase le data courant et affiche le nouveau
+	 * @param data
+	 */
 	public void setGameData(Data data) {
 		if (data == null) return;
 		this.viewerPanel.gameData = data;

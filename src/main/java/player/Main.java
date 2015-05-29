@@ -2,7 +2,7 @@ package main.java.player;
 
 import javax.swing.SwingUtilities;
 
-import test.java.player.Test_IHM;
+import test.java.player.Test_IHM_IA;
 
 
 
@@ -17,7 +17,7 @@ public class Main implements Runnable
 	}
 	public void run()
 	{
-		new Test_IHM();
+		new Test_IHM_IA();
 	}
 
 }

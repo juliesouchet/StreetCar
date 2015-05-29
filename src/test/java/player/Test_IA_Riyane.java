@@ -5,7 +5,7 @@ import java.util.Random;
 
 import main.java.data.Data;
 import main.java.game.Game;
-import main.java.player.PlayerIA;
+import main.java.player.PlayerAI;
 import main.java.rubbish.InterfaceIHM;
 
 
@@ -23,7 +23,7 @@ public class Test_IA_Riyane implements InterfaceIHM
 // --------------------------------------------
 	public Test_IA_Riyane()
 	{
-		PlayerIA playerIA	= null;
+		PlayerAI playerIA	= null;
 		Game	game		= null;
 		String	ip			= "127.0.0.1";
 		String	gameName	= "jeux";
@@ -34,7 +34,7 @@ public class Test_IA_Riyane implements InterfaceIHM
 			game		= new Game(gameName, ip, "newOrleans", 3);
 			Thread t	= new Thread(game);
 			t.start();
-			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, this);
+			playerIA	= new PlayerAI(iaName, false, Color.BLACK, game, 0, this);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 

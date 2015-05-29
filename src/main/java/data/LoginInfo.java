@@ -14,7 +14,7 @@ public class LoginInfo implements CloneableInterface<LoginInfo>
 // --------------------------------------------
 	public static final LoginInfo	initialCell0	= new LoginInfo(false,	null,	true,	true,	-1);
 	public static final LoginInfo	initialCell1	= new LoginInfo(false,	null,	false,	true,	-1);
-	public static final LoginInfo	initialCell2	= new LoginInfo(false,	null,	false,	false,	0);
+	public static final LoginInfo	initialCell2	= new LoginInfo(false,	null,	true,	false,	1); // TODO parameter n°3 = false
 	public static final LoginInfo	initialCell3	= new LoginInfo(false,	null,	false,	false,	1);
 
 	private boolean		isClosed;

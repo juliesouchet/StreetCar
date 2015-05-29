@@ -84,8 +84,8 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		this.game.placeTile(playerName, t, position);
 	}
-	public GameInterface getGame()
+	public void	drawCard (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
-		return game;
+		this.game.drawCard(playerName, nbrCards);
 	}
 }
