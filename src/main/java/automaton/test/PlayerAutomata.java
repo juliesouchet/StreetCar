@@ -2,6 +2,7 @@ package main.java.automaton.test;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
@@ -10,7 +11,9 @@ import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Tile;
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerIA;
@@ -25,14 +28,19 @@ import test.java.player.DataViewerFrame;
 
 public class PlayerAutomata implements InterfaceIHM
 {
-// --------------------------------------------
-// Attributs:
-// --------------------------------------------
+	// --------------------------------------------
+	// Attributs:
+	// --------------------------------------------
 	private DataViewerFrame frame;
 
-// --------------------------------------------
-// Builder:
-// --------------------------------------------
+	
+	private PlayerIHM player = null;
+	private String name;
+	private int i = 0;
+	private int nbCoups = 100;
+	// --------------------------------------------
+	// Builder:
+	// --------------------------------------------
 	public PlayerAutomata()
 	{
 		Scanner sc = new Scanner(System.in);
@@ -58,8 +66,8 @@ public class PlayerAutomata implements InterfaceIHM
 		Color color = askColor(sc);
 		if(!create){System.out.print("\t- IP of the application\t:");	ip			= sc.next();}
 		else															ip			= null;
-String boardName = "newOrleans";	/////// Nom par defaut
-int nbrBuildingInLine= 3;	/////// Nom par defaut
+		String boardName = "newOrleans";	/////// Nom par defaut
+		int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 		try
 		{
@@ -93,17 +101,16 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 	}
 
 	/** Autre constructeur, l'argument sert juste a surcharger le constructeur avec des valeurs par default
-	*	Si i=0 => C joueurA jeu red
-	*	si i=1 => J joueurB jeu blue 127.0.0.1
-	*
-	*/
+	 *	Si i=0 => C joueurA jeu red
+	 *	si i=1 => J joueurB jeu blue 127.0.0.1
+	 *
+	 */
 	public PlayerAutomata(int i)
 	{
-		PlayerIHM player = null;
-		String name, gameName, ip;
-		boolean create, win = false;
+		String gameName, ip;
+		boolean create;
 		Color color;
-		
+
 		if ( i== 0)	{
 			create = true; name = "joueurA"; gameName = "jeu"; color = Color.red; ip = null;
 		} else { //if ( i== 1) {
@@ -117,7 +124,7 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 		try{
 			player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine, color, create, ip, this);
-			}
+		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
@@ -127,53 +134,67 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 		if (create)
 		{
-            PlayerAutomaton edouard = new Dumbest();
-            edouard.setName(name);
+
 			try	{
 				player.hostStartGame();
-				for (int j=0; j<100; j++){
-			System.out.println(" TOUR " + (j+1));
-			System.out.println("Main :" + player.getGameData().getHand(name));
-			System.out.println();
-					Action choix_de_edouard = edouard.makeChoice(player.getGameData());
-					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
-					Tile t = player.getGameData().drawCard();
-			System.out.println();
-			System.out.println("Tire " + t);
-					this.frame.setGameData(player.getGameData());
-			System.out.println("============================\n");
-					if(player.getGameData().isTrackCompleted(name)) {
-						System.out.println("Chemin completé (tour " + j + ")");
-						win = true;
-						break;
-					}
-				}
 			}catch (Exception e)	{e.printStackTrace();}
+
 			
-			LinkedList<Point> objectifs = null;
-			objectifs = player.getGameData().getTerminus(name);
-			objectifs.addAll(player.getGameData().getBuildings(name));
-			System.out.println("Objectifs : " + objectifs);
-			if(!win) System.out.println("Chemin non complété");
+			
+			//player.getGameData().drawCard(name,1);
+			//refresh(player.getGameData());
+			//System.out.println("============================\n");
+
 		}
 	}	
-	
-	
-// --------------------------------------------
-// Local methods:
-// --------------------------------------------
+
+
+	// --------------------------------------------
+	// Local methods:
+	// --------------------------------------------
 	public void refresh(Data data)
 	{
+		PlayerAutomaton edouard = new Dumbest(name);
+		edouard.setName(name);
+		boolean win = false;
 		/*System.out.println("------------------------------------");
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
 		System.out.println("\t Round\t: "	+ data.getRound());*/
-		this.frame.setGameData(data);
+		if (this.frame!=null && (i <= nbCoups)){
+			i++;
+			if(player.getGameData().isTrackCompleted(name)) {
+				System.out.println("Chemin completé (tour " + i + ")");
+				win = true;
+				this.frame.setGameData(data);
+			}else{
+				LinkedList<Point> objectifs = null;
+				objectifs = player.getGameData().getTerminus(name);
+				objectifs.addAll(player.getGameData().getBuildings(name));
+				System.out.println("Objectifs : " + objectifs);
+				if(!win) System.out.println("Chemin non complété");
+				
+				System.out.println(" TOUR " + (i+1));
+				System.out.println("Main :" + player.getGameData().getHand(name));
+				System.out.println();
+				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
+				try {
+					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
+					//player.drawCard(1);
+				} catch (RemoteException | ExceptionGameHasNotStarted
+						| ExceptionNotYourTurn | ExceptionForbiddenAction e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	
+				this.frame.setGameData(data);
+			}
+		}
 	}
 
-// --------------------------------------------
-// Private Local methods:
-// --------------------------------------------
+	// --------------------------------------------
+	// Private Local methods:
+	// --------------------------------------------
 	private Color askColor(Scanner sc)
 	{
 		String color;
@@ -191,6 +212,6 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 	@Override
 	public void excludePlayer() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
