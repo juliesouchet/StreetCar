@@ -10,7 +10,7 @@ import main.java.data.Data;
  * @author coutaudu
  *
  */
-public class DecisionNode {
+public class DecisionTree {
 	
 	/*
 	 *  La configuration dans laquelle je suis
@@ -32,7 +32,7 @@ public class DecisionNode {
 	/* 
 	 * Les enfants: representés par une table de noeuds
 	 */
-	private ArrayList<DecisionNode> choicesTable;		
+	private ArrayList<DecisionTree> choicesTable;		
 	
 	/*
 	 * La profondeur du noeud courant (vis a vis de l'appel d'origine)  	
@@ -103,7 +103,7 @@ public class DecisionNode {
 	 * pour chaque action faisable dans la configuration courante, la configuration a laquelle ça nous mène et la qualité de cette situation
 	 * @return
 	 */
-	public ArrayList<DecisionNode> getPossibleFollowingAction(){
+	public ArrayList<DecisionTree> getPossibleFollowingAction(){
 		return this.choicesTable;
 	}
 	
@@ -159,9 +159,9 @@ public class DecisionNode {
 	 * La profondeur a construire: 
 	 * si 0 alors c'est une feuille, on fait appel a la fonction d'evaluation
 	 */
-	public DecisionNode(Data currentConfig, int height){
+	public DecisionTree(Data currentConfig, int height){
 		if (height<=0){	//C'est une feuille
-			
+			//Evaluator.evaluateSituationQuality(currentConfig.get, gamesNumber, config, difficulty)
 		}
 		else if (height>0) { // C'est un noeud interne on fait un appel récursif
 			
