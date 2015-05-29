@@ -186,6 +186,7 @@ public class Data implements Serializable
 	}
 	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
+
 		Hand hand = this.playerInfoList.get(playerName).hand;
 		Tile oldT = null;
 
@@ -557,27 +558,31 @@ public class Data implements Serializable
 		LinkedList<Point>res = new LinkedList<Point>();
 		int w = this.getWidth()-1;
 		int h = this.getHeight()-1;
-		int i0, i1;
-		boolean i0F = false, i1F = false;
+		int i0;
 
 		for (int x=0; x<w; x++)
 		{
 			i0 = this.board[x][0].getTerminusName();
-			i1 = this.board[x][h].getTerminusName();
-			if ((i0 == line) && (!i0F)) {res.addLast(new Point(x, 0)); i0F = true;}
-			if ((i1 == line) && (!i1F)) {res.addLast(new Point(x, h)); i1F = true;}
+			if (i0 == line) res.addLast(new Point(x, 0));
 		}
-		if (res.size() == 2) return res;
-		i0F = false;
-		i1F = false;
+		for (int x=0; x<w; x++)
+		{
+			i0 = this.board[x][h].getTerminusName();
+			if (i0 == line) res.addLast(new Point(x, h));
+		}
+		if (res.size() == 4) return res;
 		for (int y=0; y<h; y++)
 		{
 			i0 = this.board[0][y].getTerminusName();
-			i1 = this.board[w][y].getTerminusName();
-			if ((i0 == line) && (!i0F)) {res.addLast(new Point(0, y)); i0F = true;}
-			if ((i1 == line) && (!i1F)) {res.addLast(new Point(w, y)); i1F = true;}
+			if (i0 == line)	res.addLast(new Point(0, y));
 		}
-		if (res.size() != 2) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
+		for (int y=0; y<h; y++)
+		{
+			i0 = this.board[w][y].getTerminusName();
+			if (i0 == line)	res.addLast(new Point(w, y));
+		}
+
+		if (res.size() != 4) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
 		return res;
 	}
 	/**=====================================================================
@@ -623,38 +628,34 @@ public class Data implements Serializable
 
 		throw new RuntimeException("Unknown Color: " + color);
 	}
-// PB: rend un pointeur sur la structure locale (peut etre changé de l'exterieur)
-	public PlayerInfo getPlayerInfo(String playerName)
-	{
-		return playerInfoList.get(playerName); 
-	}
 
 // --------------------------------------------
 // Player Info class:
 // --------------------------------------------
-	public class PlayerInfo implements Serializable
+	private class PlayerInfo implements Serializable
 	{
 		// Attributes
 		private static final long	serialVersionUID = -7495867115345261352L;
 		public PlayerInterface		player;
 		public String				playerName;
 		public Hand					hand;
-		public int					line;	// Real value of the line (belongs to [1, 6])
+		public int					line;							// Real value of the line (belongs to [1, 6])
 		public Color				color;
 		public String[]				buildingInLine_name;
 		public LinkedList<Point>	buildingInLine_position;
-		public LinkedList<Point>	terminus;
+		public LinkedList<Point>	terminus;						// Complete player's terminus list
 //TODO: ulysse Ne plus stocker les action mais les data
-		public ArrayList<LinkedList<Action>>	history; // organized by turns
+		public ArrayList<LinkedList<Action>>	history;			// organized by turns
 
 // TODO: PB de l'init de ces 2 attributes
-		public boolean startedMaidenTravel = false;
-		public Point tramPosition = new Point();
-		public Point startTerminus = new Point();
+		public boolean				startedMaidenTravel	= false;	// Data relative to the travel
+		public Point				tramPosition		= null;
+		public LinkedList<Point>	endTerminus			= null;
 // TODO ???
 		public LinkedList<Point> endTermini = new LinkedList<>();
 
 		// Builder
+		private PlayerInfo(){}
 		public PlayerInfo(PlayerInterface pi, String playerName, Color playerColor)
 		{
 			Random rnd = new Random();
@@ -670,9 +671,7 @@ public class Data implements Serializable
 			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
 			remainingBuildingInLine.remove(i);
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
-			this.terminus= getTerminusPosition(this.line);								// Init the terminus position
+			this.terminus	= getTerminusPosition(this.line);							// Init the terminus position
 		}
-// TODO ???
-		public PlayerInfo(){}
 	}
 }

@@ -35,9 +35,9 @@ public class Engine implements Runnable
 		this.engineThread	.start();
 	}
 
-	// --------------------------------------------
-	// Local methods:
-	// --------------------------------------------
+// --------------------------------------------
+// Local methods:
+// --------------------------------------------
 	public void run()
 	{
 		LinkedList<EngineAction> actionList;

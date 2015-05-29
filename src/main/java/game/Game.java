@@ -192,7 +192,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	{
 		int playerIndex;
 		String res = null;
-
+//TODO If player is host: quit game + notify all players + this.Exit()
 		for (String name: this.data.getPlayerNameList())
 		{
 			if (name.equals(playerName))
@@ -279,7 +279,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
 		if(!dataPlayer.terminus.contains(terminus)) throw new ExceptionForbiddenAction();
-		
+
 		// TODO if(dataPlayer.numberOfTilesPlacedThisTurn > 0) throw new ExceptionForbiddenAction();
 		// TODO if(dataPlayer.numberOfTilesDrawnThisTurn > 0) throw new ExceptionForbiddenAction();
 		
@@ -289,7 +289,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
 
 		this.engine.addAction(playerName, this.data, "startMaidenTravel", null, null, null, -1);
-		// notifyEngine(); TODO ask riyane
 	}
 
 // --------------------------------------------
