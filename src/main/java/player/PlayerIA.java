@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 
 import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
+import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.Hand;
@@ -37,10 +38,20 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
 	 =======================================================================*/
 // TODO: remove the ihm parameter
-	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm, String difficulty) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);
-		this.automaton	= new Dumbest();
+		switch (difficulty) {
+			case "Dumbest" :
+				this.automaton	= new Dumbest();
+				break;
+			case "Traveler" :
+				this.automaton = new Traveler();
+				break;
+			default :
+				throw new RuntimeException("Undefined AI difficulty : " + difficulty);
+		}
+		
 		super.game.onJoinGame(this, false);						// Log the player to the application
 	}
 

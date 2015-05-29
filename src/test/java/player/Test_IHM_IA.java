@@ -35,7 +35,7 @@ public class Test_IHM_IA implements InterfaceIHM
 		{
 			playerIHM	= PlayerIHM.launchPlayer("riyane", "jeux", "newOrleans", 3,  Color.red, true, null, this);
 			game		= playerIHM.getGame();
-			new PlayerIA(iaName, Color.BLACK, game, 0, null);
+			new PlayerIA(iaName, Color.BLACK, game, 0, null, "Dumbest");
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 

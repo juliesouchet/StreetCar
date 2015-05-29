@@ -35,7 +35,7 @@ public class Test_IA_Riyane implements InterfaceIHM
 			game		= new Game(gameName, ip, "newOrleans", 3);
 			Thread t	= new Thread(game);
 			t.start();
-			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, this);
+			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, this, "Dumbest");
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
