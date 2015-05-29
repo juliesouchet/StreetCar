@@ -60,9 +60,12 @@ public class Engine implements Runnable
 				this.toExecute = ea;
 				try
 				{
-					thisClass	= this.getClass();
-					method		= thisClass.getDeclaredMethod(ea.function);		// Execute the corresponding action
-					method		.invoke(this);
+					synchronized(this.toExecute)
+					{
+						thisClass	= this.getClass();
+						method		= thisClass.getDeclaredMethod(ea.function);		// Execute the corresponding action
+						method		.invoke(this);
+					}
 				}
 				catch (Exception e){e.printStackTrace(); return;}
 			}
@@ -115,16 +118,31 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void placeTile() throws RemoteException
 	{
+System.out.println("placeTile: " + this.toExecute.playerName + "; Point: " + this.toExecute.position + "; tile: " + this.toExecute.tile);
 		String	player		= this.toExecute.playerName;
 		Data	data		= this.toExecute.data;
 		Point	position	= this.toExecute.position;
 		Tile	tile		= this.toExecute.tile;
 
 		data.placeTile(player, position.x, position.y, tile);
-		data.skipTurn(); // TODO put in validate
 		this.notifyAllPlayers(); // TODO this too
 	}
+	@SuppressWarnings("unused")
+	private synchronized void validate()
+	{
+		this.toExecute.data.skipTurn();
+	}
+	@SuppressWarnings("unused")
+	private synchronized void drawCard() throws RemoteException
+	{
+System.out.println("drawCard: Player: " + this.toExecute.playerName);
+		Data	data		= this.toExecute.data;
+		String	playerName	= this.toExecute.playerName;
+		int		nbrCards	= this.toExecute.nbrCardsToDraw;
 
+		data.drawCard(playerName, nbrCards);
+		this.notifyAllPlayers();
+	}
 	public synchronized void moveTram() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
@@ -132,7 +150,6 @@ public class Engine implements Runnable
 		LinkedList<Point> tramMovement = toExecute.tramMovement;
 		data.setTramPosition(playerName, tramMovement.getLast());
 
-		data.skipTurn();
 		this.notifyAllPlayers();
 		if(data.getTerminiPoints(playerName).contains(data.getTramPosition(playerName)))
 		{
@@ -205,16 +222,6 @@ public class Engine implements Runnable
 				pi.gameHasChanged(privateData);
 			}
 		}
-	}
-	@SuppressWarnings("unused")
-	private synchronized void drawCard() throws RemoteException
-	{
-		Data	data		= this.toExecute.data;
-		String	playerName	= this.toExecute.playerName;
-		int		nbrCards	= this.toExecute.nbrCardsToDraw;
-
-		data.drawCard(playerName, nbrCards);
-		this.notifyAllPlayers();
 	}
 	private synchronized void notifyAllPlayers() throws RemoteException
 	{

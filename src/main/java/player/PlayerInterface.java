@@ -28,6 +28,7 @@ public interface PlayerInterface extends Remote
 	public void		excludePlayer		()											throws RemoteException;
 	public void		gameHasChanged		(Data data)									throws RemoteException;
 	public void		placeTile			(Tile t, Point position)					throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction;
+	public void		validate			()											throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 	public void		drawCard			(int nbrCards)								throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 /*	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;

@@ -88,4 +88,8 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		this.game.drawCard(playerName, nbrCards);
 	}
+	public void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		this.game.validate(playerName);
+	}
 }

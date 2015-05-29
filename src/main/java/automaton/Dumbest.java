@@ -50,7 +50,7 @@ public class Dumbest extends PlayerAutomaton {
 			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
 		
-		System.out.println("Pose tuile "+ t.toString()+" a la position: ("+i+","+j+")");
+		System.out.print(name +": Pose tuile "+ t.toString()+" a la position: ("+i+","+j+")" + "\t|\t");
 		
 		choix = Action.newBuildSimpleAction(i, j, t);
 		

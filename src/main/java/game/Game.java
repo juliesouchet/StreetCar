@@ -231,9 +231,18 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
-// TODO: check if the guiven tile is in the player's hand
+// TODO: check if the given tile is in the player's hand
+// TODO: check if the player may add an action
 
 		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
+	}
+	public void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+// TODO: check if the player has completed his game
+
+		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
 	}
 	/**=============================================================================
 	 * Draw a card from the deck.  Put this drawn card in the player's hand

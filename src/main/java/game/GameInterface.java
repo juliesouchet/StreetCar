@@ -20,12 +20,12 @@ public interface GameInterface extends Remote
 
 	public Data		getData				(String playerName)										throws RemoteException;
 	public LoginInfo[]getLoginInfo		(String playerName)										throws RemoteException;
-	public void		setLoginInfo		(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo)			throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification;
+	public void		setLoginInfo		(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo)throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification;
 
 	public void		hostStartGame		(String playerName)										throws RemoteException, ExceptionForbiddenAction;
 	public void		placeTile			(String playerName, Tile t, Point position)				throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction;
-// TODO: remove this
 	public void		drawCard			(String playerName, int nbrCards)						throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
+	public void		validate			(String playerName)										throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 /*	public void		undoAttempt			(String playerName)										throws RemoteException;
 	public void		undoTurn			(String playerName)										throws RemoteException;
 	public void		moveTram			(String playerName, Point dest)							throws RemoteException;

@@ -73,6 +73,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			this.game.placeTile(playerName, a.tile1, a.positionTile1);
 			this.game.drawCard(playerName, 1); // TODO: modifier le 1 par le valeur rendue par l'automate
+			super.validate();
 		}
 		catch (Exception e) {e.printStackTrace(); System.exit(0);}
 	}
