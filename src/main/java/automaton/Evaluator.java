@@ -23,7 +23,7 @@ public class Evaluator {
 		switch (difficulty) {
 			case "Dumbest" :
 				for (int j = 0; j < automatonList.length; j++) {
-					automatonList[j] = new Dumbest();
+					automatonList[j] = new Dumbest(playerName);
 				}
 				break;
 			case "Traveler" :

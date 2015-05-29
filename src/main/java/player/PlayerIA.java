@@ -42,7 +42,7 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 		super(playerName, playerColor, app, ihm);
 		switch (iaLevel) {
 			case 0 :
-				this.automaton	= new Dumbest();
+				this.automaton	= new Dumbest(playerName);
 				break;
 			case 1 :
 				this.automaton = new Traveler();
