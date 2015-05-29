@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 import main.java.data.Data;
-import main.java.data.Data.PlayerInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
 
@@ -197,7 +196,7 @@ public class Engine implements Runnable
 		}
 	}
 	@SuppressWarnings("unused")
-	private void drawCard() throws RemoteException
+	private synchronized void drawCard() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String	playerName	= this.toExecute.playerName;
