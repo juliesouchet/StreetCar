@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 import main.java.data.Data;
-import main.java.data.Data.PlayerInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
 
@@ -35,9 +34,9 @@ public class Engine implements Runnable
 		this.engineThread	.start();
 	}
 
-	// --------------------------------------------
-	// Local methods:
-	// --------------------------------------------
+// --------------------------------------------
+// Local methods:
+// --------------------------------------------
 	public void run()
 	{
 		LinkedList<EngineAction> actionList;
@@ -122,7 +121,7 @@ public class Engine implements Runnable
 		Tile	tile		= this.toExecute.tile;
 
 		data.placeTile(player, position.x, position.y, tile);
-		data.skipTurn(); // TODO put in validate
+// TODO temporaire : à ajouter		data.skipTurn(); // TODO put in validate
 		this.notifyAllPlayers(); // TODO this too
 	}
 
@@ -131,12 +130,15 @@ public class Engine implements Runnable
 		Data	data		= this.toExecute.data;
 		String playerName = toExecute.playerName;
 		LinkedList<Point> tramMovement = toExecute.tramMovement;
-
-		PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
-		dataPlayer.tramPosition = tramMovement.getLast();
+		data.setTramPosition(playerName, tramMovement.getLast());
 
 		data.skipTurn();
 		this.notifyAllPlayers();
+		if(data.getTerminiPoints(playerName).contains(data.getTramPosition(playerName)))
+		{
+			System.out.println("STOP EVERYTHING!!!!!! \n" + playerName + " has won");
+			// TODO data.endgamebecozplayerzhazone
+		}
 		//		for(String name : data.getPlayerOrder())
 		//		{
 		//			PlayerInterface remotePlayer = data.getPlayer(name);
@@ -158,17 +160,25 @@ public class Engine implements Runnable
 		Data	data		= this.toExecute.data;
 		String playerName = toExecute.playerName;
 		Point chosenTerminus = toExecute.startTerminus;
-		PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
+		//PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
 
-		dataPlayer.startedMaidenTravel = true;
-		dataPlayer.startTerminus = chosenTerminus;
+		data.startMaidenTravel(playerName);
+		data.setTramPosition(playerName, chosenTerminus);
 
-		for(Point p : dataPlayer.terminus)
+		LinkedList<Point> destination = new LinkedList<Point>();
+		for(Point p : data.getTerminiPoints(playerName))
 		{
-			if(p.distance(dataPlayer.startTerminus) > 1)
+			if(p.distance(chosenTerminus) > 1)
 			{
-				dataPlayer.endTermini.add(p);
+				destination.add((Point) p.clone());
 			}
+		}
+		
+		data.setDestinationTerminus(playerName, destination);
+		if(destination.size() != 2)
+		{
+			try { throw new Exception(); } 
+			catch (Exception e) { e.printStackTrace(); } // TODO delete this once sure it works
 		}
 
 //		for(String name : data.getPlayerOrder())
@@ -197,13 +207,16 @@ public class Engine implements Runnable
 		}
 	}
 	@SuppressWarnings("unused")
-	private void drawCard() throws RemoteException
+	private synchronized void drawCard() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String	playerName	= this.toExecute.playerName;
 		int		nbrCards	= this.toExecute.nbrCardsToDraw;
 
 		data.drawCard(playerName, nbrCards);
+// TODO temporaire : à suppr
+		data.skipTurn(); // TODO put in validate
+
 		this.notifyAllPlayers();
 	}
 	private synchronized void notifyAllPlayers() throws RemoteException

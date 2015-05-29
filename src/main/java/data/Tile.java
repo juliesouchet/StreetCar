@@ -64,7 +64,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
 		this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
 		this.cardinal				= t.cardinal;
-// TODO
 		this.tileDirection			= t.tileDirection;
 		this.pathList				= new LinkedList<Path>(pathList);
 	}
@@ -163,7 +162,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Setters/getters:
 // --------------------------------------------
-	// TODO ajouté equals(Object) -- Julie
 	public boolean	equals(Object o)	{return (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}

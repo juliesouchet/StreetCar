@@ -6,7 +6,7 @@ import java.util.Random;
 import main.java.data.Data;
 import main.java.game.Game;
 import main.java.game.GameInterface;
-import main.java.player.PlayerIA;
+import main.java.player.PlayerAI;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
 
@@ -35,7 +35,7 @@ public class Test_IHM_IA implements InterfaceIHM
 		{
 			playerIHM	= PlayerIHM.launchPlayer("riyane", "jeux", "newOrleans", 3,  Color.red, true, null, this);
 			game		= Game.getRemoteGame("127.0.0.1", "jeux");
-			new PlayerIA(iaName, Color.BLACK, game, 1, null);
+			new PlayerAI(iaName, false, Color.BLACK, game, 1, null);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 

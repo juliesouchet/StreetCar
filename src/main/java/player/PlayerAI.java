@@ -19,7 +19,7 @@ import main.java.rubbish.InterfaceIHM;
 
 
 @SuppressWarnings("serial")
-public class PlayerIA extends PlayerAbstract implements Runnable
+public class PlayerAI extends PlayerAbstract implements Runnable
 {
 // --------------------------------------------
 // Attributes:
@@ -37,22 +37,21 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
 	 =======================================================================*/
 // TODO: remove the ihm parameter
-	public PlayerIA(String playerName, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerAI(String playerName, boolean isHost, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);
 		switch (iaLevel) {
-			case 0 :
+			case 1 :
 				this.automaton	= new Dumbest(playerName);
 				break;
-			case 1 :
-				this.automaton = new Traveler();
+			case 2 :
+				this.automaton = new Traveler(playerName);
 				break;
 			default :
 				throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
-
 		}
 		
-		super.game.onJoinGame(this, false, iaLevel);						// Log the player to the application
+		super.game.onJoinGame(this, isHost, iaLevel);						// Log the player to the application
 	}
 
 // --------------------------------------------
@@ -73,6 +72,7 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 		try
 		{
 			this.game.placeTile(playerName, a.tile1, a.positionTile1);
+			this.game.drawCard(playerName, 1); // TODO: modifier le 1 par le valeur rendue par l'automate
 		}
 		catch (Exception e) {e.printStackTrace(); System.exit(0);}
 	}

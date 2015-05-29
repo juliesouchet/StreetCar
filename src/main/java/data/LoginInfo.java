@@ -1,5 +1,7 @@
 package main.java.data;
 
+import java.io.Serializable;
+
 import main.java.util.CloneableInterface;
 
 
@@ -7,14 +9,15 @@ import main.java.util.CloneableInterface;
 
 
 
-public class LoginInfo implements CloneableInterface<LoginInfo>
+public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 {
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
+	public static final long		serialVersionUID = 1735179230089796614L;
 	public static final LoginInfo	initialCell0	= new LoginInfo(false,	null,	true,	true,	-1);
 	public static final LoginInfo	initialCell1	= new LoginInfo(false,	null,	false,	true,	-1);
-	public static final LoginInfo	initialCell2	= new LoginInfo(false,	null,	false,	false,	0);
+	public static final LoginInfo	initialCell2	= new LoginInfo(false,	null,	true,	false,	1); // TODO parameter n°3 = false
 	public static final LoginInfo	initialCell3	= new LoginInfo(false,	null,	false,	false,	1);
 
 	private boolean		isClosed;
