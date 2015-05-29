@@ -62,6 +62,19 @@ Mise en place du listener sur le plateau
 Mise en place des boutons `Valider` et `Commencer son voyage`
 Debut de l'implementation du chatpanel (modèle, listener, dessin faits)
 
+### Jour 7 : Mercredi 27 mai
+
+Début de l'implémentation du Dra'n'Drop
+
+### Jour 8 : Jeudi 28 mai
+
+Finalisation du Drag'n'Drop
+
+### Jour 9 : Vendredi 29 mai
+
+Création des 12 tuiles différentes 
+Intégration du moteur avec l'IHM (NewGame, JoinGame, WaitingRoom, InGame)
+
 
 
 
