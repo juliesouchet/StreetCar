@@ -12,8 +12,8 @@ public class SettingsMenuPanel extends MenuPanel {
 
 	// Constructors
 	
-	public SettingsMenuPanel() {
-		super();
+	public SettingsMenuPanel(GameController gc) {
+		super(gc);
     	this.setupPanel();
 		this.setupButtons();
 	}

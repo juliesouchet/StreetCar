@@ -8,7 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 @SuppressWarnings("serial")
-public class DragTransferHandler extends TransferHandler implements DragSourceMotionListener {
+public class TilePanelDragTransferHandler extends TransferHandler implements DragSourceMotionListener {
 
 	public Transferable createTransferable(JComponent c) {
 		if (c instanceof TilePanel) {

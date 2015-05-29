@@ -2,7 +2,6 @@ package main.java.automaton.test;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
@@ -11,7 +10,8 @@ import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Hand;
+import main.java.data.Tile;
+import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerIA;
 import main.java.player.PlayerIHM;
@@ -64,20 +64,16 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 		try
 		{
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
-			game		= playerIHM.getGame();
+			game		= Game.getRemoteGame("127.0.0.1", gameName);
 			iaName		= "IA_DUMB_" + ((new Random()).nextDouble());
 			playerIA	= new PlayerIA(iaName, Color.BLACK, game, 0, null);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
 		// Game data viewer
-		try
-		{
-			this.frame = new DataViewerFrame(game, name);
-			this.frame.setGameData(playerIHM.getGameData());
-		}
-		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
-		frame.setVisible(true);
+		this.frame = new DataViewerFrame(playerIA);
+		this.frame.setGameData(playerIHM.getGameData());
+		this.frame.setVisible(true);
 
 		if (create)
 		{
@@ -126,33 +122,37 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 
 		// Game data viewer
 		this.frame = new DataViewerFrame();
-		try	{this.frame.setGameData(player.getGameData());}
-		catch(RemoteException e){e.printStackTrace(); System.exit(0);}
-		frame.setVisible(true);
+		this.frame.setGameData(player.getGameData());
+		this.frame.setVisible(true);
 
 		if (create)
 		{
             PlayerAutomaton edouard = new Dumbest();
+            edouard.setName(name);
 			try	{
 				player.hostStartGame();
-				for (int j=0; j<1000; j++){
-					Data les_donnees = player.getGameData();
-					Hand main_de_edouard = les_donnees.getHand(name);
-					Action choix_de_edouard = edouard.makeChoice(main_de_edouard, les_donnees);
-					player.getGame().placeTile(name, choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
+				for (int j=0; j<100; j++){
+			System.out.println(" TOUR " + (j+1));
+			System.out.println("Main :" + player.getGameData().getHand(name));
+			System.out.println();
+					Action choix_de_edouard = edouard.makeChoice(player.getGameData());
+					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
+					Tile t = player.getGameData().drawCard();
+			System.out.println();
+			System.out.println("Tire " + t);
 					this.frame.setGameData(player.getGameData());
-					if(les_donnees.isTrackCompleted(name) && !win) {
+			System.out.println("============================\n");
+					if(player.getGameData().isTrackCompleted(name)) {
 						System.out.println("Chemin completé (tour " + j + ")");
 						win = true;
 						break;
 					}
 				}
 			}catch (Exception e)	{e.printStackTrace();}
+			
 			LinkedList<Point> objectifs = null;
-			try {
-				objectifs = player.getGameData().getTerminus(name);
-				objectifs.addAll(player.getGameData().getBuildings(name));
-			} catch (RemoteException e) {e.printStackTrace();}
+			objectifs = player.getGameData().getTerminus(name);
+			objectifs.addAll(player.getGameData().getBuildings(name));
 			System.out.println("Objectifs : " + objectifs);
 			if(!win) System.out.println("Chemin non complété");
 		}
@@ -164,10 +164,10 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 // --------------------------------------------
 	public void refresh(Data data)
 	{
-		System.out.println("------------------------------------");
+		/*System.out.println("------------------------------------");
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
-		System.out.println("\t Round\t: "	+ data.getRound());
+		System.out.println("\t Round\t: "	+ data.getRound());*/
 		this.frame.setGameData(data);
 	}
 
@@ -186,5 +186,11 @@ int nbrBuildingInLine= 3;	/////// Nom par defaut
 			else if	(color.equals("cyan"))	return Color.cyan;
 			else if	(color.equals("gray"))	return Color.gray;
 		}
+	}
+
+	@Override
+	public void excludePlayer() {
+		// TODO Auto-generated method stub
+		
 	}
 }

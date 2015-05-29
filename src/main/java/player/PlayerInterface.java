@@ -1,11 +1,15 @@
 package main.java.player;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import main.java.data.Data;
-import main.java.game.GameInterface;
+import main.java.data.Tile;
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 
 
 
@@ -15,15 +19,15 @@ import main.java.game.GameInterface;
 
 public interface PlayerInterface extends Remote
 {
-	public GameInterface	getGame	() throws RemoteException;
+	public Data		getGameData			()											throws RemoteException;
 
 	public String	getPlayerName		()											throws RemoteException;
-	public Color	getColor			()											throws RemoteException;
-	public Data		getGameData			()											throws RemoteException;
+	public Color	getPlayerColor		()											throws RemoteException;
 	public boolean	isHumanPlayer		()											throws RemoteException;
-
-	public void		hostStartGame		()											throws RemoteException;
+	public void		hostStartGame		()											throws RemoteException, ExceptionForbiddenAction;
+	public void		excludePlayer		()											throws RemoteException;
 	public void		gameHasChanged		(Data data)									throws RemoteException;
+	public void		placeTile			(Tile t, Point position)					throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction;
 /*	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;
 	public void		tileHasBeenPlaced	(String playerName, Tile t, Point position)	throws RemoteException;

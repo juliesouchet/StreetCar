@@ -5,6 +5,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import main.java.data.Data;
+import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
 
@@ -14,11 +15,15 @@ import main.java.player.PlayerInterface;
 
 public interface GameInterface extends Remote
 {
-	public void		onJoinGame			(PlayerInterface player, boolean isHost)				throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
-	public boolean	onQuitGame			(String playerName)										throws RemoteException;
+	public void		onJoinGame			(PlayerInterface player, boolean isHost, int iaLevel)	throws RemoteException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
+	public void		onQuitGame			(String playerName)										throws RemoteException, ExceptionForbiddenAction;
+
 	public Data		getData				(String playerName)										throws RemoteException;
+	public LoginInfo[]getLoginInfo		(String playerName)										throws RemoteException;
+	public void		setLoginInfo		(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo)			throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification;
+
 	public void		hostStartGame		(String playerName)										throws RemoteException, ExceptionForbiddenAction;
-	public void		placeTile			(String playerName, Tile t, Point position)				throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
+	public void		placeTile			(String playerName, Tile t, Point position)				throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction;
 // TODO: remove this
 	public Tile		drawCard			(String playerName, int nbrCards)						throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 /*	public void		undoAttempt			(String playerName)										throws RemoteException;

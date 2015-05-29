@@ -4,7 +4,6 @@ package main.java.gui.application;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
-import java.rmi.RemoteException;
 
 import javax.swing.JMenuBar;
 
@@ -108,32 +107,31 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	// Actions
 	
 	public void showWelcomeMenuPanel() {
-		MenuPanel newPanel = new WelcomeMenuPanel();
+		MenuPanel newPanel = new WelcomeMenuPanel(this);
 		this.setMenuPanel(newPanel);
 	}
 	
 	public void showNewGamePanel() {
-		MenuPanel newPanel = new NewGameMenuPanel();
+		MenuPanel newPanel = new NewGameMenuPanel(this);
 		this.setMenuPanel(newPanel);
 	}
 	
 	public void showJoinGamePanel() {
-		MenuPanel newPanel = new JoinGameMenuPanel();
+		MenuPanel newPanel = new JoinGameMenuPanel(this);
 		this.setMenuPanel(newPanel);		
 	}
 	
 	public void showSettingsPanel() {
-		MenuPanel newPanel = new SettingsMenuPanel();
+		MenuPanel newPanel = new SettingsMenuPanel(this);
 		this.setMenuPanel(newPanel);	
 	}
 	
 	public void showRulesPanel() {
-		MenuPanel newPanel = new RulesMenuPanel();
+		MenuPanel newPanel = new RulesMenuPanel(this);
 		this.setMenuPanel(newPanel);	
 	}
 	
 	public void quitGame() {
-		UserDefaults.getSharedInstance().synchronize();
 		System.exit(0);
 	}
 	
@@ -143,12 +141,12 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 	
 	public void showHostWaitingRoomPanel() {
-		MenuPanel newPanel = new HostRoomMenuPanel();
+		MenuPanel newPanel = new HostRoomMenuPanel(this);
 		this.setMenuPanel(newPanel);	
 	}
 	
 	public void showClientWaitingRoomPanel() {
-		MenuPanel newPanel = new ClientRoomMenuPanel();
+		MenuPanel newPanel = new ClientRoomMenuPanel(this);
 		this.setMenuPanel(newPanel);	
 	}
 	
@@ -193,7 +191,19 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 
 	// Interface IHM
 
-	@Override
+	public void forceRefresh() {
+		if (this.player == null) return;
+		
+		Data data = this.player.getGameData();
+		if (this.menuPanel != null) {
+			this.menuPanel.refresh(data);
+		}
+	}
+	
+	public void stopGame() {
+		this.player = null;
+	}
+
 	public void refresh(Data data) {
 		System.out.println("RESFRESH");
 		if (this.menuPanel != null) {
@@ -201,21 +211,11 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		}
 	}
 	
-	public void forceRefresh() {
-		if (this.player == null) return;
-		
-		try {
-			Data data = this.player.getGameData();
-			if (this.menuPanel != null) {
-				this.menuPanel.refresh(data);
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
+	public void excludePlayer() {
+		if (this.menuPanel != null) {
+			this.menuPanel.excludePlayer();
 		}
-	}
-	
-	public void stopGame() {
-		this.player = null;
+		
 	}
 	
 }

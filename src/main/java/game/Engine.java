@@ -16,20 +16,23 @@ import main.java.player.PlayerInterface;
 
 public class Engine implements Runnable
 {
-	// --------------------------------------------
-	// Attributes:
-	// --------------------------------------------
-	private Object						lock;
+// --------------------------------------------
+// Attributes:
+// --------------------------------------------
+	private Thread						engineThread;
+	private Object						engineLock;
 	private LinkedList<EngineAction>	actionList;
 	private EngineAction				toExecute;
 
-	// --------------------------------------------
-	// Builder:
-	// --------------------------------------------
-	public Engine(Object lock)
+// --------------------------------------------
+// Builder:
+// --------------------------------------------
+	public Engine()
 	{
-		this.lock		= lock;
-		this.actionList	= new LinkedList<EngineAction>();
+		this.actionList		= new LinkedList<EngineAction>();
+		this.engineLock		= new Object();
+		this.engineThread	= new Thread(this);
+		this.engineThread	.start();
 	}
 
 	// --------------------------------------------
@@ -43,11 +46,11 @@ public class Engine implements Runnable
 
 		while(true)
 		{
-			synchronized (lock)													// Wait for a new action
+			synchronized (engineLock)													// Wait for a new action
 			{
 				while (this.actionList.isEmpty())
 				{
-					try								{lock.wait();}
+					try								{engineLock.wait();}
 					catch (InterruptedException e)	{e.printStackTrace();}
 				}
 				actionList = new LinkedList<EngineAction> (this.actionList);
@@ -71,26 +74,46 @@ public class Engine implements Runnable
 	 ====================================================================*/
 	public void addAction(String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement)
 	{
-		synchronized (lock)
+		synchronized (engineLock)
 		{
 			EngineAction ea = new EngineAction(playerName, data, function, position, tile, tramMovement);
 			this.actionList.add(ea);
+			synchronized(this.engineLock)
+			{
+				try					{this.engineLock.notify();}
+				catch(Exception e)	{e.printStackTrace(); System.exit(0);}
+			}
 		}
 	}
 
-	// --------------------------------------------
-	// Private methods:
-	// Declare all the private methods as synchronized
-	// --------------------------------------------
-	public void hostStartGame() throws RemoteException
+// --------------------------------------------
+// Private methods:
+// Declare all the private methods as synchronized
+// --------------------------------------------
+	@SuppressWarnings("unused")
+	private void onJoinGame() throws RemoteException
+	{
+		this.notifyAllPlayers();
+	}
+
+	@SuppressWarnings("unused")
+	private void onQuitGame() throws RemoteException
+	{
+// TODO
+		this.notifyAllPlayers();
+	}
+	
+	@SuppressWarnings("unused")
+	private void hostStartGame() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String	playerName	= this.toExecute.playerName;
 
 		data.hostStartGame(playerName);
-		this.notifyAllPlayers(data);
+		this.notifyAllPlayers();
 	}
-	public void placeTile() throws RemoteException
+	@SuppressWarnings("unused")
+	private void placeTile() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		Point	position	= this.toExecute.position;
@@ -98,7 +121,7 @@ public class Engine implements Runnable
 
 		data.setTile(position.x, position.y, tile);
 		data.skipTurn(); // TODO put in validate
-		this.notifyAllPlayers(data); // TODO this too
+		this.notifyAllPlayers(); // TODO this too
 	}
 
 	public void moveTram() throws RemoteException
@@ -111,7 +134,7 @@ public class Engine implements Runnable
 		dataPlayer.tramPosition = tramMovement.getLast();
 
 		data.skipTurn();
-		this.notifyAllPlayers(data);
+		this.notifyAllPlayers();
 		//		for(String name : data.getPlayerOrder())
 		//		{
 		//			PlayerInterface remotePlayer = data.getPlayer(name);
@@ -151,13 +174,28 @@ public class Engine implements Runnable
 //			//remotePlayer.revealPlayerRoute(playerName, dataPlayer.route); // TODO
 //		}
 	}
-
-	// --------------------------------------------
-	// Private class:
-	// --------------------------------------------
-	private void notifyAllPlayers(Data data) throws RemoteException
+	
+	@SuppressWarnings("unused")
+	private void excludePlayer() throws RemoteException
 	{
 		PlayerInterface pi;
+		Data privateData;
+		for (String name: this.toExecute.data.getPlayerNameList())
+		{
+			pi = this.toExecute.data.getPlayer(name);
+			if (name.equals(this.toExecute.playerName)) pi.excludePlayer();
+			else
+			{
+				privateData	= this.toExecute.data.getClone(name);
+				pi.gameHasChanged(privateData);
+			}
+		}
+	}
+	
+	private void notifyAllPlayers() throws RemoteException
+	{
+		PlayerInterface pi;
+		Data data = this.toExecute.data;
 		Data privateData;
 
 		for (String name: data.getPlayerNameList())
@@ -166,7 +204,6 @@ public class Engine implements Runnable
 			privateData	= data.getClone(name);
 			pi.gameHasChanged(privateData);
 		}
-
 	}
 
 	// --------------------------------------------

@@ -4,7 +4,6 @@ import java.awt.Point;
 
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Hand;
 
 /**
  * Premiere implementation d'un automate que cherche a poser des rails pour creer le chemin le plus courts de son terminus vers ses points de passage puis vers autre terminus
@@ -16,7 +15,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	int heuristique[][];
 	int largeur, hauteur;
 	
-	public AutomatePlusCourtChemin(Data initialtConfig, Point Destination ){
+	public AutomatePlusCourtChemin(Data initialtConfig, Point Destination){
 		this.largeur = initialtConfig.getWidth();
 		this.hauteur = initialtConfig.getHeight();
 		this.heuristique = new int [this.largeur][this.hauteur];
@@ -43,7 +42,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	}
 	
 	@Override
-	public Action makeChoice(Hand myHand, Data currentConfig) {
+	public Action makeChoice(Data currentConfig) {
 		// TODO Auto-generated method stub
 		return null;
 	}

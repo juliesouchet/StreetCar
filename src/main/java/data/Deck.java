@@ -67,22 +67,23 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 		StackCell sc = null, sc1;
 		Tile res = null;
 		int size	= this.getRemainingStackSize();
+		int nbTileTypes = stack.size();
 		int rnd		= (new Random()).nextInt(size);
 		int s=0, i=0;
 
 		if (size == 0)	throw new RuntimeException("Empty stack");
 
-		while(s < size)												// Pick a random element from the stack
+		while(s <= size && i < nbTileTypes)											// Pick a random element from the stack
 		{
 			sc = this.stack.get(i);
 			s += sc.remaining;
-			if (rnd <= s)	{res = sc.t; break;}
+			if (rnd <= s)	{res = sc.t;break;}
 			i ++;
 		}
-		if (s >= size)	throw new RuntimeException();
-		sc.remaining --;											// Remove the element from the stack
+		if (s > size)	throw new RuntimeException("Not enough cards in deck");
+		sc.remaining --;															// Remove the element from the stack
 		
-		for (int j=i+1; j<size-1; j++)								// Keep the stack sorted
+		for (int j=i+1; j< nbTileTypes-1; j++)										// Keep the stack sorted
 		{
 			sc1 = this.stack.get(j);
 			if (sc1.remaining > sc.remaining) Collections.swap(stack, j, j+1);

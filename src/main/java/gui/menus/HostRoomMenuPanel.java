@@ -2,8 +2,10 @@ package main.java.gui.menus;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.rmi.RemoteException;
 
 import main.java.data.Data;
+import main.java.game.GameInterface;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.ComboBox;
@@ -22,11 +24,19 @@ public class HostRoomMenuPanel extends MenuPanel {
 	
 	// Constructors
 	
-	public HostRoomMenuPanel() {
-		super();
+	public HostRoomMenuPanel(GameController gc) {
+		super(gc);
 		this.setupPanel();
 		this.setupPlayersFields();
 		this.setupButtons();
+		
+		GameInterface game;
+		try {
+			game = gc.player.getGame();
+			System.out.println(game.getLoginInfo(gc.player.getPlayerName()));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void setupPanel() {
@@ -101,7 +111,12 @@ public class HostRoomMenuPanel extends MenuPanel {
 	public void refresh(Data data) {
 		super.refresh(data);
 		
-		System.out.println("nb player " + data.getNbrPlayer());
+		int i = 0;
+		for (String playerName : data.getPlayerNameList()) {
+			Label nameLabel = this.nameLabels[i];
+			nameLabel.setText(playerName);
+			i++;
+		}
 	}
 	
 }

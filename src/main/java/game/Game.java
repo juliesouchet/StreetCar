@@ -14,6 +14,7 @@ import main.java.data.Data.PlayerInfo;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerInterface;
+import main.java.util.Copier;
 
 
 
@@ -38,8 +39,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	private Data		data;
 	private LoginInfo[]	loggedPlayerTable;
 	private Engine		engine;
-	private Thread		engineThread;
-	private Object		engineLock;
 
 // --------------------------------------------
 // Builder:
@@ -65,10 +64,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
-		this.engineLock			= new Object();
-		this.engine				= new Engine(this.engineLock);
-		this.engineThread		= new Thread(this.engine);
-		this.engineThread		.start();
+		this.engine				= new Engine();
 
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "URL = " + url);
@@ -107,94 +103,147 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public Data getData(String playerName) throws RemoteException
+	public Data	getData(String playerName) throws RemoteException
 	{
 		return this.data.getClone(playerName);
 	}
-	public void onJoinGame(PlayerInterface player, boolean isHost) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	/**==============================================
+	 * @return the table used by the waiting room
+	 ================================================*/
+	public LoginInfo[]getLoginInfo(String playerName) throws RemoteException
 	{
+		Copier<LoginInfo> cp = new Copier<LoginInfo>();
+
+		return cp.copyTab(loggedPlayerTable);
+	}
+	/**==============================================
+	 * @return Modifies an entry of the waiting room table
+	 * Only permitted if the player using this function is the host
+	 ================================================*/
+	public void setLoginInfo(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
+	{
+		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
+		if  (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
+
+		boolean	toNotify		= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
+		String	oldPlayerName	= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
+		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
+		if (toNotify) this.engine.addAction(oldPlayerName, this.data, "excludePlayer", null, null, null);
+	}
+	/**==============================================
+	 * @return Makes a player join the game
+	 * ================================================*/
+	public void onJoinGame(PlayerInterface player, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	{
+		String	playerName	= player.getPlayerName();
+		Color	playerColor	= player.getPlayerColor();
+		boolean	isHuman		= player.isHumanPlayer();
+
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
 		{
 			System.out.println("\n===========================================================");
-			System.out.println(gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
-			System.out.println(gameMessageHeader + "Refusing player, party is currently full.");
+			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
+			System.out.println(gameMessageHeader + "Refusing player: party is currently full.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionFullParty();
 		}
-		else if (this.data.containsPlayer(player.getPlayerName()))
+		int playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
+		if (playerIndex == -1)
 		{
 			System.out.println("\n===========================================================");
-			System.out.println(gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
-			System.out.println(gameMessageHeader + "Refusing player, name already taken.");
+			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
+			System.out.println(gameMessageHeader + "Refusing player: No Corresponding Player Excpected in waiting room");
+			System.out.println("===========================================================\n");
+			throw new ExceptionNoCorrespondingPlayerExcpected();
+		}
+		else if (this.data.containsPlayer(playerName))
+		{
+			System.out.println("\n===========================================================");
+			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
+			System.out.println(gameMessageHeader + "Refusing player: name already taken.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionUsedPlayerName();
 		}
-		else if (this.usedColor(player.getColor()))
+		else if (this.usedColor(playerColor))
 		{
 			System.out.println("\n===========================================================");
-			System.out.println(gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
-			System.out.println(gameMessageHeader + "Refusing player, color \"" + player.getColor() + "\"  already taken.");
+			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
+			System.out.println(gameMessageHeader + "Refusing player: color \"" + playerColor + "\"  already taken.");
 			System.out.println("===========================================================\n");
 			throw new ExceptionUsedPlayerColor();
 		}
 		else
 		{
-			this.data.addPlayer(player, player.getPlayerName(), isHost);
+			this.data.addPlayer(player, playerName, playerColor, isHost);
+			this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
+			this.engine.addAction(null, this.data, "onJoinGame", null, null, null);
 			System.out.println("\n===========================================================");
-			System.out.println(Game.gameMessageHeader + "join request from player : \"" + player.getPlayerName() + "\"");
+			System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");
 			System.out.println(Game.gameMessageHeader + "accepted player");
 			System.out.println(Game.gameMessageHeader + "NbrPlayer: " + this.data.getNbrPlayer());
 			System.out.println("===========================================================\n");
 		}
 	}
-	public boolean onQuitGame(String playerName) throws RemoteException
+	/**==============================================
+	 * @return Makes a player leave the game
+	 * ================================================*/
+	public void onQuitGame(String playerName) throws RemoteException, ExceptionForbiddenAction
 	{
-		String resS = null;
-		boolean res= false;
+		int playerIndex;
+		String res = null;
 
 		for (String name: this.data.getPlayerNameList())
 		{
 			if (name.equals(playerName))
 			{
 				this.data.removePlayer(name);
-				resS= "player logged out";
-				res = true;
+				res= "player logged out";
+				playerIndex = getPlayerInLogInfoTable(playerName);
+				this.loggedPlayerTable[playerIndex] = new LoginInfo(true, null, false, false, -1);
 				break;
 			}
 		}
-		if (resS == null)	{resS = "player not found in the local list";	res = false;}
+		if (res == null) res = "player not found in the local list";
 
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
-		System.out.println(gameMessageHeader + "logout result : " + resS);
+		System.out.println(gameMessageHeader + "logout result : " + res);
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
-		return res;
+		this.engine.addAction(null, this.data, "onQuitGame", null, null, null);
+		if (res != null) throw new ExceptionForbiddenAction();
 	}
-	public void hostStartGame(String playerName) throws RemoteException
+	public void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 
+		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
 		this.engine.addAction(playerName, this.data, "hostStartGame", null, null, null);
-		notifyEngine();
 	}
 // Version simple pour tester l'ia
 //TODO Remplacer par public void placeTile(String playerName, int indexInHand, Point position, Direction rotation)
-	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
 
+		// TODO (fait) retirer la carte de la main du joueur --Julie
+		data.removeTileFromHand(playerName, t.getClone());
 		this.engine.addAction(playerName, this.data, "placeTile", position, t, null);
-		notifyEngine();
 	}
-	private void notifyEngine() {
-		synchronized(this.engineLock)
-		{
-			try					{this.engineLock.notify();}
-			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
-		}
+// TODO Version simple pour tester l'ia 
+	public Tile drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+// Rajouter d'autres exceptions
+		Tile t = this.data.drawCard();
+
+		// TODO (fait) la tuile tirée est ajoutée à la main du joueur directement --Julie
+		this.data.addTileToHand(playerName, t);
+		
+		return t;
 	}
 	
 	public void  moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
@@ -218,7 +267,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		
 		this.engine.addAction(playerName, this.data, "moveTram", null, null, tramMovement);
-		notifyEngine();
+		// notifyEngine(); TODO ask riyane
 	}
 	
 	public void	startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
@@ -238,21 +287,8 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
 
 		this.engine.addAction(playerName, this.data, "startMaidenTravel", null, null, null);
-		notifyEngine();
+		// notifyEngine(); TODO ask riyane
 	}
-	
-// TODO Version simple pour tester l'ia
-	public Tile drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
-	{
-		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-// Rajouter d'autres exceptions
-		return this.data.drawCard();
-	}
-// TODO public LoginInfo[] getLoginInfo()
-// TODO public void getLoginInfo(String playerName, int indexInLogTable, LogInfo li)
-
-
 
 // --------------------------------------------
 // Private methods:
@@ -264,8 +300,38 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		for (String name: this.data.getPlayerNameList())
 		{
 			p = this.data.getPlayer(name);
-			if (p.getColor().equals(c))	return true;
+			if (p.getPlayerColor().equals(c))	return true;
 		}
 		return false;
+	}
+	private int getPlayerInLogInfoTable(String playerName)
+	{
+		LoginInfo li;
+
+		for (int i=0; i<loggedPlayerTable.length; i++)
+		{
+			li = loggedPlayerTable[i];
+			if (playerName.equals(li.getPlayerName())) return i;
+		}
+		return -1;
+	}
+	/**================================================================
+	 * @return the index of the first free login cell in the table
+	 *  that matches the given player.  If no cell is found, -1 is returned
+	 ===================================================================*/
+	private int getFreeAndMatchingLoginInTableIndex(boolean isHost, boolean isHuman, int aiLevel)
+	{
+		LoginInfo li;
+
+		for (int i=0; i<this.loggedPlayerTable.length; i++)
+		{
+			li = this.loggedPlayerTable[i];
+			if (li.isClosed())									continue;
+			if (li.isHost() != isHost)							continue;
+			if (li.isHuman()!= isHuman)							continue;
+			if (!li.isHuman() && (li.getAiLevel() != aiLevel))	continue;
+			return i;
+		}
+		return -1;
 	}
 }

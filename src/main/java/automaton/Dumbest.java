@@ -1,6 +1,5 @@
 package main.java.automaton;
 
-import java.awt.Point;
 import java.util.Random;
 
 import main.java.data.Action;
@@ -20,28 +19,30 @@ import main.java.data.Tile;
  */
 public class Dumbest extends PlayerAutomaton {
 	
-	public Dumbest (){
-		this.setName("Dumbest");
+	public Dumbest() {
+		super();
+		name = "Dumbest";
 	}
 	
-	
-	public Action makeChoice(Hand myHand, Data currentconfig) {
+
+
+	public Action makeChoice(Data currentconfig) {
+		Hand myHand = currentconfig.getHand(name);
 		Action choix ;
 		Random rand = new Random();
-		Point p;
 		Tile t;
-		int i,j, k;
+		int i, j, k, n;
 		
 		do{
 			// On choisit un emplacement au hasard
 			i = rand.nextInt(currentconfig.getWidth());
 			j = rand.nextInt(currentconfig.getHeight());
-			p = new Point(i,j);
 			
 			// On choisit une tuile parmi les 5 de notre main
-			k = rand.nextInt(myHand.size());
+			n = myHand.size();			
+			k = rand.nextInt(n);
 			t = myHand.get(k);
-			
+			myHand.add(t);
 			//On la fait tourner
 			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
 				t.turnLeft();
@@ -49,9 +50,9 @@ public class Dumbest extends PlayerAutomaton {
 			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
 		
-		System.out.println("Pose tuile "+ t.toString()+" a la position:"+ p);
+		System.out.println("Pose tuile "+ t.toString()+" a la position: ("+i+","+j+")");
 		
-		choix = Action.newBuildSimpleAction(p, t);
+		choix = Action.newBuildSimpleAction(i, j, t);
 		
 		return choix;
 	}

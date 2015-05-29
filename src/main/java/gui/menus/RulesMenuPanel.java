@@ -22,8 +22,8 @@ public class RulesMenuPanel extends MenuPanel {
 	
 	// Constructors
 	
-	public RulesMenuPanel() {
-		super();
+	public RulesMenuPanel(GameController gc) {
+		super(gc);
 		this.setupPanel();
 		this.setupImagePanel();
 		this.setupButtons();

@@ -23,11 +23,11 @@ public class Traveler extends PlayerAutomaton {
 	
 	public Traveler() {
 		super();
-		setName("Traveler");
+		name = "Traveler";
 	}
 		
 	@Override
-	public Action makeChoice(Hand hand, Data currentConfig) {
+	public Action makeChoice(Data currentConfig) {
 		Action res = null;
 		Random rand = new Random();
 		Point p;
@@ -44,6 +44,7 @@ public class Traveler extends PlayerAutomaton {
 				p = new Point(i,j);
 				
 				// random tile choice in the player's hand
+				Hand hand = currentConfig.getHand(name);
 				k = rand.nextInt(hand.size());
 				t = hand.get(k);
 			}while( !currentConfig.isAcceptableTilePlacement(i, j, t));

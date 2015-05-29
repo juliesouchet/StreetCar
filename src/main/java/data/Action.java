@@ -50,6 +50,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.tile1			= tile.getClone();
 		return res;
 	}
+	public static Action newBuildSimpleAction(int x, int y, Tile tile)
+	{
+		Action res			= new Action();
+		res.positionTile1	= new Point(x,y);
+		res.tile1			= tile.getClone();
+		return res;
+	}
 	public static Action newBuildDoubleAction(Point position1, Tile tile1, Point position2, Tile tile2)
 	{
 		Action res			= new Action();
