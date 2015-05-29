@@ -6,8 +6,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import main.java.data.Data;
+import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotYourTurn;
@@ -69,6 +71,12 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // Must implement "throws RemoteException"
 // --------------------------------------------
 	public Data		getGameData()							{return (this.data == null) ? null : this.data.getClone(playerName);}
+	public LoginInfo[]getLoginInfo() throws RemoteException	{return this.game.getLoginInfo(playerName);}
+	public void setLoginInfo(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
+	{
+		this.game.setLoginInfo(playerName, playerToChangeIndex, newPlayerInfo);
+	}
+
 	public String 	getPlayerName()	throws RemoteException	{return this.playerName;}
 	public Color	getPlayerColor()throws RemoteException	{return this.color;}
 	public void		gameHasChanged(Data data) throws RemoteException
