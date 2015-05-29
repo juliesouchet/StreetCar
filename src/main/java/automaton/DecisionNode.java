@@ -6,11 +6,11 @@ import main.java.data.Action;
 import main.java.data.Data;
 
 /**
- * Arbre du minimax
+ * Noeud de decision
  * @author coutaudu
  *
  */
-public class DecisionTree {
+public class DecisionNode {
 	
 	/*
 	 *  La configuration dans laquelle je suis
@@ -32,7 +32,7 @@ public class DecisionTree {
 	/* 
 	 * Les enfants: representés par une table de noeuds
 	 */
-	private ArrayList<DecisionTree> choicesTable;		
+	private ArrayList<DecisionNode> choicesTable;		
 	
 	/*
 	 * La profondeur du noeud courant (vis a vis de l'appel d'origine)  	
@@ -103,7 +103,7 @@ public class DecisionTree {
 	 * pour chaque action faisable dans la configuration courante, la configuration a laquelle ça nous mène et la qualité de cette situation
 	 * @return
 	 */
-	public ArrayList<DecisionTree> getPossibleFollowingAction(){
+	public ArrayList<DecisionNode> getPossibleFollowingAction(){
 		return this.choicesTable;
 	}
 	
@@ -159,7 +159,7 @@ public class DecisionTree {
 	 * La profondeur a construire: 
 	 * si 0 alors c'est une feuille, on fait appel a la fonction d'evaluation
 	 */
-	public DecisionTree(Data currentConfig, int height){
+	public DecisionNode(Data currentConfig, int height){
 		if (height<=0){	//C'est une feuille
 			//Evaluator.evaluateSituationQuality(currentConfig.get, gamesNumber, config, difficulty)
 		}

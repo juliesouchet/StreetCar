@@ -37,7 +37,7 @@ public class PlayerAutomata implements InterfaceIHM
 	private PlayerIHM player = null;
 	private String name;
 	private int i = 0;
-	
+	private int nbCoups = 100;
 	// --------------------------------------------
 	// Builder:
 	// --------------------------------------------
@@ -161,8 +161,8 @@ public class PlayerAutomata implements InterfaceIHM
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
 		System.out.println("\t Round\t: "	+ data.getRound());*/
-		if (this.frame!=null && (i <= 100)){
-			i ++;
+		if (this.frame!=null && (i <= nbCoups)){
+			i++;
 			if(player.getGameData().isTrackCompleted(name)) {
 				System.out.println("Chemin completé (tour " + i + ")");
 				win = true;
@@ -180,6 +180,7 @@ public class PlayerAutomata implements InterfaceIHM
 				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
 				try {
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
+					player.drawCard(1);
 				} catch (RemoteException | ExceptionGameHasNotStarted
 						| ExceptionNotYourTurn | ExceptionForbiddenAction e) {
 					// TODO Auto-generated catch block
