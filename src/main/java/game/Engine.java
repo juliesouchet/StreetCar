@@ -197,13 +197,14 @@ public class Engine implements Runnable
 		}
 	}
 	@SuppressWarnings("unused")
-	private void drawCard()
+	private void drawCard() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String	playerName	= this.toExecute.playerName;
 		int		nbrCards	= this.toExecute.nbrCardsToDraw;
 
 		data.drawCard(playerName, nbrCards);
+		this.notifyAllPlayers();
 	}
 	private synchronized void notifyAllPlayers() throws RemoteException
 	{

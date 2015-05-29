@@ -17,7 +17,7 @@ import test.java.player.DataViewerFrame.ViewerPanel;
 
 public class BoardCreator implements Runnable {
 	static final String boardPath = "src/test/resources/boards/";
-	final int padding = 150;
+	final int padding = 200;
 	
 	Tile currentTile = null;
 	TileGrid tileGrid;
@@ -43,7 +43,7 @@ public class BoardCreator implements Runnable {
 		} catch (ExceptionUnknownBoardName | RuntimeException e) {
 			e.printStackTrace();
 		}
-		frame = new DataViewerFrame(null);
+		frame = new DataViewerFrame();
 
 		// Terrain
 		frame.setGameData(data);

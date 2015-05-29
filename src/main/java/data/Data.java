@@ -184,13 +184,21 @@ public class Data implements Serializable
 ////////////////TODO to remove
 	public void skipTurn(){this.round ++;} // goes to the next player's turn
 ////////////////TODO 
-	
+// TODO toremove
+	public void setTile(int x, int y, Tile t)
+	{
+		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the tests...");
+		this.board[x][y] = t;
+	}
 	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
 		Hand hand = this.playerInfoList.get(playerName).hand;
+		Tile oldT = null;
 
+		if (!this.board[x][y].isEmpty()) oldT = this.board[x][y];
 		this.board[x][y] = t;
 		hand.remove(t);
+		if (oldT != null) hand.add(oldT);
 	}
 	public void drawCard(String playerName, int nbrCards)
 	{
@@ -691,6 +699,7 @@ public class Data implements Serializable
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
 			this.terminus= getTerminusPosition(this.line);								// Init the terminus position
 		}
+// TODO ???
 		public PlayerInfo(){}
 	}
 }

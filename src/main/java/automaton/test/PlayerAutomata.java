@@ -180,7 +180,6 @@ public class PlayerAutomata implements InterfaceIHM
 				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
 				try {
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
-					player.
 				} catch (RemoteException | ExceptionGameHasNotStarted
 						| ExceptionNotYourTurn | ExceptionForbiddenAction e) {
 					// TODO Auto-generated catch block
