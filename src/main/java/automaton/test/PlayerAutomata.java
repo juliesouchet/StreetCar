@@ -74,7 +74,7 @@ public class PlayerAutomata implements InterfaceIHM
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
 			game		= Game.getRemoteGame("127.0.0.1", gameName);
 			iaName		= "IA_DUMB_" + ((new Random()).nextDouble());
-			playerIA	= new PlayerAI(iaName, Color.BLACK, game, 0, null);
+			playerIA	= new PlayerAI(iaName, false, Color.BLACK, game, 0, null);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 

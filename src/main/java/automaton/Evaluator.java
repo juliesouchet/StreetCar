@@ -7,15 +7,17 @@ public class Evaluator {
 	
 	/**
 	 * Simulates gamesNumber games between the player of the game starting with currentConfig. 
-	 * The players are modeled by automata of the given difficulty
+	 * The players are modeled by automata of the given difficulty 
 	 * @param gamesNumber
 	 * @param currentConfig
 	 * @param difficulty
 	 * @return
 	 */
-	static int evaluateSituationQuality(String playerName, int gamesNumber, Data config, String difficulty) {
-		int nbVictories = 0;
-		Data currentConfig, prevConfig;
+	static double evaluateSituationQuality(String playerName, int gamesNumber, Data config, String difficulty) {
+		double victoryProportion = 0;
+		int victoriesNumber = 0;
+		boolean win;
+		Data currentConfig;
 		String[] playerNameList = (String[]) config.getPlayerNameList().toArray();
 		PlayerAutomaton[] automatonList = new PlayerAutomaton[playerNameList.length];
 		
@@ -37,16 +39,15 @@ public class Evaluator {
 		
 		// Simulating the games
 		//for(int i = 0; i < gamesNumber; i++) {
-			// TODO enlever les clones
 			currentConfig = config.getClone(playerName);
 			
-			String winnerName = null;
 			// A game
-			while(winnerName == null) {
-				prevConfig = currentConfig.getClone(playerName);
+			win = false;
+			while(!win) {
 				// A round
 				for (int j = 0; j < automatonList.length; j++) {
 					// A player's turn
+					String currentPlayerName = playerNameList[j];
 					Action action = automatonList[j].makeChoice(currentConfig);
 					if(action.isConstructing()) {
 						// Building action
@@ -56,25 +57,35 @@ public class Evaluator {
 						}
 					}
 					else {
-						// TODO Moving action
-						System.out.println("Voyage pas encore implémenté");
+						if(!currentConfig.hasStartedMaidenTravel(currentPlayerName)
+							&& action.action != Action.START_TRIP_NEXT_TURN)
+							throw new RuntimeException(currentPlayerName+" tries to travel while in construction (round "+j+")");
+						
+						if(action.action == Action.START_TRIP_NEXT_TURN)
+							currentConfig.startMaidenTravel(currentPlayerName);
+						
+						else // action.action == Action.MOVE
+							currentConfig.setTramPosition(currentPlayerName, action.tramwayMovement.getLast());
 					}
 					
-					if(currentConfig.isTrackCompleted(playerNameList[j])) {
+					if(currentConfig.isTrackCompleted(currentPlayerName)) {
 						// A player has won => TODO (not counting the maiden travel)
-						winnerName = playerNameList[j];
+						win = playerName.equals(currentPlayerName);
 						break;
 					}
 				}
 				// TODO what if nobody wins ?
-				if(prevConfig.equals(currentConfig)) // nothing has been modified => the players are blocked
+				/*if(currentConfig.isEverybodyBlocked()) {
+					win = false;
 					break;
+				}*/
 			}
 			
 			// Have we won ?
-			if(playerName.equals(winnerName)) nbVictories++;
+			if(win) victoriesNumber++;
 		//}
 		
-		return nbVictories;
+		victoryProportion = (double)victoriesNumber / (double)gamesNumber;
+		return victoryProportion;
 	}
 }

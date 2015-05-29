@@ -53,7 +53,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	{
 		String res = "";
 		for (Tile t : tileList) {
-			res += "\n"+t;
+			res += "\n"+t.getTileID();
 		}
 		return res;
 	}
@@ -72,7 +72,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	public void remove(Tile t)
 	{
 		boolean test = tileList.remove(t);
-		if (!test) throw new RuntimeException("Can't find the guiven tile: " + t);
+		if (!test) throw new RuntimeException("Can't find the given tile: " + t);
 	}
 
 //--------------------------------------------

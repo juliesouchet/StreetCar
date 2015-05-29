@@ -121,7 +121,7 @@ public class Engine implements Runnable
 		Tile	tile		= this.toExecute.tile;
 
 		data.placeTile(player, position.x, position.y, tile);
-		data.skipTurn(); // TODO put in validate
+// TODO temporaire : à ajouter		data.skipTurn(); // TODO put in validate
 		this.notifyAllPlayers(); // TODO this too
 	}
 
@@ -207,13 +207,16 @@ public class Engine implements Runnable
 		}
 	}
 	@SuppressWarnings("unused")
-	private void drawCard() throws RemoteException
+	private synchronized void drawCard() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String	playerName	= this.toExecute.playerName;
 		int		nbrCards	= this.toExecute.nbrCardsToDraw;
 
 		data.drawCard(playerName, nbrCards);
+// TODO temporaire : à suppr
+		data.skipTurn(); // TODO put in validate
+
 		this.notifyAllPlayers();
 	}
 	private synchronized void notifyAllPlayers() throws RemoteException
