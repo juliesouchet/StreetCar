@@ -96,4 +96,8 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		this.game.drawCard(playerName, nbrCards);
 	}
+	public void onQuitGame (String playerName) throws RemoteException, ExceptionForbiddenAction
+	{
+		game.onQuitGame(playerName);
+	}
 }
