@@ -651,8 +651,6 @@ public class Data implements Serializable
 		public boolean				startedMaidenTravel	= false;	// Data relative to the travel
 		public Point				tramPosition		= null;
 		public LinkedList<Point>	endTerminus			= null;
-// TODO ???
-		public LinkedList<Point> endTermini = new LinkedList<>();
 
 		// Builder
 		private PlayerInfo(){}
@@ -673,5 +671,23 @@ public class Data implements Serializable
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
 			this.terminus	= getTerminusPosition(this.line);							// Init the terminus position
 		}
+	}
+	
+	public Point getTramPosition(String playerName) {
+		return playerInfoList.get(playerName).tramPosition;
+	}
+	public void setTramPosition(String playerName, Point newPosition) {
+		playerInfoList.get(playerName).tramPosition = newPosition;
+	}
+	public void startMaidenTravel(String playerName) {
+		playerInfoList.get(playerName).startedMaidenTravel = true;
+	}
+	public LinkedList<Point> getTerminiPoints(String playerName)
+	{
+		return new Copier<Point>().copyList(playerInfoList.get(playerName).terminus);
+	}
+	public void setDestinationTerminus(String playerName, LinkedList<Point> dest)
+	{
+		playerInfoList.get(playerName).endTerminus = new Copier<Point>().copyList(dest);
 	}
 }
