@@ -25,8 +25,6 @@ public class DataViewerFrame extends JFrame {
 	public static final int	paddingHeight= 50;
 
 	private static final long serialVersionUID = 1L;
-	private int tileWidth;
-	private int tileHeight;
 	ViewerPanel viewerPanel = new ViewerPanel();
 
 	// Constructors
@@ -52,8 +50,6 @@ public class DataViewerFrame extends JFrame {
 	
 	public void setGameData(Data data) {
 		if (data == null) return;
-		this.tileWidth	= (getWidth() - paddingWidth) / data.getWidth();
-		this.tileHeight	= (getHeight()- paddingHeight)/ data.getHeight();
 		this.viewerPanel.gameData = data;
 		this.viewerPanel.repaint();
 	}
@@ -67,6 +63,8 @@ public class DataViewerFrame extends JFrame {
 	
 		private static final long serialVersionUID = 1L;
 		private Data gameData = null;
+		private int tileWidth;
+		private int tileHeight;
 		
 		protected void paintComponent(Graphics g) {
 			super.paintComponents(g);
@@ -74,6 +72,8 @@ public class DataViewerFrame extends JFrame {
 			if (this.gameData == null) {
 				return;
 			}
+			this.tileWidth	= (getWidth() - paddingWidth) / gameData.getWidth();
+			this.tileHeight	= (getHeight()- paddingHeight)/ gameData.getHeight();
 			String cst = "src/main/resources/images/tiles/";
 			BufferedImage img = null;
 			String tileName;
