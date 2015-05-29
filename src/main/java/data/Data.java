@@ -222,6 +222,7 @@ System.out.println("\n==================");
 // --------------------------------------------
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public String				getHost()										{return new String(this.host);}
+	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}

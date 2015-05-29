@@ -6,8 +6,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import main.java.data.Data;
+import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotYourTurn;
 
@@ -20,6 +22,9 @@ import main.java.game.ExceptionNotYourTurn;
 public interface PlayerInterface extends Remote
 {
 	public Data		getGameData			()											throws RemoteException;
+	public LoginInfo[]getLoginInfo		() 											throws RemoteException;
+	public void		setLoginInfo		(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification;
+	public void		onQuitGame			(String playerName)										throws RemoteException, ExceptionForbiddenAction;
 
 	public String	getPlayerName		()											throws RemoteException;
 	public Color	getPlayerColor		()											throws RemoteException;
