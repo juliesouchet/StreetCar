@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import main.java.data.Data;
 import main.java.data.Tile;
-import main.java.game.GameInterface;
+import main.java.player.PlayerInterface;
 
 public class DataViewerFrame extends JFrame {
 
@@ -31,11 +31,11 @@ public class DataViewerFrame extends JFrame {
 
 	// Constructors
 
-	public DataViewerFrame(GameInterface game, String playerName) {
+	public DataViewerFrame(PlayerInterface pi) {
 		super();
 		this.setSize(new Dimension(frameWidth+paddingWidth,frameHeight+paddingHeight));
 		this.add(this.viewerPanel);
-		this.viewerPanel.addMouseListener(new TestMouseListener(game, playerName));
+		this.viewerPanel.addMouseListener(new TestMouseListener(pi));
 	}
 
 	public DataViewerFrame() {
@@ -51,6 +51,7 @@ public class DataViewerFrame extends JFrame {
 	}
 	
 	public void setGameData(Data data) {
+		if (data == null) return;
 		this.tileWidth	= (getWidth() - paddingWidth) / data.getWidth();
 		this.tileHeight	= (getHeight()- paddingHeight)/ data.getHeight();
 		this.viewerPanel.gameData = data;

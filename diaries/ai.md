@@ -118,3 +118,10 @@ Débugué l'affichage des terrains et début des tests avec Dumbest : IA posant 
 
 #### Choix de tuiles :  
 Suite à l'audit IA, nous avons choisi d'utiliser un algorithme Minimax pour décider des actions de nos IA. Ulysse se chargera d'impléter Minimax, Julie la fonction d'évaluation. Celle-ci consiste à simuler un certain nombre de parties à partir de la configuration actuelle du terrain, et d'en déduire une probabilité de victoire.
+
+-------------------
+
+### Jour 11 : Jeudi 28 mai  
+
+Complété la fonction d'évaluation + débugage en cours du moteur
+

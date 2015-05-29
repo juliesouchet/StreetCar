@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -25,6 +26,35 @@ import main.java.util.Util;
 
 public class Data implements Serializable
 {
+	//TODO Wish list de Ulysse:
+		public class possibleActionsSet{
+			private int cardinal;
+			Action[] acceptablesActions; 
+			private possibleActionsSet(int size){ // majorant du nombre d'actions possibles
+				this.cardinal= 0;
+				this.acceptablesActions = new Action[size];
+			}
+			
+			public int getCardinal(){
+				return this.cardinal;
+			}
+			
+			public Action getAction(int index){
+				return this.acceptablesActions[index];
+			}
+		}
+		/**
+		 * L'ensemble des actions possible pour le joueur spécifié (c'est son tour de jouer)
+		 * @return
+		 */
+		public possibleActionsSet getPossibleActions(String playerName){
+			return null; //TODO implémenter la méthode
+		}
+		// END ulysse'swish list
+	
+	
+	
+	
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
@@ -44,7 +74,6 @@ public class Data implements Serializable
 	public static LinkedList<String[][]>existingBuildingInLine;
 	public static LinkedList<Color>		existingColors;
 
-	private LinkedList<Integer>			remainingLine;
 	private LinkedList<String[][]>		remainingBuildingInLine;
 	private LinkedList<Tile>			initialHand;
 
@@ -76,12 +105,8 @@ public class Data implements Serializable
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
 		this.maxPlayerSpeed		= minSpeed;
-
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
-
-		this.remainingLine		= new LinkedList<Integer>(existingLine);
 		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
-
 
 		this.initInitialHand();
 	}
@@ -92,7 +117,6 @@ public class Data implements Serializable
 		Copier<Tile> 		cpT		= new Copier<Tile>();
 		Copier<String> 		cpS		= new Copier<String>();
 
-		res.remainingLine			= null;
 		res.remainingBuildingInLine	= null;
 		res.initialHand				= cpT.copyList(this.initialHand);
 
@@ -108,23 +132,36 @@ public class Data implements Serializable
 		return res;
 	}
 
+
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
+	/**================================================
+	 * Add a player to the present game
+	 ==================================================*/
 	public void addPlayer(PlayerInterface p, String playerName, Color playerColor, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
 		if ((isHost) && (this.host != null))			throw new ExceptionHostAlreadyExists();
+
 		PlayerInfo pi = new PlayerInfo(p, playerName, playerColor);
 		this.playerInfoList.put(playerName, pi);
 		if (isHost) this.host = new String(playerName);
 	}
+	/**================================================
+	 * Remove a player from the present game
+	 ==================================================*/
 	public void removePlayer(String playerName)
 	{
 		PlayerInterface pi = this.playerInfoList.get(playerName).player;
 		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
 		this.playerInfoList.remove(playerName);
 	}
+	/**================================================
+	 * Start the game:
+	 * Check whether all the parameters have been set
+	 * Pick the player order (random)
+	 ==================================================*/
 	public void hostStartGame(String host)
 	{
 		if (!this.gameCanStart())	throw new RuntimeException("The game definition is not complete"); 
@@ -143,12 +180,28 @@ public class Data implements Serializable
 			players.remove(i);
 		}
 	}
+
 ////////////////TODO to remove
-	public void skipTurn(){this.round ++;}
+	public void skipTurn(){this.round ++;} // goes to the next player's turn
 ////////////////TODO 
-	public void	setTile(int x, int y, Tile t)
+	
+	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
+		Hand hand = this.playerInfoList.get(playerName).hand;
+
 		this.board[x][y] = t;
+		hand.remove(t);
+	}
+	public void drawCard(String playerName, int nbrCards)
+	{
+		Hand hand = this.playerInfoList.get(playerName).hand;
+		Tile t;
+
+		for (int i=0; i<nbrCards; i++)
+		{
+			t = this.deck.drawTile();
+			hand.add(t);
+		}
 	}
 
 // --------------------------------------------
@@ -165,16 +218,16 @@ public class Data implements Serializable
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
-	public Color				getPlayerColor(String playerName)				{return Data.existingColors.get(this.playerInfoList.get(playerName).line);}
-	public Tile					drawCard()										{return this.deck.drawTile();}
+	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
 	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
-	public Hand					getHand(String name)							{return this.playerInfoList.get(name).hand;}
+	public Hand					getHand(String name)							{return this.playerInfoList.get(name).hand.getClone();}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean				isPlayerTurn(String playerName)
 	{
+		if (this.playerOrder == null) return false;
 		int turn = this.round%this.playerOrder.length;
 		return playerName.equals(playerOrder[turn]);
 	}
@@ -332,13 +385,12 @@ public class Data implements Serializable
 	/**===============================================================
 	 * @return true if the player has started his maiden travel
 	 =================================================================*/
-	public boolean isMoving(String name)
+	public boolean hasStartedMaidenTravel(String playerName)
 	{
-		PlayerInfo pi = this.playerInfoList.get(name);
-
-		if (pi == null) throw new RuntimeException("Unknown player: " + name);
-		if (pi.history.isEmpty())	return false;
-		return pi.history.getLast().isMoving();
+		PlayerInfo pi = this.playerInfoList.get(playerName);
+//TODO
+		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
+		return pi.startedMaidenTravel;
 	}
 	/**===============================================================
 	 * @return the positions of the buildings in the player's path
@@ -425,9 +477,9 @@ public class Data implements Serializable
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
 
-// --------------------------------------------
-// Private methods:
-// --------------------------------------------
+	// --------------------------------------------
+	// Private methods:
+	// --------------------------------------------
 	/**============================================
 	 * @return Creates the line cards from the corresponding files
 	 ==============================================*/
@@ -437,7 +489,7 @@ public class Data implements Serializable
 		String color;
 		File f;
 		Scanner sc;
-// TODO
+
 		Data.existingLine			= new LinkedList<Integer>();						// Scab the existing lines and corresponding colors
 		Data.existingColors			= new LinkedList<Color>();
 		try
@@ -565,11 +617,12 @@ public class Data implements Serializable
 			piRes.player	= null;
 			piRes.playerName= new String(str);
 			piRes.line		= pi.line;
+			piRes.color		= new Color(pi.color.getRGB());
 			piRes.hand		= pi.hand.getClone();
 			piRes.terminus	= (new Copier<Point>()).copyList(pi.terminus);
-			piRes.history	= (new Copier<Action>()).copyList(pi.history);
-
-			if ((str.equals(playerName)) || (this.isMoving(str)))		// Private Informations
+			piRes.history	= (new Copier<LinkedList<Action>>()).copyList(pi.history);
+// TODO ajouter les nouveaux attributes de valentin
+			if ((str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
 			{
 				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
 				piRes.buildingInLine_position	= (new Copier<Point>()).copyList(pi.buildingInLine_position);
@@ -583,17 +636,22 @@ public class Data implements Serializable
 		}
 		return res;
 	}
-	private int getRemainingColorIndex(Color color)
+	private int getExistingColorIndex(Color color)
 	{
 		for (int i=0; i<existingColors.size(); i++)
 			if (color.equals(existingColors.get(i))) return i;
 
 		throw new RuntimeException("Unknown Color: " + color);
 	}
+// PB: rend un pointeur sur la structure locale (peut etre changé de l'exterieur)
+	public PlayerInfo getPlayerInfo(String playerName)
+	{
+		return playerInfoList.get(playerName); 
+	}
 
-// --------------------------------------------
-// Player Info class:
-// --------------------------------------------
+	// --------------------------------------------
+	// Player Info class:
+	// --------------------------------------------
 	public class PlayerInfo implements Serializable
 	{
 		// Attributes
@@ -601,11 +659,19 @@ public class Data implements Serializable
 		public PlayerInterface		player;
 		public String				playerName;
 		public Hand					hand;
-		public int					line;
+		public int					line;	// Real value of the line (belongs to [1, 6])
+		public Color				color;
 		public String[]				buildingInLine_name;
 		public LinkedList<Point>	buildingInLine_position;
 		public LinkedList<Point>	terminus;
-		public LinkedList<Action>	history;
+		public ArrayList<LinkedList<Action>>	history; // organized by turns
+
+// TODO: PB de l'init de ces 2 attributes
+		public boolean startedMaidenTravel = false;
+		public Point tramPosition = new Point();
+		public Point startTerminus = new Point();
+// TODO ???
+		public LinkedList<Point> endTermini = new LinkedList<>();
 
 		// Builder
 		public PlayerInfo(PlayerInterface pi, String playerName, Color playerColor)
@@ -615,26 +681,16 @@ public class Data implements Serializable
 
 			this.player		= pi;
 			this.playerName	= new String(playerName);
-			this.history	= new LinkedList<Action>();
+			this.history	= new ArrayList<LinkedList<Action>>();
 			this.hand		= new Hand(initialHand);
-			this.line		= 1 + getRemainingColorIndex(playerColor);
-			remainingLine.remove(this.line-1);
+			this.line		= 1 + getExistingColorIndex(playerColor);
 			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
+			this.color		= new Color(playerColor.getRGB());
 			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
 			remainingBuildingInLine.remove(i);
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
 			this.terminus= getTerminusPosition(this.line);								// Init the terminus position
 		}
 		public PlayerInfo(){}
-	}
-
-
-	
-// TODO méthodes ajoutées par Julie pour faire fonctionner les tests IA	
-	public void removeTileFromHand(String playerName, Tile t) {
-		this.getHand(playerName).remove(t);
-	}
-	public void addTileToHand(String playerName, Tile t) {
-		this.getHand(playerName).add(t);
 	}
 }
