@@ -123,12 +123,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public void setLoginInfo(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if  (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
+		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
 		boolean	toNotify		= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
 		String	oldPlayerName	= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
-		if (toNotify) this.engine.addAction(oldPlayerName, this.data, "excludePlayer", null, null, null);
+		if (toNotify) this.engine.addAction(oldPlayerName, this.data, "excludePlayer", null, null, null, -1);
 	}
 	/**==============================================
 	 * @return Makes a player join the game
@@ -174,9 +174,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 		else
 		{
+// TODO: faire ca par engine
 			this.data.addPlayer(player, playerName, playerColor, isHost);
 			this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
-			this.engine.addAction(null, this.data, "onJoinGame", null, null, null);
+			this.engine.addAction(playerName, this.data, "onJoinGame", null, null, null, -1);
 			System.out.println("\n===========================================================");
 			System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");
 			System.out.println(Game.gameMessageHeader + "accepted player");
@@ -196,6 +197,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		{
 			if (name.equals(playerName))
 			{
+// TODO: faire ca par engine
 				this.data.removePlayer(name);
 				res= "player logged out";
 				playerIndex = getPlayerInLogInfoTable(playerName);
@@ -210,7 +212,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println(gameMessageHeader + "logout result : " + res);
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
-		this.engine.addAction(null, this.data, "onQuitGame", null, null, null);
+		this.engine.addAction(null, this.data, "onQuitGame", null, null, null, -1);
 		if (res != null) throw new ExceptionForbiddenAction();
 	}
 	public void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction
@@ -218,34 +220,34 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
-		this.engine.addAction(playerName, this.data, "hostStartGame", null, null, null);
+		this.engine.addAction(playerName, this.data, "hostStartGame", null, null, null, -1);
 	}
-// Version simple pour tester l'ia
-//TODO Remplacer par public void placeTile(String playerName, int indexInHand, Point position, Direction rotation)
+	/**=============================================================================
+	 * Places a tile from the player's hand on the bord.
+	 * The guiven tile must bellong to the player's hand
+	 * The guiven tile is removed from the player's hand
+	 ===============================================================================*/
 	public void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
+// TODO: check if the guiven tile is in the player's hand
 
-		// TODO (fait) retirer la carte de la main du joueur --Julie
-		data.removeTileFromHand(playerName, t.getClone());
-		this.engine.addAction(playerName, this.data, "placeTile", position, t, null);
+		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
 	}
-// TODO Version simple pour tester l'ia 
-	public Tile drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	/**=============================================================================
+	 * Draw a card from the deck.  Put this drawn card in the player's hand
+	 ===============================================================================*/
+	public void drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-// Rajouter d'autres exceptions
-		Tile t = this.data.drawCard();
+// TODO: Rajouter d'autres exceptions (verifier que le deck contient sufisament de cartes, et que le joueur a le droite de piocher autant de cartes)
 
-		// TODO (fait) la tuile tirée est ajoutée à la main du joueur directement --Julie
-		this.data.addTileToHand(playerName, t);
-		
-		return t;
+		this.engine.addAction(playerName, this.data, "drawCard", null, null, null, nbrCards);
 	}
-	
+
 	public void  moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
@@ -266,7 +268,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		// TODO check if maidenTravel has started (for every method)
 
 		
-		this.engine.addAction(playerName, this.data, "moveTram", null, null, tramMovement);
+		this.engine.addAction(playerName, this.data, "moveTram", null, null, tramMovement, -1);
 		// notifyEngine(); TODO ask riyane
 	}
 	
@@ -286,7 +288,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		dataPlayer.startedMaidenTravel = true;
 		dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
 
-		this.engine.addAction(playerName, this.data, "startMaidenTravel", null, null, null);
+		this.engine.addAction(playerName, this.data, "startMaidenTravel", null, null, null, -1);
 		// notifyEngine(); TODO ask riyane
 	}
 

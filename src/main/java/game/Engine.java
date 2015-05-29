@@ -46,7 +46,7 @@ public class Engine implements Runnable
 
 		while(true)
 		{
-			synchronized (engineLock)													// Wait for a new action
+			synchronized (this.engineLock)													// Wait for a new action
 			{
 				while (this.actionList.isEmpty())
 				{
@@ -72,11 +72,11 @@ public class Engine implements Runnable
 	/**===================================================================
 	 * @return add an event to the engine action queue
 	 ====================================================================*/
-	public void addAction(String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement)
+	public void addAction(String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
 	{
 		synchronized (engineLock)
 		{
-			EngineAction ea = new EngineAction(playerName, data, function, position, tile, tramMovement);
+			EngineAction ea = new EngineAction(playerName, data, function, position, tile, tramMovement, nbrCardsToDraw);
 			this.actionList.add(ea);
 			synchronized(this.engineLock)
 			{
@@ -91,20 +91,21 @@ public class Engine implements Runnable
 // Declare all the private methods as synchronized
 // --------------------------------------------
 	@SuppressWarnings("unused")
-	private void onJoinGame() throws RemoteException
+	private synchronized void onJoinGame() throws RemoteException
 	{
 		this.notifyAllPlayers();
 	}
 
 	@SuppressWarnings("unused")
-	private void onQuitGame() throws RemoteException
+	private synchronized void onQuitGame() throws RemoteException
 	{
-// TODO
+// TODO: if game has started: end game
+// TODO: elseremove player from Data
 		this.notifyAllPlayers();
 	}
 	
 	@SuppressWarnings("unused")
-	private void hostStartGame() throws RemoteException
+	private synchronized void hostStartGame() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String	playerName	= this.toExecute.playerName;
@@ -113,18 +114,19 @@ public class Engine implements Runnable
 		this.notifyAllPlayers();
 	}
 	@SuppressWarnings("unused")
-	private void placeTile() throws RemoteException
+	private synchronized void placeTile() throws RemoteException
 	{
+		String	player		= this.toExecute.playerName;
 		Data	data		= this.toExecute.data;
 		Point	position	= this.toExecute.position;
 		Tile	tile		= this.toExecute.tile;
 
-		data.setTile(position.x, position.y, tile);
+		data.placeTile(player, position.x, position.y, tile);
 		data.skipTurn(); // TODO put in validate
 		this.notifyAllPlayers(); // TODO this too
 	}
 
-	public void moveTram() throws RemoteException
+	public synchronized void moveTram() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String playerName = toExecute.playerName;
@@ -148,8 +150,11 @@ public class Engine implements Runnable
 		//		}
 	}
 
-	public void startMaidenTravel()
+	public synchronized void startMaidenTravel()
 	{
+// TODO:
+// PB: copie de la memoire de data.
+// Cette action doit etre faite par data
 		Data	data		= this.toExecute.data;
 		String playerName = toExecute.playerName;
 		Point chosenTerminus = toExecute.startTerminus;
@@ -176,7 +181,7 @@ public class Engine implements Runnable
 	}
 	
 	@SuppressWarnings("unused")
-	private void excludePlayer() throws RemoteException
+	private synchronized void excludePlayer() throws RemoteException
 	{
 		PlayerInterface pi;
 		Data privateData;
@@ -191,8 +196,16 @@ public class Engine implements Runnable
 			}
 		}
 	}
-	
-	private void notifyAllPlayers() throws RemoteException
+	@SuppressWarnings("unused")
+	private void drawCard()
+	{
+		Data	data		= this.toExecute.data;
+		String	playerName	= this.toExecute.playerName;
+		int		nbrCards	= this.toExecute.nbrCardsToDraw;
+
+		data.drawCard(playerName, nbrCards);
+	}
+	private synchronized void notifyAllPlayers() throws RemoteException
 	{
 		PlayerInterface pi;
 		Data data = this.toExecute.data;
@@ -206,28 +219,31 @@ public class Engine implements Runnable
 		}
 	}
 
-	// --------------------------------------------
-	// Private class:
-	// --------------------------------------------
+// --------------------------------------------
+// Private class:
+// --------------------------------------------
 	private class EngineAction
 	{
+		// Attributes
 		public String			playerName;
 		public Data				data;
 		public String			function;
 		public Point			position;
 		public Tile				tile;
-		public LinkedList<Point> tramMovement;
-		public Point startTerminus;
+		public LinkedList<Point>tramMovement;
+		public Point			startTerminus;
+		public int				nbrCardsToDraw;
 
 		// Builder
-		public EngineAction (String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement)
+		public EngineAction (String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
 		{
 			this.playerName		= playerName;
 			this.data			= data;
 			this.function		= function;
 			this.position		= position;
 			this.tile			= tile;
-			this.tramMovement = tramMovement;
+			this.tramMovement	= tramMovement;
+			this.nbrCardsToDraw	= nbrCardsToDraw;
 		}
 	}
 }
