@@ -62,10 +62,8 @@ public class Data implements Serializable
 	public static String				boardDirectory			= "src/main/resources/boards/";
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription";
 	public static final	String			buildingInLineFile		= "src/main/resources/line/buildingInLineDescription_";
-	public static final String			initialHandFile			= "src/main/resources/initialHand/default";
 	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
 	public static final int				maxNbrPlayer			= 6;
-	public static final int				initialHandSize			= 5;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				minSpeed				= 1;
@@ -75,7 +73,6 @@ public class Data implements Serializable
 	public static LinkedList<Color>		existingColors;
 
 	private LinkedList<String[][]>		remainingBuildingInLine;
-	private LinkedList<Tile>			initialHand;
 
 	private String						gameName;
 	private Tile[][]					board;
@@ -107,8 +104,6 @@ public class Data implements Serializable
 		this.maxPlayerSpeed		= minSpeed;
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
 		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
-
-		this.initInitialHand();
 	}
 	private Data(){}
 	public Data getClone(String playerName)
@@ -118,7 +113,6 @@ public class Data implements Serializable
 		Copier<String> 		cpS		= new Copier<String>();
 
 		res.remainingBuildingInLine	= null;
-		res.initialHand				= cpT.copyList(this.initialHand);
 
 		res.gameName				= new String(this.gameName);
 		res.board					= cpT.copyMatrix(this.board);
@@ -183,7 +177,7 @@ public class Data implements Serializable
 
 ////////////////TODO to remove
 	public void skipTurn(){this.round ++;} // goes to the next player's turn
-////////////////TODO 
+////////////////TODO
 // TODO toremove
 	public void setTile(int x, int y, Tile t)
 	{
@@ -535,28 +529,6 @@ public class Data implements Serializable
 		catch (Exception e){throw new RuntimeException("Malformed building in line file");}
 	}
 	/**============================================
-	 * @return Creates the initial hand from the corresponding file
-	 ==============================================*/
-	private void initInitialHand()
-	{
-		File f = new File(initialHandFile);
-		String tileName;
-		Scanner sc;
-
-		this.initialHand = new LinkedList<Tile>();
-		try
-		{
-			sc = new Scanner(f);
-			for (int i=0; i<initialHandSize; i++)
-			{
-				tileName = sc.next();
-				this.initialHand.add(Tile.parseTile(tileName));
-			}
-			sc.close();
-		}
-		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
-	}
-	/**============================================
 	 * @return the position of the building which name are given
 	 ==============================================*/
 	private LinkedList<Point> getBuildingPosition(String[] buildingNameTab)
@@ -657,9 +629,9 @@ public class Data implements Serializable
 		return playerInfoList.get(playerName); 
 	}
 
-	// --------------------------------------------
-	// Player Info class:
-	// --------------------------------------------
+// --------------------------------------------
+// Player Info class:
+// --------------------------------------------
 	public class PlayerInfo implements Serializable
 	{
 		// Attributes
@@ -672,6 +644,7 @@ public class Data implements Serializable
 		public String[]				buildingInLine_name;
 		public LinkedList<Point>	buildingInLine_position;
 		public LinkedList<Point>	terminus;
+//TODO: ulysse Ne plus stocker les action mais les data
 		public ArrayList<LinkedList<Action>>	history; // organized by turns
 
 // TODO: PB de l'init de ces 2 attributes
@@ -690,7 +663,7 @@ public class Data implements Serializable
 			this.player		= pi;
 			this.playerName	= new String(playerName);
 			this.history	= new ArrayList<LinkedList<Action>>();
-			this.hand		= new Hand(initialHand);
+			this.hand		= Hand.initialHand.getClone();
 			this.line		= 1 + getExistingColorIndex(playerColor);
 			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
 			this.color		= new Color(playerColor.getRGB());

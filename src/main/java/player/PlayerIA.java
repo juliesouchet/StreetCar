@@ -49,7 +49,6 @@ public class PlayerIA extends PlayerAbstract implements Runnable
 				break;
 			default :
 				throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
-
 		}
 		
 		super.game.onJoinGame(this, false, iaLevel);						// Log the player to the application

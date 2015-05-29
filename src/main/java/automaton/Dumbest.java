@@ -40,7 +40,7 @@ public class Dumbest extends PlayerAutomaton {
 			j = rand.nextInt(currentconfig.getHeight());
 			
 			// On choisit une tuile parmi les 5 de notre main
-			n = myHand.size();			
+			n = myHand.size();
 			k = rand.nextInt(n);
 			t = myHand.get(k);
 			myHand.add(t);

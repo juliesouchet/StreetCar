@@ -1,7 +1,9 @@
 package main.java.data;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 import main.java.util.CloneableInterface;
 import main.java.util.Copier;
@@ -15,21 +17,24 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	private static final long serialVersionUID = -3100388822802450220L;
+	private static final long	serialVersionUID	= -3100388822802450220L;
+	public static final int		maxHandSize			= 5;
+	public static final int		initialHandSize		= 5;
+	public static final String	initialHandFile		= "src/main/resources/initialHand/default";
+	public static final Hand	initialHand			= initInitialHand();
 
 	private LinkedList<Tile>	tileList;
 
 //--------------------------------------------
 // Builder:
 //--------------------------------------------
-	public Hand(LinkedList<Tile> basicsTiles)
+	public Hand(LinkedList<Tile> basicTiles)
 	{
-		this.tileList = new Copier<Tile>().copyList(basicsTiles);
+		if (basicTiles.size() > maxHandSize)	throw new RuntimeException("Too big hand size");
+
+		this.tileList = new Copier<Tile>().copyList(basicTiles);
 	}
-	public Hand getClone()
-	{
-		return new Hand(this.tileList);
-	}
+	public Hand getClone(){return new Hand(this.tileList);}
 
 //--------------------------------------------
 // Getter:
@@ -59,13 +64,41 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	public void add(Tile t)
 	{
 		int rotation = t.getTileDirection().getVal();
-		for(int i = 0; i < rotation; i++) { // putting it in the original orientation
-			t.turnLeft();
-		}
-		tileList.add(t);		
+
+		if (this.tileList.size() == maxHandSize) throw new RuntimeException("Too big hand size");
+		for(int i = 0; i < rotation; i++)t.turnLeft();
+		tileList.add(t);
 	}
-	public void remove(Tile t) {
-		tileList.remove(t);
+	public void remove(Tile t)
+	{
+		boolean test = tileList.remove(t);
+		if (!test) throw new RuntimeException("Can't find the guiven tile: " + t);
 	}
 
+//--------------------------------------------
+// Private Methodes:
+//--------------------------------------------
+	/**============================================
+	 * @return Creates the initial hand from the corresponding file
+	 ==============================================*/
+	private static Hand initInitialHand()
+	{
+		File f = new File(initialHandFile);
+		String tileName;
+		Scanner sc;
+
+		LinkedList<Tile> initialTileList= new LinkedList<Tile>();
+		try
+		{
+			sc = new Scanner(f);
+			for (int i=0; i<initialHandSize; i++)
+			{
+				tileName = sc.next();
+				initialTileList.add(Tile.parseTile(tileName));
+			}
+			sc.close();
+			return new Hand(initialTileList);
+		}
+		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
+	}
 }
