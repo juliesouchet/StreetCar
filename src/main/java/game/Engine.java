@@ -177,23 +177,15 @@ public class Engine implements Runnable
 		//			}
 		//		}
 	}
-	
 	@SuppressWarnings("unused")
-	private synchronized void pickTileFromBox () throws RemoteException
+	private synchronized void pickTileFromPlayer () throws RemoteException
 	{
 		// TODO
 		this.notifyAllPlayers();
 	}
 	
 	@SuppressWarnings("unused")
-	private synchronized void	pickTileFromPlayer () throws RemoteException
-	{
-		// TODO
-		this.notifyAllPlayers();
-	}
-	
-	@SuppressWarnings("unused")
-	private synchronized void replaceTwoTiles () throws RemoteException
+	private synchronized void placeTwoTiles () throws RemoteException
 	{
 		// TODO
 		this.notifyAllPlayers();

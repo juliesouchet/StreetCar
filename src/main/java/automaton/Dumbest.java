@@ -43,7 +43,7 @@ System.out.println("playerHandSize = " + currentconfig.getHand(name).getSize());
 			n = myHand.getSize();
 			k = rand.nextInt(n);
 			t = myHand.get(k);
-//TODO: nes sert a rien, et est dangereur		myHand.add(t);
+//TODO: faux -- riyane			myHand.add(t);
 			//On la fait tourner
 			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
 				t.turnLeft();

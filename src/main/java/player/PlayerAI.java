@@ -75,7 +75,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		int nbrCards = data.getPlayerRemainingCardsToDraw(playerName);
 		if (nbrCards > 0)
 		{
-			try					{super.drawCard(nbrCards);}
+			try					{super.drawTile(nbrCards);}
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 			return;
 		}

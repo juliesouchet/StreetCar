@@ -255,7 +255,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	/**=============================================================================
 	 * Draw a card from the deck.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void drawCard(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
@@ -289,19 +289,8 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.engine.addAction(ea);
 		// notifyEngine(); TODO ask riyane
 	}
-	
-	public synchronized void pickTileFromBox (String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
-	{
-		if (!this.data.isGameStarted()) throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
-		
-		EngineAction ea = engine.new EngineAction(playerName, data, "pickTileFromBox");
-		
-		this.engine.addAction(ea);
-		// TODO check if player can pick a tile
-	}
-	
-	public synchronized void	pickTileFromPlayer (String playerName, String chosenPlayer, Tile car) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+
+	public synchronized void pickTileFromPlayer (String playerName, String chosenPlayer, Tile car) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted()) throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
@@ -315,12 +304,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		// TODO check if player can pick a tile
 	}
 	
-	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void placeTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted())	throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
 		
-		EngineAction ea = engine.new EngineAction(playerName, data, "replaceTwoTiles");
+		EngineAction ea = engine.new EngineAction(playerName, data, "placeTwoTiles");
 
 		ea.tile = t1;
 		ea.secondTile = t2;
@@ -332,7 +321,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	}
 
 	
-	public synchronized void	startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
