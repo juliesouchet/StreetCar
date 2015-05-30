@@ -180,7 +180,7 @@ public class Data implements Serializable
 	public void skipTurn()
 	{
 		this.round ++;
-		String playerName = this.playerOrder[this.round];
+		String playerName = this.getPlayerTurn();
 		this.playerInfoList.get(playerName).newRound();
 	}
 	
@@ -233,6 +233,7 @@ public class Data implements Serializable
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
 	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
@@ -240,7 +241,7 @@ public class Data implements Serializable
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
 	public Hand					getHand(String playerName)						{return this.playerInfoList.get(playerName).hand.getClone();}
-	public int					getPlayerRemainingCardsToDraw(String playerName){return (this.playerInfoList.get(playerName).hand.getSize() - Hand.maxHandSize);}
+	public int					getPlayerRemainingCardsToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean				playerHasRemainingAction(String playerName)
 	{
@@ -259,8 +260,7 @@ public class Data implements Serializable
 	public boolean isPlayerTurn(String playerName)
 	{
 		if (this.playerOrder == null) return false;
-		int turn = this.round%this.playerOrder.length;
-		return playerName.equals(playerOrder[turn]);
+		return (this.getPlayerTurn().equals(playerName));
 	}
 	public PlayerInterface		getPlayer(String playerName)
 	{

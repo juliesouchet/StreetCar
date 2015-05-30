@@ -68,27 +68,28 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
 
-		if (!data.playerHasRemainingAction(playerName))
+System.out.println("--------------------------------");
+System.out.println("Round: " + data.getRound());
+		if (data.playerHasRemainingAction(playerName))
 		{
 			Action a = this.automaton.makeChoice(data);
-System.out.print(playerName +": Pose tuile "+ a.tile1.toString()+" a la position: ("+a.positionTile1.x+","+a.positionTile1.y+")" + "\t|\t");
+System.out.println("\t- " + playerName +": Pose tuile "+ a.tile1.toString()+" a la position: ("+a.positionTile1.x+","+a.positionTile1.y+")");
 			try					{this.game.placeTile(playerName, a.tile1, a.positionTile1);}
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 			return;
 		}
-System.out.println(playerName + "   11111: ");
 
 		int nbrCards = data.getPlayerRemainingCardsToDraw(playerName);
 		if (nbrCards > 0)
 		{
-System.out.print(playerName +": Pioche: " + nbrCards + "\t|\t\t\t");
+System.out.println("\t- " + playerName +": Pioche: " + nbrCards);
 			try					{this.game.drawCard(playerName, nbrCards);}
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 			return;
 		}
 		else
 		{
-System.out.print(playerName +": Validate\t\t|\t\t\t");
+System.out.println("\t- " + playerName +": Validate");
 			try					{this.game.validate(playerName);}
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 		}

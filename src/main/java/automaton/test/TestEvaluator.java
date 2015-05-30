@@ -10,6 +10,7 @@ import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.Game;
 import main.java.player.PlayerAI;
+import test.java.player.TestDumbestIHM;
 
 public class TestEvaluator {
 	
@@ -23,11 +24,11 @@ public class TestEvaluator {
 		} catch (RemoteException | ExceptionUnknownBoardName | RuntimeException e) {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
-		
-		
+
+		TestDumbestIHM ihm = new TestDumbestIHM();
 		try {
-			player1 = new PlayerAI("Player 1", true, Color.red, game, 1, null);
-			player2 = new PlayerAI("Player 2", false, Color.blue, game, 1, null);
+			player1 = new PlayerAI("Player 1", true, Color.red, game, 1, ihm);
+			player2 = new PlayerAI("Player 2", false, Color.blue, game, 1, ihm);
 		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName
 				| ExceptionUsedPlayerColor e) {
 			System.out.println("Player creation error"); e.printStackTrace();
