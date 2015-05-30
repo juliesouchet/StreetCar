@@ -727,4 +727,7 @@ public class Data implements Serializable
 	{
 		playerInfoList.get(playerName).endTerminus = new Copier<Point>().copyList(dest);
 	}
+	public boolean isPlayerTerminus(String playerName, Point terminus) {
+		return playerInfoList.get(playerName).terminus.contains(terminus);
+	}
 }

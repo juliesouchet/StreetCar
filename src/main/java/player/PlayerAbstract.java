@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.LoginInfo;
@@ -108,4 +109,30 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		game.onExcludePlayer(playerName, playerExcluded);
 	}
+	
+	public void moveTram(LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	{
+		game.moveTram(playerName, tramMovement);
+	}
+	
+	public void pickTileFromBox() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		game.pickTileFromBox(playerName);
+	}
+	
+	public void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		game.pickTileFromPlayer(chosenPlayer, chosenPlayer, tile);
+	}
+	
+	public void replaceTwoTiles(Tile t1, Tile t2, Point p1, Point p2)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		game.replaceTwoTiles(playerName, t1, t2, p1, p2);
+	}
+	
+	public void	startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	{
+		game.startMaidenTravel(playerName, terminus);
+	}
+
 }

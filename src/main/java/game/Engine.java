@@ -76,9 +76,13 @@ public class Engine implements Runnable
 	 ====================================================================*/
 	public void addAction(String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
 	{
+		addAction(new EngineAction(playerName, data, function, position, tile, tramMovement, nbrCardsToDraw));
+	}
+	
+	public void addAction(EngineAction ea)
+	{
 		synchronized (engineLock)
 		{
-			EngineAction ea = new EngineAction(playerName, data, function, position, tile, tramMovement, nbrCardsToDraw);
 			this.actionList.add(ea);
 			synchronized(this.engineLock)
 			{
@@ -144,7 +148,9 @@ System.out.println("drawCard: Player: " + this.toExecute.playerName);
 		data.drawCard(playerName, nbrCards);
 		this.notifyAllPlayers();
 	}
-	public synchronized void moveTram() throws RemoteException
+	
+	@SuppressWarnings("unused")
+	private synchronized void moveTram() throws RemoteException
 	{
 		Data	data		= this.toExecute.data;
 		String playerName = toExecute.playerName;
@@ -169,15 +175,37 @@ System.out.println("drawCard: Player: " + this.toExecute.playerName);
 		//			}
 		//		}
 	}
+	
+	@SuppressWarnings("unused")
+	private synchronized void pickTileFromBox () throws RemoteException
+	{
+		// TODO
+		this.notifyAllPlayers();
+	}
+	
+	@SuppressWarnings("unused")
+	private synchronized void	pickTileFromPlayer () throws RemoteException
+	{
+		// TODO
+		this.notifyAllPlayers();
+	}
+	
+	@SuppressWarnings("unused")
+	private synchronized void replaceTwoTiles () throws RemoteException
+	{
+		// TODO
+		this.notifyAllPlayers();
+	}
 
-	public synchronized void startMaidenTravel()
+	@SuppressWarnings("unused")
+	private synchronized void startMaidenTravel()
 	{
 // TODO:
 // PB: copie de la memoire de data.
 // Cette action doit etre faite par data
 		Data	data		= this.toExecute.data;
 		String playerName = toExecute.playerName;
-		Point chosenTerminus = toExecute.startTerminus;
+		Point chosenTerminus = toExecute.position;
 		//PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
 
 		data.startMaidenTravel(playerName);
@@ -224,6 +252,7 @@ System.out.println("drawCard: Player: " + this.toExecute.playerName);
 			}
 		}
 	}
+	
 	private synchronized void notifyAllPlayers() throws RemoteException
 	{
 		PlayerInterface pi;
@@ -241,17 +270,19 @@ System.out.println("drawCard: Player: " + this.toExecute.playerName);
 // --------------------------------------------
 // Private class:
 // --------------------------------------------
-	private class EngineAction
+	class EngineAction
 	{
 		// Attributes
 		public String			playerName;
 		public Data				data;
 		public String			function;
 		public Point			position;
+		public Point			secondPosition;
 		public Tile				tile;
+		public Tile				secondTile;
 		public LinkedList<Point>tramMovement;
-		public Point			startTerminus;
-		public int				nbrCardsToDraw;
+		public int				nbrCardsToDraw; // TODO val discuss this with riyane
+		public String 			chosenPlayer;
 
 		// Builder
 		public EngineAction (String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
@@ -263,6 +294,11 @@ System.out.println("drawCard: Player: " + this.toExecute.playerName);
 			this.tile			= tile;
 			this.tramMovement	= tramMovement;
 			this.nbrCardsToDraw	= nbrCardsToDraw;
+		}
+		
+		public EngineAction(String playerName, Data data, String Function)
+		{
+			this(playerName, data, Function, null, null, null, -1);
 		}
 	}
 }
