@@ -122,30 +122,31 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void placeTile() throws RemoteException
 	{
-System.out.println("placeTile: " + this.toExecute.playerName + "; Point: " + this.toExecute.position + "; tile: " + this.toExecute.tile);
 		String	player		= this.toExecute.playerName;
 		Data	data		= this.toExecute.data;
 		Point	position	= this.toExecute.position;
 		Tile	tile		= this.toExecute.tile;
 
 		data.placeTile(player, position.x, position.y, tile);
-		this.notifyAllPlayers(); // TODO this too
+// TODO replace by notifyPlayer()
+		this.notifyAllPlayers();
 	}
 	@SuppressWarnings("unused")
-	private synchronized void validate()
+	private synchronized void validate() throws RemoteException
 	{
-System.out.println("validate: " + this.toExecute.playerName );
 		this.toExecute.data.skipTurn();
+		this.notifyAllPlayers();
+
 	}
 	@SuppressWarnings("unused")
 	private synchronized void drawCard() throws RemoteException
 	{
-System.out.println("drawCard: Player: " + this.toExecute.playerName);
 		Data	data		= this.toExecute.data;
 		String	playerName	= this.toExecute.playerName;
 		int		nbrCards	= this.toExecute.nbrCardsToDraw;
 
 		data.drawCard(playerName, nbrCards);
+// TODO replace by notifyPlayer()
 		this.notifyAllPlayers();
 	}
 	
@@ -157,6 +158,7 @@ System.out.println("drawCard: Player: " + this.toExecute.playerName);
 		LinkedList<Point> tramMovement = toExecute.tramMovement;
 		data.setTramPosition(playerName, tramMovement.getLast());
 
+// TODO replace by notifyPlayer()
 		this.notifyAllPlayers();
 		if(data.getTerminiPoints(playerName).contains(data.getTramPosition(playerName)))
 		{
@@ -252,19 +254,24 @@ System.out.println("drawCard: Player: " + this.toExecute.playerName);
 			}
 		}
 	}
+
 	
-	private synchronized void notifyAllPlayers() throws RemoteException
+	private synchronized void notifyPlayer(String playerName) throws RemoteException
+
 	{
 		PlayerInterface pi;
 		Data data = this.toExecute.data;
 		Data privateData;
 
-		for (String name: data.getPlayerNameList())
-		{
-			pi			= data.getPlayer(name);
-			privateData	= data.getClone(name);
-			pi.gameHasChanged(privateData);
-		}
+		pi			= data.getPlayer(playerName);
+		privateData	= data.getClone(playerName);
+		pi.gameHasChanged(privateData);
+	}
+	
+	private synchronized void notifyAllPlayers() throws RemoteException
+	{
+		Data data = this.toExecute.data;
+		for (String name: data.getPlayerNameList()) this.notifyPlayer(name);
 	}
 
 // --------------------------------------------

@@ -73,11 +73,11 @@ public class PlayerIHM extends PlayerAbstract
 // Public methods: may be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public void gameHasChanged(Data data) throws RemoteException
+	public synchronized void gameHasChanged(Data data) throws RemoteException
 	{
 		super.gameHasChanged(data);
 	}
-	public void excludePlayer() throws RemoteException
+	public synchronized void excludePlayer() throws RemoteException
 	{
 		if (super.ihm != null)	super.ihm.excludePlayer();
 	}

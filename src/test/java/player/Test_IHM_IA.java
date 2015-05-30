@@ -27,7 +27,7 @@ public class Test_IHM_IA implements InterfaceIHM
 // --------------------------------------------
 	public Test_IHM_IA()
 	{
-		String iaName = "IA_DUMB_" + ((new Random()).nextInt());
+		String iaName = "IA_DUMB_" + ((new Random()).nextInt(7));
 		PlayerIHM playerIHM = null;
 		GameInterface game;
 
@@ -56,10 +56,6 @@ public class Test_IHM_IA implements InterfaceIHM
 // --------------------------------------------
 	public void refresh(Data data)
 	{
-		System.out.println("------------------------------------");
-		System.out.println("Refresh");
-		System.out.println("\t Host\t: "	+ data.getHost());
-		System.out.println("\t Round\t: "	+ data.getRound());
 		if (this.frame != null) this.frame.setGameData(data);
 	}
 	public void excludePlayer()

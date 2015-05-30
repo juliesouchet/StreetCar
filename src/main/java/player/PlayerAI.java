@@ -40,17 +40,13 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	public PlayerAI(String playerName, boolean isHost, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super(playerName, playerColor, app, ihm);
-		switch (iaLevel) {
-			case 1 :
-				this.automaton	= new Dumbest(playerName);
-				break;
-			case 2 :
-				this.automaton = new Traveler(playerName);
-				break;
-			default :
-				throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
+		switch (iaLevel)
+		{
+			case 1	:this.automaton	= new Dumbest(playerName);	break;
+			case 2	:this.automaton = new Traveler(playerName);	break;
+			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
-		
+
 		super.game.onJoinGame(this, isHost, iaLevel);						// Log the player to the application
 	}
 
@@ -68,32 +64,28 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
 
-		if (!data.playerHasRemainingAction(playerName))
+		if (data.playerHasRemainingAction(playerName))
 		{
-			Action a = this.automaton.makeChoice(data);
-System.out.print(playerName +": Pose tuile "+ a.tile1.toString()+" a la position: ("+a.positionTile1.x+","+a.positionTile1.y+")" + "\t|\t");
-			try					{this.game.placeTile(playerName, a.tile1, a.positionTile1);}
+			Action a = this.automaton.makeChoice(data.getClone(playerName));
+			try					{super.placeTile(a.tile1, a.positionTile1);}
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 			return;
 		}
-System.out.println(playerName + "   11111: ");
 
 		int nbrCards = data.getPlayerRemainingCardsToDraw(playerName);
 		if (nbrCards > 0)
 		{
-System.out.print(playerName +": Pioche: " + nbrCards + "\t|\t\t\t");
-			try					{this.game.drawCard(playerName, nbrCards);}
+			try					{super.drawCard(nbrCards);}
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 			return;
 		}
 		else
 		{
-System.out.print(playerName +": Validate\t\t|\t\t\t");
-			try					{this.game.validate(playerName);}
+			try					{super.validate();}
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 		}
 	}
-	public void excludePlayer() throws RemoteException
+	public synchronized void excludePlayer() throws RemoteException
 	{
 		if (super.ihm != null)	super.ihm.excludePlayer();
 	}

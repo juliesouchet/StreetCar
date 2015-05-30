@@ -32,6 +32,7 @@ public class Dumbest extends PlayerAutomaton {
 		Random rand = new Random();
 		Tile t;
 		int i, j, k, n;
+System.out.println("playerHandSize = " + currentconfig.getHand(name).getSize());
 
 		do{
 			// On choisit un emplacement au hasard
@@ -42,7 +43,7 @@ public class Dumbest extends PlayerAutomaton {
 			n = myHand.getSize();
 			k = rand.nextInt(n);
 			t = myHand.get(k);
-			myHand.add(t);
+//TODO: nes sert a rien, et est dangereur		myHand.add(t);
 			//On la fait tourner
 			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
 				t.turnLeft();

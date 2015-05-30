@@ -125,7 +125,6 @@ public class Data implements Serializable
 		return res;
 	}
 
-
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
@@ -180,13 +179,9 @@ public class Data implements Serializable
 	public void skipTurn()
 	{
 		this.round ++;
-		String playerName = this.playerOrder[this.round];
+		String playerName = this.getPlayerTurn();
 		this.playerInfoList.get(playerName).newRound();
 	}
-	
-	
-	
-	
 ////////////////TODO
 // TODO toremove
 	public void setTile(int x, int y, Tile t)
@@ -194,6 +189,10 @@ public class Data implements Serializable
 		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
 		this.board[x][y] = t;
 	}
+	/**===================================================
+	 * Places the given tile on the board.  If the board had an non empty tile, the old tile is put in the player's hand.
+	 * The tile is removed from the player's hand.
+	 =====================================================*/
 	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
@@ -207,6 +206,9 @@ public class Data implements Serializable
 		LinkedList<Action> history = pi.getLastActionHistory();
 		history.addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
 	}
+	/**===================================================
+	 * Draw a tile from the deck.  This tile is put in the player's hand
+	 =====================================================*/
 	public void drawCard(String playerName, int nbrCards)
 	{
 		Hand hand = this.playerInfoList.get(playerName).hand;
@@ -233,6 +235,7 @@ public class Data implements Serializable
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
 	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
@@ -240,7 +243,7 @@ public class Data implements Serializable
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
 	public Hand					getHand(String playerName)						{return this.playerInfoList.get(playerName).hand.getClone();}
-	public int					getPlayerRemainingCardsToDraw(String playerName){return (this.playerInfoList.get(playerName).hand.getSize() - Hand.maxHandSize);}
+	public int					getPlayerRemainingCardsToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean				playerHasRemainingAction(String playerName)
 	{
@@ -259,8 +262,7 @@ public class Data implements Serializable
 	public boolean isPlayerTurn(String playerName)
 	{
 		if (this.playerOrder == null) return false;
-		int turn = this.round%this.playerOrder.length;
-		return playerName.equals(playerOrder[turn]);
+		return (this.getPlayerTurn().equals(playerName));
 	}
 	public PlayerInterface		getPlayer(String playerName)
 	{

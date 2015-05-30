@@ -71,41 +71,47 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public Data		getGameData()							{return (this.data == null) ? null : this.data.getClone(playerName);}
-	public LoginInfo[]getLoginInfo() throws RemoteException	{return this.game.getLoginInfo(playerName);}
-	public void setLoginInfo(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
+	public synchronized Data		getGameData()							{return (this.data == null) ? null : this.data.getClone(playerName);}
+	public synchronized LoginInfo[]	getLoginInfo() throws RemoteException	{return this.game.getLoginInfo(playerName);}
+	public synchronized void setLoginInfo(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
 	{
 		this.game.setLoginInfo(playerName, playerToChangeIndex, newPlayerInfo);
 	}
 
-	public String 	getPlayerName()	throws RemoteException	{return this.playerName;}
-	public Color	getPlayerColor()throws RemoteException	{return this.color;}
-	public void		gameHasChanged(Data data) throws RemoteException
+	public synchronized String 	getPlayerName()	throws RemoteException	{return this.playerName;}
+	public synchronized Color	getPlayerColor()throws RemoteException	{return this.color;}
+	public synchronized void	gameHasChanged(Data data) throws RemoteException
 	{
 		this.data = data;
 		if (this.ihm != null) this.ihm.refresh(data);
 	}
-	public void	hostStartGame()	throws RemoteException, ExceptionForbiddenAction
+	public synchronized void hostStartGame()	throws RemoteException, ExceptionForbiddenAction
 	{
 		this.game.hostStartGame(playerName);
 	}
-	public void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	public synchronized void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
+System.out.println("--------------------------------");
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
 		this.game.placeTile(playerName, t, position);
 	}
-	public void	drawCard (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void drawCard (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
+System.out.println("--------------------------------");
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards);
 		this.game.drawCard(playerName, nbrCards);
 	}
-	public void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
+System.out.println("--------------------------------");
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate");
 		this.game.validate(playerName);
 	}
-	public void onQuitGame (String playerName) throws RemoteException, ExceptionForbiddenAction
+	public synchronized void onQuitGame (String playerName) throws RemoteException, ExceptionForbiddenAction
 	{
 		game.onQuitGame(playerName);
 	}
-	public void onExcludePlayer	(String playerExcluded) throws RemoteException, ExceptionForbiddenAction
+	public synchronized void onExcludePlayer	(String playerExcluded) throws RemoteException, ExceptionForbiddenAction
 	{
 		game.onExcludePlayer(playerName, playerExcluded);
 	}
