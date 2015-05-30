@@ -131,6 +131,14 @@ public class Engine implements Runnable
 // TODO replace by notifyPlayer()
 		this.notifyAllPlayers();
 	}
+
+	@SuppressWarnings("unused")
+	private synchronized void replaceTwoTiles () throws RemoteException
+	{
+		// TODO
+		this.notifyAllPlayers();
+	}
+
 	@SuppressWarnings("unused")
 	private synchronized void validate() throws RemoteException
 	{
@@ -184,13 +192,6 @@ public class Engine implements Runnable
 		this.notifyAllPlayers();
 	}
 	
-	@SuppressWarnings("unused")
-	private synchronized void placeTwoTiles () throws RemoteException
-	{
-		// TODO
-		this.notifyAllPlayers();
-	}
-
 	@SuppressWarnings("unused")
 	private synchronized void startMaidenTravel()
 	{

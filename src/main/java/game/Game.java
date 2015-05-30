@@ -303,13 +303,13 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.engine.addAction(ea);
 		// TODO check if player can pick a tile
 	}
-	
-	public synchronized void placeTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+
+	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted())	throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
 		
-		EngineAction ea = engine.new EngineAction(playerName, data, "placeTwoTiles");
+		EngineAction ea = engine.new EngineAction(playerName, data, "replaceTwoTiles");
 
 		ea.tile = t1;
 		ea.secondTile = t2;

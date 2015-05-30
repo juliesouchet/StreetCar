@@ -36,7 +36,7 @@ public interface PlayerInterface extends Remote
 	public void		excludePlayer		()											throws RemoteException;
 	public void		gameHasChanged		(Data data)									throws RemoteException;
 	public void		placeTile			(Tile t, Point position)					throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction;
-	public void		placeTwoTiles		(Tile t1, Tile t2, Point p1, Point p2)		throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
+	public void		replaceTwoTiles		(Tile t1, Tile t2, Point p1, Point p2)		throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 	public void		validate			()											throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 	public void		startMaidenTravel	(String playerName, Point terminus)			throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		moveTram			(LinkedList<Point> tramMovement)			throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
