@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
+import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionGameHasNotStarted;
@@ -40,7 +41,7 @@ public interface PlayerInterface extends Remote
 	public void		validate			()											throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 	public void		startMaidenTravel	(String playerName, Point terminus)			throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		moveTram			(LinkedList<Point> tramMovement)			throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
-	public void		drawTile			(int nbrCards)								throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
+	public void		drawTile			(int nbrCards)								throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck;
 	public void		pickTileFromPlayer	(String chosenPlayer, Tile tile)			throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
 /*	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;

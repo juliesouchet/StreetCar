@@ -255,13 +255,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	/**=============================================================================
 	 * Draw a card from the deck.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-// TODO: Rajouter d'autres exceptions (verifier que le deck contient sufisament de cartes, et que le joueur a le droite de piocher autant de cartes)
+		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnougthTileInDeck();
+// TODO: Rajouter d'autres exceptions (verifier que le joueur a le droite de piocher autant de cartes)
 
-		this.engine.addAction(playerName, this.data, "drawCard", null, null, null, nbrCards);
+		this.engine.addAction(playerName, this.data, "drawTile", null, null, null, nbrCards);
 	}
 
 	public synchronized void  moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted

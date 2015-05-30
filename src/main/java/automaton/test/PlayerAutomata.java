@@ -175,12 +175,15 @@ public class PlayerAutomata implements InterfaceIHM
 				if(!win) System.out.println("Chemin non complété");
 				
 				System.out.println(" TOUR " + (i+1));
+// TODO: --Riyane:
+// g pas voulu coriger l'erreur
+// c une modif pour ne plus faire de new dans votre automate (je c que c pas claire, on en reparle)
 				System.out.println("Main :" + player.getGameData().getHand(name));
 				System.out.println();
 				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
 				try {
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
-					player.drawCard(1);
+					player.drawTile(1);
 				} catch (RemoteException | ExceptionGameHasNotStarted
 						| ExceptionNotYourTurn | ExceptionForbiddenAction e) {
 					// TODO Auto-generated catch block

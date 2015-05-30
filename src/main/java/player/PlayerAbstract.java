@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
+import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionFullParty;
@@ -95,7 +96,7 @@ System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
 		this.game.placeTile(playerName, t, position);
 	}
-	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck
 	{
 System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards);

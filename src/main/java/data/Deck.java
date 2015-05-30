@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.Random;
 
 import main.java.util.CloneableInterface;
-import main.java.util.Copier;
 
 
 
@@ -16,7 +15,7 @@ import main.java.util.Copier;
 
 
 
-public class Deck implements Serializable, CloneableInterface<Deck>
+public class Deck implements Serializable
 {
 // --------------------------------------------
 // Attributes:
@@ -25,6 +24,7 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 	public static final String	stackDirectory		= "src/main/resources/images/tiles/";
 
 	private ArrayList<StackCell>	stack;		// Sorted list using the attribute remaining in a descending order
+	private int						stackSize;
 
 // --------------------------------------------
 // Builder:
@@ -43,19 +43,22 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 		}
 		Collections.sort(this.stack, new StackCell());
 		Collections.reverse(stack);
+		this.stackSize = this.computeRemainingDeckSize();
 	}
 	private Deck(boolean b){}
-	public Deck getClone()
+	public Deck getPlayerClone()
 	{
-		Deck res = new Deck(false);
-		Copier<StackCell> cp = new Copier<StackCell>();
-		res.stack = cp.copyList(this.stack);
+		Deck res		= new Deck(false);
+		res.stack		= null;
+		res.stackSize	= this.stackSize;
 		return res;
 	}
 
 // --------------------------------------------
 // Setters/getters: pickup 
 // --------------------------------------------
+	public boolean	isEmpty()					{return (this.getNbrRemainingDeckTile() == 0);}
+	public int		getNbrRemainingDeckTile()	{return (this.stackSize);}
 	/**=====================================================
 	 * @return Pick up an element from the stack using
 	 * a uniformly distributed probability distribution
@@ -64,14 +67,14 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 	 =======================================================*/
 	public Tile drawTile()
 	{
+		int size	= this.getNbrRemainingDeckTile();
+		if (size == 0)	throw new RuntimeException("Empty stack");
+
 		StackCell sc = null, sc1;
 		Tile res = null;
-		int size	= this.getRemainingStackSize();
 		int nbTileTypes = stack.size();
 		int rnd		= (new Random()).nextInt(size);
 		int s=0, i=0;
-
-		if (size == 0)	throw new RuntimeException("Empty stack");
 
 		while(s <= size && i < nbTileTypes)											// Pick a random element from the stack
 		{
@@ -90,17 +93,8 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 			else break;
 			sc = sc1;
 		}
+		this.stackSize --;
 		return res.getClone();
-	}
-	/**=====================================================
-	 * @return the remaining size of the stack
-	 =======================================================*/
-	public int getRemainingStackSize()
-	{
-		int res = 0;
-
-		for (StackCell sc: stack)	res += sc.remaining;
-		return res;
 	}
 	/**=====================================================
 	 * @return the number of remaining tiles that match the given tile
@@ -120,7 +114,7 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 		StackCell sc = this.pickStackCell(t);
 
 		if (sc == null)	throw new RuntimeException("Unknown tile: " + t.getTileID());
-		return (double)((double)sc.remaining / (double)getRemainingStackSize());
+		return (double)((double)sc.remaining / (double)this.stackSize);
 	}
 
 // --------------------------------------------
@@ -130,6 +124,16 @@ public class Deck implements Serializable, CloneableInterface<Deck>
 	{
 		for (StackCell sc: stack) if (sc.t.getTileID().equals(t.getTileID())) return sc;
 		return null;
+	}
+	/**=====================================================
+	 * @return the remaining size of the stack
+	 =======================================================*/
+	private int computeRemainingDeckSize()
+	{
+		int res = 0;
+
+		for (StackCell sc: stack)	res += sc.remaining;
+		return res;
 	}
 
 // --------------------------------------------

@@ -115,8 +115,8 @@ public class Data implements Serializable
 
 		res.gameName				= new String(this.gameName);
 		res.board					= cpT.copyMatrix(this.board);
-		res.deck					= null;
-		res.playerInfoList			= getPlayerCopyOfPlayerInfoList(playerName);
+		res.deck					= this.deck.getPlayerClone();
+		res.playerInfoList			= getCopyOfPlayerInfoList(playerName);
 		res.round					= this.round;
 		res.maxPlayerSpeed			= this.maxPlayerSpeed;
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
@@ -209,7 +209,7 @@ public class Data implements Serializable
 	/**===================================================
 	 * Draw a tile from the deck.  This tile is put in the player's hand
 	 =====================================================*/
-	public void drawCard(String playerName, int nbrCards)
+	public void drawTile(String playerName, int nbrCards)
 	{
 		Hand hand = this.playerInfoList.get(playerName).hand;
 		Tile t;
@@ -238,11 +238,14 @@ public class Data implements Serializable
 	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
+	public boolean				isEmptyDeck()									{return this.deck.isEmpty();}
+	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
 	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
-	public Hand					getHand(String playerName)						{return this.playerInfoList.get(playerName).hand.getClone();}
+	public int					getHandSize(String playerName)					{return this.playerInfoList.get(playerName).hand.getSize();}
+	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex);}
 	public int					getPlayerRemainingCardsToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean				playerHasRemainingAction(String playerName)
@@ -620,7 +623,7 @@ public class Data implements Serializable
 	 * If the player is player who asks: all the informations are return
 	 * else: only the shared information are shown.  If this player has started his maiden travel, his aim is shown too
 	 ========================================================================*/
-	private HashMap<String, PlayerInfo> getPlayerCopyOfPlayerInfoList(String playerName)
+	private HashMap<String, PlayerInfo> getCopyOfPlayerInfoList(String playerName)
 	{
 		HashMap<String, PlayerInfo> res = new HashMap<String, PlayerInfo>();
 		PlayerInfo pi, piRes;

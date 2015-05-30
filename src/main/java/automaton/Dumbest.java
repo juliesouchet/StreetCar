@@ -4,7 +4,6 @@ import java.util.Random;
 
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Hand;
 import main.java.data.Tile;
 
 /**
@@ -27,12 +26,13 @@ public class Dumbest extends PlayerAutomaton {
 	
 
 	public Action makeChoice(Data currentconfig) {
-		Hand myHand = currentconfig.getHand(name);
+//TODO: -- riyane modif de Data			Hand myHand = currentConfig.getHand(name);
+// sert a ne plus faire de new dans les fonctions de data qui sont appelles par l'automate)
+		int handSize = currentconfig.getHandSize(name);
 		Action choix ;
 		Random rand = new Random();
 		Tile t;
-		int i, j, k, n;
-System.out.println("playerHandSize = " + currentconfig.getHand(name).getSize());
+		int i, j, k;
 
 		do{
 			// On choisit un emplacement au hasard
@@ -40,9 +40,8 @@ System.out.println("playerHandSize = " + currentconfig.getHand(name).getSize());
 			j = rand.nextInt(currentconfig.getHeight());
 			
 			// On choisit une tuile parmi les 5 de notre main
-			n = myHand.getSize();
-			k = rand.nextInt(n);
-			t = myHand.get(k);
+			k = rand.nextInt(handSize);
+			t = currentconfig.getHandTile(name, k);
 //TODO: faux -- riyane			myHand.add(t);
 			//On la fait tourner
 			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {

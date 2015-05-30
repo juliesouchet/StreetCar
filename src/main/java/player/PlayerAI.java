@@ -9,6 +9,7 @@ import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -68,21 +69,25 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			Action a = this.automaton.makeChoice(data.getClone(playerName));
 			try					{super.placeTile(a.tile1, a.positionTile1);}
-			catch (Exception e) {e.printStackTrace(); System.exit(0);}
+			catch (Exception e) {e.printStackTrace(); return;}
 			return;
 		}
 
 		int nbrCards = data.getPlayerRemainingCardsToDraw(playerName);
 		if (nbrCards > 0)
 		{
-			try					{super.drawTile(nbrCards);}
-			catch (Exception e) {e.printStackTrace(); System.exit(0);}
+			try
+			{
+				if (!data.isEnougthTileInDeck(nbrCards)) throw new ExceptionNotEnougthTileInDeck();
+				super.drawTile(nbrCards);
+			}
+			catch (Exception e) {e.printStackTrace(); return;}
 			return;
 		}
 		else
 		{
 			try					{super.validate();}
-			catch (Exception e) {e.printStackTrace(); System.exit(0);}
+			catch (Exception e) {e.printStackTrace(); return;}
 		}
 	}
 	public synchronized void excludePlayer() throws RemoteException

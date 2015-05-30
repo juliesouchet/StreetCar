@@ -7,7 +7,6 @@ import java.util.Random;
 
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Hand;
 import main.java.data.Tile;
 
 /**
@@ -36,17 +35,19 @@ public class Traveler extends PlayerAutomaton {
 		 =============*/
 		if(!currentConfig.isTrackCompleted(getName())) {
 			// Random tile and position choice for construction (extracted from Dumbest)
-			Hand hand = currentConfig.getHand(name);
+//TODO: -- riyane modif de Data			Hand hand = currentConfig.getHand(name);
+// sert a ne plus faire de new dans les fonctions de data qui sont appelles par l'automate)
+			int handSize = currentConfig.getHandSize(name);
 			do{
 				// random position choice
 				i = r.nextInt(currentConfig.getWidth());
 				j = r.nextInt(currentConfig.getHeight());
 				
 				// random tile choice in the player's hand
-				k = r.nextInt(hand.getSize());
-				t = hand.get(k);
-				hand.add(t);
-				
+				k = r.nextInt(handSize);
+				t = currentConfig.getHandTile(name, k);
+// TODO Riyane: faux				hand.add(t);
+
 				// random rotation
 				for(int rotation = 0; rotation < r.nextInt(4); rotation++) {
 					t.turnLeft();
