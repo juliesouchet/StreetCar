@@ -125,7 +125,6 @@ public class Data implements Serializable
 		return res;
 	}
 
-
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
@@ -183,10 +182,6 @@ public class Data implements Serializable
 		String playerName = this.getPlayerTurn();
 		this.playerInfoList.get(playerName).newRound();
 	}
-	
-	
-	
-	
 ////////////////TODO
 // TODO toremove
 	public void setTile(int x, int y, Tile t)
@@ -194,6 +189,10 @@ public class Data implements Serializable
 		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
 		this.board[x][y] = t;
 	}
+	/**===================================================
+	 * Places the given tile on the board.  If the board had an non empty tile, the old tile is put in the player's hand.
+	 * The tile is removed from the player's hand.
+	 =====================================================*/
 	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
@@ -207,6 +206,9 @@ public class Data implements Serializable
 		LinkedList<Action> history = pi.getLastActionHistory();
 		history.addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
 	}
+	/**===================================================
+	 * Draw a tile from the deck.  This tile is put in the player's hand
+	 =====================================================*/
 	public void drawCard(String playerName, int nbrCards)
 	{
 		Hand hand = this.playerInfoList.get(playerName).hand;

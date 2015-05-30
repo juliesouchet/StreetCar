@@ -39,16 +39,8 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 //--------------------------------------------
 // Getter:
 //--------------------------------------------
-	public int getSize()	{return this.tileList.size();}
-
-	public Tile get(int k)
-	{
-		Tile res = this.tileList.get(k);
-
-		this.tileList.remove(k);
-		return res;
-	}
-	
+	public int	getSize()	{return this.tileList.size();}
+	public Tile	get(int k)	{return this.tileList.get(k);}
 	public String toString()
 	{
 		String res = "";
@@ -65,7 +57,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	{
 		int rotation = t.getTileDirection().getVal();
 
-		if (this.tileList.size() == maxHandSize) throw new RuntimeException("Too big hand size");
+		if (this.tileList.size() >= maxHandSize) throw new RuntimeException("Too big hand size");
 		for(int i = 0; i < rotation; i++)t.turnLeft();
 		tileList.add(t);
 	}
