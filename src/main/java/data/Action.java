@@ -35,17 +35,21 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 	public static Action newStartTripNextTurnAction()
 	{
-		return new Action();
+		Action res	= new Action();
+		res.action	= START_TRIP_NEXT_TURN;
+		return res;
 	}
 	public static Action newMoveAction(LinkedList<Point> tramwayMovement)
 	{
 		Action res			= new Action();
+		res.action			= MOVE;
 		res.tramwayMovement	= new LinkedList<Point>(tramwayMovement);
 		return res;
 	}
 	public static Action newBuildSimpleAction(Point position, Tile tile)
 	{
 		Action res			= new Action();
+		res.action			= BUILD_SIMPLE;
 		res.positionTile1	= new Point(position);
 		res.tile1			= tile.getClone();
 		return res;
@@ -53,6 +57,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public static Action newBuildSimpleAction(int x, int y, Tile tile)
 	{
 		Action res			= new Action();
+		res.action			= BUILD_SIMPLE;
 		res.positionTile1	= new Point(x,y);
 		res.tile1			= tile.getClone();
 		return res;
@@ -60,6 +65,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public static Action newBuildDoubleAction(Point position1, Tile tile1, Point position2, Tile tile2)
 	{
 		Action res			= new Action();
+		res.action			= BUILD_DOUBLE;
 		res.positionTile1	= new Point(position1);
 		res.tile1			= tile1.getClone();
 		res.positionTile2	= new Point(position2);
@@ -82,6 +88,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------
-	public boolean isConstructing()	{return ((this.action == BUILD_SIMPLE)	|| (this.action == BUILD_DOUBLE));}
-	public boolean isMoving()		{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
+	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE)	|| (this.action == BUILD_DOUBLE));}
+	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE);}
+	public boolean isMoving()				{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
 }

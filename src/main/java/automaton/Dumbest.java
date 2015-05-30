@@ -32,14 +32,14 @@ public class Dumbest extends PlayerAutomaton {
 		Random rand = new Random();
 		Tile t;
 		int i, j, k, n;
-		
+
 		do{
 			// On choisit un emplacement au hasard
 			i = rand.nextInt(currentconfig.getWidth());
 			j = rand.nextInt(currentconfig.getHeight());
 			
 			// On choisit une tuile parmi les 5 de notre main
-			n = myHand.size();
+			n = myHand.getSize();
 			k = rand.nextInt(n);
 			t = myHand.get(k);
 			myHand.add(t);
@@ -47,11 +47,8 @@ public class Dumbest extends PlayerAutomaton {
 			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
 				t.turnLeft();
 			}
-			
+// TODO que faire s'il n'y a aucun choix valide ?			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
-		
-		System.out.print(name +": Pose tuile "+ t.toString()+" a la position: ("+i+","+j+")" + "\t|\t");
-		
 		choix = Action.newBuildSimpleAction(i, j, t);
 		
 		return choix;

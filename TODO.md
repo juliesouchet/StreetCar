@@ -12,9 +12,7 @@ est-ce qu'on informe un joueur qui veut commencer son voyage d'inauguration qu'i
 => on met un message d'avertissement  
 
 # Engine :
- * Pioche et toutes les méthodes associées (état courant (probabilités de tirs pour chaque type de tuile), ~~tirer une carte~~ géré par le data...)  
- * ~~Mains des différents joueurs~~  
- * Historique des coups joués (tous les joueurs)  
+ * Synchroniser toutes les methodes d'interface reseau (PlayerInterface et GameInterface)
  * Etat des joueurs :  
     + ~~data.isConstructing(player) : boolean~~  
     + ~~data.hasPlayedFirstAction(player) : boolean~~  
@@ -22,10 +20,6 @@ est-ce qu'on informe un joueur qui veut commencer son voyage d'inauguration qu'i
     + ~~data.secondTerminus(player) : Point (l'autre terminus)~~
  * Limitation de vitesse (qui est commune à tous les joueurs)  
     + ~~data.maximumSpeed( ) : int~~  
- * Manipulation des tuiles :  
-    I. les tuiles posées sont retirées de la main  
-    II. pouvoir piocher une carte et l'ajouter à sa main  
-    III. une tuile échangée est remise dans la main    
     (VIII. pouvoir se servir dans la main des joueurs en voyage et l'ajouter à sa main)  
  * Voyage des trams :  
     IV. suivre la position des trams des joueurs  

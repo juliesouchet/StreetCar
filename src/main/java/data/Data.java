@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -165,7 +164,7 @@ public class Data implements Serializable
 		Random rnd = new Random();
 		int i, size = players.size();
 
-		this.round			= 0;
+		this.round			= -1;
 		this.playerOrder	= new String[size];
 		for (int s=size-1; s>=0; s--)
 		{
@@ -173,27 +172,40 @@ public class Data implements Serializable
 			playerOrder[s] = players.get(i);
 			players.remove(i);
 		}
+		this.skipTurn();
 	}
-
-////////////////TODO to remove
-	public void skipTurn(){this.round ++;} // goes to the next player's turn
+	/**===================================================
+	 * Makes the game forward to the next player's turn
+	 =====================================================*/
+	public void skipTurn()
+	{
+		this.round ++;
+		String playerName = this.playerOrder[this.round];
+		this.playerInfoList.get(playerName).newRound();
+	}
+	
+	
+	
+	
 ////////////////TODO
 // TODO toremove
 	public void setTile(int x, int y, Tile t)
 	{
-		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the tests...");
+		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
 		this.board[x][y] = t;
 	}
 	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
-
-		Hand hand = this.playerInfoList.get(playerName).hand;
-		Tile oldT = null;
+		PlayerInfo	pi		= this.playerInfoList.get(playerName);
+		Hand		hand	= pi.hand;
+		Tile		oldT	= null;
 
 		if (!this.board[x][y].isEmpty()) oldT = this.board[x][y];
 		this.board[x][y] = t;
-		hand.remove(t);
-		if (oldT != null) hand.add(oldT);
+		hand.remove(t);												// Remove the tile from the player's hand
+		if (oldT != null) hand.add(oldT);							// Change the current tile
+		LinkedList<Action> history = pi.getLastActionHistory();
+		history.addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
 	}
 	public void drawCard(String playerName, int nbrCards)
 	{
@@ -212,6 +224,7 @@ public class Data implements Serializable
 // --------------------------------------------
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public String				getHost()										{return new String(this.host);}
+	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
@@ -226,9 +239,24 @@ public class Data implements Serializable
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
-	public Hand					getHand(String name)							{return this.playerInfoList.get(name).hand.getClone();}
+	public Hand					getHand(String playerName)						{return this.playerInfoList.get(playerName).hand.getClone();}
+	public int					getPlayerRemainingCardsToDraw(String playerName){return (this.playerInfoList.get(playerName).hand.getSize() - Hand.maxHandSize);}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
-	public boolean				isPlayerTurn(String playerName)
+	public boolean				playerHasRemainingAction(String playerName)
+	{
+		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
+		LinkedList<Action> lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
+
+		if		(lastActions.size() == 0) return true;
+		else if (lastActions.size() == 1)
+		{
+			Action a = lastActions.getFirst();
+			return (a.isSimpleConstructing());// TODO check if we can move two times in a turn:  || a.isSimpleMoving());
+		}
+		else if (lastActions.size() == 2) return false;
+		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
+	}
+	public boolean isPlayerTurn(String playerName)
 	{
 		if (this.playerOrder == null) return false;
 		int turn = this.round%this.playerOrder.length;
@@ -645,7 +673,7 @@ public class Data implements Serializable
 		public LinkedList<Point>	buildingInLine_position;
 		public LinkedList<Point>	terminus;						// Complete player's terminus list
 //TODO: ulysse Ne plus stocker les action mais les data
-		public ArrayList<LinkedList<Action>>	history;			// organized by turns
+		public LinkedList<LinkedList<Action>>	history;			// organized by turns
 
 // TODO: PB de l'init de ces 2 attributes
 		public boolean				startedMaidenTravel	= false;	// Data relative to the travel
@@ -661,7 +689,7 @@ public class Data implements Serializable
 
 			this.player		= pi;
 			this.playerName	= new String(playerName);
-			this.history	= new ArrayList<LinkedList<Action>>();
+			this.history	= new LinkedList<LinkedList<Action>>();
 			this.hand		= Hand.initialHand.getClone();
 			this.line		= 1 + getExistingColorIndex(playerColor);
 			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
@@ -671,8 +699,17 @@ public class Data implements Serializable
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
 			this.terminus	= getTerminusPosition(this.line);							// Init the terminus position
 		}
+
+		// Getter
+		public LinkedList<Action> getLastActionHistory()
+		{
+			if (this.history.isEmpty()) return null;
+			else						return this.history.getLast();
+		}
+		// Setter
+		public void newRound(){this.history.addLast(new LinkedList<Action>());}
 	}
-	
+
 	public Point getTramPosition(String playerName) {
 		return playerInfoList.get(playerName).tramPosition;
 	}

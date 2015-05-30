@@ -130,6 +130,7 @@ System.out.println("placeTile: " + this.toExecute.playerName + "; Point: " + thi
 	@SuppressWarnings("unused")
 	private synchronized void validate()
 	{
+System.out.println("validate: " + this.toExecute.playerName );
 		this.toExecute.data.skipTurn();
 	}
 	@SuppressWarnings("unused")

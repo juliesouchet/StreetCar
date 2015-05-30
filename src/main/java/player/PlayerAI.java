@@ -62,20 +62,39 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	{
 		return false;
 	}
-	public void gameHasChanged(Data data) throws RemoteException
+	public synchronized void gameHasChanged(Data data) throws RemoteException
 	{
+System.out.println(playerName + "   11111: ");
 		super.gameHasChanged(data);
+System.out.println(playerName + "   22222: ");
 		if (!data.isGameStarted())			return;
+System.out.println(playerName + "   33333: ");
 		if (!data.isPlayerTurn(playerName)) return;
+System.out.println(playerName + "   44444: ");
 
-		Action a = this.automaton.makeChoice(data);
-		try
+		if (!data.playerHasRemainingAction(playerName))
 		{
-			this.game.placeTile(playerName, a.tile1, a.positionTile1);
-			this.game.drawCard(playerName, 1); // TODO: modifier le 1 par le valeur rendue par l'automate
-			super.validate();
+			Action a = this.automaton.makeChoice(data);
+System.out.print(playerName +": Pose tuile "+ a.tile1.toString()+" a la position: ("+a.positionTile1.x+","+a.positionTile1.y+")" + "\t|\t");
+			try					{this.game.placeTile(playerName, a.tile1, a.positionTile1);}
+			catch (Exception e) {e.printStackTrace(); System.exit(0);}
+			return;
 		}
-		catch (Exception e) {e.printStackTrace(); System.exit(0);}
+
+		int nbrCards = data.getPlayerRemainingCardsToDraw(playerName);
+		if (nbrCards > 0)
+		{
+System.out.print(playerName +": Pioche: " + nbrCards + "\t|\t\t\t");
+			try					{this.game.drawCard(playerName, nbrCards);}
+			catch (Exception e) {e.printStackTrace(); System.exit(0);}
+			return;
+		}
+		else
+		{
+System.out.print(playerName +": Validate\t\t|\t\t\t");
+			try					{this.game.validate(playerName);}
+			catch (Exception e) {e.printStackTrace(); System.exit(0);}
+		}
 	}
 	public void excludePlayer() throws RemoteException
 	{
