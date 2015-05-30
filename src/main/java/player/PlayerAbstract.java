@@ -128,7 +128,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 
 	public void replaceTwoTiles(Tile t1, Tile t2, Point p1, Point p2)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
-		game.placeTwoTiles(playerName, t1, t2, p1, p2);
+		game.replaceTwoTiles(playerName, t1, t2, p1, p2);
 	}
 
 	public void	startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
