@@ -39,8 +39,9 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 //--------------------------------------------
 // Getter:
 //--------------------------------------------
-	public int	getSize()	{return this.tileList.size();}
-	public Tile	get(int k)	{return this.tileList.get(k);}
+	public int	getSize()			{return this.tileList.size();}
+	public Tile	get(int k)			{return this.tileList.get(k);}
+	public boolean isInHand(Tile t)	{return this.tileList.contains(t);}
 	public String toString()
 	{
 		String res = "";

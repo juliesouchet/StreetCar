@@ -213,7 +213,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.engine.addAction(null, this.data, "onQuitGame", null, null, null, -1);
 		if (res != null) throw new ExceptionForbiddenAction();
 	}
-	
 
 	@Override
 	public synchronized void onExcludePlayer(String playerWhoExcludes, String playerExcluded)
@@ -234,13 +233,13 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	 * The guiven tile must bellong to the player's hand
 	 * The guiven tile is removed from the player's hand
 	 ===============================================================================*/
-	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
-// TODO: check if the given tile is in the player's hand
-// TODO: check if the player may add an action
+		if (!this.data.isInPlayerHand(playerName, t))							throw new ExceptionForbiddenAction();
+		if (!this.data.hasRemainingAction(playerName))							throw new ExceptionTooManyActions();
 
 		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
 	}
@@ -255,17 +254,17 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	/**=============================================================================
 	 * Draw a card from the deck.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck
+	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnougthTileInDeck();
-// TODO: Rajouter d'autres exceptions (verifier que le joueur a le droite de piocher autant de cartes)
+		if (nbrCards > this.data.getPlayerRemainingTilesToDraw(playerName))		throw new ExceptionTwoManyTilesToDraw();
 
 		this.engine.addAction(playerName, this.data, "drawTile", null, null, null, nbrCards);
 	}
 
-	public synchronized void  moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	public synchronized void moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();

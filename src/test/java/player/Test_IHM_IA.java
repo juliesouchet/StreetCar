@@ -43,6 +43,7 @@ public class Test_IHM_IA implements InterfaceIHM
 		this.frame = new DataViewerFrame(playerIHM);
 		this.frame.setGameData(playerIHM.getGameData());
 		this.frame.setVisible(true);
+		new ControlFrame(playerIHM);
 
 		try
 		{

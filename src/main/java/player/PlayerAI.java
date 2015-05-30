@@ -65,7 +65,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
 
-		if (data.playerHasRemainingAction(playerName))
+		if (data.hasRemainingAction(playerName))
 		{
 			Action a = this.automaton.makeChoice(data.getClone(playerName));
 			try					{super.placeTile(a.tile1, a.positionTile1);}
@@ -73,7 +73,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			return;
 		}
 
-		int nbrCards = data.getPlayerRemainingCardsToDraw(playerName);
+		int nbrCards = data.getPlayerRemainingTilesToDraw(playerName);
 		if (nbrCards > 0)
 		{
 			try

@@ -14,6 +14,7 @@ public class TestMouseListener implements MouseListener
 {
 	private PlayerInterface player;
 	private LinkedList<Tile> tileList;
+	private String	playerName;
 
 	public TestMouseListener(PlayerInterface player)
 	{
@@ -36,23 +37,31 @@ public class TestMouseListener implements MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg0)
 	{
+		Data data = null;
 		Random rnd = new Random();
 
-		while (true)
+		if (this.playerName == null)
+			try	{this.playerName = player.getPlayerName();}
+			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
+
+		for (int z=0; z<10000; z++)
 		{
+			try	{data = this.player.getGameData();}
+			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
+			int x = 1 + rnd.nextInt(data.getWidth()-1);
+			int y = 1 + rnd.nextInt(data.getHeight()-1);
+			int k = rnd.nextInt(data.getHandSize(playerName));
+			Tile t = data.getHandTile(playerName, k);
+			for (int i=0; i<rnd.nextInt(4); i++)t.turnLeft();
+			if (!data.isAcceptableTilePlacement(x, y, t)) continue;
 			try
 			{
-				Data data = this.player.getGameData();
-				int x = 1 + rnd.nextInt(data.getWidth()-1);
-				int y = 1 + rnd.nextInt(data.getHeight()-1);
-				Tile t = this.tileList.get(rnd.nextInt(this.tileList.size()));
-				for (int i=0; i<rnd.nextInt(4); i++)t.turnLeft();
-				if (!data.isAcceptableTilePlacement(x, y, t)) throw new Exception();
 				this.player.placeTile(t, new Point(x, y));
 				return;
 			}
-			catch(Exception e)	{}
+			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
 		}
+		throw new RuntimeException("No available game");
 	}
 
 	@Override
