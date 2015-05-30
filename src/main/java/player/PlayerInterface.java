@@ -25,6 +25,7 @@ public interface PlayerInterface extends Remote
 	public LoginInfo[]getLoginInfo		() 											throws RemoteException;
 	public void		setLoginInfo		(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification;
 	public void		onQuitGame			(String playerName)							throws RemoteException, ExceptionForbiddenAction;
+	public void 	onExcludePlayer		(String playerExcluded)						throws RemoteException, ExceptionForbiddenAction;
 
 	public String	getPlayerName		()											throws RemoteException;
 	public Color	getPlayerColor		()											throws RemoteException;

@@ -125,3 +125,9 @@ Suite à l'audit IA, nous avons choisi d'utiliser un algorithme Minimax pour dé
 
 Complété la fonction d'évaluation + débugage en cours du moteur
 
+-------------------
+
+### Jour 12 : Vendredi 29 mai  
+
+Rajouté le voyage du tram à Traveler et Evaluator + test d'une partie IA contre IA (bugs de synchronisation des threads)
+
