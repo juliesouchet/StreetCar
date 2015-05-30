@@ -64,13 +64,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	}
 	public synchronized void gameHasChanged(Data data) throws RemoteException
 	{
-System.out.println(playerName + "   11111: ");
 		super.gameHasChanged(data);
-System.out.println(playerName + "   22222: ");
 		if (!data.isGameStarted())			return;
-System.out.println(playerName + "   33333: ");
 		if (!data.isPlayerTurn(playerName)) return;
-System.out.println(playerName + "   44444: ");
 
 		if (!data.playerHasRemainingAction(playerName))
 		{
@@ -80,6 +76,7 @@ System.out.print(playerName +": Pose tuile "+ a.tile1.toString()+" a la position
 			catch (Exception e) {e.printStackTrace(); System.exit(0);}
 			return;
 		}
+System.out.println(playerName + "   11111: ");
 
 		int nbrCards = data.getPlayerRemainingCardsToDraw(playerName);
 		if (nbrCards > 0)

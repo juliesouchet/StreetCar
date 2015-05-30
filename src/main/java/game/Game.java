@@ -2,9 +2,7 @@ package main.java.game;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -55,11 +53,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		try																				// Create the player's remote reference
 		{
-			url = URLEncoder.encode(applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName, "UTF-8");
+			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
 			Naming.rebind(url, this);
 		}
-		catch (MalformedURLException | UnsupportedEncodingException e) {e.printStackTrace(); System.exit(0);}
+		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
 
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
@@ -79,10 +77,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	 =========================================================================*/
 	public static GameInterface getRemoteGame(String appIP, String gameName) throws RemoteException, NotBoundException
 	{
-		String url = null;
-		try {
-			url = URLEncoder.encode(applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName, "UTF-8");
-		} catch (UnsupportedEncodingException e1) { e1.printStackTrace(); }
+		String url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
 
 ////	System.setSecurityManager(new RMISecurityManager());
 		try
