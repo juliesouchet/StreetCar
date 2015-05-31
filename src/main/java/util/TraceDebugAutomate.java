@@ -6,6 +6,7 @@ public class TraceDebugAutomate {
 
 	public static boolean dumbestTrace = false;
 	public static boolean decisionNodeTrace = false;
+	public static boolean decisionTableTrace = false;
 
 
 	// Logs
@@ -20,6 +21,12 @@ public class TraceDebugAutomate {
 	public static void debugDecisionNodeTrace(String str) {
 		if (TraceDebugAutomate.decisionNodeTrace) {
 			System.out.print("decisionNode Trace:" + str);
+		}
+	}
+
+	public static void debugDecisionTableTrace(String str) {
+		if (TraceDebugAutomate.decisionTableTrace) {
+			System.out.print("decisionTableTrace:" + str);
 		}
 	}
 

@@ -25,9 +25,9 @@ public class DecisionNode {
 		// L'action choisie
 		private Action action;
 		//Nous mène à l'index du tableau de decision
-		private Integer index;
+		private int index;
 
-		public CoupleActionIndex(Action a, Integer i){
+		public CoupleActionIndex(Action a, int i){
 			action=a;
 			index=i;
 		}
@@ -37,11 +37,15 @@ public class DecisionNode {
 		public Action getAction(){
 			return this.action;
 		}
-		public void setIndex(Integer index){
+		public void setIndex(int index){
 			this.index=index;
 		}
-		public Integer getIndex(){
+		public int getIndex(){
 			return this.index;
+		}
+		public void copy(CoupleActionIndex src){
+			this.action.copy(src.action);
+			this.index=src.index;
 		}
 	}
 
@@ -132,9 +136,18 @@ public class DecisionNode {
 	 * La qualité estimée de la situation du noeud 
 	 * @return
 	 */
-	public double getConfigurationQuality(){
+	public double getQuality(){
 		return this.configurationQuality;
 	}
+	
+
+	/**
+	 * La qualité du noeud est mise a quality (double de 0.0 a 100.0)
+	 * @param quality
+	 */
+	public void setQuality(double quality){
+		this.configurationQuality=quality;
+	}	
 
 
 	/**
@@ -246,7 +259,23 @@ public class DecisionNode {
 		this.depth=depth;
 	}
 
-
+	/**
+	 * copy le noeud de decision src dans l'appelant sans nouvelle allocation memoire
+	 * @param src
+	 */
+	public void copy(DecisionNode src){
+		this.cardinalPossiblesActions = src.cardinalPossiblesActions;
+		this.configurationQuality = src.configurationQuality ;
+		this.depth = src.depth ;
+		this.isLeaf = src.isLeaf ;
+		this.isRoot = src.isRoot ;
+		for(int i=0;i<this.getNumberOfPossiblesActions();i++){
+			this.possiblesActions[i]=src.possiblesActions[i];
+		}
+		this.possiblesActions = src.possiblesActions ;
+		
+	}
+	
 	/**
 	 * nombre d'action possibles	
 	 * @param numberOfPossibleActions
@@ -281,7 +310,7 @@ public class DecisionNode {
 	@Override
 	public String toString(){
 		String affichage;
-		affichage = "[Quality="+this.getConfigurationQuality()+" Type=";
+		affichage = "[Quality="+this.getQuality()+" Type=";
 		if(this.isLeaf()){
 			affichage+="|Leaf|";
 		}else if (this.isRoot()){
