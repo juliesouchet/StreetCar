@@ -14,7 +14,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Attributes
 // -----------------------------------------------------
-	public static final long serialVersionUID = -7830218892745210163L;
+	public static final long	serialVersionUID	= -7830218892745210163L;
+	public static final int		maxTramwayMove		= 145;
 
 	public static final int MOVE					= 0;
 	public static final int BUILD_SIMPLE			= 1;
@@ -23,12 +24,12 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 	public int		action;
 
-	public Point	positionTile1;				// Build Attributes
-	public Point	positionTile2;
-	public Tile		tile1;
-	public Tile		tile2;
+	public Point	positionTile1					= new Point();									// Build Attributes
+	public Point	positionTile2					= new Point();
+	public Tile		tile1							= new Tile(null, null);
+	public Tile		tile2							= new Tile(null, null);
 
-	public LinkedList<Point> tramwayMovement;	// Move Attributes
+	public Point[]	tramwayMovement = new Point[maxTramwayMove];	// Move Attributes
 
 // -----------------------------------------------------
 // Builder
@@ -39,11 +40,19 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.action	= START_TRIP_NEXT_TURN;
 		return res;
 	}
-	public static Action newMoveAction(LinkedList<Point> tramwayMovement)
+	public static Action newMoveAction(Point[] tramwayMovement)
 	{
 		Action res			= new Action();
 		res.action			= MOVE;
-		res.tramwayMovement	= new LinkedList<Point>(tramwayMovement);
+		for (int i=0; i<tramwayMovement.length; i++)
+		{
+			res.tramwayMovement[i]	 = new Point();
+			res.tramwayMovement[i].x = tramwayMovement[i].x;
+			res.tramwayMovement[i].y = tramwayMovement[i].y;
+		}
+		for (int i=tramwayMovement.length; i<res.tramwayMovement.length; i++)
+			res.tramwayMovement[i]	 = new Point();
+
 		return res;
 	}
 	public static Action newBuildSimpleAction(Point position, Tile tile)
@@ -93,53 +102,24 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public boolean isMoving()				{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
 
 
-	
+// TODO
 	
 	//Ajout par Ulysse:
 	/**
 	 * affecte a l'appelant les parametres de src sans nouvelle allocation memoire.
 	 * @param src
 	 */
-	public void copy(Action src){
-		this.action = src.action;
-		this.positionTile1.x = src.positionTile1.x;
-		this.positionTile1.y = src.positionTile1.y;
-		this.positionTile2.x = src.positionTile2.x;
-		this.positionTile2.y = src.positionTile2.y;		
-		
+	public void copy(Action src)
+	{
+		this.action				= src.action;
+		this.positionTile1.x	= (src.positionTile1 == null) ? null : src.positionTile1.x;
+		this.positionTile1.y	= (src.positionTile1 == null) ? null : src.positionTile1.y;
+		this.positionTile2.x	= (src.positionTile2 == null) ? null : src.positionTile2.x;
+		this.positionTile2.y	= (src.positionTile2 == null) ? null : src.positionTile2.y;
+
 		//TODO ramplacer getClone par copy() sans allocation memoire
 		this.tile1=src.tile1.getClone();
 		this.tile2=src.tile2.getClone();
 		this.tramwayMovement = (LinkedList<Point>)src.tramwayMovement.clone();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

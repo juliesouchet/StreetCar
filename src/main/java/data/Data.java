@@ -279,7 +279,7 @@ public class Data implements Serializable
 		else if (lastActions.size() == 1)
 		{
 			Action a = lastActions.getFirst();
-			return (a.isSimpleConstructing());// TODO check if we can move two times in a turn:  || a.isSimpleMoving());
+			return (a.isSimpleConstructing());
 		}
 		else if (lastActions.size() == 2) return false;
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());

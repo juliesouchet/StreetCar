@@ -56,16 +56,23 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	{
 		if ((t.isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
 
-		this.tileID					= new String(t.tileID);
-		this.isTree					= t.isTree;
-		this.isBuilding				= t.isBuilding;
-		this.isStop					= t.isStop;
-		this.isTerminus				= t.isTerminus;
-		this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
-		this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
-		this.cardinal				= t.cardinal;
-		this.tileDirection			= t.tileDirection;
-		this.pathList				= new LinkedList<Path>(pathList);
+		if (t != null)
+		{
+			this.tileID					= new String(t.tileID);
+			this.isTree					= t.isTree;
+			this.isBuilding				= t.isBuilding;
+			this.isStop					= t.isStop;
+			this.isTerminus				= t.isTerminus;
+			this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
+			this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
+			this.cardinal				= t.cardinal;
+			this.tileDirection			= t.tileDirection;
+			this.pathList				= (new Copier<Path>()).copyList(pathList);
+		}
+		else
+		{
+			
+		}
 	}
 	private Tile(){}
 	public Tile getClone()
