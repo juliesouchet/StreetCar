@@ -17,20 +17,21 @@ public class testDecisionNode {
 
 
 	public static void main(String[] args) {
-		TraceDebugAutomate.decisionNodeTrace=true;
+		TraceDebugAutomate.decisionNodeTrace=false;
 		DecisionNode monNoeudDeDecision = null;
-		int taille_de_case = 5000;
-		int nb_de_case = 30000000;
+		int taille_de_case = 1000;
+		int nb_de_case = 5000;
 		long sommeTps = 0;
 		/*
 		 * Notes:
 		 * decisionNode Trace:moyenne pour 1case de 5000actions= 7.09E-7s 
-		 * decisionNode Trace:topdecisionNode Trace:Temps pour 30000000 new decisionNode de taille 5000 = 21.470737712000002
+		 * decisionNode Trace:topdecisionNode Trace:Temps pour 30000000 new decisionNode de taille 5000 = beaucoup trop long
 		 */
 		
+		//On teste l'allocation de la structure et surtout l'ordre de temps requis
 		TraceDebugAutomate.debugDecisionNodeTrace("top");
 		long tmps3 = System.nanoTime();
-		for(int i=0;i<5000;i++){
+		for(int i=0;i<nb_de_case;i++){
 			try {
 				long tmps1 = System.nanoTime();
 				monNoeudDeDecision = new DecisionNode(taille_de_case, 0, "root");
@@ -43,25 +44,36 @@ public class testDecisionNode {
 			}
 		}
 		long tmps4 = System.nanoTime();
+
+		
 		TraceDebugAutomate.debugDecisionNodeTrace("Temps pour "+nb_de_case+" new decisionNode de taille "+taille_de_case+" = "+ (tmps4-tmps3)*Math.pow(10.0, -9)+"s \n");
 		TraceDebugAutomate.debugDecisionNodeTrace("moyenne pour 1case de "+taille_de_case+"actions= "+ (sommeTps/30000000)*Math.pow(10.0, -9)+"s \n");
-		//System.out.println(monNoeudDeDecision.toString());
+		
+		//Affichage
+		System.out.println(monNoeudDeDecision.toString());
 
 		Tile maTile = Tile.parseTile("Tile_FFFFZZ060123");
 		Action monAction = Action.newBuildSimpleAction(new Point(5,4), maTile);
 
+		//Teste creation d'un couple action index
+		// TODO: etudier si creation d'n nouveau est necessaire ou possiblilité de juste modifier celui deja alloué
 		CoupleActionIndex monCoupleActionIndex1 = monNoeudDeDecision.new CoupleActionIndex(monAction, 0);
 		CoupleActionIndex monCoupleActionIndex2 = monNoeudDeDecision.new CoupleActionIndex(monAction, 1);
 
+		
 		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex1);
 
 		monNoeudDeDecision.setCoupleActionIndex(1, monCoupleActionIndex2);
+		monNoeudDeDecision.setQuality(100.0);
 
+		System.out.println("(1)"+monNoeudDeDecision.toString());
 
-		//System.out.println("(1)"+monNoeudDeDecision.toString());
-
+		monNoeudDeDecision.setQuality(50.0);
+		monNoeudDeDecision.setDepth(1);
+		monNoeudDeDecision.setLeaf();
 		monCoupleActionIndex1.setIndex(8);
-		//System.out.println("(2)"+monNoeudDeDecision.toString());
+		
+		System.out.println("(2)"+monNoeudDeDecision.toString());
 
 
 

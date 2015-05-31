@@ -7,8 +7,24 @@ import java.util.LinkedList;
 public class testGrandeStruct {
 
 	public static void main(String[] args) {
-		int mon_max= 10000000;
+		
 
+		
+		int[][] ma_matrice_dentiers = new int[3000000][5000];
+		
+		System.out.println("pop");
+		//Trop gros!
+		for(int i = 0; i<30000000;i++){
+			if(i % 100000 ==0){
+				System.out.println("i="+i);
+			}
+			for(int j = 0; j< 5000;j++){
+				ma_matrice_dentiers[i][j]=j;
+			}
+		}
+		System.out.println("pop");
+		
+		int mon_max= 10000000;
 		ArrayList<Integer> maStructureArrayList = new ArrayList<Integer>(10);
 		LinkedList<Integer> maStructureLinkedList = new LinkedList<Integer>();
 		int[] maStructureTableau = new int[mon_max];
