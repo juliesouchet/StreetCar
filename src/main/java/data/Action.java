@@ -115,6 +115,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 * affecte a l'appelant les parametres de src sans nouvelle allocation memoire.
 	 * @param src
 	 */
+
 	public void copy(Action src)
 	{
 		this.action				= src.action;

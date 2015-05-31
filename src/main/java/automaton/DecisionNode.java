@@ -93,7 +93,7 @@ public class DecisionNode {
 	 * met l'attribut isLeaf a vrai
 	 */
 	public void setLeaf(){
-		this.isRoot=true;
+		this.isLeaf=true;
 	}
 	/**
 	 * met l'attribut isRoot a faux
@@ -105,7 +105,7 @@ public class DecisionNode {
 	 * met l'attribut isLeaf a faux
 	 */
 	public void unsetLeaf(){
-		this.isRoot=false;
+		this.isLeaf=false;
 	}
 	/**
 	 * met les attributs isRoot et isLeaf a faux
@@ -206,7 +206,7 @@ public class DecisionNode {
 	 * @param coupleActionIndex
 	 */
 	public void setCoupleActionIndex(int index, CoupleActionIndex coupleActionIndex){
-		this.possiblesActions[index]=coupleActionIndex;
+		this.possiblesActions[index].copy(coupleActionIndex);
 	}
 
 
@@ -270,9 +270,8 @@ public class DecisionNode {
 		this.isLeaf = src.isLeaf ;
 		this.isRoot = src.isRoot ;
 		for(int i=0;i<this.getNumberOfPossiblesActions();i++){
-			this.possiblesActions[i]=src.possiblesActions[i];
+			this.possiblesActions[i].copy(src.possiblesActions[i]);
 		}
-		this.possiblesActions = src.possiblesActions ;
 		
 	}
 	
@@ -297,9 +296,15 @@ public class DecisionNode {
 		if(type.equals("root")){
 			this.setRoot();
 			this.unsetLeaf();
-		}else if(type.equals("internalNode")){
+		} else
+		if(type.equals("internalNode")){
 			this.setInternalNode();
-		}else if(type.equals("leaf")){
+		} else
+		if(type.equals("leaf")){
+			this.setLeaf();
+		} else
+		if(type.equals("root&leaf") || type.equals("leaf&root")){
+			this.setRoot();
 			this.setLeaf();
 		}else{
 			throw new ExceptionUnknownNodeType();
@@ -309,30 +314,32 @@ public class DecisionNode {
 
 	@Override
 	public String toString(){
-		String affichage;
-		affichage = "[Quality="+this.getQuality()+" Type=";
+		String affichage = null;
+		for(int i=0; i<this.getDepth();i++){
+			affichage+="\t";
+		}
+		affichage = "* Quality="+this.getQuality()+" Type=";
 		if(this.isLeaf()){
 			affichage+="|Leaf|";
-		}else if (this.isRoot()){
+		}
+		if (this.isRoot()){
 			affichage+="|Root|";
 		}
 		if(this.isInternal()){
 			affichage+="|(isInternal)|";
 		}
 		affichage+=" Depth="+this.getDepth();
-		affichage+=" Possibles Actions=[";
+		affichage+=" Possibles Actions:\n";
 
 		for(int i=0; i<this.getNumberOfPossiblesActions();i++){
 			TraceDebugAutomate.debugDecisionNodeTrace("tostring i="+i);
-			if( this.getCoupleActionIndex(i)!=null){
-				affichage+="<"+
-						this.getCoupleActionIndex(i).getAction()+
-						","+
-						this.getCoupleActionIndex(i).getIndex()+
-						">";
+			for(int j=0; j<this.getDepth()+1;j++){
+				affichage+="\t";
+			}
+			if( this.getCoupleActionIndex(i)!=null && this.getCoupleActionIndex(i).getIndex()!=0){
+				affichage+="<"+this.getCoupleActionIndex(i).getAction()+","+this.getCoupleActionIndex(i).getIndex()+">\n";
 			}
 		}
-		affichage+="]]";
 		return affichage;
 	}
 
