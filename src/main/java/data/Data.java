@@ -370,14 +370,15 @@ public class Data implements Serializable
 	 =================================================================*/
 	public boolean isAcceptableTilePlacement(int x, int y, Tile t)
 	{
-		LinkedList<Path> additionalPath = new LinkedList<Path>();
+		Path[] additionalPath = Tile.initPathTab();
 		LinkedList<Direction> accessibleDirection;
 		Tile oldT = this.board[x][y];
+		int additionalPathSize = oldT.isReplaceable(t, additionalPath);
 
-		if (!oldT.isReplaceable(t, additionalPath))	return false;										// Check whether t contains the old t (remove Tile and Rule C)
-		if (this.isOnEdge(x, y))					return false;
+		if (additionalPathSize == -1)	return false;													// Check whether t contains the old t (remove Tile and Rule C)
+		if (this.isOnEdge(x, y))		return false;
 
-		Tile nt = new Tile(additionalPath, t);
+		Tile nt = new Tile(additionalPath, additionalPathSize, t);
 		accessibleDirection = nt.getAccessibleDirections();
 		for (Direction d: accessibleDirection)															// Check whether the new tile is suitable with the <x, y> neighborhood
 		{

@@ -92,6 +92,6 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 			sc.close();
 			return new Hand(initialTileList);
 		}
-		catch (Exception e){throw new RuntimeException("Malformed initial hand file");}
+		catch (Exception e){e.printStackTrace(); throw new RuntimeException("Malformed initial hand file");}
 	}
 }

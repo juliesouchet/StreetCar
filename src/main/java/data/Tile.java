@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 import main.java.util.CloneableInterface;
-import main.java.util.Copier;
 import main.java.util.Direction;
+import main.java.util.Util;
 
 
 /**========================================================================
@@ -37,49 +37,51 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public static final int			nbrBuildingDescriptionChar		= 1;
 	public static final int			nbrTerminusDescriptionChar		= 1;
 	public static final int			nbrCardinalChar					= 2;
+	public static final int			maxNbrPathInTile				= 5;
 
 	private String					tileID;
-	private Boolean					isTree;
-	private Boolean					isBuilding;
-	private Boolean					isStop;
-	private Boolean					isTerminus;
+	private boolean					isTree;
+	private boolean					isBuilding;
+	private boolean					isStop;
+	private boolean					isTerminus;
 	private String					buildingDescription;
-	private Integer					terminusDescription;
-	private Integer					cardinal;
+	private int						terminusDescription;
+	private int						cardinal;
 	private Direction				tileDirection;
-//	private LinkedList<Path>		pathList;
+	private Path[]					pathTab							= initPathTab();
+	private int						ptrPathTab						= -1;					// Last non null path in pathList
 
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-	public Tile(LinkedList<Path> pathList, Tile t) throws RuntimeException
+	public Tile(Path[] pathList, int ptrPathTab, Tile t) throws RuntimeException
 	{
 		if ((t == null) || (pathList == null))
 		{
 			this.tileID					= null;
-			this.isTree					= null;
-			this.isBuilding				= null;
-			this.isStop					= null;
-			this.isTerminus				= null;
+			this.isTree					= false;
+			this.isBuilding				= false;
+			this.isStop					= false;
+			this.isTerminus				= false;
 			this.buildingDescription	= null;
-			this.terminusDescription	= null;
-			this.cardinal				= null;
+			this.terminusDescription	= -1;
+			this.cardinal				= -1;
 			this.tileDirection			= null;
-			this.pathList				= new LinkedList<Path>();
 		}
 		else if ((t != null) && (pathList != null))
 		{
-			if ((t.isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
-			this.tileID					= new String(t.tileID);
+			if ((t.isBuilding)&& (ptrPathTab > -1))throw new RuntimeException("A tile can not be a building and contain a path");
+			this.tileID					= t.tileID;
 			this.isTree					= t.isTree;
 			this.isBuilding				= t.isBuilding;
 			this.isStop					= t.isStop;
 			this.isTerminus				= t.isTerminus;
-			this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
-			this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
+			this.buildingDescription	= t.buildingDescription;
+			this.terminusDescription	= t.terminusDescription;
 			this.cardinal				= t.cardinal;
 			this.tileDirection			= t.tileDirection;
-			this.pathList				= (new Copier<Path>()).copyList(pathList);
+			copyPathTab(t.pathTab, this.pathTab, t.ptrPathTab);
+			this.ptrPathTab				= t.ptrPathTab;
 		}
 		else throw new RuntimeException("Unhandeled case");
 	}
@@ -87,18 +89,18 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public Tile getClone()
 	{
 		Tile res = new Tile();
-		Copier<Path> cp = new Copier<Path>();
 
-		res.tileID				= new String(this.tileID);
+		res.tileID				= this.tileID;
 		res.isTree				= this.isTree;
 		res.isBuilding			= this.isBuilding;
 		res.isStop				= this.isStop;
 		res.isTerminus			= this.isTerminus;
-		res.buildingDescription	= (this.buildingDescription == null) ? null : new String(this.buildingDescription);
-		res.terminusDescription	= (this.terminusDescription == null) ? null : new Integer(this.terminusDescription);
+		res.buildingDescription	= this.buildingDescription;
+		res.terminusDescription	= this.terminusDescription;
 		res.cardinal			= this.cardinal;
 		res.tileDirection		= this.tileDirection;
-		res.pathList			= cp.copyList(this.pathList);
+		copyPathTab(this.pathTab, res.pathTab, this.ptrPathTab);
+		res.ptrPathTab			= this.ptrPathTab;
 		return res;
 	}
 	public static Tile parseTile(String imageFileName)
@@ -107,7 +109,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		Direction d0, d1;
 		Tile res = new Tile();
 
-		res.tileID			= new String(imageFileName);										// Init the non scanned values
+		res.tileID			= imageFileName;													// Init the non scanned values
 		res.tileDirection	= Direction.WEST;
 
 		try
@@ -155,7 +157,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			else
 			{
 				if (!str.equals(nonTerminusDescription))	throw new Exception();
-				res.terminusDescription = null;
+				res.terminusDescription = -1;
 			}
 
 			l += nbrTerminusDescriptionChar;
@@ -163,12 +165,12 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			res.cardinal = Integer.parseInt(str);													// Scan the tile cardinal
 
 			l += nbrCardinalChar;
-			res.pathList = new LinkedList<Path>();													// Scan the tile path list
 			for (int i=l; i<imageFileName.length(); i+=2)
 			{
 				d0 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i)));
 				d1 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i+1)));
-				res.pathList.add(new Path(d0, d1));
+				res.ptrPathTab ++;
+				res.pathTab[res.ptrPathTab].setPath(d0, d1);
 			}
 			return res;
 		}
@@ -180,16 +182,17 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 	public void setTile(Tile t)
 	{
-		this.tileID					= new String(t.tileID);
+		this.tileID					= t.tileID;
 		this.isTree					= t.isTree;
 		this.isBuilding				= t.isBuilding;
 		this.isStop					= t.isStop;
 		this.isTerminus				= t.isTerminus;
-		this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
-		this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
+		this.buildingDescription	= t.buildingDescription;
+		this.terminusDescription	= t.terminusDescription;
 		this.cardinal				= t.cardinal;
 		this.tileDirection			= t.tileDirection;
-		this.pathList				= (new Copier<Path>()).copyList(t.pathList);
+		copyPathTab(t.pathTab, this.pathTab, t.ptrPathTab);
+		this.ptrPathTab				= t.ptrPathTab;
 	}
 
 // --------------------------------------------
@@ -203,17 +206,18 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public boolean	isBuilding()		{return this.isBuilding;}
 	public boolean	isTerminus()		{return this.isTerminus;}
 	public boolean	isStop()			{return this.isStop;}
-	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.pathList.isEmpty()));}
-	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (!this.pathList.isEmpty()));}
-	public void		turnLeft()			{for (Path p: pathList)	p.turnLeft();	this.tileDirection = this.tileDirection.turnLeft();}
-	public void		turnRight()			{for (Path p: pathList)	p.turnRight();	this.tileDirection = this.tileDirection.turnRight();}
+	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab == -1));}
+	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab > -1));}
+	public void		turnLeft()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnLeft();	tileDirection = tileDirection.turnLeft();}
+	public void		turnRight()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnRight();	tileDirection = tileDirection.turnRight();}
 	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
 	public void		setDirection(Direction dir)	{this.tileDirection = dir;}
 
 	public boolean	isPathTo(Direction dir)
 	{
-		for (Path p: this.pathList)
+		for (int i=0; i<=this.ptrPathTab; i++)
 		{
+			Path p = this.pathTab[i];
 			if (p.end0 == dir)	return true;
 			if (p.end1 == dir)	return true;
 		}
@@ -224,49 +228,62 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	{
 		LinkedList<Direction> res = new LinkedList<Direction>();
 
-		for (Path p: pathList)
+		for (int i=0; i<=this.ptrPathTab; i++)
 		{
+			Path p = this.pathTab[i];
 			if (!res.contains(p.end0))	res.add(p.end0);
 			if (!res.contains(p.end1))	res.add(p.end1);
 		}
 		return res;
 	}
 	/**=================================================
-	 * @return true if the current tile can be replaced by t
+	 * @return -1 if the current tile can not be replaced by t.  Otherwise, the function returns the number of additional path.
+	 * Those path are filled in additionalPath.
 	 * This function does not check if t is suitable for the current tile neighbors
 	 * @param additionalPath: output parameter (can be null). Is filled with the t's paths that are not in the current tile
 	 * ===================================================*/
-	public boolean isReplaceable(Tile t, LinkedList<Path> additionalPath)
+	public int isReplaceable(Tile t, Path[] additionalPath)
 	{
-		LinkedList<Path> lPath	= new LinkedList<Path>(this.pathList);
-		LinkedList<Path> tPath	= new LinkedList<Path>(t.pathList);
+		if (this.isTree)	 return -1;
+		if (this.isBuilding) return -1;
+		if (this.isTerminus) return -1;
+		if (this.isStop)	 return -1;
 
-		if (this.isTree)	 return false;
-		if (this.isBuilding) return false;
-		if (this.isTerminus) return false;
-		if (this.isStop)	 return false;
-
-		int sizeI = tPath.size();
-		for (int i=0; i<sizeI; i++)							// Remove the common paths
+//		LinkedList<Path> lPath	= new LinkedList<Path>(this.pathList);
+//		LinkedList<Path> tPath	= new LinkedList<Path>(t.pathList);
+		Path[]	lPath	= initPathTab();
+		Path[]	tPath	= initPathTab();
+		int		lSize	= this.ptrPathTab;
+		int		tSize	= t.ptrPathTab;
+		copyPathTab(this.pathTab,	lPath, this.ptrPathTab);
+		copyPathTab(t.pathTab,		tPath, t.ptrPathTab);
+//		int sizeI = t.ptrPathTab;
+		for (int i=0; i<=tSize; i++)							// Remove the common paths
 		{
-			Path pt = tPath.get(i);
-			int sizeJ = lPath.size();
-			for (int j=0; j<sizeJ; j++)
+			Path pt = tPath[i];
+//			int sizeJ = this.ptrPathTab;
+			for (int j=0; j<lSize; j++)
 			{
-				Path pl = lPath.get(j);
-				if (pt.equals(pl))	{tPath.remove(pt); lPath.remove(pl); i--; sizeI--; j--; sizeJ--; break;}
+				Path pl = lPath[j];
+				if (pt.equals(pl))
+				{
+					Util.swapTab(tPath, i, tSize);
+					Util.swapTab(lPath, j, lSize);
+					i--;	tSize--;
+					j--;	lSize--;
+					break;
+				}
 			}
-			
 		}
 
-		if (!lPath.isEmpty())	return false;				// Case local tile is not contained in t
-		if (tPath.isEmpty())	return false;				// Case local tile is equal to t
-		if (additionalPath != null)							// Cas replaceable
+		if (lSize != 0)	return -1;								// Case local tile is not contained in t
+		if (tSize == 0)	return -1;								// Case local tile is equal to t
+		if (additionalPath != null)								// Case replaceable
 		{
-			additionalPath.clear();
-			additionalPath.addAll(tPath);					//		Add all the new paths
+			for (int i=0; i<=tSize; i++)						//		Add all the new paths
+				additionalPath[i].setPath(tPath[i]);	
 		}
-		return true;
+		return tSize;
 	}
 	/**=============================================================
 	 * @return if t is a building the function returns its name.  Else it returns null
@@ -297,7 +314,11 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		str += (this.isBuilding)	? "Buil | ": "____ | ";
 		str += (this.isStop)		? "Stop | ": "____ | ";
 		str += (this.isTerminus)	? "Term | ": "____ | ";
-		for(Path p : pathList)	str += "[" + p.end0 + " ; " + p.end1 + "] ";
+		for(int i=0; i<=this.ptrPathTab; i++)
+		{
+			Path p = this.pathTab[i];
+			str += "[" + p.end0 + " ; " + p.end1 + "] ";
+		}
 		str += "}";
 		return str;
 	}
@@ -315,8 +336,19 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		for (String s: acceptedTerminusDescription) if (td.equals(s)) return true;
 		return false;
 	}
+	public static Path[] initPathTab()
+	{
+		Path[] res = new Path[maxNbrPathInTile];
+		for (int i=0; i<maxNbrPathInTile; i++) res[i] = new Path(Direction.WEST, Direction.WEST);
+		return res;
+	}
+	private static void copyPathTab(Path[] src, Path[] dst, int ptrSrc)
+	{
+		for (int i=0; i<= ptrSrc; i++)	dst[i].setPath(src[i]);
+	}
+
 // --------------------------------------------
-// Path class :
+// Path class:
 // Represents a path between two cardinal directions
 // --------------------------------------------
 	public static class Path implements Serializable, CloneableInterface<Path>
@@ -340,11 +372,14 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			res.end1 = this.end1;
 			return res;
 		}
+
 		// Setter
-		public void turnLeft()	{end0 = end0.turnLeft();	end1 = end1.turnLeft();}
-		public void turnRight()	{end0 = end0.turnRight();	end1 = end1.turnRight();}
-		public void turnHalf()	{end0 = end0.turnHalf();	end1 = end1.turnHalf();}
-		public String	toString()		{return "(" + end0 + ", " + end1 + ')';}
-		public boolean	equals(Path p)	{return ((end0.equals(p.end0)) && (end1.equals(p.end1)));}
+		public void turnLeft()							{end0 = end0.turnLeft();	end1 = end1.turnLeft();}
+		public void turnRight()							{end0 = end0.turnRight();	end1 = end1.turnRight();}
+		public void turnHalf()							{end0 = end0.turnHalf();	end1 = end1.turnHalf();}
+		public void setPath(Path p)						{end0 = p.end0;				end1 = p.end1;}
+		public void setPath(Direction d0, Direction d1)	{end0 = d0;					end1 = d1;}
+		public String	toString()						{return "(" + end0 + ", " + end1 + ')';}
+		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)));}
 	}
 }

@@ -20,4 +20,10 @@ public class Util
 		else if	(color.equals("black"))		return Color.black;
 		else	throw new RuntimeException("Unknown color: " + color);
 	}
+	public static void swapTab(Object[] tab, int i, int j)
+	{
+		Object tmp = tab [i];
+		tab[i] = tab[j];
+		tab[j] = tmp;
+	}
 }

@@ -21,7 +21,7 @@ public enum Direction implements Serializable
 	WRONG	(-1);
 	public static final Direction[] DIRECTION_LIST = {WEST, NORTH, EAST, SOUTH};
 
-	private final int dir;
+	public int dir;
 
 // --------------------------------------------
 // Builder:
