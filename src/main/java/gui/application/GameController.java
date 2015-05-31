@@ -87,7 +87,6 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		if (this.menuPanel != null) {
 			contentPanel.add(this.menuPanel);
 			this.componentResized(null);
-			this.forceRefresh();
 		}
 		contentPanel.revalidate();
 		contentPanel.repaint();
@@ -109,16 +108,19 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void showWelcomeMenuPanel() {
 		MenuPanel newPanel = new WelcomeMenuPanel(this);
 		this.setMenuPanel(newPanel);
+		this.forceRefresh();
 	}
 	
 	public void showNewGamePanel() {
 		MenuPanel newPanel = new NewGameMenuPanel(this);
 		this.setMenuPanel(newPanel);
+		this.forceRefresh();
 	}
 	
 	public void showJoinGamePanel() {
 		MenuPanel newPanel = new JoinGameMenuPanel(this);
-		this.setMenuPanel(newPanel);		
+		this.setMenuPanel(newPanel);
+		this.forceRefresh();		
 	}
 	
 	public void showSettingsPanel() {
@@ -142,12 +144,14 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	
 	public void showHostWaitingRoomPanel() {
 		MenuPanel newPanel = new HostRoomMenuPanel(this);
-		this.setMenuPanel(newPanel);	
+		this.setMenuPanel(newPanel);
+		this.forceRefresh();	
 	}
 	
 	public void showClientWaitingRoomPanel() {
 		MenuPanel newPanel = new ClientRoomMenuPanel(this);
-		this.setMenuPanel(newPanel);	
+		this.setMenuPanel(newPanel);
+		this.forceRefresh();
 	}
 	
 	// Show / hide frame
@@ -193,11 +197,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 
 	public void forceRefresh() {
 		if (this.player == null) return;
-		
-		Data data = this.player.getGameData();
-		if (this.menuPanel != null) {
-			this.menuPanel.refresh(data);
-		}
+		this.refresh(this.player.getGameData());
 	}
 	
 	public void stopGame() {
@@ -207,14 +207,15 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void refresh(Data data) {
 		System.out.println("RESFRESH");
 		if (this.menuPanel != null) {
-			this.menuPanel.refresh(data);
+			this.menuPanel.refreshMenu(this.player, data);
+		}
+		if (this.getFrameContentPane() instanceof InGamePanel) {
+			InGamePanel panel = (InGamePanel)this.getFrameContentPane();
+			panel.refreshGame(this.player, data);
 		}
 	}
 	
 	public void excludePlayer() {
-		if (this.menuPanel != null) {
-			this.menuPanel.excludePlayer();
-		}
 		
 	}
 	
