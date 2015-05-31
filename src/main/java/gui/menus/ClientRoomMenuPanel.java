@@ -2,23 +2,27 @@ package main.java.gui.menus;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
+import main.java.data.Data;
+import main.java.data.LoginInfo;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.ComboBox;
 import main.java.gui.components.ImagePanel;
 import main.java.gui.components.Label;
 import main.java.gui.util.Resources;
+import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
 public class ClientRoomMenuPanel extends MenuPanel {
 	
 	// Properties
 	
-	private Label[] nameLabels = new Label[5];
-	private ComboBox[] choiceComboBoxes = new ComboBox[5];
-	private ImagePanel[] avaterImagePanels = new ImagePanel[5];
-		
+	private ArrayList<Label> nameLabels = new ArrayList<Label>();
+	private ArrayList<ComboBox> choiceComboBoxes = new ArrayList<ComboBox>();
+	private ArrayList<ImagePanel> avatarImagePanels = new ArrayList<ImagePanel>();
+			
 	// Constructors
 	
 	public ClientRoomMenuPanel(GameController gc) {
@@ -47,19 +51,19 @@ public class ClientRoomMenuPanel extends MenuPanel {
 	    	ImagePanel imagePanel = new ImagePanel();
 	    	imagePanel.setBounds(160, y, 40, 40);
 		    this.add(imagePanel);
-		    this.avaterImagePanels[i] = imagePanel;
+		    this.avatarImagePanels.add(imagePanel);
 		    
 	    	Label nameLabel = new Label(defaultName + " " + i);
 		    nameLabel.setBounds(210, y, 100, 40);
 		    this.add(nameLabel);
-		    this.nameLabels[i] = nameLabel;
+		    this.nameLabels.add(nameLabel);
 		    
 			ComboBox comboBox = new ComboBox(adversaryChoices);
 			comboBox.setBounds(370, y, 150, 40);
 			comboBox.setSelectedIndex(4);
 			comboBox.setEditable(false);
 			this.add(comboBox);
-		    this.choiceComboBoxes[i] = comboBox;
+		    this.choiceComboBoxes.add(comboBox);
 	    }
 	}
 	
@@ -76,4 +80,39 @@ public class ClientRoomMenuPanel extends MenuPanel {
 		GameController gc = (GameController)this.getFrameController();
 		gc.showWelcomeMenuPanel();
 	}
+	
+	// Refresh menu
+
+	public void refreshMenu(PlayerIHM player, Data data) {
+		try {
+			LoginInfo[] loginInfos = player.getLoginInfo();
+			for (int i = 0; i < 5; i++) {
+				Label nameLabel = this.nameLabels.get(i);
+				ComboBox choiceComboBox = this.choiceComboBoxes.get(i);
+				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
+				
+				LoginInfo info = loginInfos[i];
+				nameLabel.setText(info.getPlayerName());
+				choiceComboBox.setEditable(!info.isHost());
+				
+				System.out.println(i + " " + info);
+				if (info.isClosed()) {
+					nameLabel.setText("Connection closed", null);
+					choiceComboBox.setSelectedIndex(4);
+					
+				} if (nameLabel.getText() == null && info.isHuman()) {
+					nameLabel.setText("Waiting connection", null);
+					choiceComboBox.setSelectedIndex(0);
+					
+				} else if (!info.isHuman()) {
+					int level = info.getAiLevel();
+					choiceComboBox.setSelectedIndex(level);
+					nameLabel.setText("AI", null);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

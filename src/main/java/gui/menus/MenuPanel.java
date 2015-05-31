@@ -12,10 +12,10 @@ import main.java.data.Data;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
-import main.java.rubbish.InterfaceIHM;
+import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
-public class MenuPanel extends Panel implements InterfaceIHM {
+public class MenuPanel extends Panel {
 
 	// Properties
 	
@@ -74,10 +74,8 @@ public class MenuPanel extends Panel implements InterfaceIHM {
         }
     }
 
-	// Interface IHM
+	// Refresh menu
 	
-	public void refresh(Data data) {}
-
-	public void excludePlayer() {}
+	public void refreshMenu(PlayerIHM player, Data data) {}
 	
 }
