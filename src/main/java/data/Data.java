@@ -388,7 +388,8 @@ public class Data implements Serializable
 		LinkedList<Direction> accessibleDirection;
 		Tile oldT = this.board[x][y];
 		int additionalPathSize = oldT.isReplaceable(t, additionalPath);
-System.out.println("Data.isAcceptableTilePlacement ------     " + additionalPathSize);
+//System.out.println("Data.isAcceptableTilePlacement ------     " + additionalPathSize);
+
 		if (additionalPathSize == -1)	return false;													// Check whether t contains the old t (remove Tile and Rule C)
 		if (this.isOnEdge(x, y))		return false;
 
@@ -763,7 +764,4 @@ System.out.println("Data.isAcceptableTilePlacement ------     " + additionalPath
 		// Setter
 		public void newRound(){this.history.addLast(new LinkedList<Action>());}
 	}
-
-// TODO les autres sont avec les getter et les setter
-// Il faut corriger tous les getter et setter pour faire le moin de new et copy possible (pour les besoins de l'ia)
 }

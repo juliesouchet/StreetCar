@@ -248,21 +248,17 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (this.isBuilding) return -1;
 		if (this.isTerminus) return -1;
 		if (this.isStop)	 return -1;
-throw new RuntimeException("Ne marche pas: a debuguer");
-//		LinkedList<Path> lPath	= new LinkedList<Path>(this.pathList);
-//		LinkedList<Path> tPath	= new LinkedList<Path>(t.pathList);
+
 		Path[]	lPath	= initPathTab();
 		Path[]	tPath	= initPathTab();
 		int		lSize	= this.ptrPathTab;
 		int		tSize	= t.ptrPathTab;
 		copyPathTab(this.pathTab,	lPath, this.ptrPathTab);
 		copyPathTab(t.pathTab,		tPath, t.ptrPathTab);
-//		int sizeI = t.ptrPathTab;
 		for (int i=0; i<=tSize; i++)							// Remove the common paths
 		{
 			Path pt = tPath[i];
-//			int sizeJ = this.ptrPathTab;
-			for (int j=0; j<lSize; j++)
+			for (int j=0; j<=lSize; j++)
 			{
 				Path pl = lPath[j];
 				if (pt.equals(pl))
@@ -276,8 +272,8 @@ throw new RuntimeException("Ne marche pas: a debuguer");
 			}
 		}
 
-		if (lSize != 0)	return -1;								// Case local tile is not contained in t
-		if (tSize == 0)	return -1;								// Case local tile is equal to t
+		if (lSize != -1)	return -1;							// Case local tile is not contained in t
+		if (tSize == -1)	return -1;							// Case local tile is equal to t
 		if (additionalPath != null)								// Case replaceable
 		{
 			for (int i=0; i<=tSize; i++)						//		Add all the new paths
@@ -336,6 +332,7 @@ throw new RuntimeException("Ne marche pas: a debuguer");
 		for (String s: acceptedTerminusDescription) if (td.equals(s)) return true;
 		return false;
 	}
+// TODO a rendre private
 	public static Path[] initPathTab()
 	{
 		Path[] res = new Path[maxNbrPathInTile];
