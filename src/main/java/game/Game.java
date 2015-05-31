@@ -7,6 +7,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import main.java.data.Data;
@@ -173,14 +174,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println("===========================================================\n");
 		if (gameHasStarted || isHost)	System.exit(0);
 	}
-//TODO Ne peut pas etre fait directement par player
-// Il doit passer par this.setLoginInfo (voir plus haut)
-	public synchronized void onExcludePlayer(String playerWhoExcludes, String playerExcluded)
-			throws RemoteException, ExceptionForbiddenAction {
-		// TODO Auto-generated method stub
-		
-	}
-//TODO FIN
+
 	/**==============================================
 	 * Init the game parameters.
 	 * Make the kame begins
@@ -223,11 +217,16 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.engine.addAction(ea);
 		// TODO check all possible things
 	}
-	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-// TODO: --demander a julie check if the player has completed his game
+
+		if(!data.hasStartedMaidenTravel(playerName))
+		{
+			if(data.getHandSize(playerName) < 5) throw new ExceptionForbiddenAction();
+			if(data.hasRemainingAction(playerName)) throw new ExceptionForbiddenAction();
+		}
 
 		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
 	}
@@ -237,14 +236,9 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 
 		if(!data.isPlayerTerminus(playerName, terminus)) throw new ExceptionForbiddenAction();
-
-		// TODO if(dataPlayer.numberOfTilesPlacedThisTurn > 0) throw new ExceptionForbiddenAction();
-		// TODO if(dataPlayer.numberOfTilesDrawnThisTurn > 0) throw new ExceptionForbiddenAction();
+		if(!data.isStartOfTurn(playerName)) throw new ExceptionForbiddenAction();
+		if(data.hasStartedMaidenTravel(playerName)) throw new ExceptionForbiddenAction();
 		
-		// TODO if(dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
-		
-		// TODO dataPlayer.startedMaidenTravel = true;
-		// TODO dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
 		EngineAction ea = engine.new EngineAction(playerName, data, "startMaidenTravel");
 		ea.position = terminus;
 
@@ -255,25 +249,43 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 
-		//PlayerInfo dataPlayer = data.getPlayerInfo(playerName); TODO this
-		//if(!dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction(); TODO this
-		// TODO test if tram can reach (both regarding existing path and allowed number of movement)
-		// TODO test if tram must stop at a stopping 
-		// TODO maybe more tests?
-		// TODO verify stoped at a stop sign
-		// TODO instead of a Point, pass a list of Points (easyer to check)
-		// TODO check that tram isn't goint backwards
-		// TODO check if tramMovement is linked to current tram position
-		// TODO check if each tramMovement is linked together
-		// TODO check if args are null
-		// TODO check if null (for method)
+		if(!data.hasStartedMaidenTravel(playerName)) throw new ExceptionForbiddenAction();
+		if(!data.isStartOfTurn(playerName)) throw new ExceptionForbiddenAction();
+		if(tramMovement.size() > data.getMaximumSpeed()) throw new ExceptionForbiddenAction();
+		if(tramMovement.size() < Data.minSpeed) throw new ExceptionForbiddenAction();
+		if(tramMovement.size() > Data.maxSpeed) throw new ExceptionForbiddenAction();
+
+		Point currentPosition = data.getTramPosition(playerName);
+		
+		if(!data.pathExistsBetween(currentPosition, tramMovement.getLast())) throw new ExceptionForbiddenAction();	
+		// TODO if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
+		
+		Iterator<Point> tramPathIterator = tramMovement.iterator();
+		Point previousPosition = null, nextPosition;
+		while(tramPathIterator.hasNext())
+		{
+			nextPosition = tramPathIterator.next();
+			if(previousPosition != null)
+			{
+				if(previousPosition.equals(nextPosition)) throw new ExceptionForbiddenAction();
+			}
+			if(!data.getAccessibleNeighborsPositions(currentPosition.x, currentPosition.y).contains(nextPosition))  throw new ExceptionForbiddenAction();
+			if(data.getTile(currentPosition.x, currentPosition.y).isStop())
+			{
+				if(tramPathIterator.hasNext()) throw new ExceptionForbiddenAction();
+			}
+			
+			previousPosition = currentPosition;
+			currentPosition = nextPosition;
+		}
+		
 		// TODO check if maidenTravel has started (for every method)
+		// TODO check if tram is not going backwards (regarding previous turn)
 
 		EngineAction ea = engine.new EngineAction(playerName, data, "moveTram");
 		ea.tramMovement = tramMovement;
 		
 		this.engine.addAction(ea);
-		// notifyEngine(); TODO ask riyane
 	}
 
 	/**=============================================================================
