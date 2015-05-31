@@ -248,7 +248,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (this.isBuilding) return -1;
 		if (this.isTerminus) return -1;
 		if (this.isStop)	 return -1;
-
+throw new RuntimeException("Ne marche pas: a debuguer");
 //		LinkedList<Path> lPath	= new LinkedList<Path>(this.pathList);
 //		LinkedList<Path> tPath	= new LinkedList<Path>(t.pathList);
 		Path[]	lPath	= initPathTab();

@@ -374,7 +374,7 @@ public class Data implements Serializable
 		LinkedList<Direction> accessibleDirection;
 		Tile oldT = this.board[x][y];
 		int additionalPathSize = oldT.isReplaceable(t, additionalPath);
-
+System.out.println("Data.isAcceptableTilePlacement ------     " + additionalPathSize);
 		if (additionalPathSize == -1)	return false;													// Check whether t contains the old t (remove Tile and Rule C)
 		if (this.isOnEdge(x, y))		return false;
 
