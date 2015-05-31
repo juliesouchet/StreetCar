@@ -2,10 +2,8 @@ package main.java.data;
 
 import java.awt.Point;
 import java.io.Serializable;
-import java.util.LinkedList;
 
 import main.java.util.CloneableInterface;
-import main.java.util.Copier;
 
 
 
@@ -24,12 +22,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 	public int		action;
 
-	public Point	positionTile1					= new Point();									// Build Attributes
+	public Point	positionTile1					= new Point();					// Build Attributes
 	public Point	positionTile2					= new Point();
 	public Tile		tile1							= new Tile(null, null);
 	public Tile		tile2							= new Tile(null, null);
 
-	public Point[]	tramwayMovement = new Point[maxTramwayMove];	// Move Attributes
+	public Point[]	tramwayMovement					= new Point[maxTramwayMove];	// Move Attributes
+	public int		ptrTramwayMovement				= -1;							//	Index of the last non null point
 
 // -----------------------------------------------------
 // Builder
@@ -42,8 +41,9 @@ public class Action implements Serializable, CloneableInterface<Action>
 	}
 	public static Action newMoveAction(Point[] tramwayMovement)
 	{
-		Action res			= new Action();
-		res.action			= MOVE;
+		Action res				= new Action();
+		res.action				= MOVE;
+		res.ptrTramwayMovement	= tramwayMovement.length-1;
 		for (int i=0; i<tramwayMovement.length; i++)
 		{
 			res.tramwayMovement[i]	 = new Point();
@@ -59,38 +59,49 @@ public class Action implements Serializable, CloneableInterface<Action>
 	{
 		Action res			= new Action();
 		res.action			= BUILD_SIMPLE;
-		res.positionTile1	= new Point(position);
-		res.tile1			= tile.getClone();
+		res.positionTile1.x	= position.x;
+		res.positionTile1.y	= position.y;
+		res.tile1			.setTile(tile);
 		return res;
 	}
 	public static Action newBuildSimpleAction(int x, int y, Tile tile)
 	{
 		Action res			= new Action();
 		res.action			= BUILD_SIMPLE;
-		res.positionTile1	= new Point(x,y);
-		res.tile1			= tile.getClone();
+		res.positionTile1.x	= x;
+		res.positionTile1.y	= y;
+		res.tile1			.setTile(tile);
 		return res;
 	}
 	public static Action newBuildDoubleAction(Point position1, Tile tile1, Point position2, Tile tile2)
 	{
 		Action res			= new Action();
 		res.action			= BUILD_DOUBLE;
-		res.positionTile1	= new Point(position1);
-		res.tile1			= tile1.getClone();
-		res.positionTile2	= new Point(position2);
-		res.tile2			= tile2.getClone();
+		res.positionTile1.x	= position1.x;
+		res.positionTile1.y	= position1.y;
+		res.positionTile2.x	= position2.x;
+		res.positionTile2.y	= position2.y;
+		res.tile1			.setTile(tile1);
+		res.tile2			.setTile(tile2);
 		return res;
 	}
 	private Action(){}
 	public Action getClone()
 	{
-		Action res = new Action();
-		res.action	= this.action;
-		res.positionTile1	= (this.positionTile1	== null) ? res.positionTile1 = null	: new Point(this.positionTile1);
-		res.positionTile2	= (this.positionTile2	== null) ? res.positionTile2 = null	: new Point(this.positionTile2);
-		res.tile1			= (this.tile1			== null) ? res.tile1 = null			: this.tile1.getClone();
-		res.tile2			= (this.tile2			== null) ? res.tile2 = null			: this.tile2.getClone();
-		res.tramwayMovement	= (this.tramwayMovement	== null) ? res.tramwayMovement=null	: (new Copier<Point>()).copyList(this.tramwayMovement);
+		Action res				= new Action();
+		res.action				= this.action;
+		res.positionTile1.x		= this.positionTile1.x;
+		res.positionTile1.y		= this.positionTile1.y;
+		res.positionTile2.x		= this.positionTile2.x;
+		res.positionTile2.y		= this.positionTile2.y;
+		res.tile1				.setTile(this.tile1);
+		res.tile2				.setTile(this.tile2);
+		res.ptrTramwayMovement	= this.ptrTramwayMovement;
+		for (int i=0; i<=this.ptrTramwayMovement; i++)
+		{
+			res.tramwayMovement[i].x = this.tramwayMovement[i].x;
+			res.tramwayMovement[i].y = this.tramwayMovement[i].y;
+		}
 		return res;
 	}
 
@@ -101,10 +112,9 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE);}
 	public boolean isMoving()				{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
 
-
-// TODO
-	
-	//Ajout par Ulysse:
+// -----------------------------------------------------
+// Setter
+// -----------------------------------------------------
 	/**
 	 * affecte a l'appelant les parametres de src sans nouvelle allocation memoire.
 	 * @param src
@@ -116,10 +126,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.positionTile1.y	= (src.positionTile1 == null) ? null : src.positionTile1.y;
 		this.positionTile2.x	= (src.positionTile2 == null) ? null : src.positionTile2.x;
 		this.positionTile2.y	= (src.positionTile2 == null) ? null : src.positionTile2.y;
-
-		//TODO ramplacer getClone par copy() sans allocation memoire
-		this.tile1=src.tile1.getClone();
-		this.tile2=src.tile2.getClone();
-		this.tramwayMovement = (LinkedList<Point>)src.tramwayMovement.clone();
+		this.tile1				. setTile(src.tile1);
+		this.tile2				. setTile(src.tile2);
+		this.ptrTramwayMovement	= src.ptrTramwayMovement;
+		for (int i=0; i<=src.ptrTramwayMovement; i++)
+		{
+			this.tramwayMovement[i].x = this.tramwayMovement[i].x;
+			this.tramwayMovement[i].y = this.tramwayMovement[i].y;
+		}
 	}
 }

@@ -27,7 +27,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	private static final long		serialVersionUID				= 2787165577586992226L;
+	public static final long		serialVersionUID				= 2787165577586992226L;
 	public static final String		tileNamePrefix					= "Tile_";
 	public static final String		nonBuildingDescription			= "Z";
 	public static final String		nonTerminusDescription			= "Z";
@@ -39,13 +39,13 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public static final int			nbrCardinalChar					= 2;
 
 	private String					tileID;
-	private boolean					isTree;
-	private boolean					isBuilding;
-	private boolean					isStop;
-	private boolean					isTerminus;
+	private Boolean					isTree;
+	private Boolean					isBuilding;
+	private Boolean					isStop;
+	private Boolean					isTerminus;
 	private String					buildingDescription;
 	private Integer					terminusDescription;
-	private int						cardinal;
+	private Integer					cardinal;
 	private Direction				tileDirection;
 	private LinkedList<Path>		pathList;
 
@@ -54,10 +54,22 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 	public Tile(LinkedList<Path> pathList, Tile t) throws RuntimeException
 	{
-		if ((t.isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
-
-		if (t != null)
+		if ((t == null) || (pathList == null))
 		{
+			this.tileID					= null;
+			this.isTree					= null;
+			this.isBuilding				= null;
+			this.isStop					= null;
+			this.isTerminus				= null;
+			this.buildingDescription	= null;
+			this.terminusDescription	= null;
+			this.cardinal				= null;
+			this.tileDirection			= null;
+			this.pathList				= new LinkedList<Path>();
+		}
+		else if ((t != null) && (pathList != null))
+		{
+			if ((t.isBuilding)&& (!pathList.isEmpty()))throw new RuntimeException("A tile can not be a building and contain a path");
 			this.tileID					= new String(t.tileID);
 			this.isTree					= t.isTree;
 			this.isBuilding				= t.isBuilding;
@@ -69,10 +81,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			this.tileDirection			= t.tileDirection;
 			this.pathList				= (new Copier<Path>()).copyList(pathList);
 		}
-		else
-		{
-			
-		}
+		else throw new RuntimeException("Unhandeled case");
 	}
 	private Tile(){}
 	public Tile getClone()
@@ -167,7 +176,24 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	}
 
 // --------------------------------------------
-// Setters/getters:
+// Setters:
+// --------------------------------------------
+	public void setTile(Tile t)
+	{
+		this.tileID					= new String(t.tileID);
+		this.isTree					= t.isTree;
+		this.isBuilding				= t.isBuilding;
+		this.isStop					= t.isStop;
+		this.isTerminus				= t.isTerminus;
+		this.buildingDescription	= (t.buildingDescription == null) ? null : new String(t.buildingDescription);
+		this.terminusDescription	= (t.terminusDescription == null) ? null : new Integer(t.terminusDescription);
+		this.cardinal				= t.cardinal;
+		this.tileDirection			= t.tileDirection;
+		this.pathList				= (new Copier<Path>()).copyList(t.pathList);
+	}
+
+// --------------------------------------------
+// Getters:
 // --------------------------------------------
 	public boolean	equals(Object o)	{return (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
 	public String	getTileID()			{return new String(this.tileID);}
