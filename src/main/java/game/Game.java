@@ -101,7 +101,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
-	public synchronized Data	getData(String playerName) throws RemoteException
+	public synchronized Data getData(String playerName) throws RemoteException
 	{
 		return this.data.getClone(playerName);
 	}
@@ -122,11 +122,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
-
+// TODO ajouter le test ....
 		boolean	toNotify		= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
 		String	oldPlayerName	= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
-		if (toNotify) this.engine.addAction(oldPlayerName, this.data, "excludePlayer", null, null, null, -1);
+		if (toNotify) this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
+// TODO notify all the logged players (engine)
 	}
 	/**==============================================
 	 * @return Makes a player join the game
@@ -136,82 +137,43 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		String	playerName	= player.getPlayerName();
 		Color	playerColor	= player.getPlayerColor();
 		boolean	isHuman		= player.isHumanPlayer();
+		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
 
-		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)
-		{
-			System.out.println("\n===========================================================");
-			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
-			System.out.println(gameMessageHeader + "Refusing player: party is currently full.");
-			System.out.println("===========================================================\n");
-			throw new ExceptionFullParty();
-		}
-		int playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
-		if (playerIndex == -1)
-		{
-			System.out.println("\n===========================================================");
-			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
-			System.out.println(gameMessageHeader + "Refusing player: No Corresponding Player Excpected in waiting room");
-			System.out.println("===========================================================\n");
-			throw new ExceptionNoCorrespondingPlayerExcpected();
-		}
-		else if (this.data.containsPlayer(playerName))
-		{
-			System.out.println("\n===========================================================");
-			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
-			System.out.println(gameMessageHeader + "Refusing player: name already taken.");
-			System.out.println("===========================================================\n");
-			throw new ExceptionUsedPlayerName();
-		}
-		else if (this.usedColor(playerColor))
-		{
-			System.out.println("\n===========================================================");
-			System.out.println(gameMessageHeader + "join request from player : \"" + playerName + "\"");
-			System.out.println(gameMessageHeader + "Refusing player: color \"" + playerColor + "\"  already taken.");
-			System.out.println("===========================================================\n");
-			throw new ExceptionUsedPlayerColor();
-		}
-		else
-		{
-// TODO: faire ca par engine
-			this.data.addPlayer(player, playerName, playerColor, isHost);
-			this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
-			this.engine.addAction(playerName, this.data, "onJoinGame", null, null, null, -1);
-			System.out.println("\n===========================================================");
-			System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");
-			System.out.println(Game.gameMessageHeader + "accepted player");
-			System.out.println(Game.gameMessageHeader + "NbrPlayer: " + this.data.getNbrPlayer());
-			System.out.println("===========================================================\n");
-		}
+		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
+		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExcpected();
+		if (this.data.containsPlayer(playerName))			throw new ExceptionUsedPlayerName();
+		if (this.usedColor(playerColor))					throw new ExceptionUsedPlayerColor();
+		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
+
+		this.engine.onJoinGame(this.data, player, playerName, playerColor, isHost);
+		this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
+		System.out.println("\n===========================================================");
+		System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");
+		System.out.println(Game.gameMessageHeader + "accepted player");
+		System.out.println(Game.gameMessageHeader + "Number of player: " + this.data.getNbrPlayer());
+		System.out.println("===========================================================\n");
 	}
 	/**==============================================
 	 * @return Makes a player leave the game
+	 * If the player is the host, or the game has started, the current thread exits
 	 * ================================================*/
 	public synchronized void onQuitGame(String playerName) throws RemoteException, ExceptionForbiddenAction
 	{
-		int playerIndex;
-		String res = null;
-//TODO If player is host: quit game + notify all players + this.Exit()
-		for (String name: this.data.getPlayerNameList())
-		{
-			if (name.equals(playerName))
-			{
-// TODO: faire ca par engine
-				this.data.removePlayer(name);
-				res= "player logged out";
-				playerIndex = getPlayerInLogInfoTable(playerName);
-				this.loggedPlayerTable[playerIndex] = new LoginInfo(true, null, false, false, -1);
-				break;
-			}
-		}
-		if (res == null) res = "player not found in the local list";
+		int playerIndex			= getPlayerInLogInfoTable(playerName);
+		boolean isHost			= this.data.istHost(playerName);
+		boolean gameHasStarted	= this.data.isGameStarted();
 
+		if (!this.data.containsPlayer(playerName))	throw new ExceptionForbiddenAction();
+		if (playerIndex == -1)						throw new ExceptionForbiddenAction();
+
+		this.loggedPlayerTable[playerIndex] = LoginInfo.initialLoginTable[playerIndex].getClone();
+		this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
-		System.out.println(gameMessageHeader + "logout result : " + res);
+		System.out.println(gameMessageHeader + "logout result : player logged out");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
-		this.engine.addAction(null, this.data, "onQuitGame", null, null, null, -1);
-		if (res != null) throw new ExceptionForbiddenAction();
+		if (gameHasStarted || isHost)	System.exit(0);
 	}
 
 	@Override
@@ -220,13 +182,17 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		// TODO Auto-generated method stub
 		
 	}
-	
-	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction
+	/**==============================================
+	 * Init the game parameters.
+	 * Make the kame begins
+	 ================================================*/
+	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
+		if (!this.data.gameCanStart())					throw new ExceptionNotEnougthPlayers();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
-		this.engine.addAction(playerName, this.data, "hostStartGame", null, null, null, -1);
+		this.engine.addAction(this.data, "hostStartGame", playerName);
 	}
 	/**=============================================================================
 	 * Places a tile from the player's hand on the bord.

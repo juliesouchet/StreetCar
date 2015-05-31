@@ -225,7 +225,8 @@ public class Data implements Serializable
 // Getter:
 // --------------------------------------------
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
-	public String				getHost()										{return new String(this.host);}
+	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
+	public boolean				istHost(String playerName)						{return this.host.equals(playerName);}
 	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}

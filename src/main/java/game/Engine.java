@@ -1,5 +1,6 @@
 package main.java.game;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -71,14 +72,27 @@ public class Engine implements Runnable
 			}
 		}
 	}
-	/**===================================================================
-	 * @return add an event to the engine action queue
-	 ====================================================================*/
+	/** @return add an event to the engine action queue*/
+	public void addAction(Data data, String function)
+	{
+		addAction(new EngineAction(null, data, function, null, null, null, -1, null, null));
+	}
+	/** @return add an event to the engine action queue*/
+	public void addAction(Data data, String function, String playerName)
+	{
+		addAction(new EngineAction(playerName, data, function, null, null, null, -1, null, null));
+	}
+	/** @return add an event to the engine action queue*/
+	public void addAction(Data data, String function, String playerName, Color playerColor, boolean isHost)
+	{
+		addAction(new EngineAction(playerName, data, function, null, null, null, -1, playerColor, isHost));
+	}
+	/** @return add an event to the engine action queue*/
 	public void addAction(String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
 	{
-		addAction(new EngineAction(playerName, data, function, position, tile, tramMovement, nbrCardsToDraw));
+		addAction(new EngineAction(playerName, data, function, position, tile, tramMovement, nbrCardsToDraw, null, false));
 	}
-	
+	/** @return add an event to the engine action queue*/
 	public void addAction(EngineAction ea)
 	{
 		synchronized (engineLock)
@@ -93,23 +107,63 @@ public class Engine implements Runnable
 	}
 
 // --------------------------------------------
+// Public methods:
+// This functions are executed by the caller thread
+// --------------------------------------------
+	public void onJoinGame(Data data, PlayerInterface player, String playerName, Color playerColor, boolean isHost) throws RemoteException
+	{
+		PlayerInterface pi;
+
+		data.addPlayer(player, playerName, playerColor, isHost);
+		for (String name: data.getPlayerNameList())
+		{
+			pi = data.getPlayer(name);
+			pi.gameHasChanged(data.getClone(name));
+		}
+	}
+	public void onQuitGame(Data data, String playerName) throws RemoteException
+	{
+		PlayerInterface pi;
+
+		if ((data.isGameStarted()) || (data.istHost(playerName)))
+		{
+			for (String name: data.getPlayerNameList()) data.getPlayer(name).excludePlayer();
+			this.engineThread.interrupt();
+		}
+		else
+		{
+			data.removePlayer(playerName);
+			for (String name: data.getPlayerNameList())
+			{
+				pi = data.getPlayer(name);
+				if (name.equals(playerName))	pi.excludePlayer();
+				else							pi.gameHasChanged(data.getClone(name));
+			}
+		}
+	}
+
+// --------------------------------------------
 // Private methods:
 // Declare all the private methods as synchronized
 // --------------------------------------------
 	@SuppressWarnings("unused")
-	private synchronized void onJoinGame() throws RemoteException
+	private synchronized void excludePlayer() throws RemoteException
 	{
-		this.notifyAllPlayers();
-	}
+		PlayerInterface pi;
+		Data privateData;
+		Data data = this.toExecute.data;
 
-	@SuppressWarnings("unused")
-	private synchronized void onQuitGame() throws RemoteException
-	{
-// TODO: if game has started: end game
-// TODO: elseremove player from Data
-		this.notifyAllPlayers();
+		for (String name: data.getPlayerNameList())
+		{
+			pi = data.getPlayer(name);
+			if (name.equals(this.toExecute.playerName)) pi.excludePlayer();
+			else
+			{
+				privateData	= data.getClone(name);
+				pi.gameHasChanged(privateData);
+			}
+		}
 	}
-	
 	@SuppressWarnings("unused")
 	private synchronized void hostStartGame() throws RemoteException
 	{
@@ -122,20 +176,19 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void placeTile() throws RemoteException
 	{
-		String	player		= this.toExecute.playerName;
+		String	playerName	= this.toExecute.playerName;
 		Data	data		= this.toExecute.data;
 		Point	position	= this.toExecute.position;
 		Tile	tile		= this.toExecute.tile;
 
-		data.placeTile(player, position.x, position.y, tile);
-// TODO replace by notifyPlayer()
-		this.notifyAllPlayers();
+		data.placeTile(playerName, position.x, position.y, tile);
+		this.notifyPlayer(playerName);
 	}
 
 	@SuppressWarnings("unused")
 	private synchronized void replaceTwoTiles () throws RemoteException
 	{
-		// TODO
+// TODO replace by notifyPlayer()
 		this.notifyAllPlayers();
 	}
 
@@ -154,36 +207,7 @@ public class Engine implements Runnable
 		int		nbrCards	= this.toExecute.nbrCardsToDraw;
 
 		data.drawTile(playerName, nbrCards);
-// TODO replace by notifyPlayer()
-		this.notifyAllPlayers();
-	}
-	
-	@SuppressWarnings("unused")
-	private synchronized void moveTram() throws RemoteException
-	{
-		Data	data		= this.toExecute.data;
-		String playerName = toExecute.playerName;
-		LinkedList<Point> tramMovement = toExecute.tramMovement;
-		data.setTramPosition(playerName, tramMovement.getLast());
-
-// TODO replace by notifyPlayer()
-		this.notifyAllPlayers();
-		if(data.getTerminiPoints(playerName).contains(data.getTramPosition(playerName)))
-		{
-			System.out.println("STOP EVERYTHING!!!!!! \n" + playerName + " has won");
-			// TODO data.endgamebecozplayerzhazone
-		}
-		//		for(String name : data.getPlayerOrder())
-		//		{
-		//			PlayerInterface remotePlayer = data.getPlayer(name);
-		//			remotePlayer.playerHasMovedTram(playerName, dest);
-		//
-		//			if(dataPlayer.tramPosition.equals(dataPlayer.endTerminus))
-		//			{
-		//				remotePlayer.announceVictoriousPlayer(playerName);
-		//				// TODO check if stopped by all stop points
-		//			}
-		//		}
+		this.notifyPlayer(playerName);
 	}
 	@SuppressWarnings("unused")
 	private synchronized void pickTileFromPlayer () throws RemoteException
@@ -230,27 +254,34 @@ public class Engine implements Runnable
 //			//remotePlayer.revealPlayerRoute(playerName, dataPlayer.route); // TODO
 //		}
 	}
-	
 	@SuppressWarnings("unused")
-	private synchronized void excludePlayer() throws RemoteException
+	private synchronized void moveTram() throws RemoteException
 	{
-		PlayerInterface pi;
-		Data privateData;
-		for (String name: this.toExecute.data.getPlayerNameList())
+		Data	data		= this.toExecute.data;
+		String playerName = toExecute.playerName;
+		LinkedList<Point> tramMovement = toExecute.tramMovement;
+		data.setTramPosition(playerName, tramMovement.getLast());
+
+		this.notifyPlayer(playerName);
+		if(data.getTerminiPoints(playerName).contains(data.getTramPosition(playerName)))
 		{
-			pi = this.toExecute.data.getPlayer(name);
-			if (name.equals(this.toExecute.playerName)) pi.excludePlayer();
-			else
-			{
-				privateData	= this.toExecute.data.getClone(name);
-				pi.gameHasChanged(privateData);
-			}
+			System.out.println("STOP EVERYTHING!!!!!! \n" + playerName + " has won");
+			// TODO data.endgamebecozplayerzhazone
 		}
+		//		for(String name : data.getPlayerOrder())
+		//		{
+		//			PlayerInterface remotePlayer = data.getPlayer(name);
+		//			remotePlayer.playerHasMovedTram(playerName, dest);
+		//
+		//			if(dataPlayer.tramPosition.equals(dataPlayer.endTerminus))
+		//			{
+		//				remotePlayer.announceVictoriousPlayer(playerName);
+		//				// TODO check if stopped by all stop points
+		//			}
+		//		}
 	}
 
-	
 	private synchronized void notifyPlayer(String playerName) throws RemoteException
-
 	{
 		PlayerInterface pi;
 		Data data = this.toExecute.data;
@@ -273,7 +304,9 @@ public class Engine implements Runnable
 	class EngineAction
 	{
 		// Attributes
+		public PlayerInterface	player;
 		public String			playerName;
+		public Color			playerColor;
 		public Data				data;
 		public String			function;
 		public Point			position;
@@ -281,11 +314,12 @@ public class Engine implements Runnable
 		public Tile				tile;
 		public Tile				secondTile;
 		public LinkedList<Point>tramMovement;
-		public int				nbrCardsToDraw; // TODO val discuss this with riyane
+		public Integer			nbrCardsToDraw; // TODO val discuss this with riyane
 		public String 			chosenPlayer;
+		public Boolean			isHost;
 
 		// Builder
-		public EngineAction (String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
+		public EngineAction (String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, Integer nbrCardsToDraw, Color playerColor, Boolean isHost)
 		{
 			this.playerName		= playerName;
 			this.data			= data;
@@ -294,11 +328,12 @@ public class Engine implements Runnable
 			this.tile			= tile;
 			this.tramMovement	= tramMovement;
 			this.nbrCardsToDraw	= nbrCardsToDraw;
+			this.playerColor	= playerColor;
+			this.isHost			= isHost;
 		}
-		
 		public EngineAction(String playerName, Data data, String Function)
 		{
-			this(playerName, data, Function, null, null, null, -1);
+			this(playerName, data, Function, null, null, null, -1, null, false);
 		}
 	}
 }

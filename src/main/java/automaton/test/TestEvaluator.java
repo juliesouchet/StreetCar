@@ -3,7 +3,6 @@ package main.java.automaton.test;
 import java.awt.Color;
 import java.rmi.RemoteException;
 
-import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUnknownBoardName;
 import main.java.game.ExceptionUsedPlayerColor;
@@ -37,7 +36,7 @@ public class TestEvaluator {
 		
 		try {
 			game.hostStartGame("Player 1");
-		} catch (RemoteException | ExceptionForbiddenAction e) {
+		} catch (Exception e) {
 			System.out.println("Game start error"); e.printStackTrace();
 		}
 		

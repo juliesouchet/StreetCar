@@ -12,6 +12,7 @@ import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
@@ -35,7 +36,7 @@ public interface PlayerInterface extends Remote
 	public void		onQuitGame			(String playerName)							throws RemoteException, ExceptionForbiddenAction;
 	public void 	onExcludePlayer		(String playerExcluded)						throws RemoteException, ExceptionForbiddenAction;
 
-	public void		hostStartGame		()											throws RemoteException, ExceptionForbiddenAction;
+	public void		hostStartGame		()											throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers;
 	public void		excludePlayer		()											throws RemoteException;
 	public void		gameHasChanged		(Data data)									throws RemoteException;
 	public void		placeTile			(Tile t, Point position)					throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions;

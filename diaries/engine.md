@@ -114,3 +114,34 @@ Creation des joueurs de types IA:
 
 Suite de l'integration du (moteur + joueurs) avec l'IHM (gui)
 Optimisation des classe Direction et Data pour les besoins de l'IA (trés grand nombre d'appel aux methodes de DATA)
+
+-------------------
+
+### Jour 12 : Jeudi 28 mai
+
+Optimisation de la classe Engine pour les besoin de l'ihm:
+  - Les thread joueur demandent une nouvelle action à la classe game.
+  - Cette demande léve une excepion specifique en cas d'erreur (exception de type java Exception qui est donc obligatoirement traité par l'appelant)
+  - Si non, l'action est placée dans la file d'attente du thread Engine, avant que la main soit rendu à l'utilisateur.   Le moteur reveillera le thread de la classe engine une fois l'action traitée.   Nous avons ainsi considérablement reduit le temps d'attente des joueur et rendu l'affichage beaucoup plus fluide.   Nous avons egalement gardé la contrainte de l'IHM de gérer tous les types d'erreur de l'utilisateur par un affichage specifique.
+
+-------------------
+
+### Jour 13 : Vendredi 29 mai
+
+Creation de la table de gestion des connexions:
+  - Nous avons créé une classe LoginInfo corespondant aux information de connexion d'un joueur.
+  - La table des connexions est un tableau associant a chaque joueur attendu ou deja present ses information (Joueur interdit / Humain/IA, niveau de l'ia, haute de la partie...)
+  - Cette table est totalement administree par le joueur haute.  Lors d'une connexion d'un joueur, le systeme cherche une case libre de la table correspondante au joueur.  Si une case est trouvée, la table est mise à jour.  Si non, le joueur est rejeté.
+
+-------------------
+
+### Jour 14 : Samedi 30 mai
+
+Creation des methodes de debut de voyage et de voyage.  Ces methodes respecte les principes du moteur deja enoncé (les methodes appelés par les joueur levent une exception specifique en cas d'erreur. Si non, elles ajoutent une action specifique a la file d'attente du thread moteur, et rendent la main au joueur sans attendre la fin du traitement)
+
+Test des scenarios de jeux:
+  - Classe Test_IHM_IA: nous avons ainsi testé la reponse du moteur a une partie complete ou un joueur humain joue contre une IA aleatoire.
+  - Correction des bug de synchronisation des thread joueur et moteur
+-------------------
+
+### Jour 15 : Dimanche 31 mai

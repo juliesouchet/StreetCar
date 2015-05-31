@@ -14,11 +14,13 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final long		serialVersionUID = 1735179230089796614L;
-	public static final LoginInfo	initialCell0	= new LoginInfo(false,	null,	true,	true,	-1);
-	public static final LoginInfo	initialCell1	= new LoginInfo(false,	null,	false,	true,	-1);
-	public static final LoginInfo	initialCell2	= new LoginInfo(false,	null,	true,	false,	1); // TODO parameter n°3 = false
-	public static final LoginInfo	initialCell3	= new LoginInfo(false,	null,	false,	false,	1);
+	public static final long		serialVersionUID	= 1735179230089796614L;
+	public static final LoginInfo[]	initialLoginTable	= {	new LoginInfo(false,	null,	true,	true,	-1),
+															new LoginInfo(false,	null,	false,	true,	-1),
+															new LoginInfo(false,	null,	false,	false,	1),
+															new LoginInfo(false,	null,	true,	false,	1), // TODO parameter n°3 = false
+															new LoginInfo(false,	null,	false,	false,	2),
+															new LoginInfo(false,	null,	false,	false,	3)};
 
 	private boolean		isClosed;
 	private String		playerName;
@@ -69,11 +71,7 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 	{
 		LoginInfo[]	res = new LoginInfo[Data.maxNbrPlayer];
 
-		res[0] = initialCell0.getClone();
-		res[1] = initialCell1.getClone();
-		res[2] = initialCell2.getClone();
-		res[3] = initialCell3.getClone();
-		for (int i=4; i<Data.maxNbrPlayer; i++) res[i] = initialCell3.getClone();
+		for (int i=0; i<Data.maxNbrPlayer; i++) res[i] = initialLoginTable[i].getClone();
 		return res;
 	}
 	public String toString()

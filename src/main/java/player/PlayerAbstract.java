@@ -13,6 +13,7 @@ import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
@@ -88,7 +89,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		this.data = data;
 		if (this.ihm != null) this.ihm.refresh(data);
 	}
-	public synchronized void hostStartGame()	throws RemoteException, ExceptionForbiddenAction
+	public synchronized void hostStartGame()	throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
 	{
 		this.game.hostStartGame(playerName);
 	}
