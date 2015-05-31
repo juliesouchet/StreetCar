@@ -19,8 +19,8 @@ public class testDecisionNode {
 	public static void main(String[] args) {
 		TraceDebugAutomate.decisionNodeTrace=false;
 		DecisionNode monNoeudDeDecision = null;
-		int taille_de_case = 1000;
-		int nb_de_case = 5000;
+		int taille_de_case = 5;
+		int nb_de_case = 1;
 		long sommeTps = 0;
 		/*
 		 * Notes:
@@ -34,7 +34,7 @@ public class testDecisionNode {
 		for(int i=0;i<nb_de_case;i++){
 			try {
 				long tmps1 = System.nanoTime();
-				monNoeudDeDecision = new DecisionNode(taille_de_case, 0, "root");
+				monNoeudDeDecision = new DecisionNode(taille_de_case, 0, "leaf&root");
 				long tmps2 = System.nanoTime();
 				//TraceDebugAutomate.debugDecisionNodeTrace("Temps pour new decisionNode de taille "+taille_de_case+" = "+ (tmps2-tmps1)*Math.pow(10.0, -9)+"s \n");
 				sommeTps+=(tmps2-tmps1);
@@ -46,8 +46,9 @@ public class testDecisionNode {
 		long tmps4 = System.nanoTime();
 
 		
-		TraceDebugAutomate.debugDecisionNodeTrace("Temps pour "+nb_de_case+" new decisionNode de taille "+taille_de_case+" = "+ (tmps4-tmps3)*Math.pow(10.0, -9)+"s \n");
+		TraceDebugAutomate.debugDecisionNodeTrace("Temps pour "+nb_de_case+" new decision	Node de taille "+taille_de_case+" = "+ (tmps4-tmps3)*Math.pow(10.0, -9)+"s \n");
 		TraceDebugAutomate.debugDecisionNodeTrace("moyenne pour 1case de "+taille_de_case+"actions= "+ (sommeTps/30000000)*Math.pow(10.0, -9)+"s \n");
+		
 		
 		//Affichage
 		System.out.println(monNoeudDeDecision.toString());

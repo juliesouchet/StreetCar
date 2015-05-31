@@ -104,13 +104,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.action = src.action;
 		this.positionTile1.x = src.positionTile1.x;
 		this.positionTile1.y = src.positionTile1.y;
-		this.positionTile2.x = src.positionTile2.x;
-		this.positionTile2.y = src.positionTile2.y;		
+//		this.positionTile2.x = src.positionTile2.x;
+//		this.positionTile2.y = src.positionTile2.y;		
 		
 		//TODO ramplacer getClone par copy() sans allocation memoire
-		this.tile1=src.tile1.getClone();
-		this.tile2=src.tile2.getClone();
-		this.tramwayMovement = (LinkedList<Point>)src.tramwayMovement.clone();
+//		this.tile1=src.tile1.getClone();
+//		this.tile2=src.tile2.getClone();
+//		this.tramwayMovement = (LinkedList<Point>)src.tramwayMovement.clone();
 	}
 	
 	

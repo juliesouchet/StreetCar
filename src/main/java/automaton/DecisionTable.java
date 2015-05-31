@@ -44,9 +44,20 @@ public class DecisionTable {
 	 * @param node
 	 */
 	public void setDecisionNode(int index, DecisionNode node){
-		this.NodeTable[index]=node;
+		this.NodeTable[index].copy(node);
 		this.freeSlots[index]=false;
 	}
+	
+	/**
+	 * initie (alloue) le noeud numero index a node
+	 * @param index
+	 * @param node
+	 */
+	private void initDecisionNode(int index, DecisionNode node){
+		this.NodeTable[index]=node;
+		this.freeSlots[index]=true;
+	}
+	
 	
 	/**
 	 * retourne l'action possible ayant la configuration correspondante la plus avantageuse
@@ -79,7 +90,7 @@ public class DecisionTable {
 	
 	@Override
 	public String toString(){
-		String result="";
+		String result="Table (size="+this.getSize()+"):\n";
 		TraceDebugAutomate.debugDecisionTableTrace("toString: Begin ");
 		for(int i=0;i<this.getSize();i++){
 			TraceDebugAutomate.debugDecisionTableTrace("\n toString: ("+i+")");
@@ -107,7 +118,7 @@ public class DecisionTable {
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		for(int i=0;i<tableSize;i++){
-			this.setDecisionNode(i, new DecisionNode(maxCardinalActionPossible, 0, "root"));
+			this.initDecisionNode(i, new DecisionNode(maxCardinalActionPossible, 0, "root"));
 			this.freeSlots[i]=true;
 		}
 	}
