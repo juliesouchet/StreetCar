@@ -108,7 +108,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	/**==============================================
 	 * @return the table used by the waiting room
 	 ================================================*/
-	public synchronized LoginInfo[]getLoginInfo(String playerName) throws RemoteException
+	public synchronized LoginInfo[] getLoginInfo(String playerName) throws RemoteException
 	{
 		Copier<LoginInfo> cp = new Copier<LoginInfo>();
 
@@ -122,12 +122,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
-// TODO ajouter le test ....
-		boolean	toNotify		= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
+
 		String	oldPlayerName	= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
-		if (toNotify) this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
-// TODO notify all the logged players (engine)
+		this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
 	}
 	/**==============================================
 	 * @return Makes a player join the game
@@ -175,13 +173,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		System.out.println("===========================================================\n");
 		if (gameHasStarted || isHost)	System.exit(0);
 	}
-
-	@Override
+//TODO Ne peut pas etre fait directement par player
+// Il doit passer par this.setLoginInfo (voir plus haut)
 	public synchronized void onExcludePlayer(String playerWhoExcludes, String playerExcluded)
 			throws RemoteException, ExceptionForbiddenAction {
 		// TODO Auto-generated method stub
 		
 	}
+//TODO FIN
 	/**==============================================
 	 * Init the game parameters.
 	 * Make the kame begins
@@ -209,27 +208,48 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
 	}
+	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	{
+		if (!this.data.isGameStarted())	throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
+		
+		EngineAction ea = engine.new EngineAction(playerName, data, "replaceTwoTiles");
+
+		ea.tile = t1;
+		ea.secondTile = t2;
+		ea.position = p1;
+		ea.secondPosition = p2;
+
+		this.engine.addAction(ea);
+		// TODO check all possible things
+	}
 	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-// TODO: check if the player has completed his game
+// TODO: --demander a julie check if the player has completed his game
 
 		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
 	}
-	/**=============================================================================
-	 * Draw a card from the deck.  Put this drawn card in the player's hand
-	 ===============================================================================*/
-	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw
+	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnougthTileInDeck();
-		if (nbrCards > this.data.getPlayerRemainingTilesToDraw(playerName))		throw new ExceptionTwoManyTilesToDraw();
 
-		this.engine.addAction(playerName, this.data, "drawTile", null, null, null, nbrCards);
+		if(!data.isPlayerTerminus(playerName, terminus)) throw new ExceptionForbiddenAction();
+
+		// TODO if(dataPlayer.numberOfTilesPlacedThisTurn > 0) throw new ExceptionForbiddenAction();
+		// TODO if(dataPlayer.numberOfTilesDrawnThisTurn > 0) throw new ExceptionForbiddenAction();
+		
+		// TODO if(dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
+		
+		// TODO dataPlayer.startedMaidenTravel = true;
+		// TODO dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
+		EngineAction ea = engine.new EngineAction(playerName, data, "startMaidenTravel");
+		ea.position = terminus;
+
+		this.engine.addAction(ea);
 	}
-
 	public synchronized void moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
@@ -256,55 +276,31 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		// notifyEngine(); TODO ask riyane
 	}
 
-	public synchronized void pickTileFromPlayer (String playerName, String chosenPlayer, Tile car) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
-	{
-		if (!this.data.isGameStarted()) throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
-		
-		EngineAction ea = engine.new EngineAction(playerName, data, "pickTileFromPlayer");
-		
-		ea.chosenPlayer = chosenPlayer;
-		ea.tile = car;
-		
-		this.engine.addAction(ea);
-		// TODO check if player can pick a tile
-	}
-
-	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
-	{
-		if (!this.data.isGameStarted())	throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
-		
-		EngineAction ea = engine.new EngineAction(playerName, data, "replaceTwoTiles");
-
-		ea.tile = t1;
-		ea.secondTile = t2;
-		ea.position = p1;
-		ea.secondPosition = p2;
-
-		this.engine.addAction(ea);
-		// TODO check all possible things
-	}
-
-	
-	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	/**=============================================================================
+	 * Draw a card from the deck.  Put this drawn card in the player's hand
+	 ===============================================================================*/
+	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnougthTileInDeck();
+		if (nbrCards > this.data.getPlayerRemainingTilesToDraw(playerName))		throw new ExceptionTwoManyTilesToDraw();
 
-		if(!data.isPlayerTerminus(playerName, terminus)) throw new ExceptionForbiddenAction();
+		this.engine.addAction(playerName, this.data, "drawTile", null, null, null, nbrCards);
+	}
+	/**=============================================================================
+	 * Draw a card from a player's hand.  Put this drawn card in the player's hand
+	 ===============================================================================*/
+	public synchronized void pickTileFromPlayer (String playerName, String chosenPlayerName, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand
+	{
+		if (!this.data.isGameStarted())										throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))							throw new ExceptionNotYourTurn();
+		if (this.data.getPlayerRemainingTilesToDraw(playerName) == 0)		throw new ExceptionTwoManyTilesToDraw();
+		if (!this.data.hasStartedMaidenTravel(chosenPlayerName))			throw new ExceptionForbiddenAction();
+		if (this.data.getHandSize(chosenPlayerName) == 0)					throw new ExceptionNotEnougthTileInHand();
+		if (playerName.equals(chosenPlayerName))							throw new ExceptionForbiddenAction();
 
-		// TODO if(dataPlayer.numberOfTilesPlacedThisTurn > 0) throw new ExceptionForbiddenAction();
-		// TODO if(dataPlayer.numberOfTilesDrawnThisTurn > 0) throw new ExceptionForbiddenAction();
-		
-		// TODO if(dataPlayer.startedMaidenTravel) throw new ExceptionForbiddenAction();
-		
-		// TODO dataPlayer.startedMaidenTravel = true;
-		// TODO dataPlayer.tramPosition = (Point) terminus.clone(); // TODO should I clone everything?
-		EngineAction ea = engine.new EngineAction(playerName, data, "startMaidenTravel");
-		ea.position = terminus;
-
-		this.engine.addAction(ea);
+		this.engine.addAction(data, "pickTileFromPlayer", playerName, chosenPlayerName, tile);
 	}
 
 // --------------------------------------------

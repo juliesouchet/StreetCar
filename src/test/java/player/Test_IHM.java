@@ -56,7 +56,7 @@ if (!create)
 else
 {
 name = "Riyane";
-gameName = "game";
+gameName = "jeux";
 color = Color.red;
 ip = null;
 boardName = "newOrleans";	/////// Nom par defaut
@@ -72,6 +72,7 @@ nbrBuildingInLine= 3;			/////// Nom par defaut
 		this.frame = new DataViewerFrame(playerIHM);
 		this.frame.setGameData(playerIHM.getGameData());
 		this.frame.setVisible(true);
+		new ControlFrame(playerIHM);
 
 		if (create)
 		{
@@ -100,6 +101,7 @@ nbrBuildingInLine= 3;			/////// Nom par defaut
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
 		System.out.println("\t Round\t: "	+ data.getRound());
+		if (data.isGameStarted())		System.out.println("\t Turn\t: "	+ data.getPlayerTurn());
 		if (this.frame != null) this.frame.setGameData(data);
 	}
 	public void excludePlayer()

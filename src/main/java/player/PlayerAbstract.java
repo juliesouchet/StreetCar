@@ -15,6 +15,7 @@ import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
+import main.java.game.ExceptionNotEnougthTileInHand;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
@@ -115,17 +116,18 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 	{
 		game.onQuitGame(playerName);
 	}
-	public synchronized void onExcludePlayer	(String playerExcluded) throws RemoteException, ExceptionForbiddenAction
+// TODO: n'existe pas
+/*	public synchronized void onExcludePlayer	(String playerExcluded) throws RemoteException, ExceptionForbiddenAction
 	{
 		game.onExcludePlayer(playerName, playerExcluded);
 	}
-
+*/
 	public synchronized void moveTram(LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		game.moveTram(playerName, tramMovement);
 	}
 
-	public synchronized void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn 
+	public synchronized void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand 
 	{
 		game.pickTileFromPlayer(chosenPlayer, chosenPlayer, tile);
 	}

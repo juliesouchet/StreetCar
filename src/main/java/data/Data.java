@@ -220,6 +220,17 @@ public class Data implements Serializable
 			hand.add(t);
 		}
 	}
+	/**===================================================
+	 * Draw a tile from a player's hand.  This tile is put in the player's hand
+	 =====================================================*/
+	public void pickTileFromPlayer(String playerName, String chosenPlayerName, Tile tile)
+	{
+		Hand src = this.playerInfoList.get(playerName).hand;
+		Hand dst = this.playerInfoList.get(chosenPlayerName).hand;
+
+		dst.remove(tile);
+		src.add(tile);
+	}
 
 // --------------------------------------------
 // Getter:

@@ -14,6 +14,7 @@ import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
+import main.java.game.ExceptionNotEnougthTileInHand;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
@@ -34,7 +35,8 @@ public interface PlayerInterface extends Remote
 	public LoginInfo[]getLoginInfo		() 											throws RemoteException;
 	public void		setLoginInfo		(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification;
 	public void		onQuitGame			(String playerName)							throws RemoteException, ExceptionForbiddenAction;
-	public void 	onExcludePlayer		(String playerExcluded)						throws RemoteException, ExceptionForbiddenAction;
+// TODO: n'existe pas
+//	public void 	onExcludePlayer		(String playerExcluded)						throws RemoteException, ExceptionForbiddenAction;
 
 	public void		hostStartGame		()											throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers;
 	public void		excludePlayer		()											throws RemoteException;
@@ -45,7 +47,7 @@ public interface PlayerInterface extends Remote
 	public void		startMaidenTravel	(String playerName, Point terminus)			throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		moveTram			(LinkedList<Point> tramMovement)			throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		drawTile			(int nbrCards)								throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw;
-	public void		pickTileFromPlayer	(String chosenPlayer, Tile tile)			throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn;
+	public void		pickTileFromPlayer	(String chosenPlayer, Tile tile)			throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand;
 /*	public void		distributeLineCard	()											throws RemoteException;
 	public void		distributeRouteCard	()											throws RemoteException;
 	public void		tileHasBeenPlaced	(String playerName, Tile t, Point position)	throws RemoteException;

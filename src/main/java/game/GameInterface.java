@@ -18,7 +18,7 @@ public interface GameInterface extends Remote
 {
 	public void		onJoinGame			(PlayerInterface player, boolean isHost, int iaLevel)	throws RemoteException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor;
 	public void		onQuitGame			(String playerName)										throws RemoteException, ExceptionForbiddenAction;
-	public void 	onExcludePlayer		(String playerWhoExcludes, String playerExcluded)		throws RemoteException, ExceptionForbiddenAction;
+//	public void 	onExcludePlayer		(String playerWhoExcludes, String playerExcluded)		throws RemoteException, ExceptionForbiddenAction;
 
 	public Data		getData				(String playerName)										throws RemoteException;
 	public LoginInfo[]getLoginInfo		(String playerName)										throws RemoteException;
@@ -31,7 +31,7 @@ public interface GameInterface extends Remote
 	public void		startMaidenTravel	(String playerName, Point terminus)						throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		moveTram			(String playerName, LinkedList<Point> tramMovement)		throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		drawTile			(String playerName, int nbrCards)						throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw;
-	public void		pickTileFromPlayer	(String playerName, String chosenPlayer, Tile car)		throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn; // TODO maybe instead of Tile should be int (position of card in player hand)
+	public void		pickTileFromPlayer	(String playerName, String chosenPlayer, Tile car)		throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand; // TODO maybe instead of Tile should be int (position of card in player hand)
 	
 	
 	/*
