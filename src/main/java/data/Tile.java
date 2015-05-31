@@ -47,7 +47,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	private Integer					terminusDescription;
 	private Integer					cardinal;
 	private Direction				tileDirection;
-	private LinkedList<Path>		pathList;
+//	private LinkedList<Path>		pathList;
 
 // --------------------------------------------
 // Builder:

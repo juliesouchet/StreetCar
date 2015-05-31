@@ -27,8 +27,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public Tile		tile1							= new Tile(null, null);
 	public Tile		tile2							= new Tile(null, null);
 
-	public Point[]	tramwayMovement					= new Point[maxTramwayMove];	// Move Attributes
-	public int		ptrTramwayMovement				= -1;							//	Index of the last non null point
+	public Point[]	tramwayMovement					= initMovementTab();			// Move Attributes
+	public int		ptrTramwayMovement				= -1;							//		Index of the last non null point
 
 // -----------------------------------------------------
 // Builder
@@ -46,13 +46,9 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.ptrTramwayMovement	= tramwayMovement.length-1;
 		for (int i=0; i<tramwayMovement.length; i++)
 		{
-			res.tramwayMovement[i]	 = new Point();
 			res.tramwayMovement[i].x = tramwayMovement[i].x;
 			res.tramwayMovement[i].y = tramwayMovement[i].y;
 		}
-		for (int i=tramwayMovement.length; i<res.tramwayMovement.length; i++)
-			res.tramwayMovement[i]	 = new Point();
-
 		return res;
 	}
 	public static Action newBuildSimpleAction(Point position, Tile tile)
@@ -134,5 +130,15 @@ public class Action implements Serializable, CloneableInterface<Action>
 			this.tramwayMovement[i].x = this.tramwayMovement[i].x;
 			this.tramwayMovement[i].y = this.tramwayMovement[i].y;
 		}
+	}
+
+// -----------------------------------------------------
+// Private methods
+// -----------------------------------------------------
+	private Point[] initMovementTab()
+	{
+		Point[] res = new Point[maxTramwayMove];
+		for (int i=0; i<maxTramwayMove; i++) res[i] = new Point();
+		return res;
 	}
 }
