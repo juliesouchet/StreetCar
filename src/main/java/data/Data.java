@@ -74,6 +74,7 @@ public class Data implements Serializable
 	private LinkedList<String[][]>		remainingBuildingInLine;
 
 	private String						gameName;
+	private int							nbrBuildingInLine;
 	private Tile[][]					board;
 	private Deck						deck;
 	private HashMap<String, PlayerInfo>	playerInfoList;
@@ -94,9 +95,10 @@ public class Data implements Serializable
 			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
 		this.gameName			= new String(gameName);
+		this.nbrBuildingInLine	= nbrBuildingInLine;
 		try						{sc = new Scanner(f);}
 		catch(Exception e)		{e.printStackTrace(); throw new ExceptionUnknownBoardName();}
-		this.board				= scanBoardFile(sc);
+		this.board				= scanBoardFromFile(sc);
 		sc.close();
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
@@ -114,6 +116,7 @@ public class Data implements Serializable
 		res.remainingBuildingInLine	= null;
 
 		res.gameName				= new String(this.gameName);
+		res.nbrBuildingInLine		= this.nbrBuildingInLine;
 		res.board					= cpT.copyMatrix(this.board);
 		res.deck					= this.deck.getPlayerClone();
 		res.playerInfoList			= getCopyOfPlayerInfoList(playerName);
@@ -156,7 +159,7 @@ public class Data implements Serializable
 	 ==================================================*/
 	public void hostStartGame(String host)
 	{
-		if (!this.gameCanStart())	throw new RuntimeException("The game definition is not complete"); 
+		if (!this.isGameReadyToStart())	throw new RuntimeException("The game definition is not complete"); 
 		if (!this.host.equals(host))throw new RuntimeException("The starting host does not correspond the Data known host");
 
 		LinkedList<String> players = new LinkedList<String> (this.getPlayerNameList());
@@ -231,36 +234,42 @@ public class Data implements Serializable
 		dst.remove(tile);
 		src.add(tile);
 	}
+	public void setTramPosition(String playerName, Point newPosition)
+	{
+		playerInfoList.get(playerName).tramPosition = newPosition;
+	}
+	public void startMaidenTravel(String playerName)
+	{
+		playerInfoList.get(playerName).startedMaidenTravel = true;
+	}
+	public void	setDestinationTerminus(String playerName, LinkedList<Point> dest)
+	{
+		playerInfoList.get(playerName).endTerminus = new Copier<Point>().copyList(dest);
+	}
 
 // --------------------------------------------
-// Getter:
+// Getter relative to travel:
 // --------------------------------------------
-	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
-	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
-	public boolean				istHost(String playerName)						{return this.host.equals(playerName);}
-	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
-	public int					getWidth()										{return this.board.length;}
-	public int					getHeight()										{return this.board[0].length;}
-	public int					getNbrPlayer()									{return this.playerInfoList.size();}
-	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
-	public int					getRound()										{return this.round;}
-	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
-	public String				getGameName()									{return new String(this.gameName);}
-	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
-	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
+	public Point	getTramPosition(String playerName)							{return new Point(playerInfoList.get(playerName).tramPosition);}
+	public boolean	isPlayerTerminus(String playerName, Point terminus)			{return playerInfoList.get(playerName).terminus.contains(terminus);}
+
+// --------------------------------------------
+// Getter relative to players:
+// --------------------------------------------
+// TODO isWinner: il faut imperativement faire ces test dans cet ordre
+// TODO hasStartedMaidenTravel
+// TODO tramPosition == pi.endTerminus
+// TODO isTrackCompleted (c'est le dernier car c le plus couteux)
+	public PlayerInterface		getRemotePlayer(String playerName)				{return this.playerInfoList.get(playerName).player;}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
-	public boolean				isEmptyDeck()									{return this.deck.isEmpty();}
-	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
-	public boolean				containsPlayer(String name)						{return this.playerInfoList.containsKey(name);}
+	public boolean				istHost(String playerName)						{return this.host.equals(playerName);}
+	public boolean				isPlayerLogged(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
-	public boolean				gameCanStart()									{return (this.playerInfoList.size() >= minNbrPlayer);}
-	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
 	public int					getHandSize(String playerName)					{return this.playerInfoList.get(playerName).hand.getSize();}
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex);}
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
-	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean				hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
@@ -275,17 +284,75 @@ public class Data implements Serializable
 		else if (lastActions.size() == 2) return false;
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
 	}
-	public boolean isPlayerTurn(String playerName)
+	/**===============================================================
+	 * @return true if the player's track is completed (path between the 2 terminus and through all the buildings)
+	 =================================================================*/
+	public boolean isTrackCompleted(String playerName)
 	{
-		if (this.playerOrder == null) return false;
-		return (this.getPlayerTurn().equals(playerName));
+		int			size	= 2 + this.nbrBuildingInLine;
+		Point[]		path	= new Point[size];
+		PlayerInfo	pi		= this.playerInfoList.get(playerName);
+		Point p0, p1;
+
+		path[0] = pi.buildingInLine_position.get(0);
+		path[0] = pi.buildingInLine_position.get(this.nbrBuildingInLine*2 -1);
+		p0 = path[0];
+		for (int i=1; i<path.length; i++)
+		{
+			p1 = path[i];
+			if (this.getShortestPath(p0, p1) == null)	return false;
+		}
+		return true;
 	}
-	public PlayerInterface		getPlayer(String playerName)
+	/**===============================================================
+	 * @return true if the player has started his maiden travel
+	 =================================================================*/
+	public boolean hasStartedMaidenTravel(String playerName)
 	{
-		PlayerInterface pi = this.playerInfoList.get(playerName).player;
+		PlayerInfo pi = this.playerInfoList.get(playerName);
+
 		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
-		return pi;
+		return pi.startedMaidenTravel;
 	}
+	/**===============================================================
+	 * @return the positions of the buildings in the player's path
+	 =================================================================*/
+	public LinkedList<Point> getPlayerAimBuildings(String name)
+	{
+		PlayerInfo pi = this.playerInfoList.get(name);
+		return new LinkedList<Point> (pi.buildingInLine_position);
+	}
+	/**===============================================================
+	 * @return the player's terminus list.  The result contains 4 points
+	 =================================================================*/
+	public LinkedList<Point> getPlayerTerminusPoints(String name)
+	{
+		PlayerInfo pi = this.playerInfoList.get(name);
+		return (new Copier<Point>()).copyList(pi.terminus);
+	}
+
+// --------------------------------------------
+// Getter relative to game:
+// --------------------------------------------
+	public String				getGameName()									{return new String(this.gameName);}
+	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
+	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
+	public int					getWidth()										{return this.board.length;}
+	public int					getHeight()										{return this.board[0].length;}
+	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
+	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
+	public int					getNbrPlayer()									{return this.playerInfoList.size();}
+	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
+	public int					getRound()										{return this.round;}
+	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
+	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
+	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
+	public boolean				isPlayerTurn(String playerName)					{return (this.playerOrder == null) ? false : (this.getPlayerTurn().equals(playerName));}
+	public boolean				isEmptyDeck()									{return this.deck.isEmpty();}
+	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
+	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
+	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
@@ -394,10 +461,10 @@ public class Data implements Serializable
 	}
 	/**=========================================================================
 	 * @param building: Position of a building
-	 * @return the position of the stop next to the building
+	 * @return the position of the stop next to the building, or null if no stop is found in the building neighborhood
 	 * @throws runtimeException if the parameter is not a building
 	 ===========================================================================*/
-	public Point hasStopNextToBuilding(Point building)
+	public Point isStopNextToBuilding(Point building)
 	{
 		Tile t = this.board[building.x][building.y];
 		Point p;
@@ -431,54 +498,10 @@ public class Data implements Serializable
 
 		return res;
 	}
-	/**===============================================================
-	 * @return true if the player has started his maiden travel
-	 =================================================================*/
-	public boolean hasStartedMaidenTravel(String playerName)
-	{
-		PlayerInfo pi = this.playerInfoList.get(playerName);
-//TODO
-		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
-		return pi.startedMaidenTravel;
-	}
-	/**===============================================================
-	 * @return the positions of the buildings in the player's path
-	 =================================================================*/
-	public LinkedList<Point> getBuildings(String name)
-	{
-		PlayerInfo pi = this.playerInfoList.get(name);
-		return new LinkedList<Point> (pi.buildingInLine_position);
-	}
-	/**===============================================================
-	 * @return the player's first terminal (top left square)
-	 =================================================================*/
-	public LinkedList<Point> getTerminus(String name)
-	{
-		PlayerInfo pi = this.playerInfoList.get(name);
-		return new LinkedList<Point>(pi.terminus);
-	}
-	/**===============================================================
-	 * @return true if the player's track is completed (path between the 2 terminus and through all the stops)
-	 =================================================================*/
-	public boolean isTrackCompleted(String name)
-	{
-		LinkedList<Point> path;
-		Point p0, p1;
-
-		path = this.getTerminus(name);
-		path.addAll(this.getBuildings(name));
-		p0 = path.getFirst();
-		for (int i=1; i<path.size(); i++)
-		{
-			p1 = path.get(i);
-			if (this.getShortestPath(p0, p1) == null)	return false;
-		}
-		return true;
-	}
 	/**============================================
 	 * @return Create the board from a file
 	 ==============================================*/
-	public Tile[][] scanBoardFile(Scanner sc)
+	public Tile[][] scanBoardFromFile(Scanner sc)
 	{
 		Tile[][] res;
 		String tileFileName;
@@ -526,9 +549,9 @@ public class Data implements Serializable
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
 
-	// --------------------------------------------
-	// Private methods:
-	// --------------------------------------------
+// --------------------------------------------
+// Private methods:
+// --------------------------------------------
 	/**============================================
 	 * @return Creates the line cards from the corresponding files
 	 ==============================================*/
@@ -539,7 +562,7 @@ public class Data implements Serializable
 		File f;
 		Scanner sc;
 
-		Data.existingLine			= new LinkedList<Integer>();						// Scab the existing lines and corresponding colors
+		Data.existingLine			= new LinkedList<Integer>();					// Scan the existing lines and corresponding colors
 		Data.existingColors			= new LinkedList<Color>();
 		try
 		{
@@ -557,7 +580,7 @@ public class Data implements Serializable
 		}
 		catch (Exception e){throw new RuntimeException("Malformed line file");}
 
-		Data.existingBuildingInLine	= new LinkedList<String[][]>();						// Scan the existing building in line cards
+		Data.existingBuildingInLine	= new LinkedList<String[][]>();					// Scan the existing building in line cards
 		try
 		{
 			f = new File(buildingInLineFile+nbrBuildingInLine);
@@ -594,6 +617,7 @@ public class Data implements Serializable
 				}
 			}
 		}
+		if (res.size() != buildingNameTab.length) throw new RuntimeException("Missing buildings on board");
 		return res;
 	}
 	/**===========================================================================
@@ -646,7 +670,6 @@ public class Data implements Serializable
 			pi				= this.playerInfoList.get(str);
 			piRes			= new PlayerInfo();							// Shared Information
 			piRes.player	= null;
-			piRes.playerName= new String(str);
 			piRes.line		= pi.line;
 			piRes.color		= new Color(pi.color.getRGB());
 			piRes.hand		= pi.hand.getClone();
@@ -683,7 +706,6 @@ public class Data implements Serializable
 		// Attributes
 		private static final long	serialVersionUID = -7495867115345261352L;
 		public PlayerInterface		player;
-		public String				playerName;
 		public Hand					hand;
 		public int					line;							// Real value of the line (belongs to [1, 6])
 		public Color				color;
@@ -693,7 +715,6 @@ public class Data implements Serializable
 //TODO: ulysse Ne plus stocker les action mais les data
 		public LinkedList<LinkedList<Action>>	history;			// organized by turns
 
-// TODO: PB de l'init de ces 2 attributes
 		public boolean				startedMaidenTravel	= false;	// Data relative to the travel
 		public Point				tramPosition		= null;
 		public LinkedList<Point>	endTerminus			= null;
@@ -706,7 +727,6 @@ public class Data implements Serializable
 			int i;
 
 			this.player		= pi;
-			this.playerName	= new String(playerName);
 			this.history	= new LinkedList<LinkedList<Action>>();
 			this.hand		= Hand.initialHand.getClone();
 			this.line		= 1 + getExistingColorIndex(playerColor);
@@ -728,24 +748,14 @@ public class Data implements Serializable
 		public void newRound(){this.history.addLast(new LinkedList<Action>());}
 	}
 
-	public Point getTramPosition(String playerName) {
-		return playerInfoList.get(playerName).tramPosition;
-	}
-	public void setTramPosition(String playerName, Point newPosition) {
-		playerInfoList.get(playerName).tramPosition = newPosition;
-	}
-	public void startMaidenTravel(String playerName) {
-		playerInfoList.get(playerName).startedMaidenTravel = true;
-	}
-	public LinkedList<Point> getTerminiPoints(String playerName)
-	{
-		return new Copier<Point>().copyList(playerInfoList.get(playerName).terminus);
-	}
-	public void setDestinationTerminus(String playerName, LinkedList<Point> dest)
-	{
-		playerInfoList.get(playerName).endTerminus = new Copier<Point>().copyList(dest);
-	}
-	public boolean isPlayerTerminus(String playerName, Point terminus) {
-		return playerInfoList.get(playerName).terminus.contains(terminus);
-	}
+	
+	
+// TODO existe deja: this.getTerminusPoints
+//	public LinkedList<Point> getTerminiPoints(String playerName)
+//	{
+//		return new Copier<Point>().copyList(playerInfoList.get(playerName).terminus);
+//	}
+
+// TODO les autres sont avec les getter et les setter
+// Il faut corriger tous les getter et setter pour faire le moin de new et copy possible (pour les besoins de l'ia)
 }

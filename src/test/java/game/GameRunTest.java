@@ -34,7 +34,7 @@ public class GameRunTest implements Runnable
 				String playerName = null;
 				for (String str: this.data.getPlayerNameList()) playerName = str;
 				System.out.println("yeuve: " + playerName);
-				System.out.println("nuebo: " + this.data.getPlayer(playerName).getPlayerName());
+				System.out.println("nuebo: " + this.data.getRemotePlayer(playerName).getPlayerName());
 			}
 			catch (Exception e)
 			{
