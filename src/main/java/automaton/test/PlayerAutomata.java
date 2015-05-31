@@ -169,8 +169,8 @@ public class PlayerAutomata implements InterfaceIHM
 				this.frame.setGameData(data);
 			}else{
 				LinkedList<Point> objectifs = null;
-				objectifs = player.getGameData().getTerminus(name);
-				objectifs.addAll(player.getGameData().getBuildings(name));
+				objectifs = player.getGameData().getPlayerTerminusPoints(name);
+				objectifs.addAll(player.getGameData().getPlayerAimBuildings(name));
 				System.out.println("Objectifs : " + objectifs);
 				if(!win) System.out.println("Chemin non complété");
 				

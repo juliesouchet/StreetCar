@@ -122,7 +122,7 @@ public class Engine implements Runnable
 		data.addPlayer(player, playerName, playerColor, isHost);
 		for (String name: data.getPlayerNameList())
 		{
-			pi = data.getPlayer(name);
+			pi = data.getRemotePlayer(name);
 			pi.gameHasChanged(data.getClone(name));
 		}
 	}
@@ -132,7 +132,7 @@ public class Engine implements Runnable
 
 		if ((data.isGameStarted()) || (data.istHost(playerName)))
 		{
-			for (String name: data.getPlayerNameList()) data.getPlayer(name).excludePlayer();
+			for (String name: data.getPlayerNameList()) data.getRemotePlayer(name).excludePlayer();
 			this.engineThread.interrupt();
 		}
 		else
@@ -140,7 +140,7 @@ public class Engine implements Runnable
 			data.removePlayer(playerName);
 			for (String name: data.getPlayerNameList())
 			{
-				pi = data.getPlayer(name);
+				pi = data.getRemotePlayer(name);
 				if (name.equals(playerName))	pi.excludePlayer();
 				else							pi.gameHasChanged(data.getClone(name));
 			}
@@ -160,7 +160,7 @@ public class Engine implements Runnable
 
 		for (String name: data.getPlayerNameList())
 		{
-			pi = data.getPlayer(name);
+			pi = data.getRemotePlayer(name);
 			if (name.equals(this.toExecute.playerName)) pi.excludePlayer();
 			else
 			{
@@ -219,7 +219,7 @@ public class Engine implements Runnable
 		data.setTramPosition(playerName, chosenTerminus);
 
 		LinkedList<Point> destination = new LinkedList<Point>();
-		for(Point p : data.getTerminiPoints(playerName))
+		for(Point p : data.getPlayerTerminusPoints(playerName))
 		{
 			if(p.distance(chosenTerminus) > 1)
 			{
@@ -251,7 +251,7 @@ public class Engine implements Runnable
 		data.setTramPosition(playerName, tramMovement.getLast());
 
 		this.notifyPlayer(playerName);
-		if(data.getTerminiPoints(playerName).contains(data.getTramPosition(playerName)))
+		if(data.getPlayerTerminusPoints(playerName).contains(data.getTramPosition(playerName)))
 		{
 			System.out.println("STOP EVERYTHING!!!!!! \n" + playerName + " has won");
 			// TODO data.endgamebecozplayerzhazone
@@ -296,7 +296,7 @@ public class Engine implements Runnable
 		Data data = this.toExecute.data;
 		Data privateData;
 
-		pi			= data.getPlayer(playerName);
+		pi			= data.getRemotePlayer(playerName);
 		privateData	= data.getClone(playerName);
 		pi.gameHasChanged(privateData);
 	}

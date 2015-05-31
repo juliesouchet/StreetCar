@@ -54,6 +54,7 @@ public class PlayerIHM extends PlayerAbstract
 			game		= Game.getRemoteGame(localIP, gameName);					// Remote application pointer
 		}
 		else	game	= Game.getRemoteGame(applicationIP, gameName);				// Remote application pointer
+
 		return new PlayerIHM(gameCreation, playerName, playerColor, game, ihm);		// Player Creation
 	}
 	/**=====================================================================

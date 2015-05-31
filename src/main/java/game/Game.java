@@ -139,7 +139,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
 		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExcpected();
-		if (this.data.containsPlayer(playerName))			throw new ExceptionUsedPlayerName();
+		if (this.data.isPlayerLogged(playerName))			throw new ExceptionUsedPlayerName();
 		if (this.usedColor(playerColor))					throw new ExceptionUsedPlayerColor();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
 
@@ -161,7 +161,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		boolean isHost			= this.data.istHost(playerName);
 		boolean gameHasStarted	= this.data.isGameStarted();
 
-		if (!this.data.containsPlayer(playerName))	throw new ExceptionForbiddenAction();
+		if (!this.data.isPlayerLogged(playerName))	throw new ExceptionForbiddenAction();
 		if (playerIndex == -1)						throw new ExceptionForbiddenAction();
 
 		this.loggedPlayerTable[playerIndex] = LoginInfo.initialLoginTable[playerIndex].getClone();
@@ -188,7 +188,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if (!this.data.gameCanStart())					throw new ExceptionNotEnougthPlayers();
+		if (!this.data.isGameReadyToStart())					throw new ExceptionNotEnougthPlayers();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
 		this.engine.addAction(this.data, "hostStartGame", playerName);
@@ -312,7 +312,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		for (String name: this.data.getPlayerNameList())
 		{
-			p = this.data.getPlayer(name);
+			p = this.data.getRemotePlayer(name);
 			if (p.getPlayerColor().equals(c))	return true;
 		}
 		return false;

@@ -65,8 +65,8 @@ public class Traveler extends PlayerAutomaton {
 		else {
 			if(!currentConfig.hasStartedMaidenTravel(getName())) {
 				// Initializes the itinerary with randomly chosen extremities				
-				checkpoints = currentConfig.getBuildings(getName());
-				LinkedList<Point> allTermini = currentConfig.getTerminiPoints(getName()),
+				checkpoints = currentConfig.getPlayerAimBuildings(getName());
+				LinkedList<Point> allTermini = currentConfig.getPlayerTerminusPoints(getName()),
 									destinationTerminus = new LinkedList<Point>();
 				i = r.nextInt(2); // Random first terminus
 				j = r.nextInt(2) + 2; // Random second terminus
