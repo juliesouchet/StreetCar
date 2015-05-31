@@ -106,7 +106,7 @@ System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards);
 		this.game.drawTile(playerName, nbrCards);
 	}
-	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate");
