@@ -193,6 +193,14 @@ public class testUnitaireDecisionTable {
 	}
 
 
+	@Test
+	public void testFindFreeSlot()throws ExceptionUnknownNodeType {
+		DecisionTable maTableDeDecision = tableTest();
+		assertTrue(maTableDeDecision.findFreeSlot()==6);
+		maTableDeDecision.setDecisionNode(6, new DecisionNode(4, 3, "leaf"));
+		assertTrue(maTableDeDecision.findFreeSlot()==DecisionTable.TABLE_IS_FULL);
+
+	}
 
 
 
