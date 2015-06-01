@@ -205,7 +205,6 @@ public class DecisionNode {
 		this.possiblesActions[index].copy(coupleActionIndex);
 	}
 
-
 	/**
 	 * Inscrit la valeur de la profondeur du noeud
 	 * @param depth
@@ -229,7 +228,13 @@ public class DecisionNode {
 		}
 		
 	}
+
 	
+	
+	/* ===============================================================================================================
+	 * 			CONSTRUCTEURS
+	 * =============================================================================================================== */
+
 	/**
 	 * nombre d'action possibles maximal pouvant etre traité par la structure de donnée	
 	 * @param numberMaxOfPossibleActions
@@ -269,6 +274,11 @@ public class DecisionNode {
 	}
 
 
+	
+	/* ===============================================================================================================
+	 * 			UTILITAIRES
+	 * =============================================================================================================== */
+	
 	@Override
 	public String toString(){
 		String affichage = null;
@@ -333,27 +343,6 @@ public class DecisionNode {
 	}
 
 	
-	// TODO le deplacer dans decisionTable	
-	//	// TODO le minimax
-	//	/**
-	//	 * Si type = leaf: fonction d'évaluation 
-	//	 * sinon minimax
-	//	 * 
-	//	 * @param currentConfig
-	//	 * 	L'etat du jeu courant
-	//	 * @param height
-	//	 * La profondeur a construire: 
-	//	 * si 0 alors c'est une feuille, on fait appel a la fonction d'evaluation
-	//	 */
-	//	public DecisionNode(Data currentConfig, int height){
-	//		if (height<=0){	//C'est une feuille
-	//			//Evaluator.evaluateSituationQuality(currentConfig.get, gamesNumber, config, difficulty)
-	//		}
-	//		else if (height>0) { // C'est un noeud interne on fait un appel récursif
-	//			
-	//		}
-	//		
-	//	}	
 
 
 
