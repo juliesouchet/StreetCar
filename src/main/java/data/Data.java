@@ -308,6 +308,7 @@ public class Data implements Serializable
 		Point p0, p1;
 
 		path[0] = pi.buildingInLine_position.get(0);
+		// TODO /!\ out of bounds
 		path[0] = pi.buildingInLine_position.get(this.nbrBuildingInLine*2 -1);
 		p0 = path[0];
 		for (int i=1; i<path.length; i++)

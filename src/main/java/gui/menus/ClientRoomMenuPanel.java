@@ -84,6 +84,13 @@ public class ClientRoomMenuPanel extends MenuPanel {
 	// Refresh menu
 
 	public void refreshMenu(PlayerIHM player, Data data) {
+		
+		if (data.isGameStarted()) {
+			GameController gc = this.getGameController();
+			gc.showInGamePanel();
+			return;
+		}
+		
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i = 0; i < 5; i++) {

@@ -47,6 +47,14 @@ public class DecisionNode {
 			this.action.copy(src.action);
 			this.index=src.index;
 		}
+		/**
+		 * Les couples sont initialisés a avec un index de 0 pour que la memoire soit alloué, mais la valuer contenu n'a de sens que si cet index a été modifié par une autre valeur
+		 * @return
+		 */
+		public boolean isSignificant(){
+			return this.index!=0;
+		}
+		
 	}
 
 	/* 
@@ -160,13 +168,27 @@ public class DecisionNode {
 	}
 
 	/**
-	 * retourne le nombre de branchement possible a partir de la configuration courante
+	 * retourne le nombre de branchement maximal (pour la structure de donnees) possible a partir de la configuration courante
 	 * @return
 	 */
-	public int getNumberOfPossiblesActions(){
+	public int getSizeOfPossiblesActionsTable(){
 		return this.cardinalPossiblesActions;
 	}
 
+	/**
+	 * retourne le nombre de branchement possible (coups acceptables) enregistré dans la structure de donnée
+	 * @return
+	 */
+	public int getNumberPossiblesActionsTable(){
+		int numberOfSignificantValueInTable=0;
+		for(int i=0;i<this.getSizeOfPossiblesActionsTable();i++){
+			if(this.getCoupleActionIndex(i).isSignificant()){
+				numberOfSignificantValueInTable++;
+			}
+		}		
+		return numberOfSignificantValueInTable;
+	}
+	
 	/** 
 	 * incremente le nombre d'action possible
 	 */
@@ -182,10 +204,10 @@ public class DecisionNode {
 	}
 
 	/**
-	 * met le nombre d'actions possible pour la configuratin considérée a cardinal
+	 * met le nombre d'actions possible pour la configuration considérée a cardinal
 	 * @param cardinal
 	 */
-	public void setNumberOfPossiblesActions(int cardinal){
+	public void setSizeOfPossiblesActionsTable(int cardinal){
 		this.cardinalPossiblesActions=cardinal;
 	}
 
@@ -269,29 +291,31 @@ public class DecisionNode {
 		this.depth = src.depth ;
 		this.isLeaf = src.isLeaf ;
 		this.isRoot = src.isRoot ;
-		for(int i=0;i<this.getNumberOfPossiblesActions();i++){
+		for(int i=0;i<this.getSizeOfPossiblesActionsTable();i++){
 			this.possiblesActions[i].copy(src.possiblesActions[i]);
 		}
 		
 	}
 	
 	/**
-	 * nombre d'action possibles	
-	 * @param numberOfPossibleActions
+	 * nombre d'action possibles maximal pouvant etre traité par la structure de donnée	
+	 * @param numberMaxOfPossibleActions
 	 * profondeur du noeud dans l'arbre
 	 * @param depth
 	 * type de noeud: peut etre root, internalNode ou leaf
 	 * @param type
 	 * @throws ExceptionUnknownNodeType
 	 */
-	public DecisionNode(int numberOfPossibleActions, int depth, String type) throws ExceptionUnknownNodeType{
-		this.setNumberOfPossiblesActions(numberOfPossibleActions);
+	public DecisionNode(int numberMaxOfPossibleActions, int depth, String type) throws ExceptionUnknownNodeType{
+		this.setSizeOfPossiblesActionsTable(numberMaxOfPossibleActions);
 		// On créé le tableau d'actions possible, pour l'instant vide
-		this.possiblesActions = new CoupleActionIndex[numberOfPossibleActions];
+		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
 		// On rempli la table avec des actions (du coup non significatives)
-		for(int i=0; i<numberOfPossibleActions;i++){
+		for(int i=0; i<numberMaxOfPossibleActions;i++){
 			this.possiblesActions[i]=this.new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), 0);
 		}
+		//A la creation on fixe la qualité a -1 tant qu'une valeur significative n'a pas été calculé
+		this.setQuality(-1.0);
 		this.setDepth(depth);
 		if(type.equals("root")){
 			this.setRoot();
@@ -331,7 +355,7 @@ public class DecisionNode {
 		affichage+=" Depth="+this.getDepth();
 		affichage+=" Possibles Actions:\n";
 
-		for(int i=0; i<this.getNumberOfPossiblesActions();i++){
+		for(int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
 			TraceDebugAutomate.debugDecisionNodeTrace("tostring i="+i);
 			for(int j=0; j<this.getDepth()+1;j++){
 				affichage+="\t";

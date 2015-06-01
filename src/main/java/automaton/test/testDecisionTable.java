@@ -58,17 +58,19 @@ public class testDecisionTable {
 		// TODO: etudier si creation d'n nouveau est necessaire ou possiblilité de juste modifier celui deja alloué
 		CoupleActionIndex monCoupleActionIndex1 = monNoeudDeDecision.new CoupleActionIndex(monAction, 1);
 		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex1);
-		monNoeudDeDecision.setQuality(100.0);
+		monNoeudDeDecision.setQuality(90.0);
 		
 		//System.out.println("=====================\n"+monNoeudDeDecision.toString()+"\n=====================\n");
 		
 		maTableDeDecision.setDecisionNode(0, monNoeudDeDecision);
 		
+		monNoeudDeDecision.setQuality(40.0);
 		monNoeudDeDecision.setDepth(1);
 		monNoeudDeDecision.setCoupleActionIndex(1, monCoupleActionIndex1);
 		maTableDeDecision.setDecisionNode(1, monNoeudDeDecision);
 		maTableDeDecision.setSize(2);
 		
+		monNoeudDeDecision.setQuality(100.0);
 		monNoeudDeDecision.setDepth(2);
 		monCoupleActionIndex1.setIndex(6);
 		monNoeudDeDecision.setCoupleActionIndex(2, monCoupleActionIndex1);
@@ -85,6 +87,11 @@ public class testDecisionTable {
 		System.out.println(maTableDeDecision.toString());
 		System.out.println("toc");
 		
+		System.out.println(maTableDeDecision.getBestActionIndex(0));
+		System.out.println(maTableDeDecision.getWorstActionIndex(0));
+		
+		System.out.println(maTableDeDecision.getBestActionIndex(2));
+		System.out.println(maTableDeDecision.getWorstActionIndex(2));
 	}
 
 }
