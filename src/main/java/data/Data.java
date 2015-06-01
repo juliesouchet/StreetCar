@@ -48,7 +48,9 @@ public class Data implements Serializable
 		 * L'ensemble des actions possible pour le joueur spécifié (c'est son tour de jouer)
 		 */
 		public possibleActionsSet getPossibleActions(String playerName){
-			possibleActionsSet result = new possibleActionsSet(possibleActionsSet.maxCardinal);
+return null;
+}
+/*************			possibleActionsSet result = new possibleActionsSet(possibleActionsSet.maxCardinal);
 			PlayerInfo pi = playerInfoList.get(playerName);
 			Hand hand = pi.hand;
 			Tile t1, t2, oldT;
@@ -56,9 +58,7 @@ public class Data implements Serializable
 			Point origin;
 			LinkedList<Point> neighbors;
 			
-			/*
-			 * Building
-			 */
+			// Building
 			if(!pi.startedMaidenTravel) {
 				for (int i = 0; i < hand.getSize(); i++) {					// first tile from the hand
 					t1 = hand.get(i);
@@ -100,9 +100,7 @@ public class Data implements Serializable
 				}
 			}
 			
-			/*
-			 * Traveling
-			 */
+			// Traveling
 			else {	// pi.startedMaidenTravel
 				origin = pi.tramPosition;
 				neighbors = getAccessibleNeighborsPositions(origin.x, origin.y);
@@ -119,7 +117,7 @@ public class Data implements Serializable
 			return result; //TODO implémenter la méthode
 		}
 		// END ulysse'swish list
-	
+****************************/
 		/**
 		 * @param p1
 		 * @param p2
@@ -669,6 +667,26 @@ public class Data implements Serializable
 		}
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
+	public LinkedList<Color> getUnusedColors()
+	{
+		LinkedList<Color> res = new LinkedList<Color>();
+		Set<String> nameSet = this.playerInfoList.keySet();
+
+		for (Color c: Data.existingColors)
+		{
+			for (String name: nameSet)
+			{
+				if (!c.equals(this.playerInfoList.get(name).color))	res.add(c);
+			}
+		}
+		return res;
+	}
+	public Color getRandomUnusedColor()
+	{
+		LinkedList<Color> unusedColorList = this.getUnusedColors();
+		int i = (new Random()).nextInt(unusedColorList.size());
+		return unusedColorList.get(i);
+	}
 
 // --------------------------------------------
 // Private methods:
@@ -683,8 +701,8 @@ public class Data implements Serializable
 		File f;
 		Scanner sc;
 
-		Data.existingLine			= new int[maxNbrPlayer];				// Scan the existing lines and corresponding colors
-		Data.existingColors			= new Color[maxNbrPlayer];
+		Data.existingLine	= new int[maxNbrPlayer];						// Scan the existing lines and corresponding colors
+		Data.existingColors	= new Color[maxNbrPlayer];
 		try
 		{
 			f = new File(lineFile);

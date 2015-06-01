@@ -37,8 +37,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public static final int			nbrTerminusDescriptionChar		= 1;
 	public static final int			nbrCardinalChar					= 2;
 	public static final int			maxNbrPathInTile				= 5;
-	public static final int			maxNbrUniqueDirections			= 4;
-	
+
 	private String					tileID;
 	private boolean					isTree;
 	private boolean					isBuilding;
@@ -48,8 +47,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	private int						terminusDescription;
 	private int						cardinal;
 	private Direction				tileDirection;
-	private Direction[]				uniqueDirTab; // TODO liste des directions uniques de la tuile
-	private int						uniqueDirPtr; // Last non null direction in uniqueDirTab
 
 	private Path[]					pathTab							= initPathTab();
 	private int						ptrPathTab						= -1;					// Last non null path in pathList
@@ -176,41 +173,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 				res.ptrPathTab ++;
 				res.pathTab[res.ptrPathTab].setPath(d0, d1);
 			}
-			
-			// TODO construire la liste des directions uniques
-			// si pour une direction donnée, la tuile obtenue par rotation est différente, on l'ajoute
-			for (Direction d : Direction.DIRECTION_LIST) {
-				if(d.equals(Direction.WEST)) { // Init
-					res.uniqueDirTab = new Direction[maxNbrUniqueDirections];
-					res.uniqueDirTab[0] = Direction.WEST;
-					res.uniqueDirPtr = 0;
-				}
-				else {
-					// TODO comparer les chemins après rotation : à tester
-					res.setDirection(d);
-					Tile rotated = res.getClone();
-					rotated.turnRight();
-					while(!rotated.getTileDirection().equals(Direction.WEST)) { // checking all rotations from d to west
-						boolean identical = true;
-						int i = 0;
-						while(i < res.ptrPathTab && identical) { // all the paths on the original tile
-							int j = 0;
-							while(j < rotated.ptrPathTab && !res.pathTab[i].equals(rotated.pathTab[j])) { // are they in the rotated tile ?
-								j++;
-							}
-							identical = j != rotated.ptrPathTab;
-							i++;
-						}
-						if(i != res.ptrPathTab){ // non identical tiles
-							res.uniqueDirPtr++;
-							res.uniqueDirTab[res.uniqueDirPtr] = rotated.getTileDirection();
-						}
-						rotated.turnRight();
-					}
-				}
-			}
-			
-			res.setDirection(Direction.WEST);
 			return res;
 		}
 		catch (Exception e){e.printStackTrace(); throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
@@ -249,30 +211,11 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		}
 	}
 	public void setStop(boolean b){this.isStop = b;}
-	public void		turnLeft()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnLeft();	tileDirection = tileDirection.turnLeft();}
-	public void		turnRight()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnRight();	tileDirection = tileDirection.turnRight();}
-	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
-	public void		setDirection(Direction dir)
-	{
-		switch(((this.tileDirection.getVal()-dir.getVal())+4)%4) {
-		case 0 : return;
-		case 1 : this.turnRight();
-		case 2 : this.turnHalf();
-		case 3 : this.turnLeft();
-		default :
-			throw new RuntimeException("Error setDirection : from "+this.tileDirection+" to "+dir);
-		}
-	}
 
 // --------------------------------------------
 // Getters:
 // --------------------------------------------
-	public boolean equals(Object o)	{
-		if (o!=null && this!=null){
-			return (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);
-		}
-		return false;
-	}
+	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
 	public Direction getTileDirection()	{return this.tileDirection;}
@@ -282,8 +225,10 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public boolean	isStop()			{return this.isStop;}
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab == -1));}
 	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab > -1));}
-	public Direction[] getUniqueDirectionTab ()	{return this.uniqueDirTab;}
-	public int		getUniqueDirectionPtr	()	{return this.uniqueDirPtr;}
+	public void		turnLeft()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnLeft();	tileDirection = tileDirection.turnLeft();}
+	public void		turnRight()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnRight();	tileDirection = tileDirection.turnRight();}
+	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
+	public void		setDirection(Direction dir)	{this.tileDirection = dir;}
 
 	public boolean	isPathTo(Direction dir)
 	{
@@ -453,27 +398,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		public void setPath(Path p)						{end0 = p.end0;				end1 = p.end1;}
 		public void setPath(Direction d0, Direction d1)	{end0 = d0;					end1 = d1;}
 		public String	toString()						{return "(" + end0 + ", " + end1 + ')';}
-		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)))
-															|| ((end0.equals(p.end1)) && (end1.equals(p.end0)));}
-		
-		// Getter
-		public Path getTurnHalf()
-		{
-			Path p = this.getClone();
-			p.turnHalf();
-			return p;
-		}
-		public Path getTurnLeft()
-		{
-			Path p = this.getClone();
-			p.turnLeft();
-			return p;
-		}
-		public Path getTurnRight()
-		{
-			Path p = this.getClone();
-			p.turnRight();
-			return p;
-		}
+		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)));}
 	}
 }
