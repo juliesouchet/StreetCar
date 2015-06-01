@@ -74,7 +74,7 @@ public class DecisionTable {
 		double currentValue;
 		DecisionNode decisionNode = this.getDecisionNode(index);
 
-		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getNumberOfPossiblesActions();indexCourantInNode++){
+		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
 			indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
 			if (indexCourantInTable!=0){
 				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
@@ -122,7 +122,7 @@ public class DecisionTable {
 		double currentValue;
 		DecisionNode decisionNode = this.getDecisionNode(index);
 
-		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getNumberOfPossiblesActions();indexCourantInNode++){
+		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
 			indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
 			if (indexCourantInTable!=0){
 				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();

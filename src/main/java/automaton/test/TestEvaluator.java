@@ -21,7 +21,7 @@ public class TestEvaluator {
 		String name1 = "Dumbest 1",
 				name2 = "Traveler 2";
 		int level1 = 1, // 1 = dumbest
-			level2 = 2; // 2 = traveler
+			level2 = 1; // 2 = traveler
 		
 		try {
 			game = new Game("TestEvaluator", "localhost", "newOrleans", 2);

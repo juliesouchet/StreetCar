@@ -214,7 +214,12 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Getters:
 // --------------------------------------------
-	public boolean	equals(Object o)	{return (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
+	public boolean equals(Object o)	{
+		if (o!=null && this!=null){
+			return (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);
+		}
+		return false;
+	}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
 	public Direction getTileDirection()	{return this.tileDirection;}

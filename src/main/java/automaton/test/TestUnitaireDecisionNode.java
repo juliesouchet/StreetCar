@@ -2,10 +2,14 @@ package main.java.automaton.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.awt.Point;
+
+import main.java.automaton.CoupleActionIndex;
 import main.java.automaton.DecisionNode;
-import main.java.automaton.DecisionNode.CoupleActionIndex;
 import main.java.automaton.ExceptionUnknownNodeType;
+import main.java.data.Action;
+import main.java.data.Tile;
 
 import org.junit.Test;
 
@@ -13,6 +17,7 @@ public class TestUnitaireDecisionNode {
 
 	@Test
 	public void testConstructeur() throws ExceptionUnknownNodeType{
+		@SuppressWarnings("unused")
 		DecisionNode monNoeudDeDecision = null;
 		monNoeudDeDecision = new DecisionNode(10, 0, "leaf&root");
 	}
@@ -213,60 +218,116 @@ public class TestUnitaireDecisionNode {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 1, "root");
-		assertTrue(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==10);
+		assertTrue(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==size);
 		for (int i=0;i<monNoeudDeDecision.getSizeOfPossiblesActionsTable();i++){
 			assertFalse(monNoeudDeDecision.getPossibleFollowingAction()[i]==null);
 		}
 	}
 
 	@Test
-	public void testIncrementNumberOfPossiblesActions() {
-		fail("Not yet implemented");
+	public void testSetSizeOfPossiblesActionsTable() throws ExceptionUnknownNodeType {
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		int otherSize=8;
+		monNoeudDeDecision = new DecisionNode(size, 1, "root");
+		monNoeudDeDecision.setSizeOfPossiblesActionsTable(otherSize);
+		assertFalse(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==size);
+		assertTrue(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==otherSize);
+		assertFalse(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==otherSize+1);
+	}
+	
+	@Test
+	public void getNumberPossiblesActionsTable() throws ExceptionUnknownNodeType {
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		monNoeudDeDecision = new DecisionNode(size, 0, "root");	// A l'initialisation, aucune action n'a été entrée:
+		assertTrue(monNoeudDeDecision.getNumberPossiblesActionsTable()==0); // Il y a 0 action possible
+		assertFalse(monNoeudDeDecision.getNumberPossiblesActionsTable()==1); // Il n'y a pas 1 action possible
+		CoupleActionIndex monCoupleActionIndex1 = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 1);
+		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex1);
+		CoupleActionIndex monCoupleActionIndex2 = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 2);
+		monNoeudDeDecision.setCoupleActionIndex(1, monCoupleActionIndex2);
+		assertTrue(monNoeudDeDecision.getNumberPossiblesActionsTable()==2);
+		assertFalse(monNoeudDeDecision.getNumberPossiblesActionsTable()==0);
+		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex2);
+		assertTrue(monNoeudDeDecision.getNumberPossiblesActionsTable()==2);
+		assertFalse(monNoeudDeDecision.getNumberPossiblesActionsTable()==0);		
+
+		
 	}
 
 	@Test
-	public void testDecrementNumberOfPossiblesActions() {
-		fail("Not yet implemented");
+	public void testGetandSetCoupleActionIndex() throws ExceptionUnknownNodeType {
+		DecisionNode monNoeudDeDecision = null;
+		CoupleActionIndex monCoupleActionIndex = null;
+		int size=10;
+		Tile maTile = Tile.parseTile("Tile_FFFFZZ060123");
+		Action monAction = Action.newBuildSimpleAction(new Point(5,4), maTile);
+		
+		monNoeudDeDecision = new DecisionNode(size, 1, "root");
+		assertTrue(monNoeudDeDecision.getCoupleActionIndex(0).equals(monNoeudDeDecision.getCoupleActionIndex(1))); //La table des couples action/index est initialisé avec des valeurs par default, ils doivent donc etre egaux 2 a deux
+		monCoupleActionIndex = new CoupleActionIndex(monAction, 1);
+		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex);
+		assertFalse(monCoupleActionIndex==monNoeudDeDecision.getCoupleActionIndex(0)); //Le couple a été copié, ce n'est pas le meme objet
+		assertTrue(monCoupleActionIndex.equals(monNoeudDeDecision.getCoupleActionIndex(0))); // Mais leur contenu est identique
+	
+	}
+		
+
+	@Test
+	public void testGetDepth() throws ExceptionUnknownNodeType {
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		monNoeudDeDecision = new DecisionNode(size, 1, "root");
+		assertTrue(monNoeudDeDecision.getDepth()==1);
+		assertFalse(monNoeudDeDecision.getDepth()==0);
+		monNoeudDeDecision = new DecisionNode(size, 0, "root");
+		assertFalse(monNoeudDeDecision.getDepth()==1);
+		assertTrue(monNoeudDeDecision.getDepth()==0);		
 	}
 
 	@Test
-	public void testSetNumberOfPossiblesActions() {
-		fail("Not yet implemented");
-	}
+	public void testSetDepth() throws ExceptionUnknownNodeType {
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		monNoeudDeDecision = new DecisionNode(size, 0, "root");
+		monNoeudDeDecision.setDepth(1);
+		assertTrue(monNoeudDeDecision.getDepth()==1);
+		assertFalse(monNoeudDeDecision.getDepth()==0);
+		monNoeudDeDecision = new DecisionNode(size, 1, "root");
+		monNoeudDeDecision.setDepth(0);
+		assertFalse(monNoeudDeDecision.getDepth()==1);
+		assertTrue(monNoeudDeDecision.getDepth()==0);		}
 
 	@Test
-	public void testGetCoupleActionIndex() {
-		fail("Not yet implemented");
+	public void testCopy() throws ExceptionUnknownNodeType {
+		DecisionNode monNoeudDeDecisionCible = null;
+		DecisionNode monNoeudDeDecisionSource = null;
+		int size=10;
+		monNoeudDeDecisionSource = new DecisionNode(size, 0, "root");
+		monNoeudDeDecisionCible = new DecisionNode(size, 0, "root");
+		
+		CoupleActionIndex monCoupleActionIndex = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 1);
+		monNoeudDeDecisionSource.setCoupleActionIndex(0, monCoupleActionIndex);
+		assertFalse(monNoeudDeDecisionCible.equals(monNoeudDeDecisionSource));
+		monNoeudDeDecisionCible.copy(monNoeudDeDecisionSource);
+		assertTrue(monNoeudDeDecisionCible.equals(monNoeudDeDecisionSource));
+		
 	}
 
-	@Test
-	public void testSetCoupleActionIndex() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetDepth() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testSetDepth() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testCopy() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testDecisionNode() {
-		fail("Not yet implemented");
-	}
 
 	@Test
 	public void testToString() {
-		fail("Not yet implemented");
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		try {
+			monNoeudDeDecision = new DecisionNode(size, 0, "root");
+		} catch (ExceptionUnknownNodeType e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String resultToString = monNoeudDeDecision.toString();
+		assertFalse(resultToString==null);
 	}
 
 }
