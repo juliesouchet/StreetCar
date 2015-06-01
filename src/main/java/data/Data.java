@@ -27,6 +27,7 @@ public class Data implements Serializable
 {
 	//TODO Wish list de Ulysse:
 		public class possibleActionsSet{
+			public static final int maxCardinal = 6000;
 			private int cardinal;
 			Action[] acceptablesActions; 
 			private possibleActionsSet(int size){ // majorant du nombre d'actions possibles
@@ -43,15 +44,90 @@ public class Data implements Serializable
 			}
 		}
 		/**
-		 * L'ensemble des actions possible pour le joueur spécifié (c'est son tour de jouer)
 		 * @return
+		 * L'ensemble des actions possible pour le joueur spécifié (c'est son tour de jouer)
 		 */
 		public possibleActionsSet getPossibleActions(String playerName){
-			return null; //TODO implémenter la méthode
+			possibleActionsSet result = new possibleActionsSet(possibleActionsSet.maxCardinal);
+			PlayerInfo pi = playerInfoList.get(playerName);
+			Hand hand = pi.hand;
+			Tile t1, t2, oldT;
+			Direction[] uniqueDirTab1, uniqueDirTab2;
+			Point origin;
+			LinkedList<Point> neighbors;
+			
+			/*
+			 * Building
+			 */
+			if(!pi.startedMaidenTravel) {
+				for (int i = 0; i < hand.getSize(); i++) {					// first tile from the hand
+					t1 = hand.get(i);
+					uniqueDirTab1 = t1.getUniqueDirectionTab();
+					for (int d1 = 0; d1 < t1.getUniqueDirectionPtr(); d1++) {	// each rotation of the 1st tile (minus the duplicates)
+						t1.setDirection(uniqueDirTab1[d1]);
+						
+						for (int j = i; j < hand.getSize(); j++) {			// second tile from the hand
+							t2 = hand.get(j);
+							uniqueDirTab2 = t2.getUniqueDirectionTab();
+							for (int d2 = 0; d2 < t2.getUniqueDirectionPtr(); d2++) {// each rotation of the 2nd tile (minus the duplicates)
+								t2.setDirection(uniqueDirTab2[d2]);						
+							
+								for (int x = 0; x < board.length; x++) {			// each square of the board
+									for (int y = 0; y < board[x].length; y++) {
+										
+										if(isAcceptableTilePlacement(x, y, t1)) { // simple build t1
+											result.acceptablesActions[result.cardinal] = Action.newBuildSimpleAction(new Point(x,y), t1);
+											result.cardinal++;
+										}
+										// TODO si la première pose est un échange, tester les poses de la tuile récupérée
+										oldT = getTile(x, y);
+										setTile(x, y, t1);
+										for (Point p : getAccessibleNeighborsPositions(x, y)) {	// double build t1 & neighbors (t2)
+											if(isAcceptableTilePlacement(p.x, p.y, t2)) {
+												result.acceptablesActions[result.cardinal] = Action.newBuildDoubleAction(new Point(x,y), t1, p, t2);
+												result.cardinal++;
+											}
+										}
+										setTile(x, y, oldT);
+										
+									}
+								}
+								
+							}
+						}
+						
+					}
+				}
+			}
+			
+			/*
+			 * Traveling
+			 */
+			else {	// pi.startedMaidenTravel
+				origin = pi.tramPosition;
+				neighbors = getAccessibleNeighborsPositions(origin.x, origin.y);
+				// TODO interdire les retours en arrière
+				for (Point inter : neighbors) {
+					if(distance(inter, origin) <= maxPlayerSpeed || getTile(inter).isStop()) {
+						Point[] destination = {inter};
+						result.acceptablesActions[result.cardinal] = Action.newMoveAction(destination);
+						result.cardinal++;
+					}
+					neighbors.addAll(getAccessibleNeighborsPositions(inter.x, inter.y));
+				}
+			}
+			return result; //TODO implémenter la méthode
 		}
 		// END ulysse'swish list
 	
-	
+		/**
+		 * @param p1
+		 * @param p2
+		 * @return distance de manhattan entre p1 et p2
+		 */
+		private int distance(Point p1, Point p2) {
+			return Math.abs(p1.x-p2.x)+Math.abs(p1.y-p2.y);
+		}
 	
 	
 // --------------------------------------------
