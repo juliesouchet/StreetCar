@@ -14,7 +14,8 @@ import main.java.util.TraceDebugAutomate;
 public class DecisionTable {
 	
 	public static final int ALLY=0;
-	public static final int OPPONENT=0;
+	public static final int OPPONENT=1;
+	public static final int TABLE_IS_FULL=-1;
 	
 	
 	/* ===============================================================================================================
@@ -125,6 +126,19 @@ public class DecisionTable {
 		this.size=size;
 	}
 
+	/**
+	 * Methode pour trouver un slot disponible dans la table de decision
+	 * @return
+	 * L'indice d'un slot contenant une donnée non pertinente sucestible d'être écrasée
+	 */
+	public int findFreeSlot(){
+		for (int i=0; i<this.getSize();i++){
+			if(this.slotIsFree(i)){
+				return i;
+			}
+		}
+		return TABLE_IS_FULL;
+	}
 
 	/* ===============================================================================================================
 	 * 			SETTERS
