@@ -1,11 +1,14 @@
 package main.java.gui.menus;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
 
 import main.java.data.Data;
 import main.java.data.LoginInfo;
@@ -71,9 +74,10 @@ public class HostRoomMenuPanel extends MenuPanel {
 		    this.add(imagePanel);
 		    this.avatarImagePanels.add(imagePanel);
 		    
-	    	Label nameLabel = new Label(defaultName + " " + i);
-		    nameLabel.setBounds(210, y, 100, 40);
+	    	Label nameLabel = new Label(" " + defaultName);
+		    nameLabel.setBounds(210, y, 150, 40);
 		    this.add(nameLabel);
+		    nameLabel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 		    this.nameLabels.add(nameLabel);
 		    
 			ComboBox comboBox = new ComboBox(adversaryChoices);
@@ -157,27 +161,29 @@ public class HostRoomMenuPanel extends MenuPanel {
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i = 0; i < 5; i++) {
+				
 				Label nameLabel = this.nameLabels.get(i);
 				ComboBox choiceComboBox = this.choiceComboBoxes.get(i);
 				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
 				
 				LoginInfo info = loginInfos[i];
+				System.out.println(info);
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
 				
 				System.out.println(i + " " + info);
 				if (info.isClosed()) {
-					nameLabel.setText("Connection closed", null);
+					nameLabel.setText(" Connection closed", null);
 					choiceComboBox.setSelectedIndex(4);
 					
 				} if (nameLabel.getText() == null && info.isHuman()) {
-					nameLabel.setText("Waiting connection", null);
+					nameLabel.setText(" Waiting connection", null);
 					choiceComboBox.setSelectedIndex(0);
 					
 				} else if (!info.isHuman()) {
 					int level = info.getAiLevel();
 					choiceComboBox.setSelectedIndex(level);
-					nameLabel.setText("AI", null);
+					nameLabel.setText(" AI", null);
 				}
 			}
 			

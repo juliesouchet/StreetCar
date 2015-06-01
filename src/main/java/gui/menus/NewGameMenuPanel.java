@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.Label;
@@ -15,13 +18,15 @@ import main.java.gui.util.UserDefaults;
 import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
-public class NewGameMenuPanel extends MenuPanel {
+public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 
 	// Properties
 
 	private TextField playerNameField;
 	private TextField gameNameField;
 	private TextField addressField;
+	
+	private Button createGameButton;
 	
 	// Constructors
 	
@@ -30,7 +35,10 @@ public class NewGameMenuPanel extends MenuPanel {
 		this.setupPanel();
 		this.setupTextFields();
 		this.setupButtons();
+		updateCreateGameButton();
 	}
+	
+	// Setup
 	
 	public void setupPanel() {
 		this.setMenuTitle("New Game", null);
@@ -43,15 +51,15 @@ public class NewGameMenuPanel extends MenuPanel {
 	    this.add(titleLabel);
 	    
 	    Label playerNameLabel = new Label("Player Name", null);
-	    playerNameLabel.setBounds(140, 100, 100, 40);
+	    playerNameLabel.setBounds(120, 100, 100, 40);
 	    this.add(playerNameLabel);	
 	    
 	    Label gameNameLabel = new Label("Game Name", null);
-	    gameNameLabel.setBounds(140, 150, 100, 40);
+	    gameNameLabel.setBounds(120, 150, 100, 40);
 	    this.add(gameNameLabel);	
 	    
 	    Label adressLabel = new Label("IP adress", null);
-	    adressLabel.setBounds(140, 200, 100, 40);
+	    adressLabel.setBounds(120, 200, 100, 40);
 	    this.add(adressLabel);
 		
 	    UserDefaults ud = UserDefaults.getSharedInstance();
@@ -59,12 +67,14 @@ public class NewGameMenuPanel extends MenuPanel {
 		this.playerNameField = new TextField(lastPlayerName);
 		this.playerNameField.setPlaceholder("Player1", null);
 		this.playerNameField.setBounds(new Rectangle(230, 105, 150, 30));
+		this.playerNameField.getDocument().addDocumentListener(this);
 		this.add(this.playerNameField);
 
 	    String lastGameName = ud.getString(Constants.GAME_NAME_KEY);
 		this.gameNameField = new TextField(lastGameName);
 		this.gameNameField.setPlaceholder("Game1", null);
 		this.gameNameField.setBounds(new Rectangle(230, 155, 150, 30));
+		this.gameNameField.getDocument().addDocumentListener(this);
 		this.add(this.gameNameField);
 		
 		this.addressField = new TextField(IP.getIpAdressFromInet());
@@ -74,9 +84,10 @@ public class NewGameMenuPanel extends MenuPanel {
 	}
 	
 	private void setupButtons() {
-		Button createGameButton = new Button("Create game", null);
+		createGameButton = new Button("Create game", null);
 		createGameButton.addAction(this, "createGame");
 		createGameButton.setBounds(new Rectangle(270, 280, 150, 40));
+		createGameButton.setEnabled(false);
     	this.add(createGameButton);
     	
 		Button cancelButton = new Button("Cancel", null);
@@ -120,5 +131,33 @@ public class NewGameMenuPanel extends MenuPanel {
 	public void cancelGame() {
 		GameController gc = this.getGameController();
 		gc.showWelcomeMenuPanel();
+	}
+
+	protected void updateCreateGameButton() {
+		String playerName = this.playerNameField.getText();
+		String gameName = this.gameNameField.getText();
+		if ((playerName.isEmpty() || playerName.trim().equals("")) ||
+			    (gameName.isEmpty() || gameName.trim().equals("")))	{
+			createGameButton.setEnabled(false);
+		} else {
+			createGameButton.setEnabled(true);
+		}
+	}
+	
+	// Document listener
+	
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		// Not needed
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		updateCreateGameButton();
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		updateCreateGameButton();
 	}
 }
