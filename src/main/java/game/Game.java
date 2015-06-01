@@ -142,7 +142,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!newPlayerIsHuman)															// Case create AI player
 		{
 			PlayerAI newPlayer = null;
-			try					{newPlayer = new PlayerAI(newPlayerInfo.getPlayerName(), false, this.data.getRandomUnusedColor(), this, newPlayerInfo.getAiLevel(), null);}
+			try					{newPlayer = new PlayerAI(newPlayerInfo.getPlayerName(), false, this, newPlayerInfo.getAiLevel(), null);}
 			catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 			Thread t = new Thread(playerName);
 			this.aiList.put(playerName, newPlayer);
@@ -152,21 +152,28 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	/**================================================
 	 * @return Makes a player join the game
 	 * ================================================*/
-	public synchronized void onJoinGame(PlayerInterface player, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
+	public synchronized void setPlayerColor(String playerName, Color playerColor) throws RemoteException, ExceptionUsedPlayerColor
+	{
+		if (this.data.isUsedColor(playerColor))		throw new ExceptionUsedPlayerColor();
+
+		this.data.setPlayerColor(playerName, playerColor);
+	}
+	/**================================================
+	 * @return Makes a player join the game
+	 * ================================================*/
+	public synchronized void onJoinGame(PlayerInterface player, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionGameHasAlreadyStarted
 	{
 		String	playerName	= player.getPlayerName();
-		Color	playerColor	= player.getPlayerColor();
 		boolean	isHuman		= player.isHumanPlayer();
 		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
 		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExcpected();
 		if (this.data.isPlayerLogged(playerName))			throw new ExceptionUsedPlayerName();
-		if (this.usedColor(playerColor))					throw new ExceptionUsedPlayerColor();
 		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
 
-		this.engine.onJoinGame(this.data, player, playerName, playerColor, isHost);
+		this.engine.onJoinGame(this.data, player, playerName, isHost);
 		this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
 		System.out.println("\n===========================================================");
 		System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");
@@ -201,10 +208,11 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	 * Init the game parameters.
 	 * Make the kame begins
 	 ================================================*/
-	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
+	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers, ExceptionNonInitializedPlayer
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if (!this.data.isGameReadyToStart())					throw new ExceptionNotEnougthPlayers();
+		if (!this.data.isAllPlayersInitialized())		throw new ExceptionNonInitializedPlayer();
+		if (!this.data.isGameReadyToStart())			throw new ExceptionNotEnougthPlayers();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
 		this.engine.addAction(this.data, "hostStartGame", playerName);

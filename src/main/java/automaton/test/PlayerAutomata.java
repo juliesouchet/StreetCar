@@ -73,10 +73,12 @@ public class PlayerAutomata implements InterfaceIHM
 
 		try
 		{
-			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  color, create, ip, this);
+			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  create, ip, this);
+			playerIHM	.setPlayerColor(color);
 			game		= Game.getRemoteGame("127.0.0.1", gameName);
 			iaName		= "IA_DUMB_" + ((new Random()).nextDouble());
-			playerIA	= new PlayerAI(iaName, false, Color.BLACK, game, 0, null);
+			playerIA	= new PlayerAI(iaName, false, game, 0, null);
+			playerIA	.setPlayerColor(Color.blue);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
@@ -125,7 +127,8 @@ public class PlayerAutomata implements InterfaceIHM
 
 
 		try{
-			player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine, color, create, ip, this);
+			player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine, create, ip, this);
+			player.setPlayerColor(color);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 

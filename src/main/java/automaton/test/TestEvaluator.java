@@ -29,8 +29,10 @@ public class TestEvaluator {
 
 		TestDumbestIHM ihm = new TestDumbestIHM();
 		try {
-			player1 = new PlayerAI(name1, true, Color.red, game, level1, ihm);
-			player2 = new PlayerAI(name2, false, Color.blue, game, level2, ihm);
+			player1 = new PlayerAI(name1, true, game, level1, ihm);
+			player2 = new PlayerAI(name2, false, game, level2, ihm);
+			player1.setPlayerColor(Color.red);
+			player2.setPlayerColor(Color.green);
 		}
 		catch (Exception e) {
 			System.out.println("Player creation error"); e.printStackTrace();

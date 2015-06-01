@@ -13,6 +13,7 @@ import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNonInitializedPlayer;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotEnougthTileInHand;
@@ -46,7 +47,6 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	protected GameInterface	game;
 	protected InterfaceIHM	ihm;
 	protected String		playerName;
-	protected Color			color;
 	protected Data			data;
 
 // --------------------------------------------
@@ -56,18 +56,16 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		super();
 	}
-	public PlayerAbstract(String playerName, Color playerColor, GameInterface game, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerAbstract(String playerName, GameInterface game, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
 	{
 		super();
 
 		this.game		= game;
 		this.ihm		= ihm;
 		this.playerName	= new String(playerName);
-		this.color		= playerColor;
 		this.data		= null;
 		System.out.println("\n===========================================================");
 		System.out.println("Street Car player : playerName  = " + playerName);
-		System.out.println("Street Car player : playerColor = " + playerColor);
 		System.out.println("Street Car player : ready");
 		System.out.println("===========================================================\n");
 	}
@@ -76,21 +74,25 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
 // --------------------------------------------
-	public synchronized Data		getGameData()							{return (this.data == null) ? null : this.data.getClone(playerName);}
 	public synchronized LoginInfo[]	getLoginInfo() throws RemoteException	{return this.game.getLoginInfo(playerName);}
 	public synchronized void setLoginInfo(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
 	{
 		this.game.setLoginInfo(playerName, playerToChangeIndex, newPlayerInfo);
 	}
+	public synchronized void setPlayerColor(Color playerColor) throws RemoteException, ExceptionUsedPlayerColor
+	{
+		this.game.setPlayerColor(playerName, playerColor);
+	}
 
+	public synchronized Data	getGameData()							{return (this.data == null) ? null : this.data.getClone(playerName);}
 	public synchronized String 	getPlayerName()	throws RemoteException	{return this.playerName;}
-	public synchronized Color	getPlayerColor()throws RemoteException	{return this.color;}
+	public synchronized Color	getPlayerColor()throws RemoteException	{return this.data.getPlayerColor(playerName);}
 	public synchronized void	gameHasChanged(Data data) throws RemoteException
 	{
 		this.data = data;
 		if (this.ihm != null) this.ihm.refresh(data);
 	}
-	public synchronized void hostStartGame()	throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
+	public synchronized void hostStartGame()	throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers, ExceptionNonInitializedPlayer
 	{
 		this.game.hostStartGame(playerName);
 	}
@@ -116,12 +118,6 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 	{
 		game.onQuitGame(playerName);
 	}
-// TODO: n'existe pas
-/*	public synchronized void onExcludePlayer	(String playerExcluded) throws RemoteException, ExceptionForbiddenAction
-	{
-		game.onExcludePlayer(playerName, playerExcluded);
-	}
-*/
 	public synchronized void moveTram(LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		game.moveTram(playerName, tramMovement);
