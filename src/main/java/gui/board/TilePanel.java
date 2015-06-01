@@ -5,10 +5,15 @@ import java.awt.Graphics;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
+import main.java.data.Tile;
 import main.java.gui.components.Panel;
 
 @SuppressWarnings("serial")
 public class TilePanel extends Panel implements Transferable {
+	
+	// Properties
+	
+	Tile tile;
 	
 	// Constructors
 	
@@ -16,7 +21,11 @@ public class TilePanel extends Panel implements Transferable {
 		super();
 		this.setTransferHandler(new TilePanelDragTransferHandler());
 		this.addMouseListener(new TilePanelDragMouseListener());
-		
+	}
+	
+	public TilePanel(Tile tile) {
+		super();
+		this.tile = tile;
 	}
 	
 	// Drawings
@@ -85,6 +94,16 @@ public class TilePanel extends Panel implements Transferable {
 			dragDataFlavor = new DataFlavor(TilePanel.class, "TilePanel");
 		}
 		return dragDataFlavor;
+	}
+	
+	// Getters / setters
+	
+	public Tile getTile() {
+		return this.tile;
+	}
+	
+	public void setTile(Tile tile) {
+		this.tile = tile;
 	}
 	
 }

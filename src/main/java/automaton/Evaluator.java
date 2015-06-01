@@ -52,12 +52,13 @@ public class Evaluator {
 					if(action.isConstructing()) {
 		System.out.println(currentPlayerName + " BUILD");
 						// Building action
+
 						currentConfig.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
 						if(action.action == Action.BUILD_DOUBLE) {
 							currentConfig.setTile(action.positionTile2.x, action.positionTile2.y, action.tile2);
 						}
 					}
-					else {
+					else { // MOVE action
 						if(!currentConfig.hasStartedMaidenTravel(currentPlayerName)
 							&& action.action != Action.START_TRIP_NEXT_TURN)
 							throw new RuntimeException(currentPlayerName+" tries to travel while in construction (round "+j+")");

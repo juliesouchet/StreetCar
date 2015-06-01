@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JMenuBar;
 
 import main.java.data.Data;
+import main.java.gui.board.MovingMapPanel;
 import main.java.gui.components.FrameController;
 import main.java.gui.components.Menu;
 import main.java.gui.components.MenuItem;
@@ -43,7 +44,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	
 	private void setupFrame() {
 		this.frame.setTitle("StreetCar"); 
-        this.frame.setContentPane(new InGamePanel());
+        this.frame.setContentPane(new MovingMapPanel());
         this.frame.getContentPane().setLayout(null); 
         this.frame.addComponentListener(this);
         this.frame.setSize(1250, 830);
@@ -139,7 +140,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	
 	public void showInGamePanel() {
 		this.setMenuPanel(null);
-		this.setFrameContentPane(new InGamePanel());
+		this.setFrameContentPane(new InGamePanel(this));
 	}
 	
 	public void showHostWaitingRoomPanel() {

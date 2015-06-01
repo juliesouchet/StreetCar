@@ -20,35 +20,6 @@ public class DecisionNode {
 	 */
 	private double configurationQuality;
 
-
-	public class CoupleActionIndex{
-		// L'action choisie
-		private Action action;
-		//Nous mène à l'index du tableau de decision
-		private int index;
-
-		public CoupleActionIndex(Action a, int i){
-			action=a;
-			index=i;
-		}
-		public void setAction(Action action){
-			this.action = action;
-		}
-		public Action getAction(){
-			return this.action;
-		}
-		public void setIndex(int index){
-			this.index=index;
-		}
-		public int getIndex(){
-			return this.index;
-		}
-		public void copy(CoupleActionIndex src){
-			this.action.copy(src.action);
-			this.index=src.index;
-		}
-	}
-
 	/* 
 	 * L'ensemble des actions possibles et des cases du tableau de decision correspondant
 	 */
@@ -160,32 +131,48 @@ public class DecisionNode {
 	}
 
 	/**
-	 * retourne le nombre de branchement possible a partir de la configuration courante
+	 * retourne le nombre de branchement maximal (pour la structure de donnees) possible a partir de la configuration courante
 	 * @return
 	 */
-	public int getNumberOfPossiblesActions(){
+	public int getSizeOfPossiblesActionsTable(){
 		return this.cardinalPossiblesActions;
 	}
 
-	/** 
-	 * incremente le nombre d'action possible
+	/**
+	 * retourne le nombre de branchement possible (coups acceptables) enregistré dans la structure de donnée
+	 * @return
 	 */
-	public void incrementNumberOfPossiblesActions(){
-		this.cardinalPossiblesActions++;
+	public int getNumberPossiblesActionsTable(){
+		int numberOfSignificantValueInTable=0;
+		for(int i=0;i<this.getSizeOfPossiblesActionsTable();i++){
+			if(this.getCoupleActionIndex(i).isSignificant()){
+				numberOfSignificantValueInTable++;
+			}
+		}		
+		return numberOfSignificantValueInTable;
 	}
 
-	/** 
-	 * decremente le nombre d'action possible
-	 */
-	public void decrementNumberOfPossiblesActions(){
-		this.cardinalPossiblesActions--;
-	}
+	
+// TODO: a priori un non sens, a supprimer	
+//	/** 
+//	 * incremente le nombre d'action possible
+//	 */
+//	public void incrementNumberOfPossiblesActions(){
+//		this.cardinalPossiblesActions++;
+//	}
+
+//	/** 
+//	 * decremente le nombre d'action possible
+//	 */
+//	public void decrementNumberOfPossiblesActions(){
+//		this.cardinalPossiblesActions--;
+//	}
 
 	/**
-	 * met le nombre d'actions possible pour la configuratin considérée a cardinal
+	 * met le nombre d'actions possible pour la configuration considérée a cardinal
 	 * @param cardinal
 	 */
-	public void setNumberOfPossiblesActions(int cardinal){
+	public void setSizeOfPossiblesActionsTable(int cardinal){
 		this.cardinalPossiblesActions=cardinal;
 	}
 
@@ -269,29 +256,31 @@ public class DecisionNode {
 		this.depth = src.depth ;
 		this.isLeaf = src.isLeaf ;
 		this.isRoot = src.isRoot ;
-		for(int i=0;i<this.getNumberOfPossiblesActions();i++){
+		for(int i=0;i<this.getSizeOfPossiblesActionsTable();i++){
 			this.possiblesActions[i].copy(src.possiblesActions[i]);
 		}
 		
 	}
 	
 	/**
-	 * nombre d'action possibles	
-	 * @param numberOfPossibleActions
+	 * nombre d'action possibles maximal pouvant etre traité par la structure de donnée	
+	 * @param numberMaxOfPossibleActions
 	 * profondeur du noeud dans l'arbre
 	 * @param depth
 	 * type de noeud: peut etre root, internalNode ou leaf
 	 * @param type
 	 * @throws ExceptionUnknownNodeType
 	 */
-	public DecisionNode(int numberOfPossibleActions, int depth, String type) throws ExceptionUnknownNodeType{
-		this.setNumberOfPossiblesActions(numberOfPossibleActions);
+	public DecisionNode(int numberMaxOfPossibleActions, int depth, String type) throws ExceptionUnknownNodeType{
+		this.setSizeOfPossiblesActionsTable(numberMaxOfPossibleActions);
 		// On créé le tableau d'actions possible, pour l'instant vide
-		this.possiblesActions = new CoupleActionIndex[numberOfPossibleActions];
+		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
 		// On rempli la table avec des actions (du coup non significatives)
-		for(int i=0; i<numberOfPossibleActions;i++){
-			this.possiblesActions[i]=this.new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), 0);
+		for(int i=0; i<numberMaxOfPossibleActions;i++){
+			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), 0);
 		}
+		//A la creation on fixe la qualité a -1 tant qu'une valeur significative n'a pas été calculé
+		this.setQuality(-1.0);
 		this.setDepth(depth);
 		if(type.equals("root")){
 			this.setRoot();
@@ -331,7 +320,7 @@ public class DecisionNode {
 		affichage+=" Depth="+this.getDepth();
 		affichage+=" Possibles Actions:\n";
 
-		for(int i=0; i<this.getNumberOfPossiblesActions();i++){
+		for(int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
 			TraceDebugAutomate.debugDecisionNodeTrace("tostring i="+i);
 			for(int j=0; j<this.getDepth()+1;j++){
 				affichage+="\t";
@@ -343,6 +332,37 @@ public class DecisionNode {
 		return affichage;
 	}
 
+	@Override
+	public boolean equals (Object o){
+		DecisionNode otherNode = null;
+		if(o==null){
+			return false;
+		}
+		else {
+			otherNode=(DecisionNode) o;
+			if (this.getSizeOfPossiblesActionsTable()!=otherNode.getSizeOfPossiblesActionsTable()){
+				return false;
+			}
+			if (this.getQuality()!=otherNode.getQuality()){
+				return false;
+			}
+			if (this.getDepth()!=otherNode.getDepth()){
+				return false;
+			}
+			if (this.isLeaf()!=otherNode.isLeaf()){
+				return false;
+			}
+			if (this.isRoot()!=otherNode.isRoot()){
+				return false;
+			}
+			for (int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
+				if ( !this.getPossibleFollowingAction()[i].equals(otherNode.getPossibleFollowingAction()[i])){
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 
 	// TODO le deplacer dans decisionTable	
 	//	// TODO le minimax
