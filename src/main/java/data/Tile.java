@@ -1,7 +1,6 @@
 package main.java.data;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 
 import main.java.util.CloneableInterface;
 import main.java.util.Direction;
@@ -86,6 +85,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		else throw new RuntimeException("Unhandeled case");
 	}
 	private Tile(){}
+//TODO verifier tous ceux qui l'appelent
 	public Tile getClone()
 	{
 		Tile res = new Tile();
@@ -174,7 +174,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			}
 			return res;
 		}
-		catch (Exception e){throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
+		catch (Exception e){e.printStackTrace(); throw new RuntimeException("Tile imageFileName malformed: " + imageFileName + "\n" + e);}
 	}
 
 // --------------------------------------------
@@ -224,15 +224,20 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return false;
 	}
 
-	public LinkedList<Direction> getAccessibleDirections()
+	/**==================================================
+	 * @return an int that represents the list of accessible directions:
+	 * for i between [0 , 3] if the i th bit of the res equals 1, then the i th direction is accessible.
+	 * The result may be parsed by Direction.isInList(Direction, res)
+	 ====================================================*/
+	public int getAccessibleDirections()
 	{
-		LinkedList<Direction> res = new LinkedList<Direction>();
+		int res = 0;
 
 		for (int i=0; i<=this.ptrPathTab; i++)
 		{
 			Path p = this.pathTab[i];
-			if (!res.contains(p.end0))	res.add(p.end0);
-			if (!res.contains(p.end1))	res.add(p.end1);
+			res = p.end0.addDirectionToList(res);
+			res = p.end1.addDirectionToList(res);
 		}
 		return res;
 	}
@@ -332,7 +337,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		for (String s: acceptedTerminusDescription) if (td.equals(s)) return true;
 		return false;
 	}
-// TODO a rendre private
 	public static Path[] initPathTab()
 	{
 		Path[] res = new Path[maxNbrPathInTile];

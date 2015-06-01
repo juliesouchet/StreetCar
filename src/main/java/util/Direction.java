@@ -29,9 +29,15 @@ public enum Direction implements Serializable
 	private Direction(int dir){this.dir = dir;}
 
 // --------------------------------------------
+// Getter:
+// --------------------------------------------
+	public int		getVal()							{return this.dir;}
+	public int		addDirectionToList	(int dirList)	{return  (dirList | (1 << this.dir));}
+	public boolean	isDirectionInList	(int dirList)	{return ((dirList & (1 << this.dir)) != 0);}
+
+// --------------------------------------------
 // Local Methods:
 // --------------------------------------------
-	public int getVal(){return this.dir;}
 	public Direction turnLeft()
 	{
 		switch(this.dir)

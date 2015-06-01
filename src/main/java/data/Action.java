@@ -33,12 +33,14 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Builder
 // -----------------------------------------------------
+// TODO rajouter un param pour indiquer le terminus de depart
 	public static Action newStartTripNextTurnAction()
 	{
 		Action res	= new Action();
 		res.action	= START_TRIP_NEXT_TURN;
 		return res;
 	}
+// TODO rajouter un param pour indiquer le terminus de depart
 	public static Action newMoveAction(Point[] tramwayMovement)
 	{
 		Action res				= new Action();

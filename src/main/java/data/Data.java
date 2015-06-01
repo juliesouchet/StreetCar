@@ -67,9 +67,9 @@ public class Data implements Serializable
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				minSpeed				= 1;
 	public static final int				maxSpeed				= 10;
-	public static LinkedList<Integer>	existingLine;
-	public static LinkedList<String[][]>existingBuildingInLine;
-	public static LinkedList<Color>		existingColors;
+	private static int[]				existingLine;
+	private static String[][][]			existingBuildingInLine;
+	private static Color[]				existingColors;
 
 	private LinkedList<String[][]>		remainingBuildingInLine;
 
@@ -82,6 +82,8 @@ public class Data implements Serializable
 	private int							maxPlayerSpeed;
 	private String[]					playerOrder;
 	private String						host;
+
+	private Path[]						additionalPath = Tile.initPathTab();// Optimization attribute
 
 // --------------------------------------------
 // Builder:
@@ -104,7 +106,6 @@ public class Data implements Serializable
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
 		this.maxPlayerSpeed		= minSpeed;
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
-		this.remainingBuildingInLine= new LinkedList<String[][]>(existingBuildingInLine);
 	}
 	private Data(){}
 	public Data getClone(String playerName)
@@ -349,7 +350,8 @@ public class Data implements Serializable
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
-	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
+	public Tile					getTile  (int x, int y)							{return this.board[x][y].getClone();}
+//TODO: peut etre pour l'ia 	public Tile					getTileIA(int x, int y)							{return this.board[x][y];}
 	public Tile					getTile(Point p)								{return getTile(p.x, p.y);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
@@ -384,19 +386,17 @@ public class Data implements Serializable
 	 =================================================================*/
 	public boolean isAcceptableTilePlacement(int x, int y, Tile t)
 	{
-		Path[] additionalPath = Tile.initPathTab();
-		LinkedList<Direction> accessibleDirection;
 		Tile oldT = this.board[x][y];
 		int additionalPathSize = oldT.isReplaceable(t, additionalPath);
-//System.out.println("Data.isAcceptableTilePlacement ------     " + additionalPathSize);
 
 		if (additionalPathSize == -1)	return false;													// Check whether t contains the old t (remove Tile and Rule C)
 		if (this.isOnEdge(x, y))		return false;
 
 		Tile nt = new Tile(additionalPath, additionalPathSize, t);
-		accessibleDirection = nt.getAccessibleDirections();
-		for (Direction d: accessibleDirection)															// Check whether the new tile is suitable with the <x, y> neighborhood
+		int accessibleDirection = nt.getAccessibleDirections();
+		for (Direction d: Direction.DIRECTION_LIST)														// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
+			if (!d.isDirectionInList(accessibleDirection)) continue;
 			Point neighbor = d.getNeighbour(x, y);
 
 			Tile neighborT = this.board[neighbor.x][neighbor.y];
@@ -432,10 +432,11 @@ public class Data implements Serializable
 	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
 	{
 		LinkedList<Point>		res = new LinkedList<Point>();
-		LinkedList<Direction>	ad	= board[x][y].getAccessibleDirections();			// List of the reachable directions
+		int	ad	= board[x][y].getAccessibleDirections();				// List of the reachable directions
 
-		for (Direction d: ad)															// For each accesible position
+		for (Direction d: Direction.DIRECTION_LIST)						// For each accesible position
 		{
+			if (!d.isDirectionInList(ad));
 			Point next = d.getNeighbour(x, y);
 			if (isWithinnBoard(next.x, next.y))	res.add(next);
 		}
@@ -444,13 +445,15 @@ public class Data implements Serializable
 	/**============================================================
 	 * @return the list of the neighbor tiles that can be acceded from the <x,y> cell
 	 ==============================================================*/
+	//TODO: peut etre pour l'ia: soit le rendre private soit suprimer le getClone l 459 si personne d'autre ne l'appel
 	public LinkedList<Tile> getAccessibleNeighborsTiles(int x, int y)
 	{
 		LinkedList<Tile>		res = new LinkedList<Tile>();
-		LinkedList<Direction>	ad	= board[x][y].getAccessibleDirections();		// List of the reachable directions
+		int	ad	= board[x][y].getAccessibleDirections();				// List of the reachable directions
 
-		for (Direction d: ad)														// For each accesible position
+		for (Direction d: Direction.DIRECTION_LIST)						// For each accesible position
 		{
+			if (!d.isDirectionInList(ad))	continue;
 			Point next = d.getNeighbour(x, y);
 			if (isWithinnBoard(next.x, next.y))	res.add(board[next.x][next.y].getClone());
 		}
@@ -578,25 +581,26 @@ public class Data implements Serializable
 		File f;
 		Scanner sc;
 
-		Data.existingLine			= new LinkedList<Integer>();					// Scan the existing lines and corresponding colors
-		Data.existingColors			= new LinkedList<Color>();
+		Data.existingLine			= new int[maxNbrPlayer];				// Scan the existing lines and corresponding colors
+		Data.existingColors			= new Color[maxNbrPlayer];
 		try
 		{
 			f = new File(lineFile);
 			sc = new Scanner(f);
 			for (int i=1; i<=maxNbrPlayer; i++)
 			{
-				Data.existingLine	.add(i);
+				Data.existingLine[i-1] = i;
 				line = sc.nextInt();
 				if (line != i) {sc.close();throw new Exception();}
 				color = sc.next();
-				Data.existingColors.add(Util.parseColor(color));
+				Data.existingColors[i-1] = Util.parseColor(color);
 			}
 			sc.close();
 		}
 		catch (Exception e){throw new RuntimeException("Malformed line file");}
 
-		Data.existingBuildingInLine	= new LinkedList<String[][]>();					// Scan the existing building in line cards
+		Data.existingBuildingInLine	= new String[maxNbrPlayer][][];			// Scan the existing building in line cards
+		this.remainingBuildingInLine= new LinkedList<String[][]>();
 		try
 		{
 			f = new File(buildingInLineFile+nbrBuildingInLine);
@@ -608,7 +612,8 @@ public class Data implements Serializable
 				{
 					for (int b=0; b<nbrBuildingInLine; b++) strTab[p][b] = sc.next();
 				}
-				Data.existingBuildingInLine.add(strTab);
+				Data.existingBuildingInLine[l] = strTab;
+				this.remainingBuildingInLine.addLast(strTab);
 			}
 			sc.close();
 		}
@@ -708,8 +713,8 @@ public class Data implements Serializable
 	}
 	private int getExistingColorIndex(Color color)
 	{
-		for (int i=0; i<existingColors.size(); i++)
-			if (color.equals(existingColors.get(i))) return i;
+		for (int i=0; i<existingColors.length; i++)
+			if (color.equals(existingColors[i])) return i;
 
 		throw new RuntimeException("Unknown Color: " + color);
 	}
