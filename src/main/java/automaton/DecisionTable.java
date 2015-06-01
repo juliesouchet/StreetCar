@@ -10,19 +10,20 @@ import main.java.util.TraceDebugAutomate;
  *
  */
 public class DecisionTable {
+	
+	
+	/* ===============================================================================================================
+	 * 			ATTRIBUTS
+	 * =============================================================================================================== */
 	private DecisionNode[] NodeTable;
 	private boolean[] freeSlots;
 	private int size;
 
 
-	/**
-	 * Met la valeur de la taille de la table a size
-	 * @param size
-	 */
-	public void setSize(int size){
-		this.size=size;
-	}
-
+	/* ===============================================================================================================
+	 * 			GETTERS
+	 * =============================================================================================================== */
+	
 	/**
 	 * renvoi la taille de la table
 	 * @return
@@ -30,6 +31,7 @@ public class DecisionTable {
 	public int getSize(){
 		return this.size;
 	}
+	
 	/**
 	 * Noeud de decision de la table a index
 	 * @param index
@@ -37,28 +39,8 @@ public class DecisionTable {
 	 */
 	public DecisionNode getDecisionNode(int index){
 		return this.NodeTable[index];
-	}
-	/**
-	 * met le noeud numero index a node
-	 * @param index
-	 * @param node
-	 */
-	public void setDecisionNode(int index, DecisionNode node){
-		this.NodeTable[index].copy(node);
-		this.freeSlots[index]=false;
-	}
-
-	/**
-	 * initie (alloue) le noeud numero index a node
-	 * @param index
-	 * @param node
-	 */
-	private void initDecisionNode(int index, DecisionNode node){
-		this.NodeTable[index]=node;
-		this.freeSlots[index]=true;
-	}
-
-
+	}	
+	
 	/**
 	 * PRECONDITION: Le noeud doit avoir 1 action possible (retourne -1 sinon)
 	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
@@ -87,31 +69,14 @@ public class DecisionTable {
 		}
 		return indexBestActionInNode;
 	}		
-
-
-
-
-		//		DecisionNode decisionNode = this.getDecisionNode(index);
-		//		int n=0;
-		//		
-		//		CoupleActionIndex currentCouple, bestCouple;
-		//		int currentValue, bestValue;
-		//		decisionNode.getCoupleActionIndex(0).getIndex();
-		//		for(int i=0; i<decisionNode.getNumberOfPossiblesActions();i++){
-		//			currentCouple = decisionNode.getCoupleActionIndex(i);
-		//			currentValue = currentCouple.getIndex();
-		//			valueBestAction = this.getDecisionNode(index).getCoupleActionIndex(indexOfBestAction).getIndex();
-		//			if(this.getDecisionNode(index).getCoupleActionIndex(indexOfBestAction).getIndex()<this.getDecisionNode(index).getCoupleActionIndex(i)){
-		//				indexOfBestAction=i;
-		//			}
-		//		}
-		//		return n;
-
+	
 	/**
 	 * PRECONDITION: Le noeud doit avoir 1 action possible (retourne -1 sinon)
-	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
+	 *
 	 * @param index
+	 * Numero de noeud dans le tableau
 	 * @return
+ 	 * Le numero de l'action dans la liste des actions possibles ayant la configuration correspondante la plus desavantageuse
 	 */
 	public int getWorstActionIndex(int index){
 		int indexWorstActionInTable=-1;
@@ -135,6 +100,77 @@ public class DecisionTable {
 		}
 		return indexWorstActionInNode;
 	}	
+	
+	/**
+	 * Renvoi le statut de la case du tableau: vrai si la case est disponible pour enregistrer un noeud
+	 * @param index
+	 * 	L'index de la case du tableau visée
+	 * @return
+	 */
+	public boolean slotIsFree(int index){
+		return this.freeSlots[index];
+	}	
+	
+	/**
+	 * Met la valeur de la taille de la table a size
+	 * @param size
+	 */
+	private void setSize(int size){
+		this.size=size;
+	}
+
+
+	/* ===============================================================================================================
+	 * 			SETTERS
+	 * =============================================================================================================== */
+
+	/**
+	 * met le noeud numero index a node
+	 * @param index
+	 * @param node
+	 */
+	public void setDecisionNode(int index, DecisionNode node){
+		this.NodeTable[index].copy(node);
+		this.freeSlots[index]=false;
+	}
+
+	/**
+	 * initie (alloue) le noeud numero index a node
+	 * @param index
+	 * @param node
+	 */
+	private void initDecisionNode(int index, DecisionNode node){
+		this.NodeTable[index]=node;
+		this.freeSlots[index]=true;
+	}
+
+	/* ===============================================================================================================
+	 * 			CONSTRUCTORS
+	 * =============================================================================================================== */
+
+	/**
+	 * Creer une table de decision de taille size
+	 * Pour etre sur que l'allocation mémoire est faite en amont, je la rempli de decisionsNodes non représentatifs
+	 * @param tableSize
+	 * 	Taille du tableau de DecisionNode: correspond au nombre total d'action que la table peut traiter
+	 * @param maxCardinalActionPossible
+	 * 	Taille de la table d'action de chaque noeud: le nombre maximal d'action que chaque noeud pourra traiter: dois être un majorant.
+	 * @throws ExceptionUnknownNodeType 
+	 */
+	public DecisionTable(int tableSize, int maxCardinalActionPossible) throws ExceptionUnknownNodeType{
+		this.NodeTable = new DecisionNode[tableSize];
+		this.freeSlots = new boolean[tableSize];
+		this.setSize(tableSize);
+		for(int i=0;i<this.getSize();i++){
+			this.initDecisionNode(i, new DecisionNode(maxCardinalActionPossible, 0, "root"));
+			this.freeSlots[i]=true;
+		}
+	}	
+
+
+	/* ===============================================================================================================
+	 * 			UTILITAIRES
+	 * =============================================================================================================== */
 
 	@Override
 	public String toString(){
@@ -153,24 +189,26 @@ public class DecisionTable {
 		return result;
 	}
 
-
-	/**
-	 * Creer une table de decision de taille size
-	 * Pour etre sur que l'allocation mémoire est faire en amont, je la rempli de decisionsNodes non représentatifs
-	 * TODO demander si c'est vraiment utile.
-	 * @param tableSize
-	 * nombre d'action possible a partir de la configuration courante
-	 * @param maxCardinalActionPossible
-	 * @throws ExceptionUnknownNodeType 
-	 */
-	public DecisionTable(int tableSize, int maxCardinalActionPossible) throws ExceptionUnknownNodeType{
-		this.NodeTable = new DecisionNode[tableSize];
-		this.freeSlots = new boolean[tableSize];
-		for(int i=0;i<tableSize;i++){
-			this.initDecisionNode(i, new DecisionNode(maxCardinalActionPossible, 0, "root"));
-			this.freeSlots[i]=true;
-		}
-	}
-
+	
+	//	// TODO le minimax
+	//	/**
+	//	 * Si type = leaf: fonction d'évaluation 
+	//	 * sinon minimax
+	//	 * 
+	//	 * @param currentConfig
+	//	 * 	L'etat du jeu courant
+	//	 * @param height
+	//	 * La profondeur a construire: 
+	//	 * si 0 alors c'est une feuille, on fait appel a la fonction d'evaluation
+	//	 */
+	//	public DecisionNode(Data currentConfig, int height){
+	//		if (height<=0){	//C'est une feuille
+	//			//Evaluator.evaluateSituationQuality(currentConfig.get, gamesNumber, config, difficulty)
+	//		}
+	//		else if (height>0) { // C'est un noeud interne on fait un appel récursif
+	//			
+	//		}
+	//		
+	//	}	
 
 }
