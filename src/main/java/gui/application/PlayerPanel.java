@@ -3,13 +3,11 @@ package main.java.gui.application;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.ArrayList;
 
 import javax.swing.JLabel;
 
 import main.java.data.Data;
-import main.java.data.Tile;
-import main.java.gui.board.TileImage;
+import main.java.gui.board.TilePanel;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
@@ -41,12 +39,10 @@ public class PlayerPanel extends Panel{
 	}
 	
 	public void setPlayerHandCards(String playerName) {
-		ArrayList<Tile> playerHand = new ArrayList<Tile>();
-		for (int i=0; i<data.getHandSize(playerName); i++){
+		for (int i=0; i<data.getHandSize(playerName); i++){		
+			TilePanel tilePanel = new TilePanel(data.getHandTile(playerName, i));
 			
-			playerHand.add(data.getHandTile(playerName, i));
-			TileImage tileImage = new TileImage(playerHand.get(i));
-			tileImage.getImage();
+			  
 		}
 	}
 	
