@@ -16,7 +16,12 @@ public class TestEvaluator {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		Game game = null;
-		PlayerAI player1 = null, player2 = null;
+		PlayerAI player1 = null,
+				player2 = null;
+		String name1 = "Dumbest 1",
+				name2 = "Traveler 2";
+		int level1 = 1, // 1 = dumbest
+			level2 = 2; // 2 = traveler
 		
 		try {
 			game = new Game("TestEvaluator", "localhost", "newOrleans", 2);
@@ -26,8 +31,8 @@ public class TestEvaluator {
 
 		TestDumbestIHM ihm = new TestDumbestIHM();
 		try {
-			player1 = new PlayerAI("Player 1", true, Color.red, game, 1, ihm);
-			player2 = new PlayerAI("Player 2", false, Color.blue, game, 1, ihm);
+			player1 = new PlayerAI(name1, true, Color.red, game, level1, ihm);
+			player2 = new PlayerAI(name2, false, Color.blue, game, level2, ihm);
 		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName
 				| ExceptionUsedPlayerColor e) {
 			System.out.println("Player creation error"); e.printStackTrace();
@@ -35,7 +40,7 @@ public class TestEvaluator {
 		
 		
 		try {
-			game.hostStartGame("Player 1");
+			game.hostStartGame(name1);
 		} catch (Exception e) {
 			System.out.println("Game start error"); e.printStackTrace();
 		}

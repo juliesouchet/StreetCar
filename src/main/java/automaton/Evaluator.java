@@ -65,7 +65,7 @@ public class Evaluator {
 							currentConfig.startMaidenTravel(currentPlayerName);
 						
 						else // action.action == Action.MOVE
-							currentConfig.setTramPosition(currentPlayerName, action.tramwayMovement.getLast());
+							currentConfig.setTramPosition(currentPlayerName, action.tramwayMovement[action.tramwayMovement.length-1]);
 					}
 					
 					if(currentConfig.isTrackCompleted(currentPlayerName)) {

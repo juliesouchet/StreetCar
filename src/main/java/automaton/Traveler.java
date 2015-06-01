@@ -35,8 +35,6 @@ public class Traveler extends PlayerAutomaton {
 		 =============*/
 		if(!currentConfig.isTrackCompleted(getName())) {
 			// Random tile and position choice for construction (extracted from Dumbest)
-//TODO: -- riyane modif de Data			Hand hand = currentConfig.getHand(name);
-// sert a ne plus faire de new dans les fonctions de data qui sont appelles par l'automate)
 			int handSize = currentConfig.getHandSize(name);
 			do{
 				// random position choice
@@ -46,7 +44,6 @@ public class Traveler extends PlayerAutomaton {
 				// random tile choice in the player's hand
 				k = r.nextInt(handSize);
 				t = currentConfig.getHandTile(name, k);
-// TODO Riyane: faux				hand.add(t);
 
 				// random rotation
 				for(int rotation = 0; rotation < r.nextInt(4); rotation++) {
@@ -82,7 +79,7 @@ public class Traveler extends PlayerAutomaton {
 					destinationTerminus.add(allTermini.getFirst());
 					destinationTerminus.add(allTermini.get(1));
 				}
-				// TODO setDestinationTerminus doit être fait au niveau du moteur
+		// TODO setDestinationTerminus se fait dans l'action
 				currentConfig.setDestinationTerminus(name, destinationTerminus);
 				
 				
@@ -97,17 +94,23 @@ public class Traveler extends PlayerAutomaton {
 			
 			// Go forward the maximum allowed number of squares
 			ListIterator<Point> iterator = itinerary.listIterator();
-			LinkedList<Point> streetcarMovement = new LinkedList<Point>();
+			Point [] streetcarMovement = new Point[currentConfig.getMaximumSpeed()];
 			i = 0;
 			while(iterator.hasNext() && i < currentConfig.getMaximumSpeed()) {
-				streetcarMovement.add(iterator.next());
+				streetcarMovement[i] = iterator.next();
 				i++;
 			}
 			// Updates the checkpoints : removes those passed by
-			while(streetcarMovement.contains(checkpoints.getFirst()))
+			do {
+				Point p = checkpoints.getFirst();
+				i = 0;
+				while(i<streetcarMovement.length && streetcarMovement[i] != p)
+					i++;
+				if(i<streetcarMovement.length)
 					checkpoints.removeFirst();
-					
-			checkpoints.addFirst(streetcarMovement.getLast());
+			} while (i<streetcarMovement.length);
+			// Updates the new starting point
+			checkpoints.addFirst(streetcarMovement[streetcarMovement.length-1]);
 			res = Action.newMoveAction(streetcarMovement);
 		}
 		
@@ -129,8 +132,8 @@ public class Traveler extends PlayerAutomaton {
 		 LinkedList<Point> result = new LinkedList<Point>();
 		 Point origin, destination;
 		 ListIterator<Point> iterator = checkpoints.listIterator();
-		 if(!iterator.hasNext())
-			 throw new RuntimeException("No more checkpoints");
+		// if(!iterator.hasNext())
+			// throw new RuntimeException("No more checkpoints");
 		 
 		 destination = iterator.next();
 		 while(iterator.hasNext()) {
