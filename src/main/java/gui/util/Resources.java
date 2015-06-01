@@ -94,9 +94,9 @@ public class Resources {
 	}
 
 	// Images
-
+	
 	public static BufferedImage imageNamed(String imageName) {
-		String[] extensions = { ".png", ".jpg", "tiff", "gif" };
+		String[] extensions = { ".png", ".jpg", "tiff", "gif", ""};
 		for (String fileExtension : extensions) {
 			String filename = imageName + fileExtension;
 			BufferedImage image = Resources.loadImageWithFilename(filename);

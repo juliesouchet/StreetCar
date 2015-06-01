@@ -39,6 +39,8 @@ public class ChatPanel extends Panel {
 	
 	private Chat chat = null;
 	private String sender = null;
+	private BufferedImage buffer = null;
+	private Graphics2D graphics = null;
 	
 	// Constructors
 	
@@ -76,8 +78,28 @@ public class ChatPanel extends Panel {
 		this.revalidate();
 	}
 	
+	// Buffers
+	
+	public void reloadBuffer() {
+		int height = 1;
+		int width = this.getWidth();
+		
+		this.buffer = new BufferedImage(height, width, BufferedImage.TYPE_INT_RGB);
+		this.graphics = this.buffer.createGraphics();
+
+        this.graphics.setPaint(Color.white);
+        this.graphics.fillRect(0, 0, width, height);
+		
+        
+	}
+	
+	public void updateBuffer() {
+		
+	}
+	
 	// Drawings  
  
+	
     public void paintComponent(Graphics g) {
     	super.paintComponent(g);
     	

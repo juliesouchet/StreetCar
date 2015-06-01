@@ -9,10 +9,6 @@ import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import main.java.data.Data;
 import main.java.data.Tile;
@@ -31,7 +27,8 @@ public class MapPanel extends Panel implements MouseListener {
     float widthPerCase;
     int originX;
     int originY;
-    Data data = null;
+    Data data;
+	BufferedImage bufferedImage;
     
     // Constructors
     
@@ -68,15 +65,20 @@ public class MapPanel extends Panel implements MouseListener {
 	}
 	
 	// Paint Component
-	/*
+	
 	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
         if (this.data == null) {
+        	System.out.println("data is null");
         	return;
         }
         
+        System.out.println("data is not null");
+        
         changeGlobalValues();
+        int x = (int)(widthPerCase/2);
+        int y = (int)(widthPerCase/2);
         
         for (float i=0; i<13; i++) {
         g.drawLine(originX,
@@ -87,14 +89,31 @@ public class MapPanel extends Panel implements MouseListener {
         g.drawLine(originX + Math.round(widthPerCase*i) + Math.round(widthPerCase),
         		   originY,
         		   originX + Math.round(widthPerCase*i) + Math.round(widthPerCase),
-        		   originY + Math.round(width));
-        
+        		   originY + Math.round(width));        
+        }          
         g.drawRect(originX, originY, (int)width+1, (int)width+1);
-        }      
-    }*/
+
+    	Tile[][] board = this.data.getBoard();
+		for (int j=0; j < this.data.getHeight(); j++) {
+			for (int i=0; i < this.data.getWidth(); i++) {
+				TileImage tileImage = new TileImage();
+				this.bufferedImage = tileImage.getImage(board[i][j].getTileID());
+				if (bufferedImage == null) {
+					System.out.println("image null");
+				} else {
+					AffineTransformOp transform = getRotation(board[i][j], bufferedImage, (int)widthPerCase, (int)widthPerCase);
+					g.drawImage(transform.filter(bufferedImage,null), x, y, null);
+					x += (int)(widthPerCase);
+				}
+
+			}
+			x = (int)(widthPerCase)/2;
+			y += (int)(widthPerCase);
+		}
+    }
 
 	
-	private int tileWidth;
+	/*private int tileWidth;
 	private int tileHeight;
 	private int paddingWidth = 40;
 	private int paddingHeight = 40;
@@ -126,8 +145,13 @@ public class MapPanel extends Panel implements MouseListener {
 			{
 				tileName = cst + board[i][j].getTileID();
 				System.out.println(tileName);
-				try {img = ImageIO.read(new File(tileName));}
-				catch (IOException e) {e.printStackTrace(); System.exit(0);}
+				try {
+					img = ImageIO.read(new File(tileName));
+				}
+				catch (IOException e) {
+					e.printStackTrace(); 
+					System.exit(0);
+				}
 				AffineTransformOp transform = getRotation(board[i][j], img, tileWidth, tileHeight);
 				g.drawImage(transform.filter(img,null), x, y, null);
 				x += tileWidth;
@@ -135,7 +159,7 @@ public class MapPanel extends Panel implements MouseListener {
 			x = tileWidth/2;
 			y += tileHeight;
 		}
-	}
+	}*/
 
 	private AffineTransformOp getRotation(Tile tile, BufferedImage img, int tileWidth, int tileHeight) {
 		int rightRotations = tile.getTileDirection().getVal();

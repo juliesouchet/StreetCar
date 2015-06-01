@@ -13,7 +13,10 @@ import main.java.data.Action;
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionTooManyActions;
+import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -156,7 +159,7 @@ public class PlayerAutomata implements InterfaceIHM
 	{
 		PlayerAutomaton edouard = new Dumbest(name);
 		edouard.setName(name);
-		boolean win = false;
+//		boolean win = false;
 		/*System.out.println("------------------------------------");
 		System.out.println("Refresh");
 		System.out.println("\t Host\t: "	+ data.getHost());
@@ -164,31 +167,34 @@ public class PlayerAutomata implements InterfaceIHM
 		if (this.frame!=null && (i <= nbCoups)){
 			i++;
 			if(player.getGameData().isTrackCompleted(name)) {
-				System.out.println("Chemin completé (tour " + i + ")");
-				win = true;
+//				System.out.println("Chemin completé (tour " + i + ")");
+//				win = true;
 				this.frame.setGameData(data);
 			}else{
 				LinkedList<Point> objectifs = null;
 				objectifs = player.getGameData().getPlayerTerminusPoints(name);
 				objectifs.addAll(player.getGameData().getPlayerAimBuildings(name));
-				System.out.println("Objectifs : " + objectifs);
-				if(!win) System.out.println("Chemin non complété");
+//				System.out.println("Objectifs : " + objectifs);
+//				if(!win) System.out.println("Chemin non complété");
 				
-				System.out.println(" TOUR " + (i+1));
+//				System.out.println(" TOUR " + (i+1));
 // TODO: --Riyane:
 // g pas voulu coriger l'erreur
 // c une modif pour ne plus faire de new dans votre automate (je c que c pas claire, on en reparle)
-				System.out.println("Main :" + player.getGameData().getHand(name));
-				System.out.println();
+//				System.out.println("Main :" + player.getGameData().getHand(name));
+//				System.out.println();
 				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
+				
 				try {
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
 					player.drawTile(1);
+					if(i%2 == 0)	player.validate();
 				} catch (RemoteException | ExceptionGameHasNotStarted
-						| ExceptionNotYourTurn | ExceptionForbiddenAction e) {
-					// TODO Auto-generated catch block
+						| ExceptionNotYourTurn | ExceptionForbiddenAction
+						| ExceptionTooManyActions | ExceptionNotEnougthTileInDeck | ExceptionTwoManyTilesToDraw e) {
 					e.printStackTrace();
 				}
+			
 	
 				this.frame.setGameData(data);
 			}
