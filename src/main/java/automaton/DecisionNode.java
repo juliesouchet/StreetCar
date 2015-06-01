@@ -229,7 +229,15 @@ public class DecisionNode {
 		
 	}
 
-	
+	//TODO: test unitaire
+	/**
+	 * Remet toutes les actions de la table de couples action possible/index comme non pertinentes
+	 */
+	public void reset(){
+		for(int i=0;i<this.getNumberPossiblesActionsTable();i++){
+			this.getCoupleActionIndex(i).setIndex(0);
+		}
+	}
 	
 	/* ===============================================================================================================
 	 * 			CONSTRUCTEURS
@@ -250,7 +258,7 @@ public class DecisionNode {
 		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
 		// On rempli la table avec des actions (du coup non significatives)
 		for(int i=0; i<numberMaxOfPossibleActions;i++){
-			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), 0);
+			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), -1);
 		}
 		//A la creation on fixe la qualité a -1 tant qu'une valeur significative n'a pas été calculé
 		this.setQuality(-1.0);
