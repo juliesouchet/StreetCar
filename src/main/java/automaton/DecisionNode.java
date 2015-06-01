@@ -13,6 +13,11 @@ import main.java.util.TraceDebugAutomate;
  */
 public class DecisionNode {
 
+	
+	/* ===============================================================================================================
+	 * 			ATTRIBUTS
+	 * =============================================================================================================== */
+
 	/* 
 	 * La qualité de cette configuration 
 	 * déterminée par min-max, plus tard alpha beta si on  le temps pour les noeuds internes
@@ -47,6 +52,12 @@ public class DecisionNode {
 	private boolean isRoot;
 
 
+	
+	/* ===============================================================================================================
+	 * 			GETTER
+	 * =============================================================================================================== */
+
+	
 	/**
 	 * Vrai si le noeud est une feuille
 	 */
@@ -55,44 +66,13 @@ public class DecisionNode {
 	}
 
 	/**
-	 * met l'attribut isRoot a vrai
-	 */
-	public void setRoot(){
-		this.isRoot=true;
-	}
-	/**
-	 * met l'attribut isLeaf a vrai
-	 */
-	public void setLeaf(){
-		this.isLeaf=true;
-	}
-	/**
-	 * met l'attribut isRoot a faux
-	 */
-	public void unsetRoot(){
-		this.isRoot=false;
-	}
-	/**
-	 * met l'attribut isLeaf a faux
-	 */
-	public void unsetLeaf(){
-		this.isLeaf=false;
-	}
-	/**
-	 * met les attributs isRoot et isLeaf a faux
-	 */
-	public void setInternalNode(){
-		this.isRoot=false;
-		this.isLeaf=false;
-	}
-	/**
 	 * Vrai si le noeud est un noeud interne,
 	 * cad pas une feuille ni la racine
 	 */
 	public boolean isInternal(){
 		return !this.isLeaf && !this.isRoot;
 	}
-
+	
 	/**
 	 * Vrai si le noeud est une feuille
 	 * (cad dernier etage de l'exploration combinatoire, la suite est evalué par estimation)
@@ -101,25 +81,13 @@ public class DecisionNode {
 		return this.isLeaf;
 	}
 
-
-
 	/**
 	 * La qualité estimée de la situation du noeud 
 	 * @return
 	 */
 	public double getQuality(){
 		return this.configurationQuality;
-	}
-	
-
-	/**
-	 * La qualité du noeud est mise a quality (double de 0.0 a 100.0)
-	 * @param quality
-	 */
-	public void setQuality(double quality){
-		this.configurationQuality=quality;
 	}	
-
 
 	/**
 	 * La table des fils: 
@@ -129,15 +97,15 @@ public class DecisionNode {
 	public CoupleActionIndex[] getPossibleFollowingAction(){
 		return this.possiblesActions;
 	}
-
+	
 	/**
 	 * retourne le nombre de branchement maximal (pour la structure de donnees) possible a partir de la configuration courante
 	 * @return
 	 */
 	public int getSizeOfPossiblesActionsTable(){
 		return this.cardinalPossiblesActions;
-	}
-
+	}	
+	
 	/**
 	 * retourne le nombre de branchement possible (coups acceptables) enregistré dans la structure de donnée
 	 * @return
@@ -150,32 +118,8 @@ public class DecisionNode {
 			}
 		}		
 		return numberOfSignificantValueInTable;
-	}
-
+	}	
 	
-// TODO: a priori un non sens, a supprimer	
-//	/** 
-//	 * incremente le nombre d'action possible
-//	 */
-//	public void incrementNumberOfPossiblesActions(){
-//		this.cardinalPossiblesActions++;
-//	}
-
-//	/** 
-//	 * decremente le nombre d'action possible
-//	 */
-//	public void decrementNumberOfPossiblesActions(){
-//		this.cardinalPossiblesActions--;
-//	}
-
-	/**
-	 * met le nombre d'actions possible pour la configuration considérée a cardinal
-	 * @param cardinal
-	 */
-	public void setSizeOfPossiblesActionsTable(int cardinal){
-		this.cardinalPossiblesActions=cardinal;
-	}
-
 	/**
 	 * numero d'action possible (doit etre inferieur a cardinalPossiblesActions)
 	 * @param index
@@ -184,6 +128,71 @@ public class DecisionNode {
 	 */
 	public CoupleActionIndex getCoupleActionIndex(int index){
 		return possiblesActions[index];
+	}
+	
+	/**
+	 * la profondeur du noeud courant
+	 * @return
+	 */
+	public int getDepth(){
+		return this.depth;
+	}	
+
+	
+	/* ===============================================================================================================
+	 * 			SETTER
+	 * =============================================================================================================== */
+		
+	/**
+	 * met l'attribut isRoot a vrai
+	 */
+	public void setRoot(){
+		this.isRoot=true;
+	}
+	
+	/**
+	 * met l'attribut isLeaf a vrai
+	 */
+	public void setLeaf(){
+		this.isLeaf=true;
+	}
+
+	/**
+	 * met l'attribut isRoot a faux
+	 */
+	public void unsetRoot(){
+		this.isRoot=false;
+	}
+
+	/**
+	 * met l'attribut isLeaf a faux
+	 */
+	public void unsetLeaf(){
+		this.isLeaf=false;
+	}
+
+	/**
+	 * met les attributs isRoot et isLeaf a faux
+	 */
+	public void setInternalNode(){
+		this.isRoot=false;
+		this.isLeaf=false;
+	}
+	
+	/**
+	 * La qualité du noeud est mise a quality (double de 0.0 a 100.0)
+	 * @param quality
+	 */
+	public void setQuality(double quality){
+		this.configurationQuality=quality;
+	}	
+
+	/**
+	 * met le nombre d'actions possible pour la configuration considérée a cardinal
+	 * @param cardinal
+	 */
+	public void setSizeOfPossiblesActionsTable(int cardinal){
+		this.cardinalPossiblesActions=cardinal;
 	}
 
 	/**
@@ -197,47 +206,6 @@ public class DecisionNode {
 	}
 
 
-
-	// TODO: doit etre fait dans la classe DecisionTable	
-	//	/**
-	//	 * Retourne l'indice du meilleur choix estimé
-	//	 * @return
-	//	 */
-	//	public int getBestAction(){
-	//		int bestActionIndex = 0;
-	//		// recherche du max... TODO implémenter recherche plus efficace ? 
-	//		// semblerai opportun étant donné la taille de la table de choix > 5000
-	//		for(int i=0; i<this.choicesTable.size(); i++){
-	//			if( this.choicesTable.get(i).getConfigurationQuality() > this.choicesTable.get(bestActionIndex).getConfigurationQuality()){
-	//				bestActionIndex = i;
-	//			}
-	//		}
-	//		return bestActionIndex;
-	//	}
-	//	
-	//	/**
-	//	 * Retourne l'indice du pire choix estimé
-	//	 * @return
-	//	 */
-	//	public int getWorstAction(){
-	//		int worstActionIndex = 0;
-	//		// recherche du min... TODO implémenter recherche plus efficace ? 
-	//		// semblerai opportun étant donné la taille de la table de choix > 5000
-	//		for(int i=0; i<this.choicesTable.size(); i++){
-	//			if( this.choicesTable.get(i).getConfigurationQuality() > this.choicesTable.get(worstActionIndex).getConfigurationQuality()){
-	//				worstActionIndex = i;
-	//			}
-	//		}
-	//		return worstActionIndex;
-	//	}	
-
-	/**
-	 * la profondeur du noeud courant
-	 * @return
-	 */
-	public int getDepth(){
-		return this.depth;
-	}
 	/**
 	 * Inscrit la valeur de la profondeur du noeud
 	 * @param depth
@@ -364,6 +332,7 @@ public class DecisionNode {
 		}
 	}
 
+	
 	// TODO le deplacer dans decisionTable	
 	//	// TODO le minimax
 	//	/**

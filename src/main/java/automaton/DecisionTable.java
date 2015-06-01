@@ -19,7 +19,7 @@ public class DecisionTable {
 	 * Met la valeur de la taille de la table a size
 	 * @param size
 	 */
-	public void setSize(int size){
+	private void setSize(int size){
 		this.size=size;
 	}
 
@@ -109,9 +109,11 @@ public class DecisionTable {
 
 	/**
 	 * PRECONDITION: Le noeud doit avoir 1 action possible (retourne -1 sinon)
-	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
+	 *
 	 * @param index
+	 * Numero de noeud dans le tableau
 	 * @return
+ 	 * Le numero de l'action dans la liste des actions possibles ayant la configuration correspondante la plus desavantageuse
 	 */
 	public int getWorstActionIndex(int index){
 		int indexWorstActionInTable=-1;
@@ -153,20 +155,31 @@ public class DecisionTable {
 		return result;
 	}
 
-
+	/**
+	 * Renvoi le statut de la case du tableau: vrai si la case est disponible pour enregistrer un noeud
+	 * @param index
+	 * 	L'index de la case du tableau visée
+	 * @return
+	 */
+	public boolean slotIsFree(int index){
+		return this.freeSlots[index];
+	}
+		
+	
 	/**
 	 * Creer une table de decision de taille size
-	 * Pour etre sur que l'allocation mémoire est faire en amont, je la rempli de decisionsNodes non représentatifs
-	 * TODO demander si c'est vraiment utile.
+	 * Pour etre sur que l'allocation mémoire est faite en amont, je la rempli de decisionsNodes non représentatifs
 	 * @param tableSize
-	 * nombre d'action possible a partir de la configuration courante
+	 * 	Taille du tableau de DecisionNode: correspond au nombre total d'action que la table peut traiter
 	 * @param maxCardinalActionPossible
+	 * 	Taille de la table d'action de chaque noeud: le nombre maximal d'action que chaque noeud pourra traiter: dois être un majorant.
 	 * @throws ExceptionUnknownNodeType 
 	 */
 	public DecisionTable(int tableSize, int maxCardinalActionPossible) throws ExceptionUnknownNodeType{
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
-		for(int i=0;i<tableSize;i++){
+		this.setSize(tableSize);
+		for(int i=0;i<this.getSize();i++){
 			this.initDecisionNode(i, new DecisionNode(maxCardinalActionPossible, 0, "root"));
 			this.freeSlots[i]=true;
 		}
