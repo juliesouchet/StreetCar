@@ -9,6 +9,7 @@ import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionGameHasAlreadyStarted;
 import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -36,9 +37,10 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	 * @throws ExceptionFullParty									(caught by IHM)
 	 * @throws ExceptionUsedPlayerColor 							(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
-	 =======================================================================*/
+	 =======================================================================
+	 * @throws ExceptionGameHasAlreadyStarted */
 // TODO: remove the ihm parameter
-	public PlayerAI(String playerName, boolean isHost, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public PlayerAI(String playerName, boolean isHost, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
 	{
 		super(playerName, playerColor, app, ihm);
 		switch (iaLevel)
