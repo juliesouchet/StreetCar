@@ -258,7 +258,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		Point currentPosition = data.getTramPosition(playerName);
 		
 		if(!data.pathExistsBetween(currentPosition, tramMovement.getLast())) throw new ExceptionForbiddenAction();	
-		// TODO if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
+		if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
 		
 		Iterator<Point> tramPathIterator = tramMovement.iterator();
 		Point previousPosition = null, nextPosition;
@@ -280,7 +280,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 		
 		// TODO check if maidenTravel has started (for every method)
-		// TODO check if tram is not going backwards (regarding previous turn)
 
 		EngineAction ea = engine.new EngineAction(playerName, data, "moveTram");
 		ea.tramMovement = tramMovement;
