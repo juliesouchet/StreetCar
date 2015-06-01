@@ -1,6 +1,7 @@
 package main.java.automaton;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
@@ -29,11 +30,16 @@ public class Traveler extends PlayerAutomaton {
 		Random r = new Random();
 		Tile t;
 		int i, j, k;
-		
-		/*============
+boolean trackCompleted = currentConfig.isTrackCompleted(getName());
+/*
+System.out.println("PlayerLine     : " + currentConfig.getPlayerLine(getName()));
+System.out.println("PlayerTerminus : " + currentConfig.getPlayerTerminusPosition(getName()));
+System.out.println("PlayerBuildings: " + currentConfig.getPlayerAimBuildings(getName()));
+System.out.println("trackCompleted = " + trackCompleted);
+*/		/*============
 		 *	Building
 		 =============*/
-		if(!currentConfig.isTrackCompleted(getName())) {
+		if(!trackCompleted) {
 			// Random tile and position choice for construction (extracted from Dumbest)
 			int handSize = currentConfig.getHandSize(name);
 			do{
@@ -62,8 +68,8 @@ public class Traveler extends PlayerAutomaton {
 		else {
 			if(!currentConfig.hasStartedMaidenTravel(getName())) {
 				// Initializes the itinerary with randomly chosen extremities				
-				checkpoints = currentConfig.getPlayerAimBuildings(getName());
-				LinkedList<Point> allTermini = currentConfig.getPlayerTerminusPoints(getName()),
+				checkpoints = new LinkedList<Point> (Arrays.asList(currentConfig.getPlayerAimBuildings(getName())));
+				LinkedList<Point> allTermini =  new LinkedList<Point> (Arrays.asList(currentConfig.getPlayerTerminusPosition(getName()))),
 									destinationTerminus = new LinkedList<Point>();
 				i = r.nextInt(2); // Random first terminus
 				j = r.nextInt(2) + 2; // Random second terminus
@@ -80,7 +86,7 @@ public class Traveler extends PlayerAutomaton {
 					destinationTerminus.add(allTermini.get(1));
 				}
 		// TODO setDestinationTerminus se fait dans l'action
-				currentConfig.setDestinationTerminus(name, destinationTerminus);
+				currentConfig.setDestinationTerminus(name, (Point[])destinationTerminus.toArray());
 				
 				
 				if(currentConfig.hasDoneFirstAction(getName())) {

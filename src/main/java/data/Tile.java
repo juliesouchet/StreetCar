@@ -210,6 +210,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			this.ptrPathTab				= t.ptrPathTab;
 		}
 	}
+	public void setStop(boolean b){this.isStop = b;}
 
 // --------------------------------------------
 // Getters:

@@ -47,7 +47,7 @@ public class PathFinder
 		while (!pq.isEmpty())
 		{
 			y =  pq.remove();
-			if (y.equals(pDst))	return reversePath(previous, pSrc, pDst);
+			if (y.getElem().equals(pDst))	return reversePath(previous, pSrc, pDst);
 			neighbor = data.getAccessibleNeighborsPositions(y.p.x, y.p.y);
 			for (Point z: neighbor)
 			{
@@ -60,7 +60,8 @@ public class PathFinder
 				}
 			}
 		}
-		return reversePath(previous, pSrc, pDst);
+		return null;
+//		return reversePath(previous, pSrc, pDst);
 	}
 
 // -----------------------------------------

@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 
 import main.java.data.Data;
 import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionGameHasAlreadyStarted;
 import main.java.game.ExceptionHostAlreadyExists;
 import main.java.game.ExceptionUnknownBoardName;
 import main.java.game.ExceptionUsedPlayerColor;
@@ -40,8 +41,9 @@ public class PlayerIHM extends PlayerAbstract
 	 * @throws ExceptionUsedPlayerColor 
 	 * @throws ExceptionUsedPlayerName
 	 * @throws ExceptionHostAlreadyExists
+	 * @throws ExceptionGameHasAlreadyStarted								(caught by IHM)
  	 ===========================================================================*/
-	public static PlayerIHM launchPlayer(String playerName, String gameName, String boardName, int nbrBuildingInLine, Color playerColor, boolean gameCreation, String applicationIP, InterfaceIHM ihm) throws RemoteException, NotBoundException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionUnknownBoardName, ExceptionHostAlreadyExists
+	public static PlayerIHM launchPlayer(String playerName, String gameName, String boardName, int nbrBuildingInLine, Color playerColor, boolean gameCreation, String applicationIP, InterfaceIHM ihm) throws RemoteException, NotBoundException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionUnknownBoardName, ExceptionHostAlreadyExists, ExceptionGameHasAlreadyStarted
 	{
 		String localIP = NetworkTools.firstFreeSocketInfo().IP;
 		GameInterface game;
@@ -63,8 +65,9 @@ public class PlayerIHM extends PlayerAbstract
 	 * @throws ExceptionFullParty											(caught by IHM)
 	 * @throws ExceptionUsedPlayerColor 									(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 									    (caught by IHM)
+	 * @throws ExceptionGameHasAlreadyStarted								(caught by IHM)
 	 =======================================================================*/
-	private PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	private PlayerIHM(boolean isHost, String playerName, Color playerColor, GameInterface app, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
 	{
 		super(playerName, playerColor, app, ihm);
 		super.game.onJoinGame(this, isHost, -1);					// Log the player to the application

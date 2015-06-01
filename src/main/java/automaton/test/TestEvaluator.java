@@ -3,10 +3,7 @@ package main.java.automaton.test;
 import java.awt.Color;
 import java.rmi.RemoteException;
 
-import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionUnknownBoardName;
-import main.java.game.ExceptionUsedPlayerColor;
-import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.Game;
 import main.java.player.PlayerAI;
 import test.java.player.TestDumbestIHM;
@@ -33,8 +30,8 @@ public class TestEvaluator {
 		try {
 			player1 = new PlayerAI(name1, true, Color.red, game, level1, ihm);
 			player2 = new PlayerAI(name2, false, Color.blue, game, level2, ihm);
-		} catch (RemoteException | ExceptionFullParty | ExceptionUsedPlayerName
-				| ExceptionUsedPlayerColor e) {
+		}
+		catch (Exception e) {
 			System.out.println("Player creation error"); e.printStackTrace();
 		}
 		

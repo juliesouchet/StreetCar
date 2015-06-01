@@ -19,8 +19,7 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 															new LoginInfo(false,	null,	false,	true,	-1),
 															new LoginInfo(false,	null,	false,	false,	1),
 															new LoginInfo(false,	null,	true,	false,	1), // TODO parameter n°3 = false
-															new LoginInfo(false,	null,	false,	false,	2),
-															new LoginInfo(false,	null,	false,	false,	3)};
+															new LoginInfo(false,	null,	false,	false,	2)};
 
 	private boolean		isClosed;
 	private String		playerName;
@@ -57,6 +56,7 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 // Getter / setter:
 // --------------------------------------------
 	public void		setIsClosed(boolean isClosed)	{this.isClosed = isClosed;}
+	public void		setFreeCell()					{this.playerName = null;}
 	public boolean	isClosed()						{return this.isClosed;}
 	public String	getPlayerName()					{return (this.playerName == null) ? null : new String(this.playerName);}
 	public boolean	isHost()						{return this.isHost;}

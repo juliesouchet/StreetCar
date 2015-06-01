@@ -50,6 +50,7 @@ public class Evaluator {
 					String currentPlayerName = playerNameList[j];
 					Action action = automatonList[j].makeChoice(currentConfig);
 					if(action.isConstructing()) {
+		System.out.println(currentPlayerName + " BUILD");
 						// Building action
 						currentConfig.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
 						if(action.action == Action.BUILD_DOUBLE) {
@@ -61,11 +62,15 @@ public class Evaluator {
 							&& action.action != Action.START_TRIP_NEXT_TURN)
 							throw new RuntimeException(currentPlayerName+" tries to travel while in construction (round "+j+")");
 						
-						if(action.action == Action.START_TRIP_NEXT_TURN)
+						if(action.action == Action.START_TRIP_NEXT_TURN) {
+		System.out.println(currentPlayerName + " START_TRIP_NEXT_TURN");
 							currentConfig.startMaidenTravel(currentPlayerName);
+						}
 						
-						else // action.action == Action.MOVE
+						else { // action.action == Action.MOVE
+		System.out.println(currentPlayerName + " MOVE");
 							currentConfig.setTramPosition(currentPlayerName, action.tramwayMovement[action.tramwayMovement.length-1]);
+						}
 					}
 					
 					if(currentConfig.isTrackCompleted(currentPlayerName)) {

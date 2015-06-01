@@ -62,11 +62,12 @@ public class Data implements Serializable
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription";
 	public static final	String			buildingInLineFile		= "src/main/resources/line/buildingInLineDescription_";
 	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
-	public static final int				maxNbrPlayer			= 6;
+	public static final int				maxNbrPlayer			= 5;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				minSpeed				= 1;
 	public static final int				maxSpeed				= 10;
+
 	private static int[]				existingLine;
 	private static String[][][]			existingBuildingInLine;
 	private static Color[]				existingColors;
@@ -168,6 +169,7 @@ public class Data implements Serializable
 		if (!this.isGameReadyToStart())	throw new RuntimeException("The game definition is not complete"); 
 		if (!this.host.equals(host))throw new RuntimeException("The starting host does not correspond the Data known host");
 
+// TODO: Enlever les LinkedList
 		LinkedList<String> players = new LinkedList<String> (this.getPlayerNameList());
 		Random rnd = new Random();
 		int i, size = players.size();
@@ -212,6 +214,13 @@ public class Data implements Serializable
 		this.board[x][y] = t;
 		hand.remove(t);												// Remove the tile from the player's hand
 		if (oldT != null) hand.add(oldT);							// Change the current tile
+		Point building = this.isBuildingAround(x, y);
+		if (building != null)
+		{
+			if (this.isStopNextToBuilding(building) == null)
+				this.board[x][y].setStop(true);
+		}
+// TODO: Enlever les LinkedList
 		LinkedList<Action> history = pi.getLastActionHistory();
 		history.addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
 	}
@@ -248,16 +257,27 @@ public class Data implements Serializable
 	{
 		playerInfoList.get(playerName).startedMaidenTravel = true;
 	}
-	public void	setDestinationTerminus(String playerName, LinkedList<Point> dest)
+// TODO: Enlever les LinkedList
+	public void	setDestinationTerminus(String playerName, Point[] dest)
 	{
-		playerInfoList.get(playerName).endTerminus = new Copier<Point>().copyList(dest);
+		Point[] tab = playerInfoList.get(playerName).endTerminus;
+		for (int i=0; i<tab.length; i++)
+		{
+			tab[i].x = dest[i].x;
+			tab[i].y = dest[i].y;
+		}
 	}
 
 // --------------------------------------------
 // Getter relative to travel:
 // --------------------------------------------
 	public Point	getTramPosition(String playerName)							{return new Point(playerInfoList.get(playerName).tramPosition);}
-	public boolean	isPlayerTerminus(String playerName, Point terminus)			{return playerInfoList.get(playerName).terminus.contains(terminus);}
+	public boolean	isPlayerTerminus(String playerName, Point terminus)
+	{
+		Point[] terminusTab = playerInfoList.get(playerName).terminus;
+		for (Point p: terminusTab) if (p.equals(terminus)) return true;
+		return false;
+	}
 
 // --------------------------------------------
 // Getter relative to players:
@@ -275,8 +295,11 @@ public class Data implements Serializable
 	public int					getHandSize(String playerName)					{return this.playerInfoList.get(playerName).hand.getSize();}
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex);}
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
+	public Point[]				getPlayerTerminusPosition(String playerName)	{return this.playerInfoList.get(playerName).terminus;}
+	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public Point getPreviousTramPosition(String playerName) { return playerInfoList.get(playerName).previousTramPosition; }
+// TODO: Enlever les LinkedList
 	public boolean				hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
@@ -291,6 +314,7 @@ public class Data implements Serializable
 		else if (lastActions.size() == 2) return false;
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
 	}
+// TODO: Enlever les LinkedList
 	public boolean isStartOfTurn(String playerName)
 	{
 		if(!isPlayerTurn(playerName)) return false;
@@ -307,14 +331,15 @@ public class Data implements Serializable
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
 		Point p0, p1;
 
-		path[0] = pi.buildingInLine_position.get(0);
-		// TODO /!\ out of bounds
-		path[0] = pi.buildingInLine_position.get(this.nbrBuildingInLine*2 -1);
+		path[0] = pi.terminus[0];
+		path[1] = pi.terminus[3];
+		for (int i=0; i<this.nbrBuildingInLine; i++) path[i+2] = pi.buildingInLine_position[i];
 		p0 = path[0];
 		for (int i=1; i<path.length; i++)
 		{
 			p1 = path[i];
 			if (this.getShortestPath(p0, p1) == null)	return false;
+			p0 = p1;
 		}
 		return true;
 	}
@@ -327,22 +352,6 @@ public class Data implements Serializable
 
 		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
 		return pi.startedMaidenTravel;
-	}
-	/**===============================================================
-	 * @return the positions of the buildings in the player's path
-	 =================================================================*/
-	public LinkedList<Point> getPlayerAimBuildings(String name)
-	{
-		PlayerInfo pi = this.playerInfoList.get(name);
-		return new LinkedList<Point> (pi.buildingInLine_position);
-	}
-	/**===============================================================
-	 * @return the player's terminus list.  The result contains 4 points
-	 =================================================================*/
-	public LinkedList<Point> getPlayerTerminusPoints(String name)
-	{
-		PlayerInfo pi = this.playerInfoList.get(name);
-		return (new Copier<Point>()).copyList(pi.terminus);
 	}
 
 // --------------------------------------------
@@ -437,7 +446,7 @@ public class Data implements Serializable
 
 		for (Direction d: Direction.DIRECTION_LIST)						// For each accesible position
 		{
-			if (!d.isDirectionInList(ad));
+			if (!d.isDirectionInList(ad)) continue;
 			Point next = d.getNeighbour(x, y);
 			if (isWithinnBoard(next.x, next.y))	res.add(next);
 		}
@@ -446,7 +455,6 @@ public class Data implements Serializable
 	/**============================================================
 	 * @return the list of the neighbor tiles that can be acceded from the <x,y> cell
 	 ==============================================================*/
-	//TODO: peut etre pour l'ia: soit le rendre private soit suprimer le getClone l 459 si personne d'autre ne l'appel
 	public LinkedList<Tile> getAccessibleNeighborsTiles(int x, int y)
 	{
 		LinkedList<Tile>		res = new LinkedList<Tile>();
@@ -496,6 +504,23 @@ public class Data implements Serializable
 			if (this.isWithinnBoard(p.x, p.y))	continue;
 			t = this.board[p.x][p.y];
 			if (t.isStop())	return p;
+		}
+		return null;
+	}
+	/**=========================================================================
+	 * @return the position of the building next to the given position, or null if no buildinf is found in the neighborhood
+	 ===========================================================================*/
+	public Point isBuildingAround(int x, int y)
+	{
+		Tile neighborT;
+		Point neighbor;
+
+		for (Direction dir: Direction.DIRECTION_LIST)
+		{
+			neighbor = dir.getNeighbour(x, y);
+			if (this.isWithinnBoard(neighbor.x, neighbor.y))	continue;
+			neighborT = this.board[neighbor.x][neighbor.y];
+			if (neighborT.isBuilding())	return neighbor;
 		}
 		return null;
 	}
@@ -623,9 +648,10 @@ public class Data implements Serializable
 	/**============================================
 	 * @return the position of the building which name are given
 	 ==============================================*/
-	private LinkedList<Point> getBuildingPosition(String[] buildingNameTab)
+	private Point[] getBuildingPosition(String[] buildingNameTab)
 	{
-		LinkedList<Point> res = new LinkedList<Point>();
+		Point[] res = new Point[this.nbrBuildingInLine];
+		int ptrRes = 0;
 		String s0;
 
 		for (String s: buildingNameTab)
@@ -635,46 +661,46 @@ public class Data implements Serializable
 				for (int y=0; y<this.getWidth(); y++)
 				{
 					s0 = this.board[x][y].getBuildingName();
-					if ((s0 != null) && (s0.equals(s)))	res.addLast(new Point(x, y));
+					if ((s0 != null) && (s0.equals(s)))	{res[ptrRes] = new Point(x, y); ptrRes ++;}
 				}
 			}
 		}
-		if (res.size() != buildingNameTab.length) throw new RuntimeException("Missing buildings on board");
+		if (ptrRes != buildingNameTab.length) throw new RuntimeException("Missing buildings on board");
 		return res;
 	}
 	/**===========================================================================
 	 * @return the list of the terminus positions corresponding to the given line
 	 =============================================================================*/
-	private LinkedList<Point> getTerminusPosition(int line)
+	private Point[] getTerminusPosition(int line)
 	{
-		LinkedList<Point>res = new LinkedList<Point>();
+		Point[] res = new Point[4];
 		int w = this.getWidth()-1;
 		int h = this.getHeight()-1;
-		int i0;
+		int i0, ptrRes = 0;
 
 		for (int x=0; x<w; x++)
 		{
 			i0 = this.board[x][0].getTerminusName();
-			if (i0 == line) res.addLast(new Point(x, 0));
+			if (i0 == line) {res[ptrRes] = new Point(x, 0); ptrRes ++;}
 		}
 		for (int x=0; x<w; x++)
 		{
 			i0 = this.board[x][h].getTerminusName();
-			if (i0 == line) res.addLast(new Point(x, h));
+			if (i0 == line) {res[ptrRes] = new Point(x, h); ptrRes ++;}
 		}
-		if (res.size() == 4) return res;
+		if (ptrRes == 4) return res;
 		for (int y=0; y<h; y++)
 		{
 			i0 = this.board[0][y].getTerminusName();
-			if (i0 == line)	res.addLast(new Point(0, y));
+			if (i0 == line) {res[ptrRes] = new Point(0, y); ptrRes ++;}
 		}
 		for (int y=0; y<h; y++)
 		{
 			i0 = this.board[w][y].getTerminusName();
-			if (i0 == line)	res.addLast(new Point(w, y));
+			if (i0 == line) {res[ptrRes] = new Point(w, y); ptrRes ++;}
 		}
 
-		if (res.size() != 4) throw new RuntimeException("Wrong terminus for line " + line + ": " + res);
+		if (ptrRes != 4) throw new RuntimeException("Wrong terminus for line " + line + ": ");
 		return res;
 	}
 	/**=====================================================================
@@ -695,13 +721,13 @@ public class Data implements Serializable
 			piRes.line		= pi.line;
 			piRes.color		= new Color(pi.color.getRGB());
 			piRes.hand		= pi.hand.getClone();
-			piRes.terminus	= (new Copier<Point>()).copyList(pi.terminus);
+			piRes.terminus	= (new Copier<Point>()).copyTab(pi.terminus);
 			piRes.history	= (new Copier<LinkedList<Action>>()).copyList(pi.history);
 // TODO ajouter les nouveaux attributes de valentin
 			if ((str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
 			{
 				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
-				piRes.buildingInLine_position	= (new Copier<Point>()).copyList(pi.buildingInLine_position);
+				piRes.buildingInLine_position	= (new Copier<Point>()).copyTab(pi.buildingInLine_position);
 			}
 			else
 			{
@@ -732,15 +758,14 @@ public class Data implements Serializable
 		public int					line;							// Real value of the line (belongs to [1, 6])
 		public Color				color;
 		public String[]				buildingInLine_name;
-		public LinkedList<Point>	buildingInLine_position;
-		public LinkedList<Point>	terminus;						// Complete player's terminus list
+		public Point[]				buildingInLine_position;
+		public Point[]				terminus;						// Complete player's terminus list
 //TODO: ulysse Ne plus stocker les action mais les data
 		public LinkedList<LinkedList<Action>>	history;			// organized by turns
-
 		public boolean				startedMaidenTravel	= false;	// Data relative to the travel
 		public Point				tramPosition		= null;
-		public LinkedList<Point>	endTerminus			= null;
-		public Point				previousTramPosition = null;
+		public Point[]				endTerminus			= new Point[2];
+		public Point				previousTramPosition= null;
 
 		// Builder
 		private PlayerInfo(){}
@@ -756,6 +781,7 @@ public class Data implements Serializable
 			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
 			this.color		= new Color(playerColor.getRGB());
 			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
+
 			remainingBuildingInLine.remove(i);
 			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
 			this.terminus	= getTerminusPosition(this.line);							// Init the terminus position

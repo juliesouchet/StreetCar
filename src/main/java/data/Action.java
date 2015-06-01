@@ -109,6 +109,19 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE)	|| (this.action == BUILD_DOUBLE));}
 	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE);}
 	public boolean isMoving()				{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
+	public String	toString()
+	{
+		String str = "";
+
+		switch(this.action)
+		{
+			case MOVE:					str += "MOVE : "				+ this.tramwayMovement.toString();	break;
+			case BUILD_SIMPLE:			str += "BUILD_SIMPLE: " 		+ this.positionTile1.toString();	break;
+			case BUILD_DOUBLE:			str += "BUILD_DOUBLE: " 		+ this.positionTile1.toString() + this.positionTile2.toString();	break;
+			case START_TRIP_NEXT_TURN:	str += "START_TRIP_NEXT_TURN";	break;
+		}
+		return str;
+	}
 
 // -----------------------------------------------------
 // Setter
