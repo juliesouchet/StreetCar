@@ -48,6 +48,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	private int						terminusDescription;
 	private int						cardinal;
 	private Direction				tileDirection;
+
 	private Path[]					pathTab							= initPathTab();
 	private int						ptrPathTab						= -1;					// Last non null path in pathList
 
