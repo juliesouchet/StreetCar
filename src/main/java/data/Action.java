@@ -15,6 +15,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public static final long	serialVersionUID	= -7830218892745210163L;
 	public static final int		maxTramwayMove		= 145;
 
+	public static final int NONE					= -1;
 	public static final int MOVE					= 0;
 	public static final int BUILD_SIMPLE			= 1;
 	public static final int BUILD_DOUBLE			= 2;
@@ -33,15 +34,34 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Builder
 // -----------------------------------------------------
-	public Action(){ this.action = -1;}
+	/**
+	 * Constructeur genérique: la mémoire des attributs n'est pas allouée,
+	 * l'attribut action est mis a la valeur spéciale: NONE (-1)
+	 */
+	public Action(){ this.action = NONE;}
+	
 // TODO rajouter un param pour indiquer le terminus de depart
+	/**
+	 * Créer une instance d'une action de type start trip next turn.
+	 * Remarque fait un new Action()
+	 * @return
+	 * un objet Action avec l'attribut action à la valeur speciale: START_TRIP_NEXT_TURN (3)
+	 */
 	public static Action newStartTripNextTurnAction()
 	{
 		Action res	= new Action();
 		res.action	= START_TRIP_NEXT_TURN;
 		return res;
 	}
+	
 // TODO rajouter un param pour indiquer le terminus de depart
+	/**
+	 * Créé une instance d'Action de type mouvement du tramway
+	 * @param tramwayMovement
+	 * Tableau de point représentant la série de tuile par laquelle le tram va cheminer
+	 * @return
+	 * un objet Action avec l'attribut action à la valeur speciale: MOVE (3)
+	 */
 	public static Action newMoveAction(Point[] tramwayMovement)
 	{
 		Action res				= new Action();
@@ -54,6 +74,18 @@ public class Action implements Serializable, CloneableInterface<Action>
 		}
 		return res;
 	}
+	/**
+	 * Créé une instance d'Action de type pose d'une unique tuile.
+	 * @param position
+	 * Position où l'on souhaite poser la tuile
+	 * @param tile
+	 * La tuile que l'on souhaite déposer
+	 * @return
+	 * un objet Action avec les attributs:
+	 * 		action=BUILD_SIMPLE
+	 * 		positionTile1= coordonnée du point position (copié)
+	 * 		tile1=tuile tile
+	 */
 	public static Action newBuildSimpleAction(Point position, Tile tile)
 	{
 		Action res			= new Action();
@@ -63,6 +95,21 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.tile1			.setTile(tile);
 		return res;
 	}
+	
+	/**
+	 * Créé une instance d'Action de type pose d'une unique tuile.
+	 * @param x
+	 * Abscisse où l'on souhaite poser la tuile
+	 * @param y
+	 * Ordonnée où l'on souhaite poser la tuile
+	 * @param tile
+	 * La tuile que l'on souhaite déposer
+	 * @return
+	 * un objet Action avec les attributs:
+	 * 		action=BUILD_SIMPLE
+	 * 		positionTile1= coordonnée du point position (copié)
+	 * 		tile1=tuile tile
+	 */
 	public static Action newBuildSimpleAction(int x, int y, Tile tile)
 	{
 		Action res			= new Action();
@@ -72,6 +119,25 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.tile1			.setTile(tile);
 		return res;
 	}
+	
+	/**
+	 * Créé une instance d'Action de type pose de 2 tuiles
+	 * @param position1
+	 * Coordonnées de pose de la 1ere tuile
+	 * @param tile1
+	 * La 1ere tuile que l'on souhaite poser
+	 * @param position2
+	 * Coordonnées de pose de la 2nd tuile
+	 * @param tile2
+	 * La 2nd tuile que l'on souhaite poser
+	 * @return
+	 * un objet Action avec les attributs:
+	 * 		action=BUILD_DOUBLE
+	 * 		positionTile1= coordonnée du point position 1(copié)
+	 * 		tile1=tuile tile1
+	 * 		positionTile2= coordonnée du point position 2(copié)
+	 * 		tile2=tuile tile2
+	 */
 	public static Action newBuildDoubleAction(Point position1, Tile tile1, Point position2, Tile tile2)
 	{
 		Action res			= new Action();
@@ -84,6 +150,12 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.tile2			.setTile(tile2);
 		return res;
 	}
+	
+	/**
+	 * Alloue une nouvelle instance identique de l'action appelante
+	 * @return
+	 * Une instance d'Action
+	 */
 	public Action getClone()
 	{
 		Action res				= new Action();
@@ -106,9 +178,27 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------
+	/**
+	 * @return
+	 * Vrai si l'action est de type construction (simple ou double).
+	 * Faux sinon.
+	 */
 	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE)	|| (this.action == BUILD_DOUBLE));}
+
+	/**
+	 * @return
+	 * Vrai si et seulement si l'action est de type construction simple.
+	 * Faux sinon.
+	 */
 	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE);}
+	
+	/**
+	 * @return
+	 * Vrai si l'action est de type déplacement du tramway (déjà débuté ou pour le tour suivant)
+	 */
 	public boolean isMoving()				{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
+	
+	@Override
 	public String	toString()
 	{
 		String str = "";
@@ -122,7 +212,16 @@ public class Action implements Serializable, CloneableInterface<Action>
 		}
 		return str;
 	}
+	
 	//Ajout par Ulysse:
+	/**
+	 * Test de l'égalité aec une autre instance d'Action
+	 * @param otherAction
+	 * L'instance à comparer
+	 * @return
+	 * Vrai si les 2 actions représentent des actions équivalentes sur le plateu de jeu
+	 * (c'est à dire: par exemple ne prend pas compte de l'attribut tile2 pour une pose simple...)
+	 */
 	public boolean equals(Action otherAction)
 	{
 		if (otherAction == null)				return false;
@@ -173,6 +272,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	/**
 	 * affecte a l'appelant les parametres de src sans nouvelle allocation memoire.
 	 * @param src
+	 * Action dont on copie le contenu
 	 */
 	public void copy(Action src)
 	{
@@ -194,6 +294,12 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Private methods
 // -----------------------------------------------------
+
+	/**
+	 * Initialise un tableau de Point représentant un mouvement de tramway
+	 * @return
+	 * Tableau de Point de taille maxTramwayMove (145)
+	 */
 	private Point[] initMovementTab()
 	{
 		Point[] res = new Point[maxTramwayMove];
