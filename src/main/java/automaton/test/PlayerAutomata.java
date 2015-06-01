@@ -3,7 +3,6 @@ package main.java.automaton.test;
 import java.awt.Color;
 import java.awt.Point;
 import java.rmi.RemoteException;
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -171,9 +170,10 @@ public class PlayerAutomata implements InterfaceIHM
 //				win = true;
 				this.frame.setGameData(data);
 			}else{
-				LinkedList<Point> objectifs = null;
-				objectifs = player.getGameData().getPlayerTerminusPoints(name);
-				objectifs.addAll(player.getGameData().getPlayerAimBuildings(name));
+				Point[] objectifsTerminus = null;
+				Point[] objectifsArrets = null;
+				objectifsTerminus = player.getGameData().getPlayerTerminusPosition(name);
+				objectifsArrets=player.getGameData().getPlayerAimBuildings(name);
 //				System.out.println("Objectifs : " + objectifs);
 //				if(!win) System.out.println("Chemin non complété");
 				
