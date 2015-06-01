@@ -20,43 +20,6 @@ public class DecisionNode {
 	 */
 	private double configurationQuality;
 
-
-	public class CoupleActionIndex{
-		// L'action choisie
-		private Action action;
-		//Nous mène à l'index du tableau de decision
-		private int index;
-
-		public CoupleActionIndex(Action a, int i){
-			action=a;
-			index=i;
-		}
-		public void setAction(Action action){
-			this.action = action;
-		}
-		public Action getAction(){
-			return this.action;
-		}
-		public void setIndex(int index){
-			this.index=index;
-		}
-		public int getIndex(){
-			return this.index;
-		}
-		public void copy(CoupleActionIndex src){
-			this.action.copy(src.action);
-			this.index=src.index;
-		}
-		/**
-		 * Les couples sont initialisés a avec un index de 0 pour que la memoire soit alloué, mais la valuer contenu n'a de sens que si cet index a été modifié par une autre valeur
-		 * @return
-		 */
-		public boolean isSignificant(){
-			return this.index!=0;
-		}
-		
-	}
-
 	/* 
 	 * L'ensemble des actions possibles et des cases du tableau de decision correspondant
 	 */
@@ -188,20 +151,22 @@ public class DecisionNode {
 		}		
 		return numberOfSignificantValueInTable;
 	}
-	
-	/** 
-	 * incremente le nombre d'action possible
-	 */
-	public void incrementNumberOfPossiblesActions(){
-		this.cardinalPossiblesActions++;
-	}
 
-	/** 
-	 * decremente le nombre d'action possible
-	 */
-	public void decrementNumberOfPossiblesActions(){
-		this.cardinalPossiblesActions--;
-	}
+	
+// TODO: a priori un non sens, a supprimer	
+//	/** 
+//	 * incremente le nombre d'action possible
+//	 */
+//	public void incrementNumberOfPossiblesActions(){
+//		this.cardinalPossiblesActions++;
+//	}
+
+//	/** 
+//	 * decremente le nombre d'action possible
+//	 */
+//	public void decrementNumberOfPossiblesActions(){
+//		this.cardinalPossiblesActions--;
+//	}
 
 	/**
 	 * met le nombre d'actions possible pour la configuration considérée a cardinal
@@ -312,7 +277,7 @@ public class DecisionNode {
 		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
 		// On rempli la table avec des actions (du coup non significatives)
 		for(int i=0; i<numberMaxOfPossibleActions;i++){
-			this.possiblesActions[i]=this.new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), 0);
+			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), 0);
 		}
 		//A la creation on fixe la qualité a -1 tant qu'une valeur significative n'a pas été calculé
 		this.setQuality(-1.0);
@@ -367,6 +332,37 @@ public class DecisionNode {
 		return affichage;
 	}
 
+	@Override
+	public boolean equals (Object o){
+		DecisionNode otherNode = null;
+		if(o==null){
+			return false;
+		}
+		else {
+			otherNode=(DecisionNode) o;
+			if (this.getSizeOfPossiblesActionsTable()!=otherNode.getSizeOfPossiblesActionsTable()){
+				return false;
+			}
+			if (this.getQuality()!=otherNode.getQuality()){
+				return false;
+			}
+			if (this.getDepth()!=otherNode.getDepth()){
+				return false;
+			}
+			if (this.isLeaf()!=otherNode.isLeaf()){
+				return false;
+			}
+			if (this.isRoot()!=otherNode.isRoot()){
+				return false;
+			}
+			for (int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
+				if ( !this.getPossibleFollowingAction()[i].equals(otherNode.getPossibleFollowingAction()[i])){
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 
 	// TODO le deplacer dans decisionTable	
 	//	// TODO le minimax

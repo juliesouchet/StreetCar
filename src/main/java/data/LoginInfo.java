@@ -57,6 +57,7 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 // Getter / setter:
 // --------------------------------------------
 	public void		setIsClosed(boolean isClosed)	{this.isClosed = isClosed;}
+	public void		setFreeCell()					{this.playerName = null;}
 	public boolean	isClosed()						{return this.isClosed;}
 	public String	getPlayerName()					{return (this.playerName == null) ? null : new String(this.playerName);}
 	public boolean	isHost()						{return this.isHost;}

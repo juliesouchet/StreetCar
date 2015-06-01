@@ -2,8 +2,8 @@ package main.java.automaton.test;
 
 import java.awt.Point;
 
+import main.java.automaton.CoupleActionIndex;
 import main.java.automaton.DecisionNode;
-import main.java.automaton.DecisionNode.CoupleActionIndex;
 import main.java.automaton.DecisionTable;
 import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.data.Action;
@@ -56,7 +56,7 @@ public class testDecisionTable {
 
 		//Teste creation d'un couple action index
 		// TODO: etudier si creation d'n nouveau est necessaire ou possiblilité de juste modifier celui deja alloué
-		CoupleActionIndex monCoupleActionIndex1 = monNoeudDeDecision.new CoupleActionIndex(monAction, 1);
+		CoupleActionIndex monCoupleActionIndex1 = new CoupleActionIndex(monAction, 1);
 		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex1);
 		monNoeudDeDecision.setQuality(90.0);
 		

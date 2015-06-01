@@ -7,13 +7,16 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.game.Engine.EngineAction;
+import main.java.player.PlayerAI;
 import main.java.player.PlayerInterface;
 import main.java.util.Copier;
 
@@ -31,13 +34,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final String	gameMessageHeader		= "Street Car application: ";
-	public final static int		applicationPort			= 5000;
-	public final static String	applicationProtocol		= "rmi";
+	public static final String			gameMessageHeader		= "Street Car application: ";
+	public final static int				applicationPort			= 5000;
+	public final static String			applicationProtocol		= "rmi";
 
-	private Data		data;
-	private LoginInfo[]	loggedPlayerTable;
-	private Engine		engine;
+	private Data						data;
+	private LoginInfo[]					loggedPlayerTable;
+	private Engine						engine;
+	private HashMap<String, PlayerAI>	aiList;
 
 // --------------------------------------------
 // Builder:
@@ -64,6 +68,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
 		this.engine				= new Engine();
+		this.aiList				= new HashMap<String, PlayerAI>();
 
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "URL = " + url);
@@ -124,14 +129,31 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
-		String	oldPlayerName	= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
+		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
+		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
+		boolean	newPlayerIsHuman	= newPlayerInfo.isHuman();
+
 		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
-		this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
+		this.loggedPlayerTable[playerToChangeIndex].setFreeCell();
+		if (oldPlayerIsOccupied)														// Case exclude old player
+		{
+			this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
+			this.aiList.remove(oldPlayerName);
+		}
+		if (!newPlayerIsHuman)															// Case create AI player
+		{
+			PlayerAI newPlayer = null;
+			try					{newPlayer = new PlayerAI(newPlayerInfo.getPlayerName(), false, getUnusedColor(), this, newPlayerInfo.getAiLevel(), null);}
+			catch (Exception e)	{e.printStackTrace(); System.exit(0);}
+			Thread t = new Thread(playerName);
+			this.aiList.put(playerName, newPlayer);
+			t.start();
+		}
 	}
-	/**==============================================
+	/**================================================
 	 * @return Makes a player join the game
 	 * ================================================*/
-	public synchronized void onJoinGame(PlayerInterface player, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor
+	public synchronized void onJoinGame(PlayerInterface player, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
 	{
 		String	playerName	= player.getPlayerName();
 		Color	playerColor	= player.getPlayerColor();
@@ -142,6 +164,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExcpected();
 		if (this.data.isPlayerLogged(playerName))			throw new ExceptionUsedPlayerName();
 		if (this.usedColor(playerColor))					throw new ExceptionUsedPlayerColor();
+		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
 
 		this.engine.onJoinGame(this.data, player, playerName, playerColor, isHost);
@@ -258,7 +281,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		Point currentPosition = data.getTramPosition(playerName);
 		
 		if(!data.pathExistsBetween(currentPosition, tramMovement.getLast())) throw new ExceptionForbiddenAction();	
-		// TODO if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
+		if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
 		
 		Iterator<Point> tramPathIterator = tramMovement.iterator();
 		Point previousPosition = null, nextPosition;
@@ -280,7 +303,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		}
 		
 		// TODO check if maidenTravel has started (for every method)
-		// TODO check if tram is not going backwards (regarding previous turn)
 
 		EngineAction ea = engine.new EngineAction(playerName, data, "moveTram");
 		ea.tramMovement = tramMovement;
@@ -328,6 +350,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			if (p.getPlayerColor().equals(c))	return true;
 		}
 		return false;
+	}
+// TODO crer dans data un ensemble final de couleurs utilisables
+	private Color getUnusedColor()
+	{
+		Random rnd = new Random();
+		return new Color(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 	}
 	private int getPlayerInLogInfoTable(String playerName)
 	{

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
@@ -27,14 +28,18 @@ public class InGamePanel extends Panel {
 	Panel deckAndTurnPanel;
 	TitlePanel titlePanel;
 	MapPanel mapPanel;
-	PlayerPanel[] playersPanel = new PlayerPanel[5];
+	ArrayList<PlayerPanel> playerPanels = new ArrayList<PlayerPanel>();
+	Data data;
+	String[] playersTab;
 
 	// Constructors
 	
-	InGamePanel() {
+	InGamePanel(GameController gc) {
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
+    	
+    	this.data = gc.player.getGameData();
     	
     	this.setupGameMapPanel();
     	this.setupChatPanel();
@@ -93,8 +98,11 @@ public class InGamePanel extends Panel {
     	this.bigChatPanel.add(titlePanel, BorderLayout.NORTH);
 	}
 	
-	private void setupPlayersPanel() { 		
+	private void setupPlayersPanel() { 	
+		//this.playersTab = data.getPlayerOrder(); TODO
 		int nbPlayers = 4;
+		//int nbPlayers = data.getNbrPlayer();
+		
     	this.playersSidebarPanel = new Panel();
     	this.playersSidebarPanel.setLayout(null);
     	this.playersSidebarPanel.setPreferredSize(new Dimension(330, nbPlayers*185+30));
@@ -106,14 +114,15 @@ public class InGamePanel extends Panel {
 		playersSidebarPanel.add(titlePanel);
     	
     	int y = 40;
-    	for (int i=0; i<nbPlayers; i++) {
-    		PlayerPanel playerPanel = new PlayerPanel("Name", "Difficulty");
-    		playersPanel[i] = playerPanel;
+    	System.out.println(nbPlayers);
+    	for (int i=0; i<nbPlayers-1; i++) {
+    		PlayerPanel playerPanel = new PlayerPanel("gbvdf"); //TODO
+    		playerPanels.add (playerPanel);
     		if (i<nbPlayers-1) { //last bar not displayed
-    			playersPanel[i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+    			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
     		}
-    		playersPanel[i].setBounds(15, y+(185*i), 285, 175);
-    		playersSidebarPanel.add(playersPanel[i]);
+    		playerPanel.setBounds(15, y+(185*i), 285, 175);
+    		playersSidebarPanel.add(playerPanel);
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(playersSidebarPanel);
@@ -134,5 +143,9 @@ public class InGamePanel extends Panel {
 	public void refreshGame(PlayerIHM player, Data data) {
 		System.out.println("REFRESH GAME");
 		this.mapPanel.refreshGame(player, data);
+		for (PlayerPanel playerPanel : this.playerPanels) {
+			playerPanel.refreshGame(player, data);
+		}
+		this.data = data;
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 
 import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionGameHasAlreadyStarted;
 import main.java.game.ExceptionUnknownBoardName;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -14,14 +15,14 @@ import test.java.player.TestDumbestIHM;
 public class TestEvaluator {
 	
 	@SuppressWarnings("unused")
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ExceptionGameHasAlreadyStarted {
 		Game game = null;
 		PlayerAI player1 = null,
 				player2 = null;
 		String name1 = "Dumbest 1",
 				name2 = "Traveler 2";
 		int level1 = 1, // 1 = dumbest
-			level2 = 2; // 2 = traveler
+			level2 = 1; // 2 = traveler
 		
 		try {
 			game = new Game("TestEvaluator", "localhost", "newOrleans", 2);
