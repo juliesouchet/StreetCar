@@ -62,7 +62,7 @@ public class Data implements Serializable
 	public static final	String			lineFile				= "src/main/resources/line/lineDescription";
 	public static final	String			buildingInLineFile		= "src/main/resources/line/buildingInLineDescription_";
 	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
-	public static final int				maxNbrPlayer			= 6;
+	public static final int				maxNbrPlayer			= 5;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				minSpeed				= 1;

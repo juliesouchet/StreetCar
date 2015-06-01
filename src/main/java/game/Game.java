@@ -126,6 +126,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	 ================================================*/
 	public synchronized void setLoginInfo(String playerName, int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification
 	{
+		System.out.println("POKPOKPKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOK\nPOKPOKPKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOK\nPOKPOKPKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOK\nPOKPOKPKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOKPOK\n");
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 

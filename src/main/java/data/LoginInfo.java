@@ -16,11 +16,10 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 // --------------------------------------------
 	public static final long		serialVersionUID	= 1735179230089796614L;
 	public static final LoginInfo[]	initialLoginTable	= {	new LoginInfo(false,	null,	true,	true,	-1),
-															new LoginInfo(false,	null,	false,	true,	-1),
-															new LoginInfo(false,	null,	false,	false,	1),
-															new LoginInfo(false,	null,	true,	false,	1), // TODO parameter n°3 = false
-															new LoginInfo(false,	null,	false,	false,	2),
-															new LoginInfo(false,	null,	false,	false,	3)};
+															new LoginInfo(true,	null,	false,	true,	-1),
+															new LoginInfo(true,	null,	false,	false,	1),
+															new LoginInfo(true,	null,	true,	false,	1), // TODO parameter n°3 = false
+															new LoginInfo(true,	null,	false,	false,	2)}; // TODO i put all these as closed, yours truly, Valysaar
 
 	private boolean		isClosed;
 	private String		playerName;
