@@ -183,17 +183,32 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 	public void setTile(Tile t)
 	{
-		this.tileID					= t.tileID;
-		this.isTree					= t.isTree;
-		this.isBuilding				= t.isBuilding;
-		this.isStop					= t.isStop;
-		this.isTerminus				= t.isTerminus;
-		this.buildingDescription	= t.buildingDescription;
-		this.terminusDescription	= t.terminusDescription;
-		this.cardinal				= t.cardinal;
-		this.tileDirection			= t.tileDirection;
-		copyPathTab(t.pathTab, this.pathTab, t.ptrPathTab);
-		this.ptrPathTab				= t.ptrPathTab;
+		if (t == null)
+		{
+			this.tileID					= null;
+			this.isTree					= false;
+			this.isBuilding				= false;
+			this.isStop					= false;
+			this.isTerminus				= false;
+			this.buildingDescription	= null;
+			this.terminusDescription	= -1;
+			this.cardinal				= -1;
+			this.tileDirection			= null;
+		}
+		else
+		{
+			this.tileID					= t.tileID;
+			this.isTree					= t.isTree;
+			this.isBuilding				= t.isBuilding;
+			this.isStop					= t.isStop;
+			this.isTerminus				= t.isTerminus;
+			this.buildingDescription	= t.buildingDescription;
+			this.terminusDescription	= t.terminusDescription;
+			this.cardinal				= t.cardinal;
+			this.tileDirection			= t.tileDirection;
+			copyPathTab(t.pathTab, this.pathTab, t.ptrPathTab);
+			this.ptrPathTab				= t.ptrPathTab;
+		}
 	}
 
 // --------------------------------------------

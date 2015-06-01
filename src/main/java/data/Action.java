@@ -125,8 +125,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.positionTile1.y	= (src.positionTile1 == null) ? null : src.positionTile1.y;
 		this.positionTile2.x	= (src.positionTile2 == null) ? null : src.positionTile2.x;
 		this.positionTile2.y	= (src.positionTile2 == null) ? null : src.positionTile2.y;
-//		this.tile1				. setTile(src.tile1);
-//		this.tile2				. setTile(src.tile2);
+		this.tile1				. setTile(src.tile1);
+		this.tile2				. setTile(src.tile2);
 		this.ptrTramwayMovement	= src.ptrTramwayMovement;
 		for (int i=0; i<=src.ptrTramwayMovement; i++)
 		{
