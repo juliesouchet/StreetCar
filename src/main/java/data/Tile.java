@@ -210,16 +210,12 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			this.ptrPathTab				= t.ptrPathTab;
 		}
 	}
+	public void setStop(boolean b){this.isStop = b;}
 
 // --------------------------------------------
 // Getters:
 // --------------------------------------------
-	public boolean equals(Object o)	{
-		if (o!=null && this!=null){
-			return (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);
-		}
-		return false;
-	}
+	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
 	public String	getTileID()			{return new String(this.tileID);}
 	public int		getCardinal()		{return this.cardinal;}
 	public Direction getTileDirection()	{return this.tileDirection;}

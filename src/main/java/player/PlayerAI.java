@@ -27,7 +27,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 // Attributes:
 // --------------------------------------------
 	private PlayerAutomaton	automaton;
-	
+
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
@@ -37,9 +37,8 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	 * @throws ExceptionFullParty									(caught by IHM)
 	 * @throws ExceptionUsedPlayerColor 							(caught by IHM)
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
-	 =======================================================================
-	 * @throws ExceptionGameHasAlreadyStarted */
-// TODO: remove the ihm parameter
+	 * @throws ExceptionGameHasAlreadyStarted						(caught by IHM)
+	 =======================================================================*/
 	public PlayerAI(String playerName, boolean isHost, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
 	{
 		super(playerName, playerColor, app, ihm);

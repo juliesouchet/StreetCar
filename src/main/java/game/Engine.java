@@ -207,9 +207,6 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void startMaidenTravel()
 	{
-// TODO:
-// PB: copie de la memoire de data.
-// Cette action doit etre faite par data
 		Data	data		= this.toExecute.data;
 		String playerName = toExecute.playerName;
 		Point chosenTerminus = toExecute.position;
@@ -218,21 +215,18 @@ public class Engine implements Runnable
 		data.startMaidenTravel(playerName);
 		data.setTramPosition(playerName, chosenTerminus);
 
-		LinkedList<Point> destination = new LinkedList<Point>();
-		for(Point p : data.getPlayerTerminusPoints(playerName))
+		Point[] destination = new Point[2];
+		int i = 0;
+		for(Point p : data.getPlayerTerminusPosition(playerName))
 		{
 			if(p.distance(chosenTerminus) > 1)
 			{
-				destination.add((Point) p.clone());
+				destination[i] = ((Point) p.clone());
+				i ++;
 			}
 		}
-		
+
 		data.setDestinationTerminus(playerName, destination);
-		if(destination.size() != 2)
-		{
-			try { throw new Exception(); } 
-			catch (Exception e) { e.printStackTrace(); } // TODO delete this once sure it works
-		}
 
 //		for(String name : data.getPlayerOrder())
 //		{
@@ -250,12 +244,16 @@ public class Engine implements Runnable
 		LinkedList<Point> tramMovement = toExecute.tramMovement;
 		data.setTramPosition(playerName, tramMovement.getLast());
 
-		this.notifyPlayer(playerName);
-		if(data.getPlayerTerminusPoints(playerName).contains(data.getTramPosition(playerName)))
+		Point[] terminus = data.getPlayerTerminusPosition(playerName);
+		Point position = data.getTramPosition(playerName);
+		for (int i=0; i<terminus.length; i++)
 		{
-			System.out.println("STOP EVERYTHING!!!!!! \n" + playerName + " has won");
-			// TODO data.endgamebecozplayerzhazone
+			if(terminus[i].equals(position))
+			{
+				System.out.println("STOP EVERYTHING!!!!!! \n" + playerName + " has won");
+			}
 		}
+		this.notifyPlayer(playerName);
 		//		for(String name : data.getPlayerOrder())
 		//		{
 		//			PlayerInterface remotePlayer = data.getPlayer(name);

@@ -9,9 +9,9 @@ import main.java.util.CloneableInterface;
 
 public class Action implements Serializable, CloneableInterface<Action>
 {
-	// -----------------------------------------------------
-	// Attributes
-	// -----------------------------------------------------
+// -----------------------------------------------------
+// Attributes
+// -----------------------------------------------------
 	public static final long	serialVersionUID	= -7830218892745210163L;
 	public static final int		maxTramwayMove		= 145;
 
@@ -22,25 +22,26 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 	public int		action;
 
-	public Point	positionTile1					= new Point();					// Build Attributes
-	public Point	positionTile2					= new Point();
+	public Point	positionTile1					= new Point(-1, -1);			// Build Attributes
+	public Point	positionTile2					= new Point(-1, -1);
 	public Tile		tile1							= new Tile(null, -1, null);
 	public Tile		tile2							= new Tile(null, -1, null);
 
 	public Point[]	tramwayMovement					= initMovementTab();			// Move Attributes
 	public int		ptrTramwayMovement				= -1;							//		Index of the last non null point
 
-	// -----------------------------------------------------
-	// Builder
-	// -----------------------------------------------------
-	// TODO rajouter un param pour indiquer le terminus de depart
+// -----------------------------------------------------
+// Builder
+// -----------------------------------------------------
+	public Action(){ this.action = -1;}
+// TODO rajouter un param pour indiquer le terminus de depart
 	public static Action newStartTripNextTurnAction()
 	{
 		Action res	= new Action();
 		res.action	= START_TRIP_NEXT_TURN;
 		return res;
 	}
-	// TODO rajouter un param pour indiquer le terminus de depart
+// TODO rajouter un param pour indiquer le terminus de depart
 	public static Action newMoveAction(Point[] tramwayMovement)
 	{
 		Action res				= new Action();
@@ -83,7 +84,6 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.tile2			.setTile(tile2);
 		return res;
 	}
-	private Action(){}
 	public Action getClone()
 	{
 		Action res				= new Action();
@@ -103,21 +103,77 @@ public class Action implements Serializable, CloneableInterface<Action>
 		return res;
 	}
 
-	// -----------------------------------------------------
-	// Getter
-	// -----------------------------------------------------
+// -----------------------------------------------------
+// Getter
+// -----------------------------------------------------
 	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE)	|| (this.action == BUILD_DOUBLE));}
 	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE);}
 	public boolean isMoving()				{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
+	public String	toString()
+	{
+		String str = "";
 
-	// -----------------------------------------------------
-	// Setter
-	// -----------------------------------------------------
+		switch(this.action)
+		{
+			case MOVE:					str += "MOVE : "				+ this.tramwayMovement.toString();	break;
+			case BUILD_SIMPLE:			str += "BUILD_SIMPLE: " 		+ this.positionTile1.toString()		+ this.tile1.toString();	break;
+			case BUILD_DOUBLE:			str += "BUILD_DOUBLE: " 		+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
+			case START_TRIP_NEXT_TURN:	str += "START_TRIP_NEXT_TURN";	break;
+		}
+		return str;
+	}
+	//Ajout par Ulysse:
+	public boolean equals(Action otherAction)
+	{
+		if (otherAction == null)				return false;
+		if (this.action != otherAction.action)	return false;
+
+		if(this.isMoving() && otherAction.isMoving()){
+			if (this.ptrTramwayMovement!=otherAction.ptrTramwayMovement){
+				return false;
+			}
+			for (int i=0; i<= this.ptrTramwayMovement;i++){
+				if(!(this.tramwayMovement[i]==otherAction.tramwayMovement[i])){
+					return false;
+				}
+			}
+			return true;
+		}
+
+		if(this.isSimpleConstructing() && otherAction.isSimpleConstructing()){
+			if(!this.positionTile1.equals(otherAction.positionTile1)){
+				return false;
+			}
+			if(! this.tile1.equals(otherAction.tile1)){
+				return false;
+			}
+			return true;
+		}
+		if(this.action==BUILD_DOUBLE && otherAction.action==BUILD_DOUBLE){
+			if(!this.positionTile1.equals(otherAction.positionTile1)){
+				return false;
+			}
+			if(!this.positionTile2.equals(otherAction.positionTile2)){
+				return false;
+			}
+			if(! this.tile1.equals(otherAction.tile1)){
+				return false;
+			}
+			if(! this.tile2.equals(otherAction.tile2)){
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+// -----------------------------------------------------
+// Setter
+// -----------------------------------------------------
 	/**
 	 * affecte a l'appelant les parametres de src sans nouvelle allocation memoire.
 	 * @param src
 	 */
-
 	public void copy(Action src)
 	{
 		this.action				= src.action;
@@ -135,70 +191,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 		}
 	}
 
-	// -----------------------------------------------------
-	// Private methods
-	// -----------------------------------------------------
+// -----------------------------------------------------
+// Private methods
+// -----------------------------------------------------
 	private Point[] initMovementTab()
 	{
 		Point[] res = new Point[maxTramwayMove];
 		for (int i=0; i<maxTramwayMove; i++) res[i] = new Point();
 		return res;
 	}
-
-	//Ajout par Ulysse:
-	public boolean equals(Action otherAction){
-		if( otherAction==null){
-			return false;
-		}
-		if(this.action!=otherAction.action){
-			return false;
-		}
-		if(this.isMoving() && otherAction.isMoving()){
-			for (int i=0; i< maxTramwayMove;i++){
-				if(!(this.tramwayMovement[i]==otherAction.tramwayMovement[i])){
-					return false;
-				}
-			}
-			if (! (this.ptrTramwayMovement==otherAction.ptrTramwayMovement)){
-				return false;
-			}
-		}
-		
-		if(this.isSimpleConstructing() && otherAction.isSimpleConstructing()){
-			if(!this.positionTile1.equals(otherAction.positionTile1)){
-				return false;
-			}
-			if(! this.tile1.equals(otherAction.tile1)){
-				return false;
-			}			
-		}
-		if(this.action==BUILD_DOUBLE && otherAction.action==BUILD_DOUBLE){
-			if(!this.positionTile1.equals(otherAction.positionTile1)){
-				return false;
-			}
-			if(!this.positionTile2.equals(otherAction.positionTile2)){
-				return false;
-			}
-			if(! this.tile1.equals(otherAction.tile1)){
-				return false;
-			}
-			if(! this.tile2.equals(otherAction.tile2)){
-				return false;
-			}
-		}
-
-
-
-		return true;
-	}
-
-
 }
-
-
-
-
-
-
-
-

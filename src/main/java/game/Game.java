@@ -10,7 +10,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Random;
 
 import main.java.data.Data;
 import main.java.data.LoginInfo;
@@ -69,7 +68,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
 		this.engine				= new Engine();
 		this.aiList				= new HashMap<String, PlayerAI>();
-
+// TODO: creer les automates initiaux
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "URL = " + url);
 		System.out.println(gameMessageHeader + "ready");
@@ -143,7 +142,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!newPlayerIsHuman)															// Case create AI player
 		{
 			PlayerAI newPlayer = null;
-			try					{newPlayer = new PlayerAI(newPlayerInfo.getPlayerName(), false, getUnusedColor(), this, newPlayerInfo.getAiLevel(), null);}
+			try					{newPlayer = new PlayerAI(newPlayerInfo.getPlayerName(), false, this.data.getRandomUnusedColor(), this, newPlayerInfo.getAiLevel(), null);}
 			catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 			Thread t = new Thread(playerName);
 			this.aiList.put(playerName, newPlayer);
@@ -350,12 +349,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			if (p.getPlayerColor().equals(c))	return true;
 		}
 		return false;
-	}
-// TODO crer dans data un ensemble final de couleurs utilisables
-	private Color getUnusedColor()
-	{
-		Random rnd = new Random();
-		return new Color(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 	}
 	private int getPlayerInLogInfoTable(String playerName)
 	{
