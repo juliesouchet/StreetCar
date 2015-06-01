@@ -15,3 +15,9 @@ Les journaux sont dans le dossier `diaries`. Pensez à le mettre à jour réguli
 ## Suivi des commits  
 
 RSS feed : https://github.com/juliesouchet/StreetCar/commits/master.atom
+
+## Rendu  
+
+A envoyer à guillaume.huard@imag.fr le 9/6/2015  
+Soutenance vendredi 12/06 à 10h15  
+Démo vendredi 12/06 à partir de 14h
