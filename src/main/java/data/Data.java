@@ -50,6 +50,7 @@ public class Data implements Serializable
 		public possibleActionsSet getPossibleActions(String playerName){
 return null;
 }
+///////// BUGS
 /*************			possibleActionsSet result = new possibleActionsSet(possibleActionsSet.maxCardinal);
 			PlayerInfo pi = playerInfoList.get(playerName);
 			Hand hand = pi.hand;
@@ -147,6 +148,7 @@ return null;
 	private static Color[]				existingColors;
 
 	private LinkedList<String[][]>		remainingBuildingInLine;
+	private Color[]						remainingColors;
 
 	private String						gameName;
 	private int							nbrBuildingInLine;
@@ -215,14 +217,32 @@ return null;
 	/**================================================
 	 * Add a player to the present game
 	 ==================================================*/
-	public void addPlayer(PlayerInterface p, String playerName, Color playerColor, boolean isHost) throws ExceptionFullParty
+	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
 		if ((isHost) && (this.host != null))			throw new ExceptionHostAlreadyExists();
 
-		PlayerInfo pi = new PlayerInfo(p, playerName, playerColor);
+		PlayerInfo pi = new PlayerInfo(p, playerName);
 		this.playerInfoList.put(playerName, pi);
 		if (isHost) this.host = new String(playerName);
+	}
+	/**==============================================================
+	 * Set the player's color.  Every color matches an unique line.
+	 * This function initialize the player's line and the player's buildings
+	 ================================================================*/
+	public void setPlayerColor(String playerName, Color playerColor)
+	{
+		PlayerInfo pi = this.playerInfoList.get(playerName);
+		int colorIndex	= getRemainingColorIndex(playerColor);
+
+		pi.line							= 1 + colorIndex;
+		this.remainingColors[colorIndex]= null;
+		int i							= (new Random()).nextInt(remainingBuildingInLine.size());	// Draw the buildings to go through
+		pi.color						= new Color(playerColor.getRGB());
+		pi.buildingInLine_name			= remainingBuildingInLine.get(i)[pi.line-1];
+		remainingBuildingInLine			.remove(i);
+		pi.buildingInLine_position		= getBuildingPosition(pi.buildingInLine_name);				// Init the building line position
+		pi.terminus						= getTerminusPosition(pi.line);								// Init the terminus position
 	}
 	/**================================================
 	 * Remove a player from the present game
@@ -448,10 +468,20 @@ return null;
 	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
 	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
 	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
+	public boolean				isUsedColor(Color c)							{return !this.getUnusedColors().contains(c);}
 	public boolean				isPlayerTurn(String playerName)					{return (this.playerOrder == null) ? false : (this.getPlayerTurn().equals(playerName));}
 	public boolean				isEmptyDeck()									{return this.deck.isEmpty();}
 	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
+	public boolean				isAllPlayersInitialized()
+	{
+		for (String str: this.playerInfoList.keySet())
+		{
+			PlayerInfo pi = this.playerInfoList.get(str);
+			if (!pi.isInitialized())	return false;
+		}
+		return true;
+	}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean isWithinnBoard(int x, int y)
 	{
@@ -670,14 +700,10 @@ return null;
 	public LinkedList<Color> getUnusedColors()
 	{
 		LinkedList<Color> res = new LinkedList<Color>();
-		Set<String> nameSet = this.playerInfoList.keySet();
 
-		for (Color c: Data.existingColors)
+		for (int i=0; i<Data.existingColors.length; i++)
 		{
-			for (String name: nameSet)
-			{
-				if (!c.equals(this.playerInfoList.get(name).color))	res.add(c);
-			}
+			if (this.remainingColors[i] != null) res.add(this.remainingColors[i]);
 		}
 		return res;
 	}
@@ -703,6 +729,7 @@ return null;
 
 		Data.existingLine	= new int[maxNbrPlayer];						// Scan the existing lines and corresponding colors
 		Data.existingColors	= new Color[maxNbrPlayer];
+		this.remainingColors= new Color[maxNbrPlayer];
 		try
 		{
 			f = new File(lineFile);
@@ -713,11 +740,12 @@ return null;
 				line = sc.nextInt();
 				if (line != i) {sc.close();throw new Exception();}
 				color = sc.next();
-				Data.existingColors[i-1] = Util.parseColor(color);
+				Data.existingColors[i-1]	= Util.parseColor(color);
+				this.remainingColors[i-1]	= Util.parseColor(color);
 			}
 			sc.close();
 		}
-		catch (Exception e){throw new RuntimeException("Malformed line file");}
+		catch (Exception e){e.printStackTrace(); throw new RuntimeException("Malformed line file");}
 
 		Data.existingBuildingInLine	= new String[maxNbrPlayer][][];			// Scan the existing building in line cards
 		this.remainingBuildingInLine= new LinkedList<String[][]>();
@@ -805,19 +833,26 @@ return null;
 	private HashMap<String, PlayerInfo> getCopyOfPlayerInfoList(String playerName)
 	{
 		HashMap<String, PlayerInfo> res = new HashMap<String, PlayerInfo>();
+		Copier<Point> cpP = new Copier<Point>();
+
 		PlayerInfo pi, piRes;
 
 		for (String str: this.playerInfoList.keySet())
 		{
 			pi				= this.playerInfoList.get(str);
-			piRes			= new PlayerInfo();							// Shared Information
-			piRes.player	= null;
-			piRes.line		= pi.line;
-			piRes.color		= new Color(pi.color.getRGB());
-			piRes.hand		= pi.hand.getClone();
-			piRes.terminus	= (new Copier<Point>()).copyTab(pi.terminus);
-			piRes.history	= (new Copier<LinkedList<Action>>()).copyList(pi.history);
-// TODO ajouter les nouveaux attributes de valentin
+			piRes			= new PlayerInfo();										// Shared Information
+			if (!pi.isInitialized()) {res.put(str, piRes); continue;}
+			piRes.player				= null;
+			piRes.line					= pi.line;
+			piRes.color					= (pi.color == null) ? null : new Color(pi.color.getRGB());
+			piRes.hand					= pi.hand.getClone();
+			piRes.terminus				= (pi.terminus == null) ? null : cpP.copyTab(pi.terminus);
+			piRes.history				= (new Copier<LinkedList<Action>>()).copyList(pi.history);
+			piRes.startedMaidenTravel	= pi.startedMaidenTravel;
+			piRes.tramPosition			= (pi.tramPosition == null) ? null : new Point(pi.tramPosition);
+			piRes.endTerminus			= (pi.endTerminus == null) ? null : cpP.copyTab(pi.endTerminus);
+			piRes.previousTramPosition	= (pi.previousTramPosition == null) ? null : new Point(pi.previousTramPosition);
+
 			if ((str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
 			{
 				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
@@ -832,10 +867,14 @@ return null;
 		}
 		return res;
 	}
-	private int getExistingColorIndex(Color color)
+	private int getRemainingColorIndex(Color color)
 	{
 		for (int i=0; i<existingColors.length; i++)
-			if (color.equals(existingColors[i])) return i;
+		{
+			if (!color.equals(existingColors[i])) continue;
+			if (this.remainingColors[i] == null)	throw new RuntimeException("Used Player Color");
+			else return i;
+		}
 
 		throw new RuntimeException("Unknown Color: " + color);
 	}
@@ -849,36 +888,27 @@ return null;
 		private static final long	serialVersionUID = -7495867115345261352L;
 		public PlayerInterface		player;
 		public Hand					hand;
-		public int					line;							// Real value of the line (belongs to [1, 6])
-		public Color				color;
-		public String[]				buildingInLine_name;
-		public Point[]				buildingInLine_position;
-		public Point[]				terminus;						// Complete player's terminus list
+		public int					line					= -1;					// Real value of the line (belongs to [1, 6])
+		public Color				color					= null;
+		public String[]				buildingInLine_name		= null;
+		public Point[]				buildingInLine_position	= null;
+		public Point[]				terminus				= null;					// Complete player's terminus list
 //TODO: ulysse Ne plus stocker les action mais les data
-		public LinkedList<LinkedList<Action>>	history;			// organized by turns
-		public boolean				startedMaidenTravel	= false;	// Data relative to the travel
-		public Point				tramPosition		= null;
-		public Point[]				endTerminus			= new Point[2];
-		public Point				previousTramPosition= null;
+		public LinkedList<LinkedList<Action>>	history;							// organized by turns
+		public boolean				startedMaidenTravel		= false;				// Data relative to the travel
+		public Point				tramPosition			= null;
+		public Point[]				endTerminus				= new Point[2];
+		public Point				previousTramPosition	= null;
 
 		// Builder
 		private PlayerInfo(){}
-		public PlayerInfo(PlayerInterface pi, String playerName, Color playerColor)
+		public PlayerInfo(PlayerInterface pi, String playerName)
 		{
-			Random rnd = new Random();
-			int i;
-
-			this.player		= pi;
-			this.history	= new LinkedList<LinkedList<Action>>();
-			this.hand		= Hand.initialHand.getClone();
-			this.line		= 1 + getExistingColorIndex(playerColor);
-			i				= rnd.nextInt(remainingBuildingInLine.size());				// Draw the buildings to go through
-			this.color		= new Color(playerColor.getRGB());
-			this.buildingInLine_name = remainingBuildingInLine.get(i)[line-1];
-
-			remainingBuildingInLine.remove(i);
-			this.buildingInLine_position = getBuildingPosition(buildingInLine_name);	// Init the building line position
-			this.terminus	= getTerminusPosition(this.line);							// Init the terminus position
+			this.player					= pi;
+			this.hand					= Hand.initialHand.getClone();
+			this.history				= new LinkedList<LinkedList<Action>>();
+			this.endTerminus[0]			= new Point();
+			this.endTerminus[1]			= new Point();
 		}
 
 		// Getter
@@ -887,7 +917,7 @@ return null;
 			if (this.history.isEmpty()) return null;
 			else						return this.history.getLast();
 		}
-		// Setter
-		public void newRound(){this.history.addLast(new LinkedList<Action>());}
+		public boolean isInitialized() 	{return this.line > -1;}
+		public void newRound()			{this.history.addLast(new LinkedList<Action>());}
 	}
 }

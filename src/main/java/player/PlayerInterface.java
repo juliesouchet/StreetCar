@@ -12,12 +12,14 @@ import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNonInitializedPlayer;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotEnougthTileInHand;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
+import main.java.game.ExceptionUsedPlayerColor;
 
 
 
@@ -34,11 +36,10 @@ public interface PlayerInterface extends Remote
 
 	public LoginInfo[]getLoginInfo		() 											throws RemoteException;
 	public void		setLoginInfo		(int playerToChangeIndex, LoginInfo newPlayerInfo) throws RemoteException, ExceptionForbiddenAction, ExceptionForbiddenHostModification;
+	public void		setPlayerColor		(Color playerColor)							throws RemoteException, ExceptionUsedPlayerColor;
 	public void		onQuitGame			(String playerName)							throws RemoteException, ExceptionForbiddenAction;
-// TODO: n'existe pas
-//	public void 	onExcludePlayer		(String playerExcluded)						throws RemoteException, ExceptionForbiddenAction;
 
-	public void		hostStartGame		()											throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers;
+	public void		hostStartGame		()											throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers, ExceptionNonInitializedPlayer;
 	public void		excludePlayer		()											throws RemoteException;
 	public void		gameHasChanged		(Data data)									throws RemoteException;
 	public void		placeTile			(Tile t, Point position)					throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions;

@@ -115,11 +115,11 @@ public class Engine implements Runnable
 // Public methods:
 // This functions are executed by the caller's thread
 // --------------------------------------------
-	public void onJoinGame(Data data, PlayerInterface player, String playerName, Color playerColor, boolean isHost) throws RemoteException
+	public void onJoinGame(Data data, PlayerInterface player, String playerName, boolean isHost) throws RemoteException
 	{
 		PlayerInterface pi;
 
-		data.addPlayer(player, playerName, playerColor, isHost);
+		data.addPlayer(player, playerName, isHost);
 		for (String name: data.getPlayerNameList())
 		{
 			pi = data.getRemotePlayer(name);

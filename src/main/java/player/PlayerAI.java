@@ -1,6 +1,5 @@
 package main.java.player;
 
-import java.awt.Color;
 import java.rmi.RemoteException;
 
 import main.java.automaton.Dumbest;
@@ -39,9 +38,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	 * @throws ExceptionUsedPlayerName 								(caught by IHM)
 	 * @throws ExceptionGameHasAlreadyStarted						(caught by IHM)
 	 =======================================================================*/
-	public PlayerAI(String playerName, boolean isHost, Color playerColor, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
+	public PlayerAI(String playerName, boolean isHost, GameInterface app, int iaLevel, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
 	{
-		super(playerName, playerColor, app, ihm);
+		super(playerName, app, ihm);
 		switch (iaLevel)
 		{
 			case 1	:this.automaton	= new Dumbest(playerName);	break;
