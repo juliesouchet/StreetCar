@@ -131,6 +131,11 @@ public class Data implements Serializable
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
+	
+	public void setPreviousTramPosition(String playerName, Point newPosition) { playerInfoList.get(playerName).previousTramPosition = newPosition; }
+	
+	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; } // TODO rename the fuck out of this methdo
+	
 	/**================================================
 	 * Add a player to the present game
 	 ==================================================*/
@@ -270,6 +275,7 @@ public class Data implements Serializable
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex);}
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
+	public Point getPreviousTramPosition(String playerName) { return playerInfoList.get(playerName).previousTramPosition; }
 	public boolean				hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
@@ -283,6 +289,12 @@ public class Data implements Serializable
 		}
 		else if (lastActions.size() == 2) return false;
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
+	}
+	public boolean isStartOfTurn(String playerName)
+	{
+		if(!isPlayerTurn(playerName)) return false;
+		LinkedList<Action> lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
+		return lastActions.size() == 0;
 	}
 	/**===============================================================
 	 * @return true if the player's track is completed (path between the 2 terminus and through all the buildings)
@@ -338,12 +350,14 @@ public class Data implements Serializable
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public Tile					getTile(int x, int y)							{return this.board[x][y].getClone();}
+	public Tile					getTile(Point p)								{return getTile(p.x, p.y);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
+	public boolean				pathExistsBetween(Point p1, Point p2)			{return getShortestPath(p1, p2) != null;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
-	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
+	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;} // TODO rename the fuck out of this methdo
 	public int					getRound()										{return this.round;}
 	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
 	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
@@ -370,14 +384,16 @@ public class Data implements Serializable
 	 =================================================================*/
 	public boolean isAcceptableTilePlacement(int x, int y, Tile t)
 	{
-		LinkedList<Path> additionalPath = new LinkedList<Path>();
+		Path[] additionalPath = Tile.initPathTab();
 		LinkedList<Direction> accessibleDirection;
 		Tile oldT = this.board[x][y];
+		int additionalPathSize = oldT.isReplaceable(t, additionalPath);
+//System.out.println("Data.isAcceptableTilePlacement ------     " + additionalPathSize);
 
-		if (!oldT.isReplaceable(t, additionalPath))	return false;										// Check whether t contains the old t (remove Tile and Rule C)
-		if (this.isOnEdge(x, y))					return false;
+		if (additionalPathSize == -1)	return false;													// Check whether t contains the old t (remove Tile and Rule C)
+		if (this.isOnEdge(x, y))		return false;
 
-		Tile nt = new Tile(additionalPath, t);
+		Tile nt = new Tile(additionalPath, additionalPathSize, t);
 		accessibleDirection = nt.getAccessibleDirections();
 		for (Direction d: accessibleDirection)															// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
@@ -718,6 +734,7 @@ public class Data implements Serializable
 		public boolean				startedMaidenTravel	= false;	// Data relative to the travel
 		public Point				tramPosition		= null;
 		public LinkedList<Point>	endTerminus			= null;
+		public Point				previousTramPosition = null;
 
 		// Builder
 		private PlayerInfo(){}
@@ -747,15 +764,4 @@ public class Data implements Serializable
 		// Setter
 		public void newRound(){this.history.addLast(new LinkedList<Action>());}
 	}
-
-	
-	
-// TODO existe deja: this.getTerminusPoints
-//	public LinkedList<Point> getTerminiPoints(String playerName)
-//	{
-//		return new Copier<Point>().copyList(playerInfoList.get(playerName).terminus);
-//	}
-
-// TODO les autres sont avec les getter et les setter
-// Il faut corriger tous les getter et setter pour faire le moin de new et copy possible (pour les besoins de l'ia)
 }

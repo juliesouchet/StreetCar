@@ -8,10 +8,12 @@ import java.awt.Graphics;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
+import main.java.data.Data;
 import main.java.gui.board.MapPanel;
 import main.java.gui.chat.ChatPanel;
 import main.java.gui.components.Panel;
 import main.java.gui.components.TitlePanel;
+import main.java.player.PlayerIHM;
 
 public class InGamePanel extends Panel {
 
@@ -24,6 +26,7 @@ public class InGamePanel extends Panel {
 	Panel playersSidebarPanel;
 	Panel deckAndTurnPanel;
 	TitlePanel titlePanel;
+	MapPanel mapPanel;
 	PlayerPanel[] playersPanel = new PlayerPanel[5];
 
 	// Constructors
@@ -59,8 +62,8 @@ public class InGamePanel extends Panel {
 		bigMapPanel.add(eastTestPanel, BorderLayout.EAST);
 		bigMapPanel.add(westTestPanel, BorderLayout.WEST);
 		
-		MapPanel mapPanel = new MapPanel();
-		bigMapPanel.add(mapPanel, BorderLayout.CENTER);
+		this.mapPanel = new MapPanel();
+		bigMapPanel.add(this.mapPanel, BorderLayout.CENTER);
 		
 		mapPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 		
@@ -125,8 +128,11 @@ public class InGamePanel extends Panel {
 	
 	// Actions
 	
-	/*public void quitGame() {
-		MainFrameController mfc = (MainFrameController)this.getFrameController();
-		mfc.showWelcomeMenuPanel();
-	}*/	
+
+	// Refresh game
+	
+	public void refreshGame(PlayerIHM player, Data data) {
+		System.out.println("REFRESH GAME");
+		this.mapPanel.refreshGame(player, data);
+	}
 }

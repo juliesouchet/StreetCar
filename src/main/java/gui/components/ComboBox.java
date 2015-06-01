@@ -17,7 +17,7 @@ public class ComboBox extends Panel implements ActionListener, MouseListener, Co
 	// Properties
 	
 	  private JPopupMenu popupMenu = new JPopupMenu();
-	  private ArrayList<ActionPerformer> performers;
+	  private ArrayList<ActionListener> actionListeners;
 	  private Label label;
 	  private int selectedIndex = 0;
 	  private boolean editable = true;
@@ -25,7 +25,7 @@ public class ComboBox extends Panel implements ActionListener, MouseListener, Co
 	// Constructors
 	
 	public ComboBox() {
-		this.performers = new ArrayList<ActionPerformer>();
+		this.actionListeners = new ArrayList<ActionListener>();
 		this.label = new Label("");
 		this.label.setBounds(0, 0, this.getWidth(), this.getHeight());
 		this.add(this.label);
@@ -81,15 +81,29 @@ public class ComboBox extends Panel implements ActionListener, MouseListener, Co
 	// Actions
 	
 	public void actionPerformed(ActionEvent e) {
+		MenuItem selectedItem = (MenuItem)e.getSource();
+		for (int i = 0; i < this.popupMenu.getComponentCount(); i++) {
+			MenuItem item = (MenuItem)this.popupMenu.getComponent(i);
+			if (selectedItem == item) {
+				this.setSelectedIndex(i);
+				break;
+			}
+		}
+		
+		ActionEvent event = new ActionEvent(this,
+                e.getID(),
+                e.getActionCommand(),
+                e.getModifiers());
+		
 		MenuItem menuItem = (MenuItem)e.getSource();
 		this.selectedIndex = this.popupMenu.getComponentIndex(menuItem);
-		for (ActionPerformer performer : this.performers) {
-			performer.actionPerformed(null);
+		for (ActionListener listener : this.actionListeners) {
+			listener.actionPerformed(event);
 		}
 	}
 
-	public void addAction(Object target, String action) {
-		this.performers.add(new ActionPerformer(target, action));
+	public void addActionListener(ActionListener listener) {
+		this.actionListeners.add(listener);
 	}
 	
 	// MouseListener

@@ -18,4 +18,10 @@ public class Label extends JLabel {
 		this(Resources.localizedString(text, comment));
 	}
 	
+	// Setters
+	
+	public void setText(String text, String comment) {
+		this.setText(Resources.localizedString(text, comment));
+	}
+	
 }

@@ -24,8 +24,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 	public Point	positionTile1					= new Point();					// Build Attributes
 	public Point	positionTile2					= new Point();
-	public Tile		tile1							= new Tile(null, null);
-	public Tile		tile2							= new Tile(null, null);
+	public Tile		tile1							= new Tile(null, -1, null);
+	public Tile		tile2							= new Tile(null, -1, null);
 
 	public Point[]	tramwayMovement					= initMovementTab();			// Move Attributes
 	public int		ptrTramwayMovement				= -1;							//		Index of the last non null point

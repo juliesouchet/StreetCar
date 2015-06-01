@@ -6,8 +6,18 @@ import java.awt.Point;
 import java.awt.dnd.DropTarget;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import main.java.data.Data;
+import main.java.data.Tile;
 import main.java.gui.components.Panel;
+import main.java.player.PlayerIHM;
 
 
 public class MapPanel extends Panel implements MouseListener {
@@ -21,6 +31,7 @@ public class MapPanel extends Panel implements MouseListener {
     float widthPerCase;
     int originX;
     int originY;
+    Data data = null;
     
     // Constructors
     
@@ -57,9 +68,13 @@ public class MapPanel extends Panel implements MouseListener {
 	}
 	
 	// Paint Component
-	
+	/*
 	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
+        if (this.data == null) {
+        	return;
+        }
         
         changeGlobalValues();
         
@@ -76,8 +91,64 @@ public class MapPanel extends Panel implements MouseListener {
         
         g.drawRect(originX, originY, (int)width+1, (int)width+1);
         }      
-    }
+    }*/
 
+	
+	private int tileWidth;
+	private int tileHeight;
+	private int paddingWidth = 40;
+	private int paddingHeight = 40;
+	
+	protected void paintComponent(Graphics g) {
+		super.paintComponents(g);
+
+		if (this.data == null) {
+			System.out.println("data is null");
+			return;
+		}
+		
+		System.out.println("data is not null");
+		
+		this.tileWidth	= (getWidth() - paddingWidth) / data.getWidth();
+		this.tileHeight	= (getHeight()- paddingHeight)/ data.getHeight();
+		String cst = "src/main/resources/images/tiles/";
+		BufferedImage img = null;
+		String tileName;
+		Tile[][] board = this.data.getBoard();
+		int x = tileWidth/2;
+		int y = tileHeight/2;
+
+		System.out.println(this.data.getHeight() + " " + this.data.getWidth());
+		
+		for (int j=0; j < this.data.getHeight(); j++)
+		{
+			for (int i=0; i < this.data.getWidth(); i++)
+			{
+				tileName = cst + board[i][j].getTileID();
+				System.out.println(tileName);
+				try {img = ImageIO.read(new File(tileName));}
+				catch (IOException e) {e.printStackTrace(); System.exit(0);}
+				AffineTransformOp transform = getRotation(board[i][j], img, tileWidth, tileHeight);
+				g.drawImage(transform.filter(img,null), x, y, null);
+				x += tileWidth;
+			}
+			x = tileWidth/2;
+			y += tileHeight;
+		}
+	}
+
+	private AffineTransformOp getRotation(Tile tile, BufferedImage img, int tileWidth, int tileHeight) {
+		int rightRotations = tile.getTileDirection().getVal();
+		double rotationRequired = Math.toRadians(rightRotations*90);
+		double locationX = tileWidth / 2;
+		double locationY = tileHeight / 2;
+		AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+		double xScale = (double)tileWidth/(double)img.getWidth();
+		double yScale = (double)tileHeight/(double)img.getHeight();
+		tx.concatenate(AffineTransform.getScaleInstance(xScale, yScale));
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+		return op;
+	}
 	
 	// Mouse Action
 	
@@ -108,5 +179,13 @@ public class MapPanel extends Panel implements MouseListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// not needed
+	}
+	
+	// Refresh game
+	
+	public void refreshGame(PlayerIHM player, Data data) {
+		System.out.println("REFRESH GAME in board");
+		this.data = data;
+		this.repaint();
 	}
 }
