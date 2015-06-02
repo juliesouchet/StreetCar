@@ -180,7 +180,10 @@ public class HostRoomMenuPanel extends MenuPanel {
 ///////				System.out.println(info);
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
-//TODO 				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
+// TODO: erreur: tu ne teste pas si info.isClosed().   Si c isClosed, alors info.getPlayerName() == null
+if (!info.isOccupiedCell()) continue;
+// TODO: correction bidon, 
+				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
 				
 				System.out.println(i + " " + info);
 				if (info.isClosed()) {

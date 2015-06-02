@@ -683,8 +683,9 @@ return null;
 				{
 					tileFileName	= sc.next();
 					res[x][y]		= Tile.parseTile(tileFileName);
-					dir				= Direction.parse(sc.nextInt());
-					res[x][y]		.setDirection(dir);
+//					dir				= Direction.parse(sc.nextInt());
+sc.nextInt();
+///					res[x][y]		.setDirection(dir);
 				}
 			}
 		}

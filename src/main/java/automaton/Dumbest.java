@@ -21,7 +21,7 @@ public class Dumbest extends PlayerAutomaton {
 
 	public Dumbest(String playerName) {
 		super();
-		if(name == null) this.name = "Dumbest";
+		if(playerName == null) this.name = "Dumbest";
 		else this.name = playerName;
 	}
 	

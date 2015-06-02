@@ -140,7 +140,6 @@ public String getHostName(){return this.data.getHost();}
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
-System.out.println("------------" + oldPlayerName);
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
 		boolean	oldPlayerIsHuman	= this.loggedPlayerTable[playerToChangeIndex].isHuman();
 		boolean	newPlayerIsHuman	= newPlayerInfo.isHuman();
@@ -165,11 +164,6 @@ System.out.println("------------" + oldPlayerName);
 		{
 			this.launchAIPlayer(newPlayerInfo);
 		}
-System.out.println(this.loggedPlayerTable[0].isClosed());
-System.out.println(this.loggedPlayerTable[1].isClosed());
-System.out.println(this.loggedPlayerTable[2].isClosed());
-System.out.println(this.loggedPlayerTable[3].isClosed());
-System.out.println(this.loggedPlayerTable[4].isClosed());
 	}
 	/**================================================
 	 * @return Makes a player join the game
