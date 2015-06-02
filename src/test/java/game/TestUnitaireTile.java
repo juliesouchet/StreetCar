@@ -49,17 +49,17 @@ public class TestUnitaireTile {
 	public void testCopy() {
 		Tile maTileA = null;
 		Tile maTileB = null;
-		
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ99");
 		maTileB = Tile.parseTile("Tile_FFFTZ60123");
 		maTileA.copy(maTileB);
 		assertTrue(maTileA.equalsStrong(maTileB));
-	
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ99");
 		maTileB = Tile.parseTile("Tile_FFFTZ60123");
 		maTileB.copy(maTileA);
 		assertTrue(maTileA.equalsStrong(maTileB));
-		
+
 	}
 
 	@Test
@@ -70,7 +70,7 @@ public class TestUnitaireTile {
 		assertTrue(maTileA.isStop());
 		maTileA.setStop(false);
 		assertFalse(maTileA.isStop());
-		
+
 	}
 
 	@Test
@@ -78,13 +78,13 @@ public class TestUnitaireTile {
 		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
 		Tile maTileB = Tile.parseTile("Tile_FFFFZZ99");
 		assertTrue(maTileA.equals(maTileB));
-		
+
 		maTileA.turnHalf();
 		assertTrue(maTileA.equals(maTileB));
 
 		maTileA.setStop(true);
 		assertTrue(maTileA.equals(maTileB));
-		
+
 	}
 
 	@Test
@@ -175,7 +175,7 @@ public class TestUnitaireTile {
 	public void testGetTerminusName() {
 		Tile maTileA = Tile.parseTile("Tile_FFFTZ10101");
 		assertTrue(1==maTileA.getTerminusName());
-		
+
 		maTileA = Tile.parseTile("Tile_FTFFAZ01");
 		assertTrue(-1==maTileA.getTerminusName());
 
@@ -195,91 +195,94 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testInitPathTab() {
-		fail("Not yet implemented");
+		Path[] monTableauDePath = Tile.initPathTab();
+		for(int i=0;i<Tile.maxNbrPathInTile;i++){
+			assertTrue(monTableauDePath[i].equals(new Path(Direction.WEST,Direction.WEST)));
+		}
 	}
 
 	@Test
 	public void testGetAccessibleDirections() {
 		Tile maTileA = null;
 		int mesDirectionsAccessibles;
-		
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ99");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));		
-	
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-				
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ060123");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-			
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ100102");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ100103");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_FFFFZZ100203");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_FFFTZ10101");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_FFFTZ10103");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_FFFTZ10112");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_FFFTZ10123");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-	
+
 		maTileA = Tile.parseTile("Tile_FTFFAZ01");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
@@ -294,7 +297,7 @@ public class TestUnitaireTile {
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_TFFFZZ02010223");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
@@ -329,7 +332,7 @@ public class TestUnitaireTile {
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-		
+
 		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
@@ -337,9 +340,9 @@ public class TestUnitaireTile {
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
 
-		}
+	}
 
-	
+
 	@Test
 	public void testParseTile() {
 		Tile maTile1 = Tile.parseTile("Tile_FFFFZZ99");
@@ -773,7 +776,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile32.isPathTo(Direction.SOUTH));
 		assertFalse(maTile32.isPathTo(Direction.WEST));
 		assertTrue(maTile32.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile33 = Tile.parseTile("Tile_FTFFBZ01");
 		assertFalse(maTile33.isEmpty());
 		assertTrue(maTile33.isBuilding());
@@ -786,7 +789,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile33.isPathTo(Direction.SOUTH));
 		assertFalse(maTile33.isPathTo(Direction.WEST));
 		assertTrue(maTile33.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile34 = Tile.parseTile("Tile_FTFFCZ01");
 		assertFalse(maTile34.isEmpty());
 		assertTrue(maTile34.isBuilding());
@@ -799,7 +802,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile34.isPathTo(Direction.SOUTH));
 		assertFalse(maTile34.isPathTo(Direction.WEST));
 		assertTrue(maTile34.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile35 = Tile.parseTile("Tile_FTFFDZ01");
 		assertFalse(maTile35.isEmpty());
 		assertTrue(maTile35.isBuilding());
@@ -812,7 +815,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile35.isPathTo(Direction.SOUTH));
 		assertFalse(maTile35.isPathTo(Direction.WEST));
 		assertTrue(maTile35.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile36 = Tile.parseTile("Tile_FTFFEZ01");
 		assertFalse(maTile36.isEmpty());
 		assertTrue(maTile36.isBuilding());
@@ -825,7 +828,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile36.isPathTo(Direction.SOUTH));
 		assertFalse(maTile36.isPathTo(Direction.WEST));
 		assertTrue(maTile36.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile37 = Tile.parseTile("Tile_FTFFFZ01");
 		assertFalse(maTile37.isEmpty());
 		assertTrue(maTile37.isBuilding());
@@ -838,7 +841,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile37.isPathTo(Direction.SOUTH));
 		assertFalse(maTile37.isPathTo(Direction.WEST));
 		assertTrue(maTile37.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile38 = Tile.parseTile("Tile_FTFFGZ01");
 		assertFalse(maTile38.isEmpty());
 		assertTrue(maTile38.isBuilding());
@@ -851,7 +854,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile38.isPathTo(Direction.SOUTH));
 		assertFalse(maTile38.isPathTo(Direction.WEST));
 		assertTrue(maTile38.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile39 = Tile.parseTile("Tile_FTFFHZ01");
 		assertFalse(maTile39.isEmpty());
 		assertTrue(maTile39.isBuilding());
@@ -864,7 +867,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile39.isPathTo(Direction.SOUTH));
 		assertFalse(maTile39.isPathTo(Direction.WEST));
 		assertTrue(maTile39.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile40 = Tile.parseTile("Tile_FTFFIZ01");
 		assertFalse(maTile40.isEmpty());
 		assertTrue(maTile40.isBuilding());
@@ -877,7 +880,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile40.isPathTo(Direction.SOUTH));
 		assertFalse(maTile40.isPathTo(Direction.WEST));
 		assertTrue(maTile40.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile41 = Tile.parseTile("Tile_FTFFKZ01");
 		assertFalse(maTile41.isEmpty());
 		assertTrue(maTile41.isBuilding());
@@ -890,7 +893,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile41.isPathTo(Direction.SOUTH));
 		assertFalse(maTile41.isPathTo(Direction.WEST));
 		assertTrue(maTile41.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile42 = Tile.parseTile("Tile_FTFFLZ01");
 		assertFalse(maTile42.isEmpty());
 		assertTrue(maTile42.isBuilding());
@@ -903,7 +906,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile42.isPathTo(Direction.SOUTH));
 		assertFalse(maTile42.isPathTo(Direction.WEST));
 		assertTrue(maTile42.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile43 = Tile.parseTile("Tile_FTFFMZ01");
 		assertFalse(maTile43.isEmpty());
 		assertTrue(maTile43.isBuilding());
@@ -916,7 +919,7 @@ public class TestUnitaireTile {
 		assertFalse(maTile43.isPathTo(Direction.SOUTH));
 		assertFalse(maTile43.isPathTo(Direction.WEST));
 		assertTrue(maTile43.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile44 = Tile.parseTile("Tile_TFFFZZ040213");
 		assertFalse(maTile44.isEmpty());
 		assertFalse(maTile44.isBuilding());
@@ -929,7 +932,7 @@ public class TestUnitaireTile {
 		assertTrue(maTile44.isPathTo(Direction.SOUTH));
 		assertTrue(maTile44.isPathTo(Direction.WEST));
 		assertTrue(maTile44.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile45 = Tile.parseTile("Tile_TFFFZZ02010223");
 		assertFalse(maTile45.isEmpty());
 		assertFalse(maTile45.isBuilding());
@@ -942,7 +945,7 @@ public class TestUnitaireTile {
 		assertTrue(maTile45.isPathTo(Direction.SOUTH));
 		assertTrue(maTile45.isPathTo(Direction.WEST));
 		assertTrue(maTile45.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile46 = Tile.parseTile("Tile_TFFFZZ02021203");
 		assertFalse(maTile46.isEmpty());
 		assertFalse(maTile46.isBuilding());
@@ -955,7 +958,7 @@ public class TestUnitaireTile {
 		assertTrue(maTile46.isPathTo(Direction.SOUTH));
 		assertTrue(maTile46.isPathTo(Direction.WEST));
 		assertTrue(maTile46.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile47 = Tile.parseTile("Tile_TFFFZZ06031323");
 		assertFalse(maTile47.isEmpty());
 		assertFalse(maTile47.isBuilding());
@@ -968,7 +971,7 @@ public class TestUnitaireTile {
 		assertTrue(maTile47.isPathTo(Direction.SOUTH));
 		assertTrue(maTile47.isPathTo(Direction.WEST));
 		assertTrue(maTile47.getTileDirection().equals(Direction.WEST));
-		
+
 		Tile maTile48 = Tile.parseTile("Tile_TFFFZZ06121323");
 		assertFalse(maTile48.isEmpty());
 		assertFalse(maTile48.isBuilding());
@@ -981,7 +984,7 @@ public class TestUnitaireTile {
 		assertTrue(maTile48.isPathTo(Direction.SOUTH));
 		assertFalse(maTile48.isPathTo(Direction.WEST));
 		assertTrue(maTile48.getTileDirection().equals(Direction.WEST));		
-		
+
 		Tile maTile49 = Tile.parseTile("Tile_TFFFZZ0401122303");
 		assertFalse(maTile49.isEmpty());
 		assertFalse(maTile49.isBuilding());
@@ -996,6 +999,6 @@ public class TestUnitaireTile {
 		assertTrue(maTile49.getTileDirection().equals(Direction.WEST));		
 
 	}
-	
-	
+
+
 }

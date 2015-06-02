@@ -538,6 +538,11 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		for (String s: acceptedTerminusDescription) if (td.equals(s)) return true;
 		return false;
 	}
+	
+	/**
+	 * Alloue un tableau de path, initialisé avec des paths West-West (donc déjà alloués)
+	 * @return Un tableau de Path de taille maxNbrPathInTile (5)
+	 */
 	public static Path[] initPathTab()
 	{
 		Path[] res = new Path[maxNbrPathInTile];
