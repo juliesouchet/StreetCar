@@ -46,6 +46,301 @@ public class TestUnitaireTile {
 	}
 
 	@Test
+	public void testCopy() {
+		Tile maTileA = null;
+		Tile maTileB = null;
+		
+		maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		maTileB = Tile.parseTile("Tile_FFFTZ60123");
+		maTileA.copy(maTileB);
+		assertTrue(maTileA.equalsStrong(maTileB));
+	
+		maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		maTileB = Tile.parseTile("Tile_FFFTZ60123");
+		maTileB.copy(maTileA);
+		assertTrue(maTileA.equalsStrong(maTileB));
+		
+	}
+
+	@Test
+	public void testSetStop() {
+		Tile maTileA = Tile.parseTile("Tile_FFFTZ60123");
+		assertFalse(maTileA.isStop());
+		maTileA.setStop(true);
+		assertTrue(maTileA.isStop());
+		maTileA.setStop(false);
+		assertFalse(maTileA.isStop());
+		
+	}
+
+	@Test
+	public void testEqualsObject() {
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		Tile maTileB = Tile.parseTile("Tile_FFFFZZ99");
+		assertTrue(maTileA.equals(maTileB));
+		
+		maTileA.turnHalf();
+		assertTrue(maTileA.equals(maTileB));
+
+		maTileA.setStop(true);
+		assertTrue(maTileA.equals(maTileB));
+		
+	}
+
+	@Test
+	public void testGetTileID() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetCardinal() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetTileDirection() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsTree() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsBuilding() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsTerminus() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsStop() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsEmpty() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsDeckTile() {
+		assertFalse(Tile.parseTile("Tile_FFFFZZ99").isDeckTile());
+		assertTrue(Tile.parseTile("Tile_FFFFZZ2003").isDeckTile());
+		assertFalse(Tile.parseTile("Tile_FFFTZ10112").isDeckTile());
+		assertFalse(Tile.parseTile("Tile_FTFFAZ01").isDeckTile());
+		assertTrue(Tile.parseTile("Tile_TFFFZZ040213").isDeckTile());
+	}
+
+	@Test
+	public void testTurnLeft() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testTurnRight() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testTurnHalf() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testSetDirection() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsPathTo() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testIsReplaceable() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetBuildingName() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetTerminusName() {
+		Tile maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		assertTrue(1==maTileA.getTerminusName());
+		
+		maTileA = Tile.parseTile("Tile_FTFFAZ01");
+		assertTrue(-1==maTileA.getTerminusName());
+
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		assertTrue(-1==maTileA.getTerminusName());
+		maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		assertTrue(-1==maTileA.getTerminusName());
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		assertTrue(-1==maTileA.getTerminusName());
+	}
+
+	@Test
+	public void testToString() {
+		Tile maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		assertFalse(maTileA.toString()==null);
+	}
+
+	@Test
+	public void testInitPathTab() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetAccessibleDirections() {
+		Tile maTileA = null;
+		int mesDirectionsAccessibles;
+		
+		maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));		
+	
+		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+				
+		maTileA = Tile.parseTile("Tile_FFFFZZ060123");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+			
+		maTileA = Tile.parseTile("Tile_FFFFZZ100102");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_FFFFZZ100103");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_FFFFZZ100203");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_FFFTZ10103");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_FFFTZ10112");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_FFFTZ10123");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+	
+		maTileA = Tile.parseTile("Tile_FTFFAZ01");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+
+
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_TFFFZZ02010223");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+
+		maTileA = Tile.parseTile("Tile_TFFFZZ02021203");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+
+		maTileA = Tile.parseTile("Tile_TFFFZZ06031323");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+
+		maTileA = Tile.parseTile("Tile_TFFFZZ06121323");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertFalse(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+
+		maTileA.turnLeft();
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertFalse(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+		
+		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
+		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
+		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
+		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
+
+		}
+
+	
+	@Test
 	public void testParseTile() {
 		Tile maTile1 = Tile.parseTile("Tile_FFFFZZ99");
 		assertTrue(maTile1.isEmpty());
@@ -701,120 +996,6 @@ public class TestUnitaireTile {
 		assertTrue(maTile49.getTileDirection().equals(Direction.WEST));		
 
 	}
-
-	@Test
-	public void testSetTile() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testSetStop() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testEqualsObject() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetTileID() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetCardinal() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetTileDirection() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsTree() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsBuilding() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsTerminus() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsStop() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsEmpty() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsDeckTile() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testTurnLeft() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testTurnRight() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testTurnHalf() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testSetDirection() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsPathTo() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetAccessibleDirections() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testIsReplaceable() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetBuildingName() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetTerminusName() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testToString() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testInitPathTab() {
-		fail("Not yet implemented");
-	}
-
+	
+	
 }

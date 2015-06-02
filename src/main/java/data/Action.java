@@ -93,7 +93,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.action			= BUILD_SIMPLE;
 		res.positionTile1.x	= position.x;
 		res.positionTile1.y	= position.y;
-		res.tile1			.setTile(tile);
+		res.tile1			.copy(tile);
 		return res;
 	}
 	
@@ -117,7 +117,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.action			= BUILD_SIMPLE;
 		res.positionTile1.x	= x;
 		res.positionTile1.y	= y;
-		res.tile1			.setTile(tile);
+		res.tile1			.copy(tile);
 		return res;
 	}
 	
@@ -147,8 +147,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.positionTile1.y	= position1.y;
 		res.positionTile2.x	= position2.x;
 		res.positionTile2.y	= position2.y;
-		res.tile1			.setTile(tile1);
-		res.tile2			.setTile(tile2);
+		res.tile1			.copy(tile1);
+		res.tile2			.copy(tile2);
 		return res;
 	}
 	
@@ -165,8 +165,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.positionTile1.y		= this.positionTile1.y;
 		res.positionTile2.x		= this.positionTile2.x;
 		res.positionTile2.y		= this.positionTile2.y;
-		res.tile1				.setTile(this.tile1);
-		res.tile2				.setTile(this.tile2);
+		res.tile1				.copy(this.tile1);
+		res.tile2				.copy(this.tile2);
 		res.ptrTramwayMovement	= this.ptrTramwayMovement;
 		for (int i=0; i<=this.ptrTramwayMovement; i++)
 		{
@@ -297,8 +297,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.positionTile1.y	= (src.positionTile1 == null) ? null : src.positionTile1.y;
 		this.positionTile2.x	= (src.positionTile2 == null) ? null : src.positionTile2.x;
 		this.positionTile2.y	= (src.positionTile2 == null) ? null : src.positionTile2.y;
-		this.tile1				. setTile(src.tile1);
-		this.tile2				. setTile(src.tile2);
+		this.tile1				. copy(src.tile1);
+		this.tile2				. copy(src.tile2);
 		this.ptrTramwayMovement	= src.ptrTramwayMovement;
 		for (int i=0; i<=src.ptrTramwayMovement; i++)
 		{
