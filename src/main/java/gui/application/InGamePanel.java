@@ -15,6 +15,7 @@ import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionUncompletedPath;
 import main.java.gui.board.MapPanel;
 import main.java.gui.chat.ChatPanel;
 import main.java.gui.components.Panel;
@@ -169,6 +170,9 @@ public class InGamePanel extends Panel {
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e) {
+			e.printStackTrace();
+		} catch (ExceptionUncompletedPath e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

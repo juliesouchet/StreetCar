@@ -140,8 +140,7 @@ public class Engine implements Runnable
 			for (String name: data.getPlayerNameList())
 			{
 				pi = data.getRemotePlayer(name);
-				if (name.equals(playerName))	pi.excludePlayer();
-				else							pi.gameHasChanged(data.getClone(name));
+				if (!name.equals(playerName))	pi.gameHasChanged(data.getClone(name));
 			}
 		}
 	}
