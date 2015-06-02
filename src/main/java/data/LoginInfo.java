@@ -14,8 +14,8 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
-	public static final long		serialVersionUID	= 1735179230089796614L;
-	public static final LoginInfo[]	initialLoginTable	= {	new LoginInfo(false,	null,	true,	true,	-1),
+	private static final long		serialVersionUID	= 1735179230089796614L;
+	private static final LoginInfo[]initialLoginTable	= {	new LoginInfo(false,	null,	true,	true,	-1),
 															new LoginInfo(false,	null,	false,	true,	-1),
 															new LoginInfo(false,	null,	false,	false,	1),
 															new LoginInfo(false,	null,	true,	false,	1), // TODO parameter n°3 = false
@@ -73,6 +73,10 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 
 		for (int i=0; i<Data.maxNbrPlayer; i++) res[i] = initialLoginTable[i].getClone();
 		return res;
+	}
+	public static LoginInfo getInitialLoggedPlayerTableCell(int index)
+	{
+		return initialLoginTable[index].getClone();
 	}
 	public String toString()
 	{

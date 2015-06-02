@@ -3,6 +3,9 @@ package main.java.automaton;
 import main.java.data.Action;
 
 	public class CoupleActionIndex{
+
+		final static int NOT_SIGNIFICANT = -1;
+		
 		// L'action choisie
 		private Action action;
 		//Nous mène à l'index du tableau de decision
@@ -39,13 +42,13 @@ import main.java.data.Action;
 		 * @return
 		 */
 		public boolean isSignificant(){
-			return this.index!=-1;
+			return this.index!=NOT_SIGNIFICANT;
 		}
 		/**
 		 * Met l'index de branchement a -1 pour signifier que le couple n'est pas une donnée pertinente
 		 */
 		public void setNonSignificant(){
-			this.index=-1;
+			this.index=NOT_SIGNIFICANT;
 		}
 		public boolean equals(CoupleActionIndex otherCoupleActionIndex){
 			if (this.getAction().equals(otherCoupleActionIndex.getAction()) && this.getIndex()==otherCoupleActionIndex.getIndex()){

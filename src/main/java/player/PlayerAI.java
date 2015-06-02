@@ -48,7 +48,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 
-		super.game.onJoinGame(this, isHost, iaLevel);						// Log the player to the application
+		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
 	}
 
 // --------------------------------------------

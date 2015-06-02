@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 
 import main.java.data.Data;
 import main.java.data.LoginInfo;
@@ -36,11 +37,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public static final String			gameMessageHeader		= "Street Car application: ";
 	public final static int				applicationPort			= 5000;
 	public final static String			applicationProtocol		= "rmi";
+	public final static String			AiDefaultName			= "AI Level ";
 
 	private Data						data;
 	private LoginInfo[]					loggedPlayerTable;
 	private Engine						engine;
-	private HashMap<String, PlayerAI>	aiList;
+	private HashMap<String, Thread>	aiList;
 
 // --------------------------------------------
 // Builder:
@@ -67,13 +69,20 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
 		this.engine				= new Engine();
-		this.aiList				= new HashMap<String, PlayerAI>();
-// TODO: creer les automates initiaux
+		this.aiList				= new HashMap<String, Thread>();
+
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "URL = " + url);
 		System.out.println(gameMessageHeader + "ready");
 		System.out.println(gameMessageHeader + "Start waiting for connexion request");
 		System.out.println("===========================================================\n");
+
+		for (LoginInfo li:this.loggedPlayerTable)										// Creates the initial AiPlayer's thread
+		{
+			if (li.isClosed() || li.isHuman()) continue;
+			this.launchAIPlayer(li);
+		}
+
 	}
 	/**=======================================================================
 	 * @return Creates a remote application cloned to the real application at the given ip
@@ -130,24 +139,21 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
+		boolean	oldPlayerIsHuman	= this.loggedPlayerTable[playerToChangeIndex].isHuman();
 		boolean	newPlayerIsHuman	= newPlayerInfo.isHuman();
 
 		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
 		this.loggedPlayerTable[playerToChangeIndex].setFreeCell();
 		if (oldPlayerIsOccupied)														// Case exclude old player
 		{
-			this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
-			this.aiList.remove(oldPlayerName);
+			if (oldPlayerIsHuman)	this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
+			else
+			{
+				this.aiList.get(oldPlayerName).interrupt();
+				this.aiList.remove(oldPlayerName);
+			}
 		}
-		if (!newPlayerIsHuman)															// Case create AI player
-		{
-			PlayerAI newPlayer = null;
-			try					{newPlayer = new PlayerAI(newPlayerInfo.getPlayerName(), false, this, newPlayerInfo.getAiLevel(), null);}
-			catch (Exception e)	{e.printStackTrace(); System.exit(0);}
-			Thread t = new Thread(playerName);
-			this.aiList.put(playerName, newPlayer);
-			t.start();
-		}
+		if (!newPlayerIsHuman)		this.launchAIPlayer(newPlayerInfo);					// Case create AI player
 	}
 	/**================================================
 	 * @return Makes a player join the game
@@ -161,10 +167,9 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	/**================================================
 	 * @return Makes a player join the game
 	 * ================================================*/
-	public synchronized void onJoinGame(PlayerInterface player, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionGameHasAlreadyStarted
+	public synchronized void onJoinGame(PlayerInterface player, boolean isHuman, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionGameHasAlreadyStarted
 	{
 		String	playerName	= player.getPlayerName();
-		boolean	isHuman		= player.isHumanPlayer();
 		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
@@ -173,7 +178,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
 
-		this.engine.onJoinGame(this.data, player, playerName, isHost);
+		this.engine.onJoinGame(this.data, player, playerName, isHuman, isHost);
 		this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
 		System.out.println("\n===========================================================");
 		System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");
@@ -194,7 +199,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (!this.data.isPlayerLogged(playerName))	throw new ExceptionForbiddenAction();
 		if (playerIndex == -1)						throw new ExceptionForbiddenAction();
 
-		this.loggedPlayerTable[playerIndex] = LoginInfo.initialLoginTable[playerIndex].getClone();
+		this.loggedPlayerTable[playerIndex] = LoginInfo.getInitialLoggedPlayerTableCell(playerIndex);
 		this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
@@ -211,7 +216,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers, ExceptionNonInitializedPlayer
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if (!this.data.isAllPlayersInitialized())		throw new ExceptionNonInitializedPlayer();
+		if (!this.data.isAllHumanPlayersInitialized())	throw new ExceptionNonInitializedPlayer();
 		if (!this.data.isGameReadyToStart())			throw new ExceptionNotEnougthPlayers();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
@@ -347,17 +352,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // Private methods:
 // --------------------------------------------
-	private boolean usedColor(Color c) throws RemoteException
-	{
-		PlayerInterface p;
-
-		for (String name: this.data.getPlayerNameList())
-		{
-			p = this.data.getRemotePlayer(name);
-			if (p.getPlayerColor().equals(c))	return true;
-		}
-		return false;
-	}
 	private int getPlayerInLogInfoTable(String playerName)
 	{
 		LoginInfo li;
@@ -387,5 +381,30 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 			return i;
 		}
 		return -1;
+	}
+	/**=====================================================================
+	 * Create a new AI player corresponding to the given informations.
+	 * The new player name is picked following to the existing names.
+	 * The new player's thread is kept in this.aiList
+	 =======================================================================*/
+	private void launchAIPlayer(LoginInfo newPlayerInfo)
+	{
+		PlayerAI	newPlayer	= null;
+		String		playerName	= AiDefaultName + newPlayerInfo.getAiLevel();
+		String		nameAdd		= "";
+		Random		rnd			= new Random();
+
+		while(true)
+		{
+			if (this.aiList.containsKey(playerName+nameAdd)) nameAdd += rnd.nextInt(10);
+			else break;
+		}
+		if (!nameAdd.equals(""))	playerName += "_" + nameAdd;
+
+		try					{newPlayer = new PlayerAI(playerName, false, this, newPlayerInfo.getAiLevel(), null);}
+		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
+		Thread t = new Thread(newPlayer);
+		this.aiList.put(playerName, t);
+		t.start();
 	}
 }

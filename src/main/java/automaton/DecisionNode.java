@@ -13,7 +13,8 @@ import main.java.util.TraceDebugAutomate;
  */
 public class DecisionNode {
 
-	
+	final static int NOT_SIGNIFICANT = -1;
+
 	/* ===============================================================================================================
 	 * 			ATTRIBUTS
 	 * =============================================================================================================== */
@@ -138,6 +139,22 @@ public class DecisionNode {
 		return this.depth;
 	}	
 
+	/**
+	 * @param index
+	 * L'indice du couple action-index dans la table.
+	 * @return
+	 * vrai si le couple action-index est une donnée pertinente (cad pas un valeur de remplissage pour forcer allocation)
+	 */
+	public boolean actionIsSignificant(int index){
+		return this.getCoupleActionIndex(index).isSignificant();
+	}
+	/**
+	 * @return
+	 * Vrai si la valeur de la qualité du noeud n'est pas une valeur de remplissage
+	 */
+	public boolean qualityIsSignificant(){
+		return this.getQuality()!=NOT_SIGNIFICANT;
+	}
 	
 	/* ===============================================================================================================
 	 * 			SETTER
@@ -229,14 +246,14 @@ public class DecisionNode {
 		
 	}
 
-	//TODO: test unitaire
 	/**
 	 * Remet toutes les actions de la table de couples action possible/index comme non pertinentes
 	 */
 	public void reset(){
 		for(int i=0;i<this.getNumberPossiblesActionsTable();i++){
-			this.getCoupleActionIndex(i).setIndex(0);
+			this.getCoupleActionIndex(i).setIndex(CoupleActionIndex.NOT_SIGNIFICANT);
 		}
+		this.setQuality(NOT_SIGNIFICANT);
 	}
 	
 	/* ===============================================================================================================
@@ -258,10 +275,10 @@ public class DecisionNode {
 		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
 		// On rempli la table avec des actions (du coup non significatives)
 		for(int i=0; i<numberMaxOfPossibleActions;i++){
-			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), -1);
+			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), CoupleActionIndex.NOT_SIGNIFICANT);
 		}
-		//A la creation on fixe la qualité a -1 tant qu'une valeur significative n'a pas été calculé
-		this.setQuality(-1.0);
+		//A la creation on fixe la qualité a NOT_SIGNIFICANT tant qu'une valeur significative n'a pas été calculé
+		this.setQuality(NOT_SIGNIFICANT);
 		this.setDepth(depth);
 		if(type.equals("root")){
 			this.setRoot();

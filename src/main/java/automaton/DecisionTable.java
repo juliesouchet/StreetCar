@@ -1,5 +1,7 @@
 package main.java.automaton;
 
+import main.java.data.Action;
+import main.java.data.Data;
 import main.java.util.TraceDebugAutomate;
 
 
@@ -10,6 +12,10 @@ import main.java.util.TraceDebugAutomate;
  *
  */
 public class DecisionTable {
+	
+	public static final int ALLY=0;
+	public static final int OPPONENT=1;
+	public static final int TABLE_IS_FULL=-1;
 	
 	
 	/* ===============================================================================================================
@@ -42,23 +48,24 @@ public class DecisionTable {
 	}	
 	
 	/**
-	 * PRECONDITION: Le noeud doit avoir 1 action possible (retourne -1 sinon)
-	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
+	 * PRECONDITION: Le noeud doit avoir 1 action possible (retourne NOT_SIGNIFICANT (-1) sinon)
 	 * @param index
+	 * Numero de noeud dans le tableau
 	 * @return
+	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
 	 */
 	public int getBestActionIndex(int index){
-		int indexBestActionInTable=-1;
-		int indexBestActionInNode=-1;
+		int indexBestActionInTable=DecisionNode.NOT_SIGNIFICANT;
+		int indexBestActionInNode=DecisionNode.NOT_SIGNIFICANT;
 		int indexCourantInTable;
 		int indexCourantInNode;
-		double bestValue=-1;
+		double bestValue=-1.0;
 		double currentValue;
 		DecisionNode decisionNode = this.getDecisionNode(index);
 
 		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
-			indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
-			if (indexCourantInTable!=0){
+			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
+				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
 				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
 				if( currentValue>=bestValue){
 					indexBestActionInNode = indexCourantInNode;
@@ -88,8 +95,8 @@ public class DecisionTable {
 		DecisionNode decisionNode = this.getDecisionNode(index);
 
 		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
-			indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
-			if (indexCourantInTable!=0){
+			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
+				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
 				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
 				if( currentValue<=worstValue){
 					indexWorstActionInNode = indexCourantInNode;
@@ -119,6 +126,19 @@ public class DecisionTable {
 		this.size=size;
 	}
 
+	/**
+	 * Methode pour trouver un slot disponible dans la table de decision
+	 * @return
+	 * L'indice d'un slot contenant une donnée non pertinente sucestible d'être écrasée
+	 */
+	public int findFreeSlot(){
+		for (int i=0; i<this.getSize();i++){
+			if(this.slotIsFree(i)){
+				return i;
+			}
+		}
+		return TABLE_IS_FULL;
+	}
 
 	/* ===============================================================================================================
 	 * 			SETTERS
@@ -167,6 +187,7 @@ public class DecisionTable {
 		}
 	}	
 
+	
 
 	/* ===============================================================================================================
 	 * 			UTILITAIRES
@@ -190,25 +211,60 @@ public class DecisionTable {
 	}
 
 	
-	//	// TODO le minimax
-	//	/**
-	//	 * Si type = leaf: fonction d'évaluation 
-	//	 * sinon minimax
-	//	 * 
-	//	 * @param currentConfig
-	//	 * 	L'etat du jeu courant
-	//	 * @param height
-	//	 * La profondeur a construire: 
-	//	 * si 0 alors c'est une feuille, on fait appel a la fonction d'evaluation
-	//	 */
-	//	public DecisionNode(Data currentConfig, int height){
-	//		if (height<=0){	//C'est une feuille
-	//			//Evaluator.evaluateSituationQuality(currentConfig.get, gamesNumber, config, difficulty)
-	//		}
-	//		else if (height>0) { // C'est un noeud interne on fait un appel récursif
-	//			
-	//		}
-	//		
-	//	}	
+	/*
+	 * TODO finir implementation:
+	 * demander a julie fonctionnement Evaluator.evaluateSituationQuality (gameNumber? difficulty?)
+	 * TODO passer methode en argument ? (a priori non...)
+	 */
+	/**
+	 * Implémentation de l'algorithme minimax: la table de décision est calculée
+	 * @param index
+	 * 	L'indice du noeud en construction dans la table de decision
+	 * @param type
+	 *  noeud Min ou Noeud max (ALLY ou OPPONENT);
+	 * @param wantedDepth
+	 * 	la profondeur (restante) a explorer) 
+	 * @param currentConfiguration
+	 * 	le data courant: cad l'etat de la partie
+	 */
+	public void applyMinMax(int index, int type, int wantedDepth, Data currentConfiguration ){
+		double evaluatedQuality = DecisionNode.NOT_SIGNIFICANT;
+		Data.possibleActionsSet potentialActionsSet = null;
+		CoupleActionIndex bufferCoupleActionIndex = null;
+		int aFreeSlot = 0;
+		// Cas d'une feuille on estime la qualité avec la fonction de Julie
+		if(wantedDepth==0){ 
+			//evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty)
+			this.getDecisionNode(index).setQuality(evaluatedQuality);
+			this.getDecisionNode(index).setLeaf();
+			
+		// Cas d'une recurrence	
+		} else if(wantedDepth>0){
+			potentialActionsSet = currentConfiguration.getPossibleActions(currentConfiguration.getPlayerTurn());
+			/*TODO demander a Riyane un constructeur d'action abstrait que alloue la memoire*/
+			bufferCoupleActionIndex = new CoupleActionIndex( new Action(), CoupleActionIndex.NOT_SIGNIFICANT);
+			for (int i=0; i<potentialActionsSet.getCardinal(); i++){
+				// TODO indexFreeSlot = this.findFreeSlot();
+				bufferCoupleActionIndex.setIndex(aFreeSlot);
+				bufferCoupleActionIndex.setAction(potentialActionsSet.getAction(i));
+				this.getDecisionNode(index).setCoupleActionIndex(i, bufferCoupleActionIndex);
+
+// TODO				
+//				currentConfiguration.doAction(potentialActionsSet.getAction(i));
+//				this.applyMinMax(aFreeSlot, typeSuivant, wantedDepth-1, currentConfiguration);
+//				currentConfiguration.rollBack();
+			}
+			if (type==ALLY){
+				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getBestActionIndex(index)).getQuality());
+			}
+			else if (type==OPPONENT){
+				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getWorstActionIndex(index)).getQuality());	
+
+			}
+					
+		}
+	}
+	
+
 
 }

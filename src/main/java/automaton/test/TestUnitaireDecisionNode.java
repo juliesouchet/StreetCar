@@ -145,7 +145,7 @@ public class TestUnitaireDecisionNode {
 	@Test
 	public void testIsInternal() throws ExceptionUnknownNodeType {
 		DecisionNode monNoeudDeDecision = null;
-		
+
 		monNoeudDeDecision = new DecisionNode(10, 1, "internalNode");
 		assertTrue(monNoeudDeDecision.isInternal());
 		monNoeudDeDecision = new DecisionNode(10, 1, "leaf");
@@ -156,39 +156,39 @@ public class TestUnitaireDecisionNode {
 		assertFalse(monNoeudDeDecision.isInternal());
 		monNoeudDeDecision = new DecisionNode(10, 1, "leaf&root");
 		assertFalse(monNoeudDeDecision.isInternal());
-		
+
 		monNoeudDeDecision.unsetLeaf();
 		monNoeudDeDecision.unsetRoot();
 		assertTrue(monNoeudDeDecision.isInternal());
-		
-		}
+
+	}
 
 	@Test
 	public void testSetInternalNode() throws ExceptionUnknownNodeType {
 		DecisionNode monNoeudDeDecision = null;
-		
+
 		monNoeudDeDecision = new DecisionNode(10, 1, "internalNode");
 		monNoeudDeDecision.setInternalNode();
 		assertTrue(monNoeudDeDecision.isInternal());
-				
+
 		monNoeudDeDecision = new DecisionNode(10, 1, "leaf");
 		monNoeudDeDecision.setInternalNode();
 		assertTrue(monNoeudDeDecision.isInternal());
-		
+
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
 		monNoeudDeDecision.setInternalNode();
 		assertTrue(monNoeudDeDecision.isInternal());
-		
+
 		monNoeudDeDecision = new DecisionNode(10, 1, "root&leaf");
 		monNoeudDeDecision.setInternalNode();
 		assertTrue(monNoeudDeDecision.isInternal());
-		
+
 		monNoeudDeDecision = new DecisionNode(10, 1, "leaf&root");
 		monNoeudDeDecision.setInternalNode();
 		assertTrue(monNoeudDeDecision.isInternal());
-	
+
 	}
-		
+
 
 	@Test
 	public void testGetAndSetQuality() throws ExceptionUnknownNodeType {
@@ -209,8 +209,8 @@ public class TestUnitaireDecisionNode {
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
 		maTableCoupleActionIndex = monNoeudDeDecision.getPossibleFollowingAction();
 		assertFalse(maTableCoupleActionIndex==null);
-		assertTrue(maTableCoupleActionIndex[0].getIndex()==0); //Init a 0
-		assertTrue(maTableCoupleActionIndex[9].getIndex()==0);
+		assertTrue(maTableCoupleActionIndex[0].getIndex()==-1); //Init a -1
+		assertTrue(maTableCoupleActionIndex[9].getIndex()==-1);
 	}
 
 	@Test
@@ -235,7 +235,7 @@ public class TestUnitaireDecisionNode {
 		assertTrue(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==otherSize);
 		assertFalse(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==otherSize+1);
 	}
-	
+
 	@Test
 	public void getNumberPossiblesActionsTable() throws ExceptionUnknownNodeType {
 		DecisionNode monNoeudDeDecision = null;
@@ -253,7 +253,7 @@ public class TestUnitaireDecisionNode {
 		assertTrue(monNoeudDeDecision.getNumberPossiblesActionsTable()==2);
 		assertFalse(monNoeudDeDecision.getNumberPossiblesActionsTable()==0);		
 
-		
+
 	}
 
 	@Test
@@ -263,16 +263,16 @@ public class TestUnitaireDecisionNode {
 		int size=10;
 		Tile maTile = Tile.parseTile("Tile_FFFFZZ060123");
 		Action monAction = Action.newBuildSimpleAction(new Point(5,4), maTile);
-		
+
 		monNoeudDeDecision = new DecisionNode(size, 1, "root");
 		assertTrue(monNoeudDeDecision.getCoupleActionIndex(0).equals(monNoeudDeDecision.getCoupleActionIndex(1))); //La table des couples action/index est initialisé avec des valeurs par default, ils doivent donc etre egaux 2 a deux
 		monCoupleActionIndex = new CoupleActionIndex(monAction, 1);
 		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex);
 		assertFalse(monCoupleActionIndex==monNoeudDeDecision.getCoupleActionIndex(0)); //Le couple a été copié, ce n'est pas le meme objet
 		assertTrue(monCoupleActionIndex.equals(monNoeudDeDecision.getCoupleActionIndex(0))); // Mais leur contenu est identique
-	
+
 	}
-		
+
 
 	@Test
 	public void testGetDepth() throws ExceptionUnknownNodeType {
@@ -306,26 +306,56 @@ public class TestUnitaireDecisionNode {
 		int size=10;
 		monNoeudDeDecisionSource = new DecisionNode(size, 0, "root");
 		monNoeudDeDecisionCible = new DecisionNode(size, 0, "root");
-		
+
 		CoupleActionIndex monCoupleActionIndex = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 1);
 		monNoeudDeDecisionSource.setCoupleActionIndex(0, monCoupleActionIndex);
 		assertFalse(monNoeudDeDecisionCible.equals(monNoeudDeDecisionSource));
 		monNoeudDeDecisionCible.copy(monNoeudDeDecisionSource);
 		assertTrue(monNoeudDeDecisionCible.equals(monNoeudDeDecisionSource));
-		
+
 	}
 
 
 	@Test
-	public void testToString() {
+	public void testActionIsSignificant() throws ExceptionUnknownNodeType{
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
-		try {
-			monNoeudDeDecision = new DecisionNode(size, 0, "root");
-		} catch (ExceptionUnknownNodeType e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		monNoeudDeDecision = new DecisionNode(size, 0, "root");
+		assertFalse(monNoeudDeDecision.actionIsSignificant(0));
+		monNoeudDeDecision.getCoupleActionIndex(0).setIndex(1);
+		assertTrue(monNoeudDeDecision.actionIsSignificant(0));
+	}
+	
+	@Test
+	public void testQualityIsSignificant() throws ExceptionUnknownNodeType{
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		monNoeudDeDecision = new DecisionNode(size, 0, "root");
+		assertFalse(monNoeudDeDecision.qualityIsSignificant());
+		monNoeudDeDecision.setQuality(8.0);
+		assertTrue(monNoeudDeDecision.qualityIsSignificant());
+	}
+	
+	@Test
+	public void testReset() throws ExceptionUnknownNodeType{
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		monNoeudDeDecision = new DecisionNode(size, 0, "root");
+		monNoeudDeDecision.setQuality(10.0);
+		for(int i = 0; i < size; i++){
+			monNoeudDeDecision.getCoupleActionIndex(i).setIndex(i);
 		}
+		monNoeudDeDecision.reset();
+		for(int i = 0; i < size; i++){
+			assertFalse(monNoeudDeDecision.actionIsSignificant(0));
+		}
+	}
+
+	@Test
+	public void testToString() throws ExceptionUnknownNodeType {
+		DecisionNode monNoeudDeDecision = null;
+		int size=10;
+		monNoeudDeDecision = new DecisionNode(size, 0, "root");
 		String resultToString = monNoeudDeDecision.toString();
 		assertFalse(resultToString==null);
 	}
