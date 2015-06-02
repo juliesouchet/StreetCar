@@ -15,7 +15,7 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 // Attributes:
 // --------------------------------------------
 	private static final long		serialVersionUID	= 1735179230089796614L;
-	private static final LoginInfo[]initialLoginTable	= {	new LoginInfo(false,	null,	true,	true,	-1),
+	public static final LoginInfo[]initialLoginTable	= {	new LoginInfo(false,	null,	true,	true,	-1),
 															new LoginInfo(false,	null,	false,	true,	-1),
 															new LoginInfo(false,	null,	false,	false,	1),
 															new LoginInfo(false,	null,	false,	false,	1), // TODO parameter n°3 = false

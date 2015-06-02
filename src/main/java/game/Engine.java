@@ -129,7 +129,7 @@ public class Engine implements Runnable
 		boolean			isHost		= this.toExecute.isHost;
 		PlayerInterface pi;
 
-		data.addPlayer(player, playerName, isHuman, isHost);
+//		data.addPlayer(player, playerName, isHost, isHuman);
 		for (String name: data.getPlayerNameList())
 		{
 			pi = data.getRemotePlayer(name);
