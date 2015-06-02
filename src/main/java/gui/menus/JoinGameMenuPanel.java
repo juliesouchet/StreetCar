@@ -1,5 +1,6 @@
 	package main.java.gui.menus;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -101,19 +102,16 @@ public class JoinGameMenuPanel extends MenuPanel {
 		
 		GameController gc = this.getGameController();
 		try {
-			/*
-			gc.player = PlayerIHM.launchPlayer(playerName,
-					                           gameName,
-					                           "newOrleans",
-					                           2,
-					                           Color.RED,
-					                           false,
-					                           null,
-					                           gc);			
-			*/
-			
-			
-			gc.player = PlayerIHM.launchPlayer(playerName, gameName, "newOrleans", 2, false, addressField.getText(), gc);
+			gc.player = PlayerIHM.launchPlayer(playerName, 
+											   gameName,
+											   "newOrleans",
+											    2,
+											    false,
+											    addressField.getText(),
+											    gc);
+
+			Color playerColor = gc.player.getGameData().getRandomUnusedColor();
+			gc.player.setPlayerColor(playerColor);
 			gc.showClientWaitingRoomPanel();
 		} catch (Exception e)	{
 		     Toolkit.getDefaultToolkit().beep();
