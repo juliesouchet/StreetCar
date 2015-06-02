@@ -1,6 +1,5 @@
 package test.java.player;
 
-import java.awt.Color;
 import java.util.Random;
 
 import main.java.data.Data;
@@ -35,10 +34,8 @@ public class Test_IHM_IA implements InterfaceIHM
 		try
 		{
 			playerIHM	= PlayerIHM.launchPlayer("riyane", "jeux", "newOrleans", 3,  true, null, this);
-			playerIHM	.setPlayerColor(Color.red);
 			game		= Game.getRemoteGame("127.0.0.1", "jeux");
 			playerAI	= new PlayerAI(iaName, false, game, 1, null);
-			playerAI	.setPlayerColor(Color.green);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 

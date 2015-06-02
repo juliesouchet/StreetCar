@@ -180,7 +180,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 ///////				System.out.println(info);
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
-				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
+//TODO 				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
 				
 				System.out.println(i + " " + info);
 				if (info.isClosed()) {
