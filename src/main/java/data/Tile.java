@@ -119,7 +119,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 //TODO verifier tous ceux qui l'appelent
 	
 	/**
-	 * Clone la tuile
+	 * Clone la tuile (Deep clone: toutes les attributs sont clones)
 	 * @return
 	 * Retourne une référence vers une nouvelle instance de tuile égale a la tuile appelante
 	 */
@@ -191,7 +191,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 				res.buildingDescription = null;
 			}
 
-			l += nbrBuildingDescriptionChar;														// Scan the terminusDescription
+			l += nbrBuildingDescriptionChar;													// Scan the terminusDescription
 			str = imageFileName.substring(l, l+nbrTerminusDescriptionChar);
 			if (res.isTerminus)
 			{
@@ -207,7 +207,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 
 			l += nbrTerminusDescriptionChar;
 			str = imageFileName.substring(l, l+nbrCardinalChar);
-			res.cardinal = Integer.parseInt(str);													// Scan the tile cardinal
+			res.cardinal = Integer.parseInt(str);												// Scan the tile cardinal
 
 			l += nbrCardinalChar;
 			for (int i=l; i<imageFileName.length(); i+=2)
@@ -297,6 +297,10 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (o==null){return false;}
 		if (!(o instanceof Tile)){return false;}
 		comparedTile = (Tile) o;
+
+		
+		
+		
 		if (!((Tile)o).tileID.equals(this.tileID)){return false;}
 		if (this.isTree()!=comparedTile.isTree() || this.isBuilding()!=comparedTile.isBuilding() || this.isStop()!=comparedTile.isStop() || this.isTerminus()!=comparedTile.isTerminus() ){
 			return false;
@@ -318,7 +322,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			return false;
 		}
 		for( int i=0; i<this.ptrPathTab;i++ ){
-			if (!this.pathTab.equals(comparedTile.pathTab)){
+			if (!this.pathTab[i].equals(comparedTile.pathTab[i])){
 				return false;
 			}
 		}
@@ -401,16 +405,9 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * Modifie l'orientation de la tuile: retourne la tuile (équivament à double rotation à droite ou à gauche).
 	 */
 	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
-	
+ 
 	/**
-	 * Affecte l'orentation de la tuile à la direction donnée.
-	 * @param dir
-	 * Direction voulue pour la tuile.
-	 */
-	public void		setDirection(Direction dir)	{this.tileDirection = dir;}
-
-	/**
-	 * Donne les voies permises par la tuile.	
+	 * Indique si la direction donnee est accessible par cette tuile.
 	 * @param dir
 	 * La direction où l'on veut aller.
 	 * @return

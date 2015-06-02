@@ -77,8 +77,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			try
 			{
-				if (!data.isEnougthTileInDeck(nbrCards)) {
-					//throw new ExceptionNotEnougthTileInDeck(); TODO continuer à jouer jusqu'à ce que les mains soient vides
+				if (!data.isEnougthTileInDeck(nbrCards))
+				{
+//throw new ExceptionNotEnougthTileInDeck(); TODO continuer à jouer jusqu'à ce que les mains soient vides
 					nbrCards = data.getNbrRemainingDeckTile();
 				}
 				super.drawTile(nbrCards);
