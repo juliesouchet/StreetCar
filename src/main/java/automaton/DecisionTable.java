@@ -59,7 +59,7 @@ public class DecisionTable {
 		int indexBestActionInNode=DecisionNode.NOT_SIGNIFICANT;
 		int indexCourantInTable;
 		int indexCourantInNode;
-		double bestValue=-1.0;
+		double bestValue = -1.0;
 		double currentValue;
 		DecisionNode decisionNode = this.getDecisionNode(index);
 

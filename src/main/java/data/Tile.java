@@ -57,10 +57,11 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	/**
 	 * Constructeur de tuile: fais une copy de la tuile t
 	 * @param pathList
-	 * La liste des voies de la tuile. Met des valeurs par default si null. (Les String aà null, les booléens à null et les entiers à -1)
+	 * La liste des voies de la tuile. Met des valeurs par default si null. (Les String à null, les booléens à null et les entiers à -1)
 	 * @param ptrPathTab
 	 * TODO ptrPathTab est le compteur du nombre de chemin ?
 	 * @param t
+	 * La tuile copiée
 	 * @throws RuntimeException
 	 */
 	public Tile(Path[] pathList, int ptrPathTab, Tile t) throws RuntimeException
@@ -94,8 +95,19 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		}
 		else throw new RuntimeException("Unhandeled case");
 	}
+	
+	/**
+	 * Constructeur générique
+	 */
 	private Tile(){}
 //TODO verifier tous ceux qui l'appelent
+	
+	//TODO copyPathTab copie il bien les valeurs ou juste les références ?
+	/**
+	 * Clone la tuile
+	 * @return
+	 * Retourne une référence vers une nouvelle instance de tuile égale a la tuile appelante
+	 */
 	public Tile getClone()
 	{
 		Tile res = new Tile();
