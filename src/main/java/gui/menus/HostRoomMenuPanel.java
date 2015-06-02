@@ -161,26 +161,19 @@ public class HostRoomMenuPanel extends MenuPanel {
 			return;
 		}
 		System.out.println(data.getPlayerNameList());
-		for (String playerName : data.getPlayerNameList()) {
-			if (data.getPlayerColor(playerName) == null) {
-				Color playerColor = data.getRandomUnusedColor();
-				data.setPlayerColor(playerName, playerColor);
-			}
-		}
 		
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
-			for (int i = 0; i < 5; i++) {
-				
+System.out.println("************* " + data.getNbrPlayer());
+			for (int i = 0; i < data.getNbrPlayer(); i++) {				
+				LoginInfo info = loginInfos[i];
 				Label nameLabel = this.nameLabels.get(i);
 				ComboBox choiceComboBox = this.choiceComboBoxes.get(i);
 				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
+				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
 				
-				LoginInfo info = loginInfos[i];
-///////				System.out.println(info);
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
-//TODO 				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
 				
 				System.out.println(i + " " + info);
 				if (info.isClosed()) {

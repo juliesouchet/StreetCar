@@ -40,6 +40,7 @@ public class InGamePanel extends Panel {
 	// Constructors
 	
 	InGamePanel(GameController gc) {
+		// TODO valz comment : was commented
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
@@ -143,6 +144,8 @@ public class InGamePanel extends Panel {
 	// Actions
 	
 	public void validate() {
+		// TODO uncomment and fix
+		/*
 		try {
 			this.getPlayer().validate();
 		} catch (RemoteException e) {
@@ -154,6 +157,7 @@ public class InGamePanel extends Panel {
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 	
 	public void beginTrip() {
@@ -184,6 +188,7 @@ public class InGamePanel extends Panel {
 	}
 	
 	public void refreshGame(PlayerIHM player, Data data) {
+		// TODO valz comment : was commented
 		System.out.println("REFRESH GAME");
 		this.mapPanel.refreshGame(player, data);
 		for (PlayerPanel playerPanel : this.playerPanels) {
