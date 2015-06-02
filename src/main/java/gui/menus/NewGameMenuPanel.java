@@ -1,6 +1,5 @@
 package main.java.gui.menus;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -8,7 +7,6 @@ import java.awt.Toolkit;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import main.java.data.Data;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.Label;
@@ -121,11 +119,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 					                           true,
 					                           IP.getIpAdressFromInet(),
 					                           gc);
-			Data data = gc.player.getGameData();
-			if (data == null) System.out.println("DATA VAUT NULL");
-			Color playerColor = data.getRandomUnusedColor();
-			/*gc.player.setPlayerColor(playerColor);
-			gc.showHostWaitingRoomPanel();*/
+			gc.showHostWaitingRoomPanel();
 		} catch (Exception e)	{
 			e.printStackTrace(); 
 			System.exit(0);
