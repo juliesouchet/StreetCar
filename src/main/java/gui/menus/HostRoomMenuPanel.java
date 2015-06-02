@@ -174,6 +174,11 @@ System.out.println("************* " + data.getNbrPlayer());
 				
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
+
+// TODO: erreur: tu ne teste pas si info.isClosed().   Si c isClosed, alors info.getPlayerName() == null
+if (!info.isOccupiedCell()) continue;
+// TODO: correction bidon, 
+				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
 				
 				System.out.println(i + " " + info);
 				if (info.isClosed()) {
