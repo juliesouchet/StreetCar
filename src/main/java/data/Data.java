@@ -139,6 +139,8 @@ return null;
 	public static final	String			buildingInLineFile		= "src/main/resources/line/buildingInLineDescription_";
 	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
 	public static final int				maxNbrPlayer			= 5;
+	public static final int				minLine					= 1;
+	public static final int				maxLine					= 6;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				minSpeed				= 1;
@@ -148,8 +150,9 @@ return null;
 	private static String[][][]			existingBuildingInLine;
 	private static Color[]				existingColors;
 
+	LinkedList<Integer>					remainingLine;
 	private LinkedList<String[][]>		remainingBuildingInLine;
-	private Color[]						remainingColors;
+	private LinkedList<Color>			remainingColors;
 
 	private String						gameName;
 	private int							nbrBuildingInLine;
@@ -183,6 +186,9 @@ return null;
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
 		this.maxPlayerSpeed		= minSpeed;
+		this.remainingLine		= new LinkedList<Integer>();
+		for (int j=minLine; j<=maxLine; j++) remainingLine.add(j);
+
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
 	}
 	private Data(){}
@@ -194,7 +200,8 @@ return null;
 		Copier<String> 		cpS		= new Copier<String>();
 
 		res.remainingBuildingInLine	= null;
-		res.remainingColors			= cpC.copyTab(remainingColors);
+		res.remainingLine			= null;
+		res.remainingColors			= cpC.copyList(remainingColors);
 
 		res.gameName				= new String(this.gameName);
 		res.nbrBuildingInLine		= this.nbrBuildingInLine;
@@ -236,24 +243,24 @@ return null;
 	public void setPlayerColor(String playerName, Color playerColor)
 	{
 		PlayerInfo pi = this.playerInfoList.get(playerName);
-		int colorIndex	= getRemainingColorIndex(playerColor);
 
-		pi.line							= 1 + colorIndex;
-		this.remainingColors[colorIndex]= null;
-		int i							= (new Random()).nextInt(remainingBuildingInLine.size());	// Draw the buildings to go through
-		pi.color						= new Color(playerColor.getRGB());
-		pi.buildingInLine_name			= remainingBuildingInLine.get(i)[pi.line-1];
-		remainingBuildingInLine			.remove(i);
-		pi.buildingInLine_position		= getBuildingPosition(pi.buildingInLine_name);				// Init the building line position
-		pi.terminus						= getTerminusPosition(pi.line);								// Init the terminus position
+		if (!this.remainingColors.contains(playerColor)) throw new RuntimeException("Used color");
+
+		pi.color = new Color(playerColor.getRGB());
+		this.remainingColors.add(pi.color);
+		this.remainingColors.remove(playerColor);
 	}
 	/**================================================
 	 * Remove a player from the present game
 	 ==================================================*/
 	public void removePlayer(String playerName)
 	{
-		PlayerInterface pi = this.playerInfoList.get(playerName).player;
+		PlayerInfo pi = this.playerInfoList.get(playerName);
 		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
+
+		this.remainingLine				.add(pi.line);
+		this.remainingColors			.add(pi.color);
+		this.remainingBuildingInLine	.add(pi.remainingBuildingInLineSave);
 		this.playerInfoList.remove(playerName);
 	}
 	/**================================================
@@ -270,8 +277,6 @@ return null;
 		LinkedList<String> players = new LinkedList<String> (this.getPlayerNameList());
 		Random rnd = new Random();
 		int i, size = players.size();
-		Color color;
-		PlayerInfo pi;
 
 		this.round			= -1;
 		this.playerOrder	= new String[size];				// Init playerOrder
@@ -282,13 +287,6 @@ return null;
 			players.remove(i);
 		}
 
-		for (String name: this.playerInfoList.keySet())		// Init the non initialized players attributes
-		{
-			pi = this.playerInfoList.get(name);
-			if (pi.isHuman)	continue;
-			color = this.getRandomUnusedColor();
-			this.setPlayerColor(name, color);
-		}
 		this.skipTurn();
 	}
 	/**===================================================
@@ -484,11 +482,12 @@ return null;
 	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
 	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
 	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
-	public boolean				isUsedColor(Color c)							{return !this.getUnusedColors().contains(c);}
+	public boolean				isUsedColor(Color c)							{return this.remainingColors.contains(c);}
 	public boolean				isPlayerTurn(String playerName)					{return (this.playerOrder == null) ? false : (this.getPlayerTurn().equals(playerName));}
 	public boolean				isEmptyDeck()									{return this.deck.isEmpty();}
 	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
+	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean				isAllHumanPlayersInitialized()
 	{
 		for (String str: this.playerInfoList.keySet())
@@ -499,7 +498,6 @@ return null;
 		}
 		return true;
 	}
-	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
@@ -714,21 +712,10 @@ return null;
 		}
 		catch(Exception e){throw new RuntimeException("Error while writing the board");}
 	}
-	public LinkedList<Color> getUnusedColors()
-	{
-		LinkedList<Color> res = new LinkedList<Color>();
-
-		for (int i=0; i<Data.existingColors.length; i++)
-		{
-			if (this.remainingColors[i] != null) res.add(this.remainingColors[i]);
-		}
-		return res;
-	}
 	public Color getRandomUnusedColor()
 	{
-		LinkedList<Color> unusedColorList = this.getUnusedColors();
-		int i = (new Random()).nextInt(unusedColorList.size());
-		return unusedColorList.get(i);
+		int i = (new Random()).nextInt(this.remainingColors.size());
+		return this.remainingColors.get(i);
 	}
 
 // --------------------------------------------
@@ -744,36 +731,36 @@ return null;
 		File f;
 		Scanner sc;
 
-		Data.existingLine	= new int[maxNbrPlayer];						// Scan the existing lines and corresponding colors
-		Data.existingColors	= new Color[maxNbrPlayer];
-		this.remainingColors= new Color[maxNbrPlayer];
+		Data.existingLine	= new int[maxLine];						// Scan the existing lines and corresponding colors
+		Data.existingColors	= new Color[maxLine];
+		this.remainingColors= new LinkedList<Color>();
 		try
 		{
 			f = new File(lineFile);
 			sc = new Scanner(f);
-			for (int i=1; i<=maxNbrPlayer; i++)
+			for (int i=1; i<=maxLine; i++)
 			{
 				Data.existingLine[i-1] = i;
 				line = sc.nextInt();
 				if (line != i) {sc.close();throw new Exception();}
 				color = sc.next();
 				Data.existingColors[i-1]	= Util.parseColor(color);
-				this.remainingColors[i-1]	= Util.parseColor(color);
+				this.remainingColors		.add(Util.parseColor(color));
 			}
 			sc.close();
 		}
 		catch (Exception e){e.printStackTrace(); throw new RuntimeException("Malformed line file");}
 
-		Data.existingBuildingInLine	= new String[maxNbrPlayer][][];			// Scan the existing building in line cards
+		Data.existingBuildingInLine	= new String[maxLine][][];			// Scan the existing building in line cards
 		this.remainingBuildingInLine= new LinkedList<String[][]>();
 		try
 		{
 			f = new File(buildingInLineFile+nbrBuildingInLine);
 			sc = new Scanner(f);
-			for (int l=0; l<maxNbrPlayer; l++)
+			for (int l=0; l<maxLine; l++)
 			{
-				String[][] strTab = new String[maxNbrPlayer][nbrBuildingInLine];
-				for (int p=0; p<maxNbrPlayer; p++)
+				String[][] strTab = new String[maxLine][nbrBuildingInLine];
+				for (int p=0; p<maxLine; p++)
 				{
 					for (int b=0; b<nbrBuildingInLine; b++) strTab[p][b] = sc.next();
 				}
@@ -885,17 +872,6 @@ return null;
 		}
 		return res;
 	}
-	private int getRemainingColorIndex(Color color)
-	{
-		for (int i=0; i<existingColors.length; i++)
-		{
-			if (!color.equals(existingColors[i])) continue;
-			if (this.remainingColors[i] == null)	throw new RuntimeException("Used Player Color");
-			else return i;
-		}
-
-		throw new RuntimeException("Unknown Color: " + color);
-	}
 
 // --------------------------------------------
 // Player Info class:
@@ -907,25 +883,39 @@ return null;
 		public PlayerInterface		player;
 		public boolean				isHuman;
 		public Hand					hand;
-		public int					line					= -1;					// Real value of the line (belongs to [1, 6])
-		public Color				color					= null;
-		public String[]				buildingInLine_name		= null;
-		public Point[]				buildingInLine_position	= null;
-		public Point[]				terminus				= null;					// Complete player's terminus list
+		public int					line;											// Real value of the line (belongs to [1, 6])
+		public Color				color;
+		public String[]				buildingInLine_name;
+		public Point[]				buildingInLine_position;
+		public Point[]				terminus;										// Complete player's terminus list
 //TODO: ulysse Ne plus stocker les action mais les data
 		public LinkedList<LinkedList<Action>>	history;							// organized by turns
 		public boolean				startedMaidenTravel		= false;				// Data relative to the travel
 		public Point				tramPosition			= null;
 		public Point[]				endTerminus				= new Point[2];
 		public Point				previousTramPosition	= null;
+public String[][]remainingBuildingInLineSave;
 
 		// Builder
 		private PlayerInfo(){}
 		public PlayerInfo(PlayerInterface pi, boolean isHuman, String playerName)
 		{
+			Random rnd = new Random();
+			int i;
 			this.player					= pi;
 			this.isHuman				= isHuman;
 			this.hand					= Hand.initialHand.getClone();
+			i 							= rnd.nextInt(remainingColors.size());
+			this.color					= remainingColors.get(i);
+			i 							= rnd.nextInt(remainingLine.size());
+			this.line					= remainingLine.get(i);
+			remainingLine.remove(i);
+			i 							= rnd.nextInt(remainingBuildingInLine.size());
+			this.remainingBuildingInLineSave = remainingBuildingInLine.get(i);
+			this.buildingInLine_name	= this.remainingBuildingInLineSave[this.line-1];
+			remainingBuildingInLine		.remove(i);
+			this.buildingInLine_position= getBuildingPosition(this.buildingInLine_name);				// Init the building line position
+			this.terminus				= getTerminusPosition(this.line);								// Init the terminus position
 			this.history				= new LinkedList<LinkedList<Action>>();
 			this.endTerminus[0]			= new Point();
 			this.endTerminus[1]			= new Point();

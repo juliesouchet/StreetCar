@@ -62,7 +62,6 @@ nbrBuildingInLine= 3;			/////// Nom par defaut
 		try
 		{
 			playerIHM	= PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine,  create, ip, this);
-			playerIHM.setPlayerColor(Color.red);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
