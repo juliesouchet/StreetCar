@@ -21,10 +21,10 @@ public class Dumbest extends PlayerAutomaton {
 
 	public Dumbest(String playerName) {
 		super();
-		this.name = new String(playerName);
+		if(name == null) this.name = "Dumbest";
+		else this.name = playerName;
 	}
 	
-
 	public Action makeChoice(Data currentconfig) {
 //TODO: -- riyane modif de Data			Hand myHand = currentConfig.getHand(name);
 // sert a ne plus faire de new dans les fonctions de data qui sont appelles par l'automate)
