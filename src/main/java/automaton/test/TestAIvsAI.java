@@ -9,8 +9,8 @@ import main.java.game.Game;
 import main.java.player.PlayerAI;
 import test.java.player.TestDumbestIHM;
 
-public class TestEvaluator {
-
+public class TestAIvsAI {
+	
 	public static void main(String[] args) throws ExceptionGameHasAlreadyStarted {
 		Game game = null;
 		PlayerAI player1 = null,
@@ -20,10 +20,18 @@ public class TestEvaluator {
 		String name1, name2;
 		int level1,	level2;
 		
-		name1 = dumbestName + " 1";
-		name2 = travelerName + " 2";
-		level1 = dumbest;
-		level2 = traveler;
+		if(args.length>2) {
+			level1 = Integer.parseInt(args[1]);
+			level2 = Integer.parseInt(args[2]);
+		}
+		else {
+			level1 = dumbest;
+			level2 = traveler;
+		}	
+		name1 = level1==1 ? dumbestName : travelerName;
+		name1 += " 1";
+		name2 = level1==1 ? dumbestName : travelerName;
+		name2 += " 2";
 		
 		try {
 			game = new Game("TestEvaluator", "localhost", "newOrleans", 2);

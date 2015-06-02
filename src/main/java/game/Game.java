@@ -259,7 +259,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		if(!data.hasStartedMaidenTravel(playerName))
 		{
-			if(data.getHandSize(playerName) < 5) throw new ExceptionForbiddenAction();
+			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction(); // on peut avoir une main non pleine, mais seulement si la pioche est vide
 			if(data.hasRemainingAction(playerName)) throw new ExceptionForbiddenAction();
 		}
 

@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.Tile;
+import main.java.gui.application.GameController;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
@@ -26,7 +27,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
     private int originY;
     private int mapWidth;
     private int cellWidth;
-    private Data data;
+    public Data data;
     
     // Constructors
     
@@ -114,6 +115,14 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	public void componentHidden(ComponentEvent e) {}
 	
 	// Refresh game
+
+	public Data getData() {
+		return this.data;
+	}
+	
+	public PlayerIHM getPlayer() {
+		return ((GameController)(this.getFrameController())).player;
+	}
 	
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.data = data;

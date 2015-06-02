@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.io.Serializable;
 
 import main.java.util.CloneableInterface;
+import main.java.util.TraceDebugData;
 
 
 
@@ -224,15 +225,28 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 */
 	public boolean equals(Action otherAction)
 	{
-		if (otherAction == null)				return false;
-		if (this.action != otherAction.action)	return false;
+		
+		TraceDebugData.debugActionEquals("Begin action equals\n");
+		if (otherAction == null){
+			TraceDebugData.debugActionEquals("\t otherAction is null: return FALSE \n");
+			return false;
+		}
+		if (this.action != otherAction.action){
+			TraceDebugData.debugActionEquals("\t this is null: return FALSE \n");
+			return false;
+		}
+		TraceDebugData.debugActionEquals("\t otherAction et this are instanciated : CONTINUE \n");
 
 		if(this.isMoving() && otherAction.isMoving()){
+			TraceDebugData.debugActionEquals("\t Both isMoving(): CONTINUE \n");
 			if (this.ptrTramwayMovement!=otherAction.ptrTramwayMovement){
+				TraceDebugData.debugActionEquals("\t ptrTramwayMovement different: return FALSE \n");
 				return false;
 			}
+			TraceDebugData.debugActionEquals("\t ptrTramwayMovement are equals: return CONTINUE \n");
 			for (int i=0; i<= this.ptrTramwayMovement;i++){
-				if(!(this.tramwayMovement[i]==otherAction.tramwayMovement[i])){
+				if(!(this.tramwayMovement[i].equals(otherAction.tramwayMovement[i]))){
+					TraceDebugData.debugActionEquals("\t this.tramwayMovement["+i+"]="+this.tramwayMovement[i]+" != this.tramwayMovement["+i+"]="+otherAction.tramwayMovement[i]+" return FALSE \n");
 					return false;
 				}
 			}
@@ -270,7 +284,9 @@ public class Action implements Serializable, CloneableInterface<Action>
 // Setter
 // -----------------------------------------------------
 	/**
-	 * affecte a l'appelant les parametres de src sans nouvelle allocation memoire.
+	 *	Affecte a l'appelant les parametres de src 
+	 *	/!\ Pas d'allocation de memoire
+	 *	/!\ Ne doit pas être appelé par une instance non allouée de Action.
 	 * @param src
 	 * Action dont on copie le contenu
 	 */
@@ -286,8 +302,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.ptrTramwayMovement	= src.ptrTramwayMovement;
 		for (int i=0; i<=src.ptrTramwayMovement; i++)
 		{
-			this.tramwayMovement[i].x = this.tramwayMovement[i].x;
-			this.tramwayMovement[i].y = this.tramwayMovement[i].y;
+			this.tramwayMovement[i].x = src.tramwayMovement[i].x;
+			this.tramwayMovement[i].y = src.tramwayMovement[i].y;
 		}
 	}
 
