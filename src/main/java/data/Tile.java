@@ -488,7 +488,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return tSize;
 	}
 	/**=============================================================
-	 * @return if t is a building the function returns its name.  Else it returns null
+	 * @return if this is a building the function returns its name (string).</br>  Else it returns null
 	 ===============================================================*/
 	public String getBuildingName()
 	{

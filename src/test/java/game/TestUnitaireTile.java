@@ -143,7 +143,38 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testTurnRight() {
-		fail("Not yet implemented");
+		Tile maTile = Tile.parseTile("Tile_FFFFZZ2003");
+		assertTrue(maTile.isPathTo(Direction.WEST));
+		assertTrue(maTile.isPathTo(Direction.SOUTH));
+		assertFalse(maTile.isPathTo(Direction.NORTH));
+		assertFalse(maTile.isPathTo(Direction.EAST));
+		assertTrue(maTile.getTileDirection().equals(Direction.WEST));
+
+		maTile.turnRight();
+		assertTrue(maTile.isPathTo(Direction.WEST));
+		assertFalse(maTile.isPathTo(Direction.SOUTH));
+		assertTrue(maTile.isPathTo(Direction.NORTH));
+		assertFalse(maTile.isPathTo(Direction.EAST));
+		assertTrue(maTile.getTileDirection().equals(Direction.NORTH));
+		
+		
+		maTile.turnRight();
+		assertFalse(maTile.isPathTo(Direction.WEST));
+		assertFalse(maTile.isPathTo(Direction.SOUTH));
+		assertTrue(maTile.isPathTo(Direction.NORTH));
+		assertTrue(maTile.isPathTo(Direction.EAST));
+		assertTrue(maTile.getTileDirection().equals(Direction.EAST));
+		
+		maTile.turnRight();
+		assertFalse(maTile.isPathTo(Direction.WEST));
+		assertTrue(maTile.isPathTo(Direction.SOUTH));
+		assertFalse(maTile.isPathTo(Direction.NORTH));
+		assertTrue(maTile.isPathTo(Direction.EAST));
+		assertTrue(maTile.getTileDirection().equals(Direction.SOUTH));
+		
+		maTile.turnRight();
+		assertTrue(maTile.equalsStrong(Tile.parseTile("Tile_FFFFZZ2003")));
+				
 	}
 
 	@Test
@@ -283,7 +314,21 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testGetBuildingName() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		assertTrue(maTileA.getBuildingName()==null);
+
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		assertTrue(maTileA.getBuildingName()==null);
+		
+		maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		assertTrue(maTileA.getBuildingName()==null);
+		
+		maTileA = Tile.parseTile("Tile_FTFFAZ01");
+		assertFalse(maTileA.getBuildingName()==null);//TODO assertTrue que ca renvoi exactement la chaine voulue
+
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		assertTrue(maTileA.getBuildingName()==null);
+
 	}
 
 	@Test
@@ -341,10 +386,10 @@ public class TestUnitaireTile {
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertFalse(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
-
 		maTileA = Tile.parseTile("Tile_FFFFZZ060123");
 		mesDirectionsAccessibles = maTileA.getAccessibleDirections();		
 		assertTrue(Direction.WEST.isDirectionInList(mesDirectionsAccessibles));
+		
 		assertTrue(Direction.NORTH.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.EAST.isDirectionInList(mesDirectionsAccessibles));
 		assertTrue(Direction.SOUTH.isDirectionInList(mesDirectionsAccessibles));
