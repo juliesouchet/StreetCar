@@ -1,6 +1,5 @@
 package main.java.gui.menus;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -113,6 +112,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 		
 		GameController gc = this.getGameController();
 		try {
+			/*
 			gc.player = PlayerIHM.launchPlayer(playerName,
 					                           gameName,
 					                           "newOrleans",
@@ -121,6 +121,8 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 					                           true,
 					                           null,
 					                           gc);
+			*/
+			gc.player = PlayerIHM.launchPlayer(playerName, gameName, "newOrleans", 2, true, addressField.getText(), gc);
 			gc.showHostWaitingRoomPanel();
 		} catch (Exception e)	{
 			e.printStackTrace(); 

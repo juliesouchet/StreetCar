@@ -217,12 +217,12 @@ return null;
 	/**================================================
 	 * Add a player to the present game
 	 ==================================================*/
-	public void addPlayer(PlayerInterface p, String playerName, boolean isHost) throws ExceptionFullParty
+	public void addPlayer(PlayerInterface p, String playerName, boolean isHost, boolean isHuman) throws ExceptionFullParty
 	{
 		if (this.playerInfoList.size() >= maxNbrPlayer)	throw new ExceptionFullParty();
 		if ((isHost) && (this.host != null))			throw new ExceptionHostAlreadyExists();
 
-		PlayerInfo pi = new PlayerInfo(p, playerName);
+		PlayerInfo pi = new PlayerInfo(p, isHuman, playerName);
 		this.playerInfoList.put(playerName, pi);
 		if (isHost) this.host = new String(playerName);
 	}
@@ -267,14 +267,24 @@ return null;
 		LinkedList<String> players = new LinkedList<String> (this.getPlayerNameList());
 		Random rnd = new Random();
 		int i, size = players.size();
+		Color color;
+		PlayerInfo pi;
 
 		this.round			= -1;
-		this.playerOrder	= new String[size];
+		this.playerOrder	= new String[size];				// Init playerOrder
 		for (int s=size-1; s>=0; s--)
 		{
 			i = rnd.nextInt(s+1);
 			playerOrder[s] = players.get(i);
 			players.remove(i);
+		}
+
+		for (String name: this.playerInfoList.keySet())		// Init the non initialized players attributes
+		{
+			pi = this.playerInfoList.get(name);
+			if (pi.isHuman)	continue;
+			color = this.getRandomUnusedColor();
+			this.setPlayerColor(name, color);
 		}
 		this.skipTurn();
 	}
@@ -473,11 +483,12 @@ return null;
 	public boolean				isEmptyDeck()									{return this.deck.isEmpty();}
 	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
-	public boolean				isAllPlayersInitialized()
+	public boolean				isAllHumanPlayersInitialized()
 	{
 		for (String str: this.playerInfoList.keySet())
 		{
 			PlayerInfo pi = this.playerInfoList.get(str);
+			if (!pi.isHuman)			continue;
 			if (!pi.isInitialized())	return false;
 		}
 		return true;
@@ -843,6 +854,7 @@ return null;
 			piRes			= new PlayerInfo();										// Shared Information
 			if (!pi.isInitialized()) {res.put(str, piRes); continue;}
 			piRes.player				= null;
+			piRes.isHuman				= pi.isHuman;
 			piRes.line					= pi.line;
 			piRes.color					= (pi.color == null) ? null : new Color(pi.color.getRGB());
 			piRes.hand					= pi.hand.getClone();
@@ -887,6 +899,7 @@ return null;
 		// Attributes
 		private static final long	serialVersionUID = -7495867115345261352L;
 		public PlayerInterface		player;
+		public boolean				isHuman;
 		public Hand					hand;
 		public int					line					= -1;					// Real value of the line (belongs to [1, 6])
 		public Color				color					= null;
@@ -902,9 +915,10 @@ return null;
 
 		// Builder
 		private PlayerInfo(){}
-		public PlayerInfo(PlayerInterface pi, String playerName)
+		public PlayerInfo(PlayerInterface pi, boolean isHuman, String playerName)
 		{
 			this.player					= pi;
+			this.isHuman				= isHuman;
 			this.hand					= Hand.initialHand.getClone();
 			this.history				= new LinkedList<LinkedList<Action>>();
 			this.endTerminus[0]			= new Point();
