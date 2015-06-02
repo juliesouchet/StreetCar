@@ -9,6 +9,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.Tile;
@@ -117,6 +118,20 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.data = data;
 		this.updateMapGeometry();
+	}
+
+	public void setData(Data d) {
+		data = d;
+	}
+
+	public void startMaidenVoyage(Point point) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void moveTram(LinkedList<Point> tramPath) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
