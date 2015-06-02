@@ -190,9 +190,11 @@ return null;
 	{
 		Data res = new Data();
 		Copier<Tile> 		cpT		= new Copier<Tile>();
+		Copier<Color> 		cpC		= new Copier<Color>();
 		Copier<String> 		cpS		= new Copier<String>();
 
 		res.remainingBuildingInLine	= null;
+		res.remainingColors			= cpC.copyTab(remainingColors);
 
 		res.gameName				= new String(this.gameName);
 		res.nbrBuildingInLine		= this.nbrBuildingInLine;
