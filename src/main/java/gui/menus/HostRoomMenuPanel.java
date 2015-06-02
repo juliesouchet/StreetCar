@@ -14,6 +14,7 @@ import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
+import main.java.game.ExceptionNonInitializedPlayer;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
@@ -121,6 +122,8 @@ public class HostRoomMenuPanel extends MenuPanel {
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
 		} catch (ExceptionNotEnougthPlayers e) {
+			e.printStackTrace();
+		} catch (ExceptionNonInitializedPlayer e) {
 			e.printStackTrace();
 		}
 	}

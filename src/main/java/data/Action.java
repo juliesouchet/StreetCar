@@ -75,7 +75,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		return res;
 	}
 	/**
-	 * Créé une instance d'Action de type pose d'une unique tuile.
+	 * Créer une instance d'Action de type pose d'une unique tuile.
 	 * @param position
 	 * Position où l'on souhaite poser la tuile
 	 * @param tile
@@ -270,7 +270,9 @@ public class Action implements Serializable, CloneableInterface<Action>
 // Setter
 // -----------------------------------------------------
 	/**
-	 * affecte a l'appelant les parametres de src sans nouvelle allocation memoire.
+	 *	Affecte a l'appelant les parametres de src 
+	 *	/!\ Pas d'allocation de memoire
+	 *	/!\ Ne doit pas être appelé par une instance non allouée de Action.
 	 * @param src
 	 * Action dont on copie le contenu
 	 */
