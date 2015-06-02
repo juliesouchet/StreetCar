@@ -212,7 +212,15 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testTurnHalf() {
-		fail("Not yet implemented");
+		Tile maTile = Tile.parseTile("Tile_FFFFZZ2003");
+		maTile.turnHalf();
+		assertTrue(maTile.getTileDirection().equals(Direction.EAST));
+		maTile.turnHalf();
+		assertTrue(maTile.equalsStrong(Tile.parseTile("Tile_FFFFZZ2003")));
+		
+		maTile.turnRight();
+		maTile.turnHalf();
+		assertTrue(maTile.getTileDirection().equals(Direction.SOUTH));
 	}
 
 	@Test
