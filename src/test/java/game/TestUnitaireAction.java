@@ -81,7 +81,6 @@ public class TestUnitaireAction {
 			assertTrue(monActionCible.tramwayMovement[i].equals(monActionSrc.tramwayMovement[i]));
 		}
 
-		//TODO Ulysse: j'en suis ici 02/06/15 1h39
 
 	}
 
@@ -151,24 +150,29 @@ public class TestUnitaireAction {
 		Action monActionA = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		Action monActionB = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		assertTrue(monActionA.equals(monActionB));
+		assertTrue(monActionB.equals(monActionA));
 		
 		monActionA = Action.newBuildSimpleAction(0,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionB = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		assertFalse(monActionA.equals(monActionB));
+		assertFalse(monActionB.equals(monActionA));
 		
 		monActionA = Action.newBuildSimpleAction(0,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionB =Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		assertFalse(monActionA.equals(monActionB));
+		assertFalse(monActionB.equals(monActionA));
 
 		
 		monActionA =Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionB =Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		assertTrue(monActionA.equals(monActionB));
+		assertTrue(monActionB.equals(monActionA));
 		
 		monActionA = Action.newBuildSimpleAction(0,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionB =Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionB.action=Action.BUILD_SIMPLE;
 		assertTrue(monActionA.equals(monActionB));
+		assertTrue(monActionB.equals(monActionA));
 		
 		monActionA = Action.newStartTripNextTurnAction();
 		Point[] chemin = new Point[10];
@@ -177,31 +181,45 @@ public class TestUnitaireAction {
 		}
 		monActionB = Action.newMoveAction(chemin);
 		assertFalse(monActionA.equals(monActionB));
+		assertFalse(monActionB.equals(monActionA));
 
 		monActionA = Action.newBuildSimpleAction(0,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionB =Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionA.action=Action.BUILD_DOUBLE;
 		assertFalse(monActionA.equals(monActionB));
+		assertFalse(monActionB.equals(monActionA));
 		
 		monActionA =Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionB = Action.newMoveAction(chemin);
 		assertFalse(monActionA.equals(monActionB));
+		assertFalse(monActionB.equals(monActionA));
 		
 	}
 
 	@Test
 	public void testCopy() {
+		//simple<-simple
 		Action monActionA = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
 		Action monActionB = Action.newBuildSimpleAction(0,0, Tile.parseTile("Tile_FFFFZZ100103"));
 		monActionA.copy(monActionB);
 		assertTrue(monActionA.equals(Action.newBuildSimpleAction(0,0, Tile.parseTile("Tile_FFFFZZ100103"))));
 		assertTrue(monActionA.equals(monActionB));
 
-		monActionB =Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
+		//simple<-double
+		monActionB = Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		monActionA.copy(monActionB);
 		assertTrue(monActionA.equals(monActionB));
 		assertTrue(monActionA.equals(Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"))));
 
+		//double<-simple
+		monActionA = Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
+		monActionB = Action.newBuildSimpleAction(0,0, Tile.parseTile("Tile_FFFFZZ100103"));
+		monActionB.copy(monActionA);
+		assertTrue(monActionB.equals(monActionA));
+		assertTrue(monActionB.equals(Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"))));
+
+		//double<-move
+		monActionA = Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
 		Point[] chemin = new Point[10];
 		for(int i=0; i<chemin.length;i++){
 			chemin[i] = new Point(i,i);
@@ -211,16 +229,46 @@ public class TestUnitaireAction {
 		assertTrue(monActionA.equals(monActionB));
 		assertTrue(monActionA.equals(Action.newMoveAction(chemin)));
 		
-		monActionA = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
+		//move<-double
+		monActionA = Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"));
+		chemin = new Point[10];
+		for(int i=0; i<chemin.length;i++){
+			chemin[i] = new Point(i,i);
+		}
+		monActionB = Action.newMoveAction(chemin);
+		monActionB.copy(monActionA);
+		monActionA.equals(monActionB);
+		assertTrue(monActionA.equals(monActionB));
+		assertTrue(monActionB.equals(Action.newBuildDoubleAction(new Point(0,1), Tile.parseTile("Tile_FFFFZZ060123"), new Point(2,3), Tile.parseTile("Tile_FFFFZZ060123"))));		
 		
-		
-		monActionA = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
-		
-		
-		monActionA = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
-		
-		
-		monActionA = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
+		//move<-move
+		chemin = new Point[10];
+		for(int i=0; i<chemin.length;i++){
+			chemin[i] = new Point(i,i);
+		}
+		monActionA = Action.newMoveAction(chemin);
+		chemin = new Point[10];
+		for(int i=0; i<chemin.length;i++){
+			chemin[i] = new Point(i+1,i+1);
+		}
+		monActionB = Action.newMoveAction(chemin);
+		monActionB.ptrTramwayMovement=3;
+		monActionA.copy(monActionB);
+		assertTrue(monActionA.equals(monActionB));
+
+		//startmove<-move
+		monActionA= Action.newStartTripNextTurnAction();
+		monActionB = Action.newMoveAction(chemin);
+		monActionA.copy(monActionB);
+		assertTrue(monActionA.equals(monActionB));
+		assertTrue(monActionA.equals(Action.newMoveAction(chemin)));
+
+		//move<-startmove
+		monActionA= Action.newStartTripNextTurnAction();
+		monActionB = Action.newMoveAction(chemin);		
+		monActionB.copy(monActionA);
+		assertTrue(monActionA.equals(monActionB));
+		assertTrue(monActionA.equals(Action.newStartTripNextTurnAction()));
 		
 	}
 

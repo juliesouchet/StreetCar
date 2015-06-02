@@ -4,12 +4,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
 import main.java.data.Data;
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.gui.board.MapPanel;
 import main.java.gui.chat.ChatPanel;
 import main.java.gui.components.Panel;
@@ -137,8 +142,46 @@ public class InGamePanel extends Panel {
 	
 	// Actions
 	
-
+	public void validate() {
+		try {
+			this.getPlayer().validate();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (ExceptionGameHasNotStarted e) {
+			e.printStackTrace();
+		} catch (ExceptionNotYourTurn e) {
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void beginTrip() {
+		System.out.println("THE TERMINUS IS UNDEFINED FOR THE MOMENT");
+		PlayerIHM player = this.getPlayer();
+		Point terminus = new Point();
+		try {
+			this.getPlayer().startMaidenTravel(player.getPlayerName(), terminus);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (ExceptionNotYourTurn e) {
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			e.printStackTrace();
+		} catch (ExceptionGameHasNotStarted e) {
+			e.printStackTrace();
+		}
+	}
+	
 	// Refresh game
+	
+	public Data getData() {
+		return this.data;
+	}
+	
+	public PlayerIHM getPlayer() {
+		return ((GameController)(this.getFrameController())).player;
+	}
 	
 	public void refreshGame(PlayerIHM player, Data data) {
 		System.out.println("REFRESH GAME");
