@@ -7,6 +7,15 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.rmi.RemoteException;
+
+import main.java.data.Data;
+import main.java.data.Tile;
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionTooManyActions;
+import main.java.player.PlayerIHM;
 
 class MapPanelDropTargetListener implements DropTargetListener {
 
@@ -52,94 +61,22 @@ class MapPanelDropTargetListener implements DropTargetListener {
 			e.printStackTrace();
 		}
 		
-		
-		/*DropTargetContext c = dtde.getDropTargetContext();
-
-		// What does the Transferable support
-		if (transferable.isDataFlavorSupported(dragAndDropPanelFlavor)) {
-			transferableObj = dtde.getTransferable().getTransferData(dragAndDropPanelFlavor);
-		} 
-
-	} catch (Exception ex) {}
-
-	// If didn't find an item, bail
-	if (transferableObj == null) {
-		return;
-	}
-
-		// Done with cursors, dropping
-		this.rootPanel.setCursor(Cursor.getDefaultCursor());
-
-		// Just going to grab the expected DataFlavor to make sure
-		// we know what is being dropped
-		DataFlavor dragAndDropPanelFlavor = null;
-
-		Object transferableObj = null;
-		Transferable transferable = null;
-
+		PlayerIHM player = this.mapPanel.getPlayer();
+		Data data = player.getGameData();
+		Tile tile = data.getBoard()[p.x][p.y];
 		try {
-			// Grab expected flavor
-			dragAndDropPanelFlavor = TilePanel.getDragDataFlavor();
-
-			transferable = dtde.getTransferable();
-			DropTargetContext c = dtde.getDropTargetContext();
-
-			// What does the Transferable support
-			if (transferable.isDataFlavorSupported(dragAndDropPanelFlavor)) {
-				transferableObj = dtde.getTransferable().getTransferData(dragAndDropPanelFlavor);
-			} 
-
-		} catch (Exception ex) {}
-
-		// If didn't find an item, bail
-		if (transferableObj == null) {
-			return;
+			player.placeTile(tile, p);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (ExceptionGameHasNotStarted e) {
+			e.printStackTrace();
+		} catch (ExceptionNotYourTurn e) {
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			e.printStackTrace();
+		} catch (ExceptionTooManyActions e) {
+			e.printStackTrace();
 		}
-
-		// Cast it to the panel. By this point, we have verified it is 
-		// a RandomDragAndDropPanel.
-		RandomDragAndDropPanel droppedPanel = (RandomDragAndDropPanel)transferableObj;
-
-		// Get the y offset from the top of the WorkFlowSheetPanel
-		// for the drop option (the cursor on the drop)
-		final int dropYLoc = dtde.getLocation().y;
-
-		// We need to map the Y axis values of drop as well as other
-		// RandomDragAndDropPanel so can sort by location.
-		Map<Integer, RandomDragAndDropPanel> yLocMapForPanels = new HashMap<Integer, RandomDragAndDropPanel>();
-		yLocMapForPanels.put(dropYLoc, droppedPanel);
-
-		// Iterate through the existing demo panels. Going to find their locations.
-		for (RandomDragAndDropPanel nextPanel : rootPanel.getDragAndDropPanelsDemo().getRandomDragAndDropPanels()) {
-
-			// Grab the y value
-			int y = nextPanel.getY();
-
-			// If the dropped panel, skip
-			if (!nextPanel.equals(droppedPanel)) {
-				yLocMapForPanels.put(y, nextPanel);
-			}
-		}
-
-		// Grab the Y values and sort them
-		List<Integer> sortableYValues = new ArrayList<Integer>();
-		sortableYValues.addAll(yLocMapForPanels.keySet());
-		Collections.sort(sortableYValues);
-
-		// Put the panels in list in order of appearance
-		List<RandomDragAndDropPanel> orderedPanels = new ArrayList<RandomDragAndDropPanel>();
-		for (Integer i : sortableYValues) {
-			orderedPanels.add(yLocMapForPanels.get(i));
-		}
-
-		// Grab the in-memory list and re-add panels in order.
-		List<RandomDragAndDropPanel> inMemoryPanelList = this.rootPanel.getDragAndDropPanelsDemo().getRandomDragAndDropPanels();
-		inMemoryPanelList.clear();
-		inMemoryPanelList.addAll(orderedPanels);
-
-		// Request relayout contents, or else won't update GUI following drop.
-		// Will add back in the order to which we just sorted
-		this.rootPanel.getDragAndDropPanelsDemo().relayout();
-		*/
+		
 	}
 }
