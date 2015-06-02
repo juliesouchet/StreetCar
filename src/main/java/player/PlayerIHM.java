@@ -69,7 +69,7 @@ public class PlayerIHM extends PlayerAbstract
 	private PlayerIHM(boolean isHost, String playerName, GameInterface app, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
 	{
 		super(playerName, app, ihm);
-		super.game.onJoinGame(this, isHost, -1);					// Log the player to the application
+		super.game.onJoinGame(this, true, isHost, -1);								// Log the player to the application
 	}
 
 // --------------------------------------------

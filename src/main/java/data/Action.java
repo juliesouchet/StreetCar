@@ -75,7 +75,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		return res;
 	}
 	/**
-	 * Créé une instance d'Action de type pose d'une unique tuile.
+	 * Créer une instance d'Action de type pose d'une unique tuile.
 	 * @param position
 	 * Position où l'on souhaite poser la tuile
 	 * @param tile
