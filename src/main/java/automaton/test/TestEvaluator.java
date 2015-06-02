@@ -1,54 +1,70 @@
 package main.java.automaton.test;
 
-import java.awt.Color;
 import java.rmi.RemoteException;
 
-import main.java.game.ExceptionGameHasAlreadyStarted;
-import main.java.game.ExceptionUnknownBoardName;
+import main.java.automaton.Evaluator;
+import main.java.automaton.PlayerAutomaton;
+import main.java.data.Data;
+import main.java.data.LoginInfo;
 import main.java.game.Game;
-import main.java.player.PlayerAI;
-import test.java.player.TestDumbestIHM;
+
 
 public class TestEvaluator {
 
-	public static void main(String[] args) throws ExceptionGameHasAlreadyStarted {
+	public static void main(String[] args) {
+		String boardName = "src/test/resources/boards/test";
+		int nbrBuildingInLine = 2;
+		Data data = null;
+		String gameName = "Simulation";
+		int nbrGamesSimulated  = 1;
+		
+		/*================*
+		 *	Game setup
+		 *================*/
 		Game game = null;
-		PlayerAI player1 = null,
-				player2 = null;
-		String dumbestName = "Dumbest", travelerName = "Traveler";
-		int dumbest = 1, traveler = 2;
-		String name1, name2;
-		int level1,	level2;
-		
-		name1 = dumbestName + " 1";
-		name2 = travelerName + " 2";
-		level1 = dumbest;
-		level2 = traveler;
-		
+		LoginInfo[] initialLoginTable = 
+				// LoginInfo(isClosed, playerName, isHost, isHuman, iaLevel)
+				{
+				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.travelerLvl),
+				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
+				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)
+				};
+		for(int i = 0; i < initialLoginTable.length; i++) {
+			LoginInfo.initialLoginTable[i] = initialLoginTable[i];
+		}
+		Data.boardDirectory = "";
 		try {
-			game = new Game("TestEvaluator", "localhost", "newOrleans", 2);
-		} catch (RemoteException | ExceptionUnknownBoardName | RuntimeException e) {
+			game = new Game(gameName, "localhost", boardName, nbrBuildingInLine);
+		} catch (Exception e) {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
-
-		TestDumbestIHM ihm = new TestDumbestIHM();
+		
+		String playerName = game.getHostName();
 		try {
-			player1 = new PlayerAI(name1, true, game, level1, ihm);
-			player2 = new PlayerAI(name2, false, game, level2, ihm);
-			player1.setPlayerColor(Color.red);
-			player2.setPlayerColor(Color.green);
-		}
-		catch (Exception e) {
-			System.out.println("Player creation error"); e.printStackTrace();
+			data = game.getData(playerName);
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 		
+		/*================*
+		 *	Simulation(s)
+		 *================*/
 		
-		try {
-			game.hostStartGame(name1);
-		} catch (Exception e) {
-			System.out.println("Game start error"); e.printStackTrace();
-		}
+		nbrGamesSimulated = 1;
+		double victoryProb = Evaluator.evaluateSituationQuality(playerName, nbrGamesSimulated, data, PlayerAutomaton.dumbestLvl);
 		
+		
+		/*=========================*
+		 *	Displaying the result
+		 *=========================*/
+		
+		System.out.println("=========================");
+		System.out.println("=========================");
+		System.out.println(playerName + "a une chance de gagner de " + victoryProb + "%");		
+		System.out.println("=========================");
+		System.out.println("=========================");
 		
 	}
 }
