@@ -9,7 +9,6 @@ import main.java.data.Action;
 import main.java.data.Data;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
-import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -74,11 +73,14 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		}
 
 		int nbrCards = data.getPlayerRemainingTilesToDraw(playerName);
-		if (nbrCards > 0)
+		if (nbrCards > 0 && data.getNbrRemainingDeckTile() > 0)
 		{
 			try
 			{
-				if (!data.isEnougthTileInDeck(nbrCards)) throw new ExceptionNotEnougthTileInDeck();
+				if (!data.isEnougthTileInDeck(nbrCards)) {
+					//throw new ExceptionNotEnougthTileInDeck(); TODO continuer à jouer jusqu'à ce que les mains soient vides
+					nbrCards = data.getNbrRemainingDeckTile();
+				}
 				super.drawTile(nbrCards);
 			}
 			catch (Exception e) {e.printStackTrace(); return;}
