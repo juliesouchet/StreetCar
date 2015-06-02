@@ -213,7 +213,7 @@ return null;
 	
 	public void setPreviousTramPosition(String playerName, Point newPosition) { playerInfoList.get(playerName).previousTramPosition = newPosition; }
 	
-	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; } // TODO rename the fuck out of this methdo
+	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; } // TODO rename this method
 	
 	/**================================================
 	 * Add a player to the present game
@@ -477,7 +477,7 @@ return null;
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
 	public boolean				pathExistsBetween(Point p1, Point p2)			{return getShortestPath(p1, p2) != null;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
-	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;} // TODO rename the fuck out of this methdo
+	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;} // TODO rename this methdo
 	public int					getRound()										{return this.round;}
 	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
 	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
