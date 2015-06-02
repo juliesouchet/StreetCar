@@ -38,6 +38,8 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public static final int			nbrCardinalChar					= 2;
 	public static final int			maxNbrPathInTile				= 5;
 
+	public static final String nonRealTileID = "SPECIAL_UNREAL0000";
+	
 	private String					tileID;
 	private boolean					isTree;
 	private boolean					isBuilding;
@@ -71,7 +73,14 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * @throws RuntimeException
 	 * 	Si ptrPathTab == -1
 	 */
-	public Tile(Path[] pathList, int ptrPathTab, Tile tile) throws RuntimeException
+	public static Tile specialNonRealTileConstructor(Path[] pathList, int ptrPathTab, Tile tile) throws RuntimeException{
+		return new Tile(pathList, ptrPathTab, tile);
+	}
+	
+	/**
+	 * Voir signature de specialNonRealTileConstructorTile 
+	 */
+	private Tile(Path[] pathList, int ptrPathTab, Tile tile) throws RuntimeException
 	{
 		if ((tile == null) || (pathList == null))
 		{
@@ -88,7 +97,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		else if ((tile != null) && (pathList != null))
 		{
 			if ((tile.isBuilding)&& (ptrPathTab > -1))throw new RuntimeException("A tile can not be a building and contain a path");
-			this.tileID					= tile.tileID;
+			this.tileID					= null;
 			this.isTree					= tile.isTree;
 			this.isBuilding				= tile.isBuilding;
 			this.isStop					= tile.isStop;
@@ -269,7 +278,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 *	Vrai si les instances représentent la même tuile
 	 *	Faux sinon
 	 */
-	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);} //TODO comparer juste le tileID est il suffisant ,
+	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);} //TODO comparer juste le tileID est il suffisant ?
 
 	/**
 	 * @return

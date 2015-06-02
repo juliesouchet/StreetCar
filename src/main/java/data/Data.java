@@ -523,7 +523,7 @@ return null;
 		if (additionalPathSize == -1)	return false;													// Check whether t contains the old t (remove Tile and Rule C)
 		if (this.isOnEdge(x, y))		return false;
 
-		Tile nt = new Tile(additionalPath, additionalPathSize, t);
+		Tile nt = Tile.specialNonRealTileConstructor(additionalPath, additionalPathSize, t);
 		int accessibleDirection = nt.getAccessibleDirections();
 		for (Direction d: Direction.DIRECTION_LIST)														// Check whether the new tile is suitable with the <x, y> neighborhood
 		{

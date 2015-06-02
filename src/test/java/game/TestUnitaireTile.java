@@ -23,7 +23,7 @@ public class TestUnitaireTile {
 		
 		Tile maTileB=null;
 		
-		maTileB = new Tile(monPath, monPtrEndPath, maTileA);
+		maTileB = Tile.specialNonRealTileConstructor(monPath, monPtrEndPath, maTileA);
 		
 		assertFalse(maTileB.equals(Tile.parseTile("Tile_FFFFZZ2113")));
 		assertTrue(maTileB.isPathTo(Direction.WEST));
