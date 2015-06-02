@@ -71,7 +71,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * @param tile
 	 * 	La tuile source d'où l'on copie le reste des attributs.
 	 * @throws RuntimeException
-	 * 	Si ptrPathTab == -1
+	 * 	Si ptrPathTab > -1 && la tuile est un building
 	 */
 	public static Tile specialNonRealTileConstructor(Path[] pathList, int ptrPathTab, Tile tile) throws RuntimeException{
 		return new Tile(pathList, ptrPathTab, tile);
@@ -106,7 +106,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			this.terminusDescription	= tile.terminusDescription;
 			this.cardinal				= tile.cardinal;
 			this.tileDirection			= tile.tileDirection;
-			copyPathTab(tile.pathTab, this.pathTab, tile.ptrPathTab);		// TODO Faux
+			copyPathTab(pathList, this.pathTab, ptrPathTab);		// TODO Faux
 			this.ptrPathTab				= tile.ptrPathTab;
 		}
 		else throw new RuntimeException("Unhandeled case");
@@ -271,15 +271,62 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // Getters:
 // --------------------------------------------
 	/**
-	 *	Vrai si les deux instances représentent la même tuile.
+	 *	Vrai si l'ID des 2 tuiles est le même. (donc les tuiles sont sensés être les même à la rotation près) </br>
+	 *	/!\ Ne prend pas du tout en compte les autres attributs. 
 	 *	@param
 	 *	L'objet à comparer, retourne faux si null.
 	 *	@return
 	 *	Vrai si les instances représentent la même tuile
 	 *	Faux sinon
 	 */
-	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);} //TODO comparer juste le tileID est il suffisant ?
+	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
 
+	
+/**
+ * Compare la tuile intégralement: </br>
+ * (Prend en compte l'orientation)
+ * @param o
+ * L'objet à comparer.
+ * @return
+ * Vrai si les 2 tuiles sont strictement identiques </br>
+ * Faux sinon.
+ */
+	public boolean equalsStrong(Object o){
+		Tile comparedTile = null;
+		
+		if (o==null){return false;}
+		if (!(o instanceof Tile)){return false;}
+		comparedTile = (Tile) o;
+		if (!((Tile)o).tileID.equals(this.tileID)){return false;}
+		if (this.isTree()!=comparedTile.isTree() || this.isBuilding()!=comparedTile.isBuilding() || this.isStop()!=comparedTile.isStop() || this.isTerminus()!=comparedTile.isTerminus() ){
+			return false;
+		}
+		if ((this.buildingDescription==null && comparedTile.buildingDescription!=null) || (this.buildingDescription!=null && !this.buildingDescription.equals(comparedTile.buildingDescription)) ){
+			return false;
+		}
+
+		if (this.terminusDescription!=comparedTile.terminusDescription){
+			return false;
+		}
+		if (this.cardinal!=comparedTile.cardinal){
+			return false;
+		}
+		if  ((this.tileDirection==null && comparedTile.tileDirection!=null) || (this.tileDirection!=null && !this.tileDirection.equals(comparedTile.tileDirection))){
+			return false;
+		}
+		if (this.ptrPathTab!=comparedTile.ptrPathTab){
+			return false;
+		}
+		for( int i=0; i<this.ptrPathTab;i++ ){
+			if (!this.pathTab.equals(comparedTile.pathTab)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	
 	/**
 	 * @return
 	 * Retourne l'attribut tileID qui identifie la tuile.
@@ -294,21 +341,21 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	
 	/**
 	 * @return
-	 * L'orientation de la tuile :	WEST (0), NORTH	(1), EAST (2), SOUTH (3).
-	 * REMARQUE: Par défault à WEST.
+	 * L'orientation de la tuile :	WEST (0), NORTH	(1), EAST (2), SOUTH (3).</br>
+	 * REMARQUE: Par défault à WEST.</br>
 	 */
 	public Direction getTileDirection()	{return this.tileDirection;}
 	
 	/**
 	 * @return
-	 * Vrai si la tuile est une tuile contenant un arbre (donc inamovible).
+	 * Vrai si la tuile est une tuile contenant un arbre (donc inamovible).</br>
 	 * Faux sinon.
 	 */
 	public boolean	isTree()			{return this.isTree;}
 	
 	/**
 	 * @return
-	 * Vrai si la tuile représente un batiment (une station)
+	 * Vrai si la tuile représente un batiment (une station)</br>
 	 * Faux sinon.
 	 */
 	public boolean	isBuilding()		{return this.isBuilding;}
@@ -321,16 +368,16 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	
 	/**
 	 * @return
-	 * Vrai si la tuile représente un stop.
-	 * Remarque1: elle a été posé la première à côté d'un batiment.
-	 * Remarque2: lorsqu'un tramway circule il est forcé de arreter son déplacement.
+	 * Vrai si la tuile représente un stop.</br>
+	 * Remarque1: elle a été posé la première à côté d'un batiment.</br>
+	 * Remarque2: lorsqu'un tramway circule il est forcé de arreter son déplacement.</br>
 	 */
 	public boolean	isStop()			{return this.isStop;}
 	
 	/**
 	 * @return
-	 * Vrai si la tuile représente un vide (n'est ni un batiment, ni un terminus, ni des rails... un carré d'herbe ou de pavé.)
-	 * Faux sinon.
+	 * Vrai si la tuile représente un vide (n'est ni un batiment, ni un terminus, ni des rails... un carré d'herbe ou de pavé.)</br>
+	 * Faux sinon.</br>
 	 */
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab == -1));}
 	
@@ -381,9 +428,9 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	}
 
 	/**==================================================
-	 * @return an int that represents the list of accessible directions:
-	 * for i between [0 , 3] if the i th bit of the res equals 1, then the i th direction is accessible.
-	 * The result may be parsed by Direction.isInList(Direction, res)
+	 * @return an int that represents the list of accessible directions:</br>
+	 * for i between [0 , 3] if the i th bit of the res equals 1, then the i th direction is accessible.</br>
+	 * The result may be parsed by Direction.isInList(Direction, res)</br>
 	 ====================================================*/
 	public int getAccessibleDirections()
 	{
@@ -398,9 +445,9 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return res;
 	}
 	/**=================================================
-	 * @return -1 if the current tile can not be replaced by t.  Otherwise, the function returns the number of additional path.
-	 * Those path are filled in additionalPath.
-	 * This function does not check if t is suitable for the current tile neighbors
+	 * @return -1 if the current tile can not be replaced by t.  Otherwise, the function returns the number of additional path.</br>
+	 * Those path are filled in additionalPath.</br>
+	 * This function does not check if t is suitable for the current tile neighbors</br>
 	 * @param additionalPath: output parameter (can be null). Is filled with the t's paths that are not in the current tile
 	 * ===================================================*/
 	public int isReplaceable(Tile t, Path[] additionalPath)

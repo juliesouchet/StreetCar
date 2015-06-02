@@ -35,7 +35,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Attributes:
 // --------------------------------------------
 	public static final String			gameMessageHeader		= "Street Car application: ";
-	public final static int				applicationPort			= 5000;
+	public static int					applicationPort			= 5000;
 	public final static String			applicationProtocol		= "rmi";
 	public final static String			AiDefaultName			= "AI Level ";
 

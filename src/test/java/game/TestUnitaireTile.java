@@ -15,6 +15,7 @@ public class TestUnitaireTile {
 	public void testTile() {
 		Tile maTileA = null;
 		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
+		assertTrue(maTileA.equalsStrong(Tile.parseTile("Tile_FFFFZZ2113")));
 		
 		Path[] monPath = null;
 		monPath = new Path[10];
@@ -25,10 +26,10 @@ public class TestUnitaireTile {
 		
 		maTileB = Tile.specialNonRealTileConstructor(monPath, monPtrEndPath, maTileA);
 		
-		assertFalse(maTileB.equals(Tile.parseTile("Tile_FFFFZZ2113")));
+		assertFalse(maTileB.equalsStrong(Tile.parseTile("Tile_FFFFZZ2113")));
 		assertTrue(maTileB.isPathTo(Direction.WEST));
 		assertTrue(maTileB.isPathTo(Direction.NORTH));
-		
+		assertTrue(maTileA.equalsStrong(Tile.parseTile("Tile_FFFFZZ2113")));
 	}
 
 	@Test
