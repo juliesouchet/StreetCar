@@ -245,14 +245,16 @@ public String getHostName(){return this.data.getHost();}
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
 		if (!this.data.isInPlayerHand(playerName, t))							throw new ExceptionForbiddenAction();
 		if (!this.data.hasRemainingAction(playerName))							throw new ExceptionTooManyActions();
+		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
 		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
 	}
-	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn
+	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
-		if (!this.data.isGameStarted())	throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName)) throw new ExceptionNotYourTurn();
-		
+		if (!this.data.isGameStarted())				throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))	throw new ExceptionNotYourTurn();
+		if(data.hasStartedMaidenTravel(playerName))	throw new ExceptionForbiddenAction();
+
 		EngineAction ea = engine.new EngineAction(playerName, data, "replaceTwoTiles");
 
 		ea.tile = t1;
@@ -276,15 +278,15 @@ public String getHostName(){return this.data.getHost();}
 
 		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
 	}
-	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionUncompletedPath
 	{
-		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+		if(!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();
+		if(!this.data.isPlayerTurn(playerName))				throw new ExceptionNotYourTurn();
+		if(!data.isPlayerTerminus(playerName, terminus))	throw new ExceptionForbiddenAction();
+		if(!data.isStartOfTurn(playerName))					throw new ExceptionForbiddenAction();
+		if(data.hasStartedMaidenTravel(playerName))			throw new ExceptionForbiddenAction();
+		if(!data.isTrackCompleted(playerName))				throw new ExceptionUncompletedPath();
 
-		if(!data.isPlayerTerminus(playerName, terminus)) throw new ExceptionForbiddenAction();
-		if(!data.isStartOfTurn(playerName)) throw new ExceptionForbiddenAction();
-		if(data.hasStartedMaidenTravel(playerName)) throw new ExceptionForbiddenAction();
-		
 		EngineAction ea = engine.new EngineAction(playerName, data, "startMaidenTravel");
 		ea.position = terminus;
 
@@ -292,20 +294,20 @@ public String getHostName(){return this.data.getHost();}
 	}
 	public synchronized void moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
-		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+		if (!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))			throw new ExceptionNotYourTurn();
 
-		if(!data.hasStartedMaidenTravel(playerName)) throw new ExceptionForbiddenAction();
-		if(!data.isStartOfTurn(playerName)) throw new ExceptionForbiddenAction();
-		if(tramMovement.size() > data.getMaximumSpeed()) throw new ExceptionForbiddenAction();
-		if(tramMovement.size() < Data.minSpeed) throw new ExceptionForbiddenAction();
-		if(tramMovement.size() > Data.maxSpeed) throw new ExceptionForbiddenAction();
+		if(!data.hasStartedMaidenTravel(playerName))		throw new ExceptionForbiddenAction();
+		if(!data.isStartOfTurn(playerName))					throw new ExceptionForbiddenAction();
+		if(tramMovement.size() > data.getMaximumSpeed())	throw new ExceptionForbiddenAction();
+		if(tramMovement.size() < Data.minSpeed)				throw new ExceptionForbiddenAction();
+		if(tramMovement.size() > Data.maxSpeed)				throw new ExceptionForbiddenAction();
 
 		Point currentPosition = data.getTramPosition(playerName);
-		
-		if(!data.pathExistsBetween(currentPosition, tramMovement.getLast())) throw new ExceptionForbiddenAction();	
+
+		if(!data.pathExistsBetween(currentPosition, tramMovement.getLast())) throw new ExceptionForbiddenAction();
 		if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
-		
+
 		Iterator<Point> tramPathIterator = tramMovement.iterator();
 		Point previousPosition = null, nextPosition;
 		while(tramPathIterator.hasNext())
@@ -324,24 +326,23 @@ public String getHostName(){return this.data.getHost();}
 			previousPosition = currentPosition;
 			currentPosition = nextPosition;
 		}
-		
-		// TODO check if maidenTravel has started (for every method)
 
 		EngineAction ea = engine.new EngineAction(playerName, data, "moveTram");
 		ea.tramMovement = tramMovement;
-		
+
 		this.engine.addAction(ea);
 	}
 
 	/**=============================================================================
 	 * Draw a card from the deck.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw
+	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnougthTileInDeck();
 		if (nbrCards > this.data.getPlayerRemainingTilesToDraw(playerName))		throw new ExceptionTwoManyTilesToDraw();
+		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
 		this.engine.addAction(playerName, this.data, "drawTile", null, null, null, nbrCards);
 	}
@@ -356,6 +357,7 @@ public String getHostName(){return this.data.getHost();}
 		if (!this.data.hasStartedMaidenTravel(chosenPlayerName))			throw new ExceptionForbiddenAction();
 		if (this.data.getHandSize(chosenPlayerName) == 0)					throw new ExceptionNotEnougthTileInHand();
 		if (playerName.equals(chosenPlayerName))							throw new ExceptionForbiddenAction();
+		if(data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
 		this.engine.addAction(data, "pickTileFromPlayer", playerName, chosenPlayerName, tile);
 	}

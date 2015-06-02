@@ -163,6 +163,7 @@ return null;
 	private int							maxPlayerSpeed;
 	private String[]					playerOrder;
 	private String						host;
+	private String						winner;
 
 	private Path[]						additionalPath = Tile.initPathTab();// Optimization attribute
 
@@ -186,6 +187,7 @@ return null;
 		this.deck				= new Deck();
 		this.playerInfoList		= new HashMap<String, PlayerInfo>();
 		this.maxPlayerSpeed		= minSpeed;
+		this.winner				= null;
 		this.remainingLine		= new LinkedList<Integer>();
 		for (int j=minLine; j<=maxLine; j++) remainingLine.add(j);
 
@@ -209,6 +211,7 @@ return null;
 		res.deck					= this.deck.getPlayerClone();
 		res.playerInfoList			= getCopyOfPlayerInfoList(playerName);
 		res.round					= this.round;
+		res.winner					= (this.winner == null) ? null : new String(this.winner);
 		res.maxPlayerSpeed			= this.maxPlayerSpeed;
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
@@ -279,6 +282,7 @@ return null;
 		int i, size = players.size();
 
 		this.round			= -1;
+		this.winner			= null;
 		this.playerOrder	= new String[size];				// Init playerOrder
 		for (int s=size-1; s>=0; s--)
 		{
@@ -320,7 +324,7 @@ return null;
 		hand.remove(t);												// Remove the tile from the player's hand
 		if (oldT != null) hand.add(oldT);							// Change the current tile
 		Point building = this.isBuildingAround(x, y);
-		if (building != null)
+		if (building != null)										// Case put stop next to building
 		{
 			if (this.isStopNextToBuilding(building) == null)
 				this.board[x][y].setStop(true);
@@ -354,13 +358,17 @@ return null;
 		dst.remove(tile);
 		src.add(tile);
 	}
-	public void setTramPosition(String playerName, Point newPosition)
-	{
-		playerInfoList.get(playerName).tramPosition = newPosition;
-	}
 	public void startMaidenTravel(String playerName)
 	{
 		playerInfoList.get(playerName).startedMaidenTravel = true;
+	}
+	public void setTramPosition(String playerName, Point newPosition)
+	{
+		PlayerInfo pi = playerInfoList.get(playerName);
+
+		pi.tramPosition = newPosition;
+		if (newPosition.equals(pi.endTerminus[0]))	this.winner = new String(playerName);
+		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
 	}
 // TODO: Enlever les LinkedList
 	public void	setDestinationTerminus(String playerName, Point[] dest)
@@ -387,10 +395,6 @@ return null;
 // --------------------------------------------
 // Getter relative to players:
 // --------------------------------------------
-// TODO isWinner: il faut imperativement faire ces test dans cet ordre
-// TODO hasStartedMaidenTravel
-// TODO tramPosition == pi.endTerminus
-// TODO isTrackCompleted (c'est le dernier car c le plus couteux)
 	public PlayerInterface		getRemotePlayer(String playerName)				{return this.playerInfoList.get(playerName).player;}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
@@ -404,7 +408,8 @@ return null;
 	public Point[]				getPlayerTerminusPosition(String playerName)	{return this.playerInfoList.get(playerName).terminus;}
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
-	public Point getPreviousTramPosition(String playerName) { return playerInfoList.get(playerName).previousTramPosition; }
+	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
+	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
 // TODO: Enlever les LinkedList
 	public boolean				hasRemainingAction(String playerName)
 	{
@@ -435,11 +440,17 @@ return null;
 		int			size	= 2 + this.nbrBuildingInLine;
 		Point[]		path	= new Point[size];
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
-		Point p0, p1;
+		Point p0, p1, building;
 
 		path[0] = pi.terminus[0];
 		path[1] = pi.terminus[3];
-		for (int i=0; i<this.nbrBuildingInLine; i++) path[i+2] = pi.buildingInLine_position[i];
+
+		for (int i=0; i<this.nbrBuildingInLine; i++)				// Look for stop around buildings
+		{
+			building	= pi.buildingInLine_position[i];
+			path[i+2]	= this.isStopNextToBuilding(building);
+			if (path[i+2] == null) return false;
+		}
 		p0 = path[0];
 		for (int i=1; i<path.length; i++)
 		{
@@ -449,21 +460,11 @@ return null;
 		}
 		return true;
 	}
-	/**===============================================================
-	 * @return true if the player has started his maiden travel
-	 =================================================================*/
-	public boolean hasStartedMaidenTravel(String playerName)
-	{
-		PlayerInfo pi = this.playerInfoList.get(playerName);
-
-		if (pi == null) throw new RuntimeException("Unknown player: " + playerName);
-		return pi.startedMaidenTravel;
-	}
 
 // --------------------------------------------
 // Getter relative to game:
 // --------------------------------------------
-	// TODO fin de partie quand la pioche et les mains sont vides et qu'aucun joueur n'a complété son chemin
+	public String				getWinner()										{return this.winner;}
 	public int					getNbrRemainingDeckTile()						{return this.deck.getNbrRemainingDeckTile();} // ajouté par Julie
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
@@ -477,7 +478,7 @@ return null;
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
 	public boolean				pathExistsBetween(Point p1, Point p2)			{return getShortestPath(p1, p2) != null;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
-	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;} // TODO rename this methdo
+	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
 	public int					getRound()										{return this.round;}
 	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
 	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
