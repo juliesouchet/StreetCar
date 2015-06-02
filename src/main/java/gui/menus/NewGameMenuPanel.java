@@ -122,7 +122,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 					                           null,
 					                           gc);
 			*/
-			gc.player = PlayerIHM.launchPlayer(playerName, gameName, "newOrleans", 2, true, addressField.getText(), gc);
+			gc.player = PlayerIHM.launchPlayer(playerName, gameName, "newOrleans", 2, true, "127.0.0.1" /*addressField.getText()*/, gc);
 			gc.showHostWaitingRoomPanel();
 		} catch (Exception e)	{
 			e.printStackTrace(); 

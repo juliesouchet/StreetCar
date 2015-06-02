@@ -135,7 +135,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 	}
 	
 	public void changePlayerType(ComboBox comboBox) {
-		System.out.println("CHANGE");
+//////		System.out.println("CHANGE");
 
 		GameController gc = this.getGameController();
 		PlayerIHM player = gc.player;
@@ -170,11 +170,11 @@ public class HostRoomMenuPanel extends MenuPanel {
 				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
 				
 				LoginInfo info = loginInfos[i];
-				System.out.println(info);
+///////				System.out.println(info);
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
 				
-				System.out.println(i + " " + info);
+//////				System.out.println(i + " " + info);
 				if (info.isClosed()) {
 					nameLabel.setText(" Connection closed", null);
 					choiceComboBox.setSelectedIndex(4);

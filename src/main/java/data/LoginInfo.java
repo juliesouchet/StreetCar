@@ -18,7 +18,7 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 	private static final LoginInfo[]initialLoginTable	= {	new LoginInfo(false,	null,	true,	true,	-1),
 															new LoginInfo(false,	null,	false,	true,	-1),
 															new LoginInfo(false,	null,	false,	false,	1),
-															new LoginInfo(false,	null,	true,	false,	1), // TODO parameter n°3 = false
+															new LoginInfo(false,	null,	false,	false,	1), // TODO parameter n°3 = false
 															new LoginInfo(false,	null,	false,	false,	2)};
 
 	private boolean		isClosed;
