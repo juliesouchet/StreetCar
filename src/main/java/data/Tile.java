@@ -528,6 +528,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		public void setPath(Path p)						{end0 = p.end0;				end1 = p.end1;}
 		public void setPath(Direction d0, Direction d1)	{end0 = d0;					end1 = d1;}
 		public String	toString()						{return "(" + end0 + ", " + end1 + ')';}
-		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)));}
+		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)))
+															|| ((end0.equals(p.end1)) && (end1.equals(p.end0)));}
 	}
 }

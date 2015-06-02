@@ -47,6 +47,8 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
+// TODO a corriger
+public String getHostName(){return this.data.getHost();}
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
@@ -181,6 +183,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
 
+		this.data.addPlayer(player, playerName, isHost, isHuman);
 		this.engine.addAction(data, "onJoinGame", playerName, isHuman, isHost, player);////////////onJoinGame(this.data, player, playerName, isHuman, isHost);
 		this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
 		System.out.println("\n===========================================================");
@@ -214,7 +217,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 	/**==============================================
 	 * Init the game parameters.
-	 * Make the kame begins
+	 * Make the game begins
 	 ================================================*/
 	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers, ExceptionNonInitializedPlayer
 	{
@@ -226,9 +229,9 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		this.engine.addAction(this.data, "hostStartGame", playerName);
 	}
 	/**=============================================================================
-	 * Places a tile from the player's hand on the bord.
-	 * The guiven tile must bellong to the player's hand
-	 * The guiven tile is removed from the player's hand
+	 * Places a tile from the player's hand on the board.
+	 * The given tile must belong to the player's hand
+	 * The given tile is removed from the player's hand
 	 ===============================================================================*/
 	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions
 	{
