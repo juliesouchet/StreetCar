@@ -124,6 +124,7 @@ return null;
 		 * @param p2
 		 * @return distance de manhattan entre p1 et p2
 		 */
+		@SuppressWarnings("unused")
 		private int distance(Point p1, Point p2) {
 			return Math.abs(p1.x-p2.x)+Math.abs(p1.y-p2.y);
 		}
@@ -461,6 +462,8 @@ return null;
 // --------------------------------------------
 // Getter relative to game:
 // --------------------------------------------
+	// TODO fin de partie quand la pioche et les mains sont vides et qu'aucun joueur n'a complété son chemin
+	public int					getNbrRemainingDeckTile()						{return this.deck.getNbrRemainingDeckTile();} // ajouté par Julie
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
