@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.Label;
@@ -14,13 +17,17 @@ import main.java.gui.util.UserDefaults;
 import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
-public class JoinGameMenuPanel extends MenuPanel {
+public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 
 	// Properties
 	
 	private TextField playerNameField;
 	private TextField gameNameField;
 	private TextField addressField;
+	
+	Button joinGameButton;
+	
+	String gameAddress;	
 	
 	// Constructors
 	
@@ -29,6 +36,7 @@ public class JoinGameMenuPanel extends MenuPanel {
     	this.setupPanel();
 		this.setupTextFields();
 		this.setupButtons();
+		updateJoinGameButton();
 	}
 	
 	private void setupPanel() {
@@ -58,26 +66,29 @@ public class JoinGameMenuPanel extends MenuPanel {
 		this.playerNameField = new TextField(lastPlayerName);
 		this.playerNameField.setPlaceholder("Player1", null);
 		this.playerNameField.setBounds(new Rectangle(230, 105, 150, 30));
+		this.playerNameField.getDocument().addDocumentListener(this);
 		this.add(this.playerNameField);
 		
 	    String lastGameName = ud.getString(Constants.GAME_NAME_KEY);
 		this.gameNameField = new TextField(lastGameName);
 		this.gameNameField.setPlaceholder("Game1", null);
 		this.gameNameField.setBounds(new Rectangle(230, 155, 150, 30));
+		this.gameNameField.getDocument().addDocumentListener(this);
 		this.add(this.gameNameField);
-		
+				
 		this.addressField = new TextField("");
-		addressField.setBounds(new Rectangle(230, 205, 150, 30));
+		gameAddress = addressField.toString();
 		addressField.setPlaceholder("ex: 130.190.31.67", null);
-		addressField.setEditable(true);
+		addressField.setBounds(new Rectangle(230, 205, 150, 30));
+		this.addressField.getDocument().addDocumentListener(this);
 		this.add(this.addressField);
 	}
 	
 	private void setupButtons() {
-		Button createGameButton = new Button("Join game", null);
-		createGameButton.addAction(this, "joinGame");
-		createGameButton.setBounds(270, 280, 150, 40);
-    	this.add(createGameButton);
+		joinGameButton = new Button("Join game", null);
+		joinGameButton.addAction(this, "joinGame");
+		joinGameButton.setBounds(270, 280, 150, 40);
+    	this.add(joinGameButton);
     	
 		Button cancelButton = new Button("Cancel", null);
 		cancelButton.addAction(this, "cancelGame");
@@ -122,6 +133,36 @@ public class JoinGameMenuPanel extends MenuPanel {
 	public void cancelGame() {
 		GameController gc = (GameController)this.getFrameController();
 		gc.showWelcomeMenuPanel();
+	}
+	
+	protected void updateJoinGameButton() {
+		String playerName = this.playerNameField.getText();
+		String gameName = this.gameNameField.getText();
+		String gameAddress = this.addressField.getText();
+		if ((playerName.isEmpty() || playerName.trim().equals("")) ||
+			(gameName.isEmpty() || gameName.trim().equals(""))	||
+			(gameAddress.isEmpty() || gameAddress.trim().equals(""))) {
+			joinGameButton.setEnabled(false);
+		} else {
+			joinGameButton.setEnabled(true);
+		}
+	}
+	
+	// Document listener
+	
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		// Not needed
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		updateJoinGameButton();
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		updateJoinGameButton();
 	}
 
 }
