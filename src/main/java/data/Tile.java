@@ -55,13 +55,13 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // Builder:
 // --------------------------------------------
 	/**
-	 * Constructeur de tuile spécial:
-	 * Permet de construire une tuile "irréelle" en forcant ces chemins à la valeur donnée en argument.
-	 * Copie le reste des propriétés depuis la tuile données en argument.
-	 * PRECONDITIONS: 
-	 * 	-pathList non null => retourne une tuile nulle (String null, booléens à faux, entiers à -1)
-	 * 	-tile non null  =>retourne une tuile nulle (String null, booléens à faux, entiers à -1)
-	 * 	-ptrPathTab > -1 => /!\ lève une exception
+	 * Constructeur de tuile spécial:</br>
+	 * Permet de construire une tuile "irréelle" en forcant ces chemins à la valeur donnée en argument.</br>
+	 * Copie le reste des propriétés depuis la tuile données en argument.</br>
+	 * PRECONDITIONS: </br>
+	 * 	*pathList non null => retourne une tuile nulle (String null, booléens à faux, entiers à -1)</br>
+	 * 	*tile non null  =>retourne une tuile nulle (String null, booléens à faux, entiers à -1)</br>
+	 * 	*ptrPathTab > -1 => /!\ lève une exception</br>
 	 * @param pathList
 	 *	Le tableau contenant les voies de la tuile.
 	 * @param ptrPathTab

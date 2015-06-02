@@ -1,14 +1,34 @@
 package test.java.game;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import main.java.data.Tile;
+import main.java.data.Tile.Path;
+import main.java.util.Direction;
 
 import org.junit.Test;
 
-public class testUnitaireTile {
+public class TestUnitaireTile {
 
 	@Test
 	public void testTile() {
-		fail("Not yet implemented");
+		Tile maTileA = null;
+		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
+		
+		Path[] monPath = null;
+		monPath = new Path[10];
+		int monPtrEndPath = 0;
+		monPath[0]= new Path(Direction.WEST, Direction.NORTH);
+		
+		Tile maTileB=null;
+		
+		maTileB = new Tile(monPath, monPtrEndPath, maTileA);
+		
+		assertFalse(maTileB.equals(Tile.parseTile("Tile_FFFFZZ2113")));
+		assertTrue(maTileB.isPathTo(Direction.WEST));
+		assertTrue(maTileB.isPathTo(Direction.NORTH));
+		
 	}
 
 	@Test
