@@ -59,7 +59,9 @@ public class Evaluator {
 				}
 			}			
 			try {
-				game = new Game("TestEvaluator", "localhost", "newOrleans", 2);
+				// TODO ne pas lancer la partie au départ, mais à partir de la config courante
+				Game.applicationPort = 5555;
+				game = new Game("Evaluator", "localhost", "src/test/resources/boards/test", 2);
 			} catch (Exception e) {
 				System.out.println("Game creation error"); e.printStackTrace();
 			}			

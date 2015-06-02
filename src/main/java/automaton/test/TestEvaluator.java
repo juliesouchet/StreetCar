@@ -53,7 +53,7 @@ public class TestEvaluator {
 		 *================*/
 		
 		nbrGamesSimulated = 1;
-		double victoryProb = Evaluator.evaluateSituationQuality(playerName, nbrGamesSimulated, data, PlayerAutomaton.dumbestLvl);
+		double victoryProb = Evaluator.evaluateSituationQuality(playerName, nbrGamesSimulated, data.getClone(playerName), PlayerAutomaton.dumbestLvl);
 		
 		
 		/*=========================*
@@ -62,7 +62,7 @@ public class TestEvaluator {
 		
 		System.out.println("=========================");
 		System.out.println("=========================");
-		System.out.println(playerName + "a une chance de gagner de " + victoryProb + "%");		
+		System.out.println(playerName + " a une chance de gagner de " + victoryProb + "%");		
 		System.out.println("=========================");
 		System.out.println("=========================");
 		
