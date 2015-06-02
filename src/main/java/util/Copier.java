@@ -1,5 +1,6 @@
 package main.java.util;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -23,8 +24,9 @@ public class Copier <T>
 
 		for (T t: l)
 		{
-			if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
-			else									elem = getMyJavaClones(t);
+			if 		(t == null)							elem = null;
+			else if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
+			else										elem = getMyJavaClones(t);
 			res.add(elem);
 		}
 
@@ -41,8 +43,9 @@ public class Copier <T>
 
 		for (T t: l)
 		{
-			if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
-			else									elem = getMyJavaClones(t);
+			if 		(t == null)							elem = null;
+			else if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
+			else										elem = getMyJavaClones(t);
 			res.add(elem);
 		}
 
@@ -61,8 +64,9 @@ public class Copier <T>
 		for (int i=0; i<w; i++)
 		{
 			t = tab[i];
-			if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
-			else									elem = getMyJavaClones(t);
+			if		(t == null)							elem = null;
+			else if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
+			else										elem = getMyJavaClones(t);
 			res[i] = elem;
 		}
 		return res;
@@ -84,8 +88,9 @@ public class Copier <T>
 			for (int j=0; j<h; j++)
 			{
 				t = matrix[i][j];
-				if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
-				else									elem = getMyJavaClones(t);
+				if		(t == null)							elem = null;
+				else if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
+				else										elem = getMyJavaClones(t);
 				res[i][j] = elem;
 			}
 		}
@@ -100,10 +105,11 @@ public class Copier <T>
 	@SuppressWarnings("unchecked")
 	private T getMyJavaClones(T elem)
 	{
-		if (elem instanceof String)	return (T) new String((String)elem);
-		if (elem instanceof Point)	return (T) new Point((Point)elem);
-		if (elem instanceof ArrayList) return (T) new ArrayList<>((ArrayList<?>)elem);
-		if (elem instanceof LinkedList) return (T) new LinkedList<>((LinkedList<?>)elem);
+		if (elem instanceof String)		return (T) new String((String)elem);
+		if (elem instanceof Point)		return (T) new Point((Point)elem);
+		if (elem instanceof Color)		return (T) new Color(((Color)elem).getRGB());
+		if (elem instanceof ArrayList)	return (T) new ArrayList<>((ArrayList<?>)elem);
+		if (elem instanceof LinkedList)	return (T) new LinkedList<>((LinkedList<?>)elem);
 		else throw new RuntimeException("Cloneable cast unexpected: " + elem.getClass());
 	}
 }

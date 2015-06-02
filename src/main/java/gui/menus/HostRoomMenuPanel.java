@@ -143,6 +143,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 		try {
 			index = this.choiceComboBoxes.indexOf(comboBox);
 			player.setLoginInfo(index, info);
+			System.out.println("ON VIENT DE CHANGER UN LOGIN INFO");
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
@@ -155,6 +156,18 @@ public class HostRoomMenuPanel extends MenuPanel {
 	// Refresh menu
 	
 	public void refreshMenu(PlayerIHM player, Data data) {
+		if (data == null) {
+			System.out.println("DATA VAUT NULL");
+			return;
+		}
+		System.out.println(data.getPlayerNameList());
+		for (String playerName : data.getPlayerNameList()) {
+			if (data.getPlayerColor(playerName) == null) {
+				Color playerColor = data.getRandomUnusedColor();
+				data.setPlayerColor(playerName, playerColor);
+			}
+		}
+		
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i = 0; i < 5; i++) {
@@ -167,8 +180,9 @@ public class HostRoomMenuPanel extends MenuPanel {
 ///////				System.out.println(info);
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
+				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
 				
-//////				System.out.println(i + " " + info);
+				System.out.println(i + " " + info);
 				if (info.isClosed()) {
 					nameLabel.setText(" Connection closed", null);
 					choiceComboBox.setSelectedIndex(4);

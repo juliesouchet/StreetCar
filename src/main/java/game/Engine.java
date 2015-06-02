@@ -78,6 +78,11 @@ public class Engine implements Runnable
 		addAction(new EngineAction(null, null, data, function, null, null, null, -1, null, null, null, null));
 	}
 	/** @return add an event to the engine action queue*/
+	public void addAction(Data data, String function, PlayerInterface pi)
+	{
+		addAction(new EngineAction(pi, null, data, function, null, null, null, -1, null, null, null, null));
+	}
+	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function, String playerName)
 	{
 		addAction(new EngineAction(null, playerName, data, function, null, null, null, -1, null, null, null, null));
@@ -120,23 +125,6 @@ public class Engine implements Runnable
 // Public methods:
 // This functions are executed by the caller's thread
 // --------------------------------------------
-	private synchronized void onJoinGame() throws RemoteException
-	{
-		Data			data		= this.toExecute.data;
-		PlayerInterface	player		= this.toExecute.player;
-		String			playerName	= this.toExecute.playerName;
-		boolean			isHuman		= this.toExecute.isHuman;
-		boolean			isHost		= this.toExecute.isHost;
-		PlayerInterface pi;
-
-//		data.addPlayer(player, playerName, isHost, isHuman);
-		for (String name: data.getPlayerNameList())
-		{
-			pi = data.getRemotePlayer(name);
-			Data d = data.getClone(name);
-			pi.gameHasChanged(d);
-		}
-	}
 	public void onQuitGame(Data data, String playerName) throws RemoteException
 	{
 		PlayerInterface pi;
@@ -168,17 +156,15 @@ public class Engine implements Runnable
 		PlayerInterface pi;
 		Data privateData;
 		Data data = this.toExecute.data;
+		PlayerInterface playerToExclude = this.toExecute.player;
 
 		for (String name: data.getPlayerNameList())
 		{
 			pi = data.getRemotePlayer(name);
-			if (name.equals(this.toExecute.playerName)) pi.excludePlayer();
-			else
-			{
-				privateData	= data.getClone(name);
-				pi.gameHasChanged(privateData);
-			}
+			privateData	= data.getClone(name);
+			pi.gameHasChanged(privateData);
 		}
+		playerToExclude.excludePlayer();
 	}
 	@SuppressWarnings("unused")
 	private synchronized void hostStartGame() throws RemoteException

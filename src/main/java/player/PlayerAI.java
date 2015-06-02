@@ -44,6 +44,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			case 1	:this.automaton	= new Dumbest(playerName);	break;
 			case 2	:this.automaton = new Traveler(playerName);	break;
+//			case 3	:this.automaton = new Traveler(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application

@@ -140,6 +140,7 @@ public String getHostName(){return this.data.getHost();}
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
+System.out.println("------------" + oldPlayerName);
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
 		boolean	oldPlayerIsHuman	= this.loggedPlayerTable[playerToChangeIndex].isHuman();
 		boolean	newPlayerIsHuman	= newPlayerInfo.isHuman();
@@ -148,17 +149,27 @@ public String getHostName(){return this.data.getHost();}
 		this.loggedPlayerTable[playerToChangeIndex].setFreeCell();
 		if (oldPlayerIsOccupied)														// Case exclude old player
 		{
-			if (oldPlayerIsHuman)	this.engine.addAction(this.data, "excludePlayer", oldPlayerName);
+			this.data.removePlayer(oldPlayerName);
+			if ((oldPlayerIsHuman) && (oldPlayerName != null))
+			{
+				PlayerInterface	oldPlayer	= this.data.getRemotePlayer(oldPlayerName);
+				this.engine.addAction(this.data, "excludePlayer", oldPlayer);
+			}
 			else
 			{
 				this.aiList.get(oldPlayerName).interrupt();
 				this.aiList.remove(oldPlayerName);
 			}
 		}
-		if (!newPlayerIsHuman)															// Case create AI player
+		else if (!newPlayerIsHuman)														// Case create AI player
 		{
 			this.launchAIPlayer(newPlayerInfo);
 		}
+System.out.println(this.loggedPlayerTable[0].isClosed());
+System.out.println(this.loggedPlayerTable[1].isClosed());
+System.out.println(this.loggedPlayerTable[2].isClosed());
+System.out.println(this.loggedPlayerTable[3].isClosed());
+System.out.println(this.loggedPlayerTable[4].isClosed());
 	}
 	/**================================================
 	 * @return Makes a player join the game
@@ -183,8 +194,8 @@ public String getHostName(){return this.data.getHost();}
 		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
 
-		this.data.addPlayer(player, playerName, isHost, isHuman);
-		this.engine.addAction(data, "onJoinGame", playerName, isHuman, isHost, player);////////////onJoinGame(this.data, player, playerName, isHuman, isHost);
+		data.addPlayer(player, playerName, isHost, isHuman);
+		this.engine.addAction(data, "notifyAllPlayers");
 		this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
 		System.out.println("\n===========================================================");
 		System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");

@@ -90,7 +90,6 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	public synchronized Color	getPlayerColor()throws RemoteException	{return this.data.getPlayerColor(playerName);}
 	public synchronized void	gameHasChanged(Data data) throws RemoteException
 	{
-//System.out.println("playerAbstract");
 		this.data = data;
 		if (this.ihm != null) this.ihm.refresh(data);
 	}
