@@ -55,17 +55,25 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // Builder:
 // --------------------------------------------
 	/**
-	 * Constructeur de tuile: fais une copy de la tuile t
+	 * Constructeur de tuile spécial:
+	 * Permet de construire une tuile "irréelle" en forcant ces chemins à la valeur donnée en argument.
+	 * Copie le reste des propriétés depuis la tuile données en argument.
+	 * PRECONDITIONS: 
+	 * 	-pathList non null => retourne une tuile nulle (String null, booléens à faux, entiers à -1)
+	 * 	-tile non null  =>retourne une tuile nulle (String null, booléens à faux, entiers à -1)
+	 * 	-ptrPathTab > -1 => /!\ lève une exception
 	 * @param pathList
-	 * La liste des voies de la tuile. Met des valeurs par default si null. (Les String aà null, les booléens à null et les entiers à -1)
+	 *	Le tableau contenant les voies de la tuile.
 	 * @param ptrPathTab
-	 * TODO ptrPathTab est le compteur du nombre de chemin ?
-	 * @param t
+	 * 	L'indice de fin des valeurs significatives du tableau.
+	 * @param tile
+	 * 	La tuile source d'où l'on copie le reste des attributs.
 	 * @throws RuntimeException
+	 * 	Si ptrPathTab == -1
 	 */
-	public Tile(Path[] pathList, int ptrPathTab, Tile t) throws RuntimeException
+	public Tile(Path[] pathList, int ptrPathTab, Tile tile) throws RuntimeException
 	{
-		if ((t == null) || (pathList == null))
+		if ((tile == null) || (pathList == null))
 		{
 			this.tileID					= null;
 			this.isTree					= false;
@@ -77,25 +85,35 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			this.cardinal				= -1;
 			this.tileDirection			= null;
 		}
-		else if ((t != null) && (pathList != null))
+		else if ((tile != null) && (pathList != null))
 		{
-			if ((t.isBuilding)&& (ptrPathTab > -1))throw new RuntimeException("A tile can not be a building and contain a path");
-			this.tileID					= t.tileID;
-			this.isTree					= t.isTree;
-			this.isBuilding				= t.isBuilding;
-			this.isStop					= t.isStop;
-			this.isTerminus				= t.isTerminus;
-			this.buildingDescription	= t.buildingDescription;
-			this.terminusDescription	= t.terminusDescription;
-			this.cardinal				= t.cardinal;
-			this.tileDirection			= t.tileDirection;
-			copyPathTab(t.pathTab, this.pathTab, t.ptrPathTab);
-			this.ptrPathTab				= t.ptrPathTab;
+			if ((tile.isBuilding)&& (ptrPathTab > -1))throw new RuntimeException("A tile can not be a building and contain a path");
+			this.tileID					= tile.tileID;
+			this.isTree					= tile.isTree;
+			this.isBuilding				= tile.isBuilding;
+			this.isStop					= tile.isStop;
+			this.isTerminus				= tile.isTerminus;
+			this.buildingDescription	= tile.buildingDescription;
+			this.terminusDescription	= tile.terminusDescription;
+			this.cardinal				= tile.cardinal;
+			this.tileDirection			= tile.tileDirection;
+			copyPathTab(tile.pathTab, this.pathTab, tile.ptrPathTab);		// TODO Faux
+			this.ptrPathTab				= tile.ptrPathTab;
 		}
 		else throw new RuntimeException("Unhandeled case");
 	}
+	
+	/**
+	 * Constructeur générique
+	 */
 	private Tile(){}
 //TODO verifier tous ceux qui l'appelent
+	
+	/**
+	 * Clone la tuile
+	 * @return
+	 * Retourne une référence vers une nouvelle instance de tuile égale a la tuile appelante
+	 */
 	public Tile getClone()
 	{
 		Tile res = new Tile();
@@ -188,7 +206,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 				d0 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i)));
 				d1 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i+1)));
 				res.ptrPathTab ++;
-				res.pathTab[res.ptrPathTab].setPath(d0, d1);
+				res.pathTab[res.ptrPathTab].setPath(d0, d1);		// TODO Faux
 			}
 			return res;
 		}
@@ -198,6 +216,12 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Setters:
 // --------------------------------------------
+	/**
+	 * Copie le contenu de la tuile passée en argument dans la tuile appelante.
+	 * Remarque: ne fait pas de nouvelle allocation.
+	 * @param t
+	 * Tuile à recopier.
+	 */
 	public void setTile(Tile t)
 	{
 		if (t == null)
@@ -227,27 +251,116 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			this.ptrPathTab				= t.ptrPathTab;
 		}
 	}
+	/**
+	 * Setter sur l'attibut booléen isStop de la tuile
+	 * @param b
+	 * True ou False
+	 */
 	public void setStop(boolean b){this.isStop = b;}
 
 // --------------------------------------------
 // Getters:
 // --------------------------------------------
-	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
+	/**
+	 *	Vrai si les deux instances représentent la même tuile.
+	 *	@param
+	 *	L'objet à comparer, retourne faux si null.
+	 *	@return
+	 *	Vrai si les instances représentent la même tuile
+	 *	Faux sinon
+	 */
+	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);} //TODO comparer juste le tileID est il suffisant ,
+
+	/**
+	 * @return
+	 * Retourne l'attribut tileID qui identifie la tuile.
+	 */
 	public String	getTileID()			{return new String(this.tileID);}
+	
+	/**
+	 * @return
+	 * Le nombre de tuile de ce type dans la pioche au départ, ne compte pas les mains initiales.
+	 */
 	public int		getCardinal()		{return this.cardinal;}
+	
+	/**
+	 * @return
+	 * L'orientation de la tuile :	WEST (0), NORTH	(1), EAST (2), SOUTH (3).
+	 * REMARQUE: Par défault à WEST.
+	 */
 	public Direction getTileDirection()	{return this.tileDirection;}
+	
+	/**
+	 * @return
+	 * Vrai si la tuile est une tuile contenant un arbre (donc inamovible).
+	 * Faux sinon.
+	 */
 	public boolean	isTree()			{return this.isTree;}
+	
+	/**
+	 * @return
+	 * Vrai si la tuile représente un batiment (une station)
+	 * Faux sinon.
+	 */
 	public boolean	isBuilding()		{return this.isBuilding;}
+	
+	/**
+	 * @return
+	 * Vrai si la tuile représente un terminus.
+	 */
 	public boolean	isTerminus()		{return this.isTerminus;}
+	
+	/**
+	 * @return
+	 * Vrai si la tuile représente un stop.
+	 * Remarque1: elle a été posé la première à côté d'un batiment.
+	 * Remarque2: lorsqu'un tramway circule il est forcé de arreter son déplacement.
+	 */
 	public boolean	isStop()			{return this.isStop;}
+	
+	/**
+	 * @return
+	 * Vrai si la tuile représente un vide (n'est ni un batiment, ni un terminus, ni des rails... un carré d'herbe ou de pavé.)
+	 * Faux sinon.
+	 */
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab == -1));}
+	
+	/**
+	 * @return
+	 * Vrai si la tuile peut être une tuile du deck (c'est une tuile de rails).
+	 */
 	public boolean	isDeckTile()		{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab > -1));}
+	
+	/**
+	 * Modifie l'orientation de la tuile: rotation de 1 vers la gauche.
+	 */
 	public void		turnLeft()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnLeft();	tileDirection = tileDirection.turnLeft();}
+	
+	/**
+	 * Modifie l'orientation de la tuile: rotation de 1 vers la droite.
+	 */
 	public void		turnRight()			{for (int i=0; i<=this.ptrPathTab; i++) pathTab[i].turnRight();	tileDirection = tileDirection.turnRight();}
+	
+	/**
+	 * Modifie l'orientation de la tuile: retourne la tuile (équivament à double rotation à droite ou à gauche).
+	 */
 	public void		turnHalf()			{this.turnLeft(); this.turnLeft();}
+	
+	/**
+	 * Affecte l'orentation de la tuile à la direction donnée.
+	 * @param dir
+	 * Direction voulue pour la tuile.
+	 */
 	public void		setDirection(Direction dir)	{this.tileDirection = dir;}
 
-	public boolean	isPathTo(Direction dir)
+	/**
+	 * Donne les voies permises par la tuile.	
+	 * @param dir
+	 * La direction où l'on veut aller.
+	 * @return
+	 * Vrai si il existe une voie depuis la tuile vers la direction donnée.
+	 */
+	public boolean	isPathTo(Direction dir) //TODO est ce suffisant ? on peut aller du sud vers le nord mais pas forcément de l'ouest vers le nord... isPathBetween(Direction from, Dz
 	{
 		for (int i=0; i<=this.ptrPathTab; i++)
 		{
@@ -270,7 +383,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		for (int i=0; i<=this.ptrPathTab; i++)
 		{
 			Path p = this.pathTab[i];
-			res = p.end0.addDirectionToList(res);
+			res = p.end0.addDirectionToList(res);	// TODO faux
 			res = p.end1.addDirectionToList(res);
 		}
 		return res;
@@ -415,6 +528,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		public void setPath(Path p)						{end0 = p.end0;				end1 = p.end1;}
 		public void setPath(Direction d0, Direction d1)	{end0 = d0;					end1 = d1;}
 		public String	toString()						{return "(" + end0 + ", " + end1 + ')';}
-		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)));}
+		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)))
+															|| ((end0.equals(p.end1)) && (end1.equals(p.end0)));}
 	}
 }

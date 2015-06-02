@@ -47,6 +47,8 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
+// TODO a corriger
+public String getHostName(){return this.data.getHost();}
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
@@ -226,7 +228,7 @@ System.out.println(this.loggedPlayerTable[4].isClosed());
 
 	/**==============================================
 	 * Init the game parameters.
-	 * Make the kame begins
+	 * Make the game begins
 	 ================================================*/
 	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers, ExceptionNonInitializedPlayer
 	{
@@ -238,9 +240,9 @@ System.out.println(this.loggedPlayerTable[4].isClosed());
 		this.engine.addAction(this.data, "hostStartGame", playerName);
 	}
 	/**=============================================================================
-	 * Places a tile from the player's hand on the bord.
-	 * The guiven tile must bellong to the player's hand
-	 * The guiven tile is removed from the player's hand
+	 * Places a tile from the player's hand on the board.
+	 * The given tile must belong to the player's hand
+	 * The given tile is removed from the player's hand
 	 ===============================================================================*/
 	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions
 	{

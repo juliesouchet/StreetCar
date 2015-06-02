@@ -75,6 +75,12 @@ Finalisation du Drag'n'Drop
 Création des 12 tuiles différentes 
 Intégration du moteur avec l'IHM (NewGame, JoinGame, WaitingRoom, InGame)
 
+### Jour 10 : Lundi 1 juin
 
+Continuation de l'intégration
+
+### Jour 11 : Mardi 2 juin
+
+Finalisation de l'intégration avec le moteur pour une première version jouable
 
 

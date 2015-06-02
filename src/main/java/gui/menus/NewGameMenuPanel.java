@@ -112,17 +112,13 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 		
 		GameController gc = this.getGameController();
 		try {
-			/*
 			gc.player = PlayerIHM.launchPlayer(playerName,
-					                           gameName,
+					                           gameName, 
 					                           "newOrleans",
 					                           2,
-					                           Color.BLACK,
 					                           true,
-					                           null,
+					                           IP.getIpAdressFromInet(),
 					                           gc);
-			*/
-			gc.player = PlayerIHM.launchPlayer(playerName, gameName, "newOrleans", 2, true, "127.0.0.1" /*addressField.getText()*/, gc);
 			gc.showHostWaitingRoomPanel();
 		} catch (Exception e)	{
 			e.printStackTrace(); 

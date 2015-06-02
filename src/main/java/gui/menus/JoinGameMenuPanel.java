@@ -1,5 +1,6 @@
 	package main.java.gui.menus;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -41,32 +42,32 @@ public class JoinGameMenuPanel extends MenuPanel {
 	    this.add(titleLabel);
 	    
 	    Label playerNameLabel = new Label("Player name", null);
-	    playerNameLabel.setBounds(140, 100, 100, 40);
+	    playerNameLabel.setBounds(120, 100, 100, 40);
 	    this.add(playerNameLabel);	
 
 	    Label gameNameLabel = new Label("Game name", null);
-	    gameNameLabel.setBounds(140, 150, 100, 40);
+	    gameNameLabel.setBounds(120, 150, 100, 40);
 	    this.add(gameNameLabel);
 	    
 	    Label adressLabel = new Label("IP adress", null);
-	    adressLabel.setBounds(140, 200, 100, 40);
+	    adressLabel.setBounds(120, 200, 100, 40);
 	    this.add(adressLabel);
 		
 	    UserDefaults ud = UserDefaults.getSharedInstance();
 	    String lastPlayerName = ud.getString(Constants.PLAYER_NAME_KEY);
 		this.playerNameField = new TextField(lastPlayerName);
 		this.playerNameField.setPlaceholder("Player1", null);
-		this.playerNameField.setBounds(new Rectangle(215, 105, 150, 30));
+		this.playerNameField.setBounds(new Rectangle(230, 105, 150, 30));
 		this.add(this.playerNameField);
 		
 	    String lastGameName = ud.getString(Constants.GAME_NAME_KEY);
 		this.gameNameField = new TextField(lastGameName);
 		this.gameNameField.setPlaceholder("Game1", null);
-		this.gameNameField.setBounds(new Rectangle(215, 155, 150, 30));
+		this.gameNameField.setBounds(new Rectangle(230, 155, 150, 30));
 		this.add(this.gameNameField);
 		
 		this.addressField = new TextField("");
-		addressField.setBounds(new Rectangle(215, 205, 150, 30));
+		addressField.setBounds(new Rectangle(230, 205, 150, 30));
 		addressField.setPlaceholder("ex: 130.190.31.67", null);
 		addressField.setEditable(true);
 		this.add(this.addressField);
@@ -101,19 +102,16 @@ public class JoinGameMenuPanel extends MenuPanel {
 		
 		GameController gc = this.getGameController();
 		try {
-			/*
-			gc.player = PlayerIHM.launchPlayer(playerName,
-					                           gameName,
-					                           "newOrleans",
-					                           2,
-					                           Color.RED,
-					                           false,
-					                           null,
-					                           gc);			
-			*/
-			
-			
-			gc.player = PlayerIHM.launchPlayer(playerName, gameName, "newOrleans", 2, false, addressField.getText(), gc);
+			gc.player = PlayerIHM.launchPlayer(playerName, 
+											   gameName,
+											   "newOrleans",
+											    2,
+											    false,
+											    addressField.getText(),
+											    gc);
+
+			Color playerColor = gc.player.getGameData().getRandomUnusedColor();
+			gc.player.setPlayerColor(playerColor);
 			gc.showClientWaitingRoomPanel();
 		} catch (Exception e)	{
 		     Toolkit.getDefaultToolkit().beep();
