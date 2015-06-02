@@ -153,7 +153,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 				this.aiList.remove(oldPlayerName);
 			}
 		}
-		if (!newPlayerIsHuman)		this.launchAIPlayer(newPlayerInfo);					// Case create AI player
+		if (!newPlayerIsHuman)															// Case create AI player
+		{
+			this.launchAIPlayer(newPlayerInfo);
+		}
 	}
 	/**================================================
 	 * @return Makes a player join the game
@@ -178,7 +181,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
 
-		this.engine.onJoinGame(this.data, player, playerName, isHuman, isHost);
+		this.engine.addAction(data, "onJoinGame", playerName, isHuman, isHost, player);////////////onJoinGame(this.data, player, playerName, isHuman, isHost);
 		this.loggedPlayerTable[playerIndex] = new LoginInfo(false, playerName, isHost, isHuman, iaLevel);
 		System.out.println("\n===========================================================");
 		System.out.println(Game.gameMessageHeader + "join request from player : \"" + playerName + "\"");
@@ -396,12 +399,12 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 
 		while(true)
 		{
-			if (this.aiList.containsKey(playerName+nameAdd)) nameAdd += rnd.nextInt(10);
+			if (this.data.isUsedPlayerName(playerName+nameAdd)) nameAdd += rnd.nextInt(10);
 			else break;
 		}
 		if (!nameAdd.equals(""))	playerName += "_" + nameAdd;
 
-		try					{newPlayer = new PlayerAI(playerName, false, this, newPlayerInfo.getAiLevel(), null);}
+		try					{newPlayer = new PlayerAI(playerName, newPlayerInfo.isHost(), this, newPlayerInfo.getAiLevel(), null);}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 		Thread t = new Thread(newPlayer);
 		this.aiList.put(playerName, t);

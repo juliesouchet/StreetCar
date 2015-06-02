@@ -54,6 +54,15 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
+	/**
+	 * Constructeur de tuile: fais une copy de la tuile t
+	 * @param pathList
+	 * La liste des voies de la tuile. Met des valeurs par default si null. (Les String aà null, les booléens à null et les entiers à -1)
+	 * @param ptrPathTab
+	 * TODO ptrPathTab est le compteur du nombre de chemin ?
+	 * @param t
+	 * @throws RuntimeException
+	 */
 	public Tile(Path[] pathList, int ptrPathTab, Tile t) throws RuntimeException
 	{
 		if ((t == null) || (pathList == null))
@@ -104,6 +113,14 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		res.ptrPathTab			= this.ptrPathTab;
 		return res;
 	}
+	
+	/**
+	 * Constructeur statique: instancie une tuile a partir de son code (nom de l'image dans les ressources) avec les propriétés correspondantes.
+	 * @param imageFileName
+	 * 	Nom du fichier image correspondant à la tuile souhaitée
+	 * @return
+	 * 	Un objet tuile instancié avec les caractéristiques correspondant à l'image.
+	 */
 	public static Tile parseTile(String imageFileName)
 	{
 		String str;

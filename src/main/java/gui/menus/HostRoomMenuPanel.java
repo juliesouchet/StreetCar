@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.swing.BorderFactory;
 
@@ -23,14 +24,6 @@ import main.java.gui.components.ImagePanel;
 import main.java.gui.components.Label;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
-
-// Impossible de recuperer l ordre des players
-// Impossible de forcer un refresh
-// PK une AI a pas de nom
-// Il faut un moyen plus propre que getPlayerName == null pour savoir si la connexion est etablie
-// Il faut pouvoir recuperer la couleur d un joueur
-// Comment dire au moteur de commencer a jouer
-// ou comment savoir que le jeu commence
 
 @SuppressWarnings("serial")
 public class HostRoomMenuPanel extends MenuPanel {
@@ -135,7 +128,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 	}
 	
 	public void changePlayerType(ComboBox comboBox) {
-		System.out.println("CHANGE");
+//////		System.out.println("CHANGE");
 
 		GameController gc = this.getGameController();
 		PlayerIHM player = gc.player;
@@ -144,7 +137,8 @@ public class HostRoomMenuPanel extends MenuPanel {
 		boolean isClosed = (index == 4);
 		boolean isHuman = (index == 0 || index == 4);
 		int aiLevel = index;
-		LoginInfo info = new LoginInfo(isClosed, null, false, isHuman, aiLevel);
+		String randomName = UUID.randomUUID().toString();
+		LoginInfo info = new LoginInfo(isClosed, randomName, false, isHuman, aiLevel);
 		
 		try {
 			index = this.choiceComboBoxes.indexOf(comboBox);
@@ -170,11 +164,11 @@ public class HostRoomMenuPanel extends MenuPanel {
 				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
 				
 				LoginInfo info = loginInfos[i];
-				System.out.println(info);
+///////				System.out.println(info);
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
 				
-				System.out.println(i + " " + info);
+//////				System.out.println(i + " " + info);
 				if (info.isClosed()) {
 					nameLabel.setText(" Connection closed", null);
 					choiceComboBox.setSelectedIndex(4);

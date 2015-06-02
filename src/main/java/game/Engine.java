@@ -75,27 +75,32 @@ public class Engine implements Runnable
 	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function)
 	{
-		addAction(new EngineAction(null, data, function, null, null, null, -1, null, null, null));
+		addAction(new EngineAction(null, null, data, function, null, null, null, -1, null, null, null, null));
 	}
 	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function, String playerName)
 	{
-		addAction(new EngineAction(playerName, data, function, null, null, null, -1, null, null, null));
+		addAction(new EngineAction(null, playerName, data, function, null, null, null, -1, null, null, null, null));
 	}
 	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function, String playerName, String chosenPlayerName, Tile t)
 	{
-		addAction(new EngineAction(playerName, data, function, null, t, null, -1, null, null, chosenPlayerName));
+		addAction(new EngineAction(null, playerName, data, function, null, t, null, -1, null, null, null, chosenPlayerName));
 	}
 	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function, String playerName, Color playerColor, boolean isHost)
 	{
-		addAction(new EngineAction(playerName, data, function, null, null, null, -1, playerColor, isHost, null));
+		addAction(new EngineAction(null, playerName, data, function, null, null, null, -1, playerColor, null, isHost, null));
+	}
+	/** @return add an event to the engine action queue*/
+	public void addAction(Data data, String function, String playerName, boolean isHuman, boolean isHost, PlayerInterface pi)
+	{
+		addAction(new EngineAction(pi, playerName, data, function, null, null, null, null, null, isHost, isHuman, null));
 	}
 	/** @return add an event to the engine action queue*/
 	public void addAction(String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
 	{
-		addAction(new EngineAction(playerName, data, function, position, tile, tramMovement, nbrCardsToDraw, null, false, null));
+		addAction(new EngineAction(null, playerName, data, function, position, tile, tramMovement, nbrCardsToDraw, null, false, null, null));
 	}
 	/** @return add an event to the engine action queue*/
 	public void addAction(EngineAction ea)
@@ -115,15 +120,21 @@ public class Engine implements Runnable
 // Public methods:
 // This functions are executed by the caller's thread
 // --------------------------------------------
-	public void onJoinGame(Data data, PlayerInterface player, String playerName, boolean isHuman, boolean isHost) throws RemoteException
+	private synchronized void onJoinGame() throws RemoteException
 	{
+		Data			data		= this.toExecute.data;
+		PlayerInterface	player		= this.toExecute.player;
+		String			playerName	= this.toExecute.playerName;
+		boolean			isHuman		= this.toExecute.isHuman;
+		boolean			isHost		= this.toExecute.isHost;
 		PlayerInterface pi;
 
 		data.addPlayer(player, playerName, isHuman, isHost);
 		for (String name: data.getPlayerNameList())
 		{
 			pi = data.getRemotePlayer(name);
-			pi.gameHasChanged(data.getClone(name));
+			Data d = data.getClone(name);
+			pi.gameHasChanged(d);
 		}
 	}
 	public void onQuitGame(Data data, String playerName) throws RemoteException
@@ -324,10 +335,12 @@ public class Engine implements Runnable
 		public Integer			nbrCardsToDraw; // TODO val discuss this with riyane
 		public String 			chosenPlayer;
 		public Boolean			isHost;
+		public Boolean			isHuman;
 
 		// Builder
-		public EngineAction (String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, Integer nbrCardsToDraw, Color playerColor, Boolean isHost, String chosenPlayer)
+		public EngineAction (PlayerInterface pi, String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, Integer nbrCardsToDraw, Color playerColor, Boolean isHost, Boolean isHuman, String chosenPlayer)
 		{
+			this.player			= pi;
 			this.playerName		= playerName;
 			this.data			= data;
 			this.function		= function;
@@ -338,10 +351,11 @@ public class Engine implements Runnable
 			this.playerColor	= playerColor;
 			this.chosenPlayer	= chosenPlayer;
 			this.isHost			= isHost;
+			this.isHuman		= isHuman;
 		}
 		public EngineAction(String playerName, Data data, String Function)
 		{
-			this(playerName, data, Function, null, null, null, -1, null, false, null);
+			this(null, playerName, data, Function, null, null, null, -1, null, false, null, null);
 		}
 	}
 }

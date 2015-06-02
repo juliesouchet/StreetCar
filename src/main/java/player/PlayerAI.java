@@ -46,8 +46,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			case 2	:this.automaton = new Traveler(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
-
+System.out.println("playerAI __________________");
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
+System.out.println("playerAI fiiiiin___________");
 	}
 
 // --------------------------------------------

@@ -78,6 +78,7 @@ public class PlayerIHM extends PlayerAbstract
 // --------------------------------------------
 	public synchronized void gameHasChanged(Data data) throws RemoteException
 	{
+System.out.println("playerIHM");
 		super.gameHasChanged(data);
 	}
 	public synchronized void excludePlayer() throws RemoteException
