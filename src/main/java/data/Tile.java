@@ -47,7 +47,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	private boolean					isTerminus;
 	private String					buildingDescription;
 	private int						terminusDescription;
-	private int						cardinal;
+	private int						cardinal = 0;
 	private Direction				tileDirection;
 
 	private Path[]					pathTab							= initPathTab();
