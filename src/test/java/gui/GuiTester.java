@@ -15,7 +15,6 @@ import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNonInitializedPlayer;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotEnougthTileInHand;
@@ -88,8 +87,7 @@ public class GuiTester {
 
 		@Override
 		public void hostStartGame() throws RemoteException,
-				ExceptionForbiddenAction, ExceptionNotEnougthPlayers,
-				ExceptionNonInitializedPlayer {
+				ExceptionForbiddenAction, ExceptionNotEnougthPlayers {
 			// TODO Auto-generated method stub
 			
 		}
