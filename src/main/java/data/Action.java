@@ -65,6 +65,51 @@ public class Action implements Serializable, CloneableInterface<Action>
 		return newBuildSimpleAction(position.x, position.y, t);
 	}
 
+	    
+	public static Action newBuildDoubleAction (Point position1, Tile tile1, Point position2, Tile tile2){
+		Action res = new Action();
+
+		res.action = BUILD_DOUBLE;
+		res.tile1.copy(tile1);
+		res.tile2.copy(tile2);
+		
+		res.positionTile1.x	= position1.x;
+		res.positionTile1.y	= position1.y;
+		res.positionTile1.x	= position2.x;
+		res.positionTile1.y	= position2.y;
+
+		return res;		
+	}
+	
+	public static Action newBuildTwoSimpleAction (Point position1, Tile tile1, Point position2, Tile tile2){
+		Action res = new Action();
+
+		res.action = TWO_BUILD_SIMPLE;
+		res.tile1.copy(tile1);
+		res.tile2.copy(tile2);
+		
+		res.positionTile1.x	= position1.x;
+		res.positionTile1.y	= position1.y;
+		res.positionTile1.x	= position2.x;
+		res.positionTile1.y	= position2.y;
+
+		return res;		
+	}
+	
+	public static Action newStartTripNextTurnAction (Point position, Tile t)	{
+		return newStartTripNextTurnAction(position.x, position.y, t);
+	}
+
+	public static Action newStartTripNextTurnAction (int x, int y, Tile t)	{
+		Action res = new Action();
+
+		res.action			= BUILD_AND_START_TRIP_NEXT_TURN;
+		res.tile1			.copy(t);
+		res.positionTile1.x	= x;
+		res.positionTile1.y	= y;
+
+		return res;
+	}
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------

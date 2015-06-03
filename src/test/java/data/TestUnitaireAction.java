@@ -19,11 +19,11 @@ public class TestUnitaireAction {
 		assertTrue(monAction.action==Action.NONE);
 	}
 
-	@Test
-	public void testNewStartTripNextTurnAction() {
-		Action monAction = Action.newStartTripNextTurnAction();
-		assertTrue(monAction.action==Action.START_TRIP_NEXT_TURN);
-	}
+//	@Test
+//	public void testNewStartTripNextTurnAction() {
+//		Action monAction = Action.newStartTripNextTurnAction();
+//		assertTrue(monAction.action==Action.START_TRIP_NEXT_TURN);
+//	}
 
 	@Test
 	public void testNewMoveAction() {
@@ -42,7 +42,7 @@ public class TestUnitaireAction {
 
 	@Test
 	public void testGetClone() {
-		Action monActionSrc = Action.newStartTripNextTurnAction();
+		Action monActionSrc = Action.newBuildSimpleAction(new Point(1,1),Tile.parseTile("Tile_FFFFZZ060123"));
 		Action monActionCible = null;
 		monActionCible = monActionSrc.getClone();
 		assertFalse(monActionCible==monActionSrc);
@@ -52,7 +52,7 @@ public class TestUnitaireAction {
 		for(int i=0; i<chemin.length;i++){
 			chemin[i] = new Point(i,i);
 		}
-		monActionSrc = Action.newMoveAction(chemin);
+		monActionSrc = Action.newMoveAction(chemin,10);
 		monActionCible = null;
 		monActionCible = monActionSrc.getClone();
 		assertFalse(monActionCible==monActionSrc);
