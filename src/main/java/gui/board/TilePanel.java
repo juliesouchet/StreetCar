@@ -37,7 +37,7 @@ public class TilePanel extends Panel implements Transferable {
 	
 	public void setTile(Tile tile) {
 		this.tile = tile;
-		if (tile == null) {
+		if (tile != null) {
 			this.tileImage = new TileImage(tile);
 			this.getTransferHandler().setDragImage(tileImage.getImage());
 			this.revalidate();
