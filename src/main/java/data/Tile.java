@@ -466,49 +466,53 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return res;
 	}
 	/**=================================================
-	 * @return -1 if the current tile can not be replaced by t.  Otherwise, the function returns the number of additional path.</br>
-	 * Those path are filled in additionalPath.</br>
-	 * This function does not check if t is suitable for the current tile neighbors</br>
+	 *	Test if the calling tile can be replaced by the tile given as argument.
+	 * @return 
+	 * 	-1 if the current tile can not be replaced by addedTile.</br>
+	 * 	The number of additional path, is the current tile can be replaced by addedTile.</br>
+	 * 	Those path are added in additionalPath.</br>
+	 * 	REMARK: /!\ This function does not check if t is suitable for the current tile neighbors</br>
+	 * @Param addedTile
 	 * @param additionalPath: output parameter (can be null). Is filled with the t's paths that are not in the current tile
 	 * ===================================================*/
-	public int isReplaceable(Tile t, Path[] additionalPath)
+	public int isReplaceable(Tile addedTile, Path[] additionalPath)
 	{
 		if (this.isTree)	 return -1;
 		if (this.isBuilding) return -1;
 		if (this.isTerminus) return -1;
 		if (this.isStop)	 return -1;
 
-		Path[]	lPath	= initPathTab();
-		Path[]	tPath	= initPathTab();
-		int		lSize	= this.ptrPathTab;
-		int		tSize	= t.ptrPathTab;
-		copyPathTab(this.pathTab,	lPath, this.ptrPathTab);
-		copyPathTab(t.pathTab,		tPath, t.ptrPathTab);
-		for (int i=0; i<=tSize; i++)							// Remove the common paths
+		Path[]	localPath	= initPathTab();
+		Path[]	addedTilePath	= initPathTab();
+		int		localTileNumberOfPath	= this.ptrPathTab;
+		int		addedTileNumberOfPath	= addedTile.ptrPathTab;
+		copyPathTab(this.pathTab,	localPath, this.ptrPathTab);
+		copyPathTab(addedTile.pathTab,		addedTilePath, addedTile.ptrPathTab);
+		for (int i=0; i<=addedTileNumberOfPath; i++)							// Remove the common paths
 		{
-			Path pt = tPath[i];
-			for (int j=0; j<=lSize; j++)
+			Path bufferPathAddedTile = addedTilePath[i];
+			for (int j=0; j<=localTileNumberOfPath; j++)
 			{
-				Path pl = lPath[j];
-				if (pt.equals(pl))
+				Path bufferPathLocalTile = localPath[j];
+				if (bufferPathAddedTile.equals(bufferPathLocalTile))
 				{
-					Util.swapTab(tPath, i, tSize);
-					Util.swapTab(lPath, j, lSize);
-					i--;	tSize--;
-					j--;	lSize--;
+					Util.swapTab(addedTilePath, i, addedTileNumberOfPath);
+					Util.swapTab(localPath, j, localTileNumberOfPath);
+					i--;	addedTileNumberOfPath--;
+					j--;	localTileNumberOfPath--;
 					break;
 				}
 			}
 		}
 
-		if (lSize != -1)	return -1;							// Case local tile is not contained in t
-		if (tSize == -1)	return -1;							// Case local tile is equal to t
+		if (localTileNumberOfPath != -1)	return -1;							// Case local tile is not contained in t
+		if (addedTileNumberOfPath == -1)	return -1;							// Case local tile is equal to t
 		if (additionalPath != null)								// Case replaceable
 		{
-			for (int i=0; i<=tSize; i++)						//		Add all the new paths
-				additionalPath[i].setPath(tPath[i]);	
+			for (int i=0; i<=addedTileNumberOfPath; i++)						//		Add all the new paths
+				additionalPath[i].setPath(addedTilePath[i]);	
 		}
-		return tSize;
+		return addedTileNumberOfPath;
 	}
 	/**=============================================================
 	 * @return if this is a building the function returns its name (string).</br>  Else it returns null
