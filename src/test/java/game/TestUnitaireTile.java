@@ -350,7 +350,16 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testIsReplaceable() {
-		fail("Not yet implemented");
+
+				Tile maTileA = Tile.parseTile("Tile_FFFFZZ2113"); // la tuile virage de base
+				Path[] additionalPath = null;
+//		assertTrue(-1==maTileA.isReplaceable(Tile.parseTile("Tile_TFFFZZ040213"), additionalPath)); //On test si elle est remplacable par la route horizontale + virage vers le bas
+
+		
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003"); // la tuile virage de base
+		additionalPath = null;
+assertTrue(0==maTileA.isReplaceable(Tile.parseTile("Tile_FFFFZZ100203"), additionalPath)); //On test si elle est remplacable par la route horizontale + virage vers le bas
+		
 	}
 
 	@Test
