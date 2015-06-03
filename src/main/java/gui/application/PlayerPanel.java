@@ -30,7 +30,6 @@ public class PlayerPanel extends Panel{
 		nameOfPlayerLabel.setBounds(70, 5, 80, 30);
 		this.add(nameOfPlayerLabel);
 		
-		playerColor = data.getPlayerColor(nameOfPlayer);
 	}
 	
 	public void setPlayerHandCards(String playerName) {
@@ -63,7 +62,8 @@ public class PlayerPanel extends Panel{
         super.paintComponent(g);
         
         //avatar
-        g.setColor(playerColor);
+        //g.setColor(playerColor); TODO valz
+        g.setColor(Color.YELLOW);
         g.fillRect(10, 5, 45, 45);
         g.setColor(Color.BLACK);
         g.drawRect(10, 5, 45, 45);
@@ -83,6 +83,9 @@ public class PlayerPanel extends Panel{
 	
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.data = data;
-		setPlayerHandCards(this.nameOfPlayer);
+		if (data == null) {
+			playerColor = data.getPlayerColor(nameOfPlayer);
+			setPlayerHandCards(this.nameOfPlayer);
+		}
 	}
 }

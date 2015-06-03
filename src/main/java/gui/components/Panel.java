@@ -15,7 +15,8 @@ public class Panel extends JPanel {
 	
 	public Frame getFrame() {
 		Container parent = this.getParent();
-		while (parent != null && !(parent instanceof Frame)) {
+		if(parent == null) return null;
+		while (!(parent instanceof Frame)) {
 			parent = parent.getParent();
 		}
 		return (Frame)parent;

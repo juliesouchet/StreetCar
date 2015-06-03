@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import javax.swing.BorderFactory;
 
@@ -18,6 +17,7 @@ import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionNonInitializedPlayer;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.gui.application.GameController;
+import main.java.gui.application.StreetCar;
 import main.java.gui.components.Button;
 import main.java.gui.components.ComboBox;
 import main.java.gui.components.ImagePanel;
@@ -70,12 +70,13 @@ public class HostRoomMenuPanel extends MenuPanel {
 		    
 	    	Label nameLabel = new Label(" " + defaultName);
 		    nameLabel.setBounds(210, y, 150, 40);
-		    this.add(nameLabel);
 		    nameLabel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+		    this.add(nameLabel);
 		    this.nameLabels.add(nameLabel);
 		    
 			ComboBox comboBox = new ComboBox(adversaryChoices);
 			comboBox.setBounds(370, y, 150, 40);
+			comboBox.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 			this.add(comboBox);
 		    this.choiceComboBoxes.add(comboBox);
 		    
@@ -106,10 +107,10 @@ public class HostRoomMenuPanel extends MenuPanel {
 	// Actions
 	
 	public void playGame() {
-		GameController gc = (GameController)this.getFrameController();
-		gc.showInGamePanel();
+		GameController gc = this.getGameController();
 		try {
-			this.getGameController().player.hostStartGame();
+			StreetCar.player.hostStartGame();
+			gc.showInGamePanel();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
@@ -123,22 +124,20 @@ public class HostRoomMenuPanel extends MenuPanel {
 	
 	public void cancelGame() {
 		GameController gc = (GameController)this.getFrameController();
-		gc.player = null;
+		StreetCar.player = null;
 		gc.showWelcomeMenuPanel();
 	}
 	
 	public void changePlayerType(ComboBox comboBox) {
-//////		System.out.println("CHANGE");
+		System.out.println("CHANGE");
 
-		GameController gc = this.getGameController();
-		PlayerIHM player = gc.player;
+		PlayerIHM player = StreetCar.player;
 		
 		int index = comboBox.getSelectedIndex();
 		boolean isClosed = (index == 4);
 		boolean isHuman = (index == 0 || index == 4);
 		int aiLevel = index;
-		String randomName = UUID.randomUUID().toString();
-		LoginInfo info = new LoginInfo(isClosed, randomName, false, isHuman, aiLevel);
+		LoginInfo info = new LoginInfo(isClosed, null, false, isHuman, aiLevel);
 		
 		try {
 			index = this.choiceComboBoxes.indexOf(comboBox);
@@ -160,44 +159,36 @@ public class HostRoomMenuPanel extends MenuPanel {
 			System.out.println("DATA VAUT NULL");
 			return;
 		}
-		System.out.println(data.getPlayerNameList());
-		for (String playerName : data.getPlayerNameList()) {
-			if (data.getPlayerColor(playerName) == null) {
-				Color playerColor = data.getRandomUnusedColor();
-				data.setPlayerColor(playerName, playerColor);
-			}
-		}
 		
+		System.out.println(data.getPlayerNameList());
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
-			for (int i = 0; i < 5; i++) {
-				
+			for (int i=0; i<loginInfos.length; i++) {
 				Label nameLabel = this.nameLabels.get(i);
 				ComboBox choiceComboBox = this.choiceComboBoxes.get(i);
 				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
 				
 				LoginInfo info = loginInfos[i];
-///////				System.out.println(info);
-				nameLabel.setText(info.getPlayerName());
+
+				String playerName = (info.getPlayerName() == null) ? info.getPlayerName() : "";
+				nameLabel.setText(playerName);
 				choiceComboBox.setEditable(!info.isHost());
-// TODO: erreur: tu ne teste pas si info.isClosed().   Si c isClosed, alors info.getPlayerName() == null
-if (!info.isOccupiedCell()) continue;
-// TODO: correction bidon, 
-				avatarImagePanel.setBackground(data.getPlayerColor(info.getPlayerName()));
 				
-				System.out.println(i + " " + info);
 				if (info.isClosed()) {
 					nameLabel.setText(" Connection closed", null);
 					choiceComboBox.setSelectedIndex(4);
+					avatarImagePanel.setBackground(Color.WHITE);
 					
-				} if (nameLabel.getText() == null && info.isHuman()) {
+				} else if (nameLabel.getText() == null && info.isHuman()) {
 					nameLabel.setText(" Waiting connection", null);
 					choiceComboBox.setSelectedIndex(0);
+					avatarImagePanel.setBackground(Color.WHITE);
 					
 				} else if (!info.isHuman()) {
 					int level = info.getAiLevel();
 					choiceComboBox.setSelectedIndex(level);
 					nameLabel.setText(" AI", null);
+					//avatarImagePanel.setBackground(data.getPlayerColor(playerName));
 				}
 			}
 			

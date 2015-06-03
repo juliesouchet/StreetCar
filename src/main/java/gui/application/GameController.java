@@ -23,7 +23,6 @@ import main.java.gui.menus.SettingsMenuPanel;
 import main.java.gui.menus.WelcomeMenuPanel;
 import main.java.gui.util.Constants;
 import main.java.gui.util.UserDefaults;
-import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
 
 public class GameController extends FrameController implements InterfaceIHM, ComponentListener {
@@ -31,7 +30,6 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	// Properties
 	
 	protected MenuPanel menuPanel = null;
-	public PlayerIHM player = null;
 	
     // Constructors
 	
@@ -197,22 +195,22 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	// Interface IHM
 
 	public void forceRefresh() {
-		if (this.player == null) return;
-		this.refresh(this.player.getGameData());
+		if (StreetCar.player == null) return;
+		this.refresh(StreetCar.player.getGameData());
 	}
 	
 	public void stopGame() {
-		this.player = null;
+		StreetCar.player = null;
 	}
 
 	public void refresh(Data data) {
 		System.out.println("RESFRESH");
 		if (this.menuPanel != null) {
-			this.menuPanel.refreshMenu(this.player, data);
+			this.menuPanel.refreshMenu(StreetCar.player, data);
 		}
 		if (this.getFrameContentPane() instanceof InGamePanel) {
 			InGamePanel panel = (InGamePanel)this.getFrameContentPane();
-			panel.refreshGame(this.player, data);
+			panel.refreshGame(StreetCar.player, data);
 		}
 	}
 	

@@ -117,12 +117,15 @@ public String getHostName(){return this.data.getHost();}
 // Must implement "throws RemoteException"
 // Must be declared in the interface "RemoteApplicationInterface"
 // --------------------------------------------
+	/**==============================================
+	 * @return a copy of the data of the game
+	 ================================================*/
 	public synchronized Data getData(String playerName) throws RemoteException
 	{
 		return this.data.getClone(playerName);
 	}
 	/**==============================================
-	 * @return the table used by the waiting room
+	 * @return a copy of the table used by the waiting room
 	 ================================================*/
 	public synchronized LoginInfo[] getLoginInfo(String playerName) throws RemoteException
 	{
@@ -204,7 +207,7 @@ public String getHostName(){return this.data.getHost();}
 	public synchronized void onQuitGame(String playerName) throws RemoteException, ExceptionForbiddenAction
 	{
 		int playerIndex			= getPlayerInLogInfoTable(playerName);
-		boolean isHost			= this.data.istHost(playerName);
+		boolean isHost			= this.data.isHost(playerName);
 		boolean gameHasStarted	= this.data.isGameStarted();
 
 		if (!this.data.isPlayerLogged(playerName))	throw new ExceptionForbiddenAction();
@@ -248,6 +251,10 @@ public String getHostName(){return this.data.getHost();}
 
 		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
 	}
+	/**=============================================================================
+	 * Switch at once two tiles from the player's hand with two tiles on the board.
+	 * The tiles from the board are placed in the player's hand.
+	 ===============================================================================*/
 	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())				throw new ExceptionGameHasNotStarted();
@@ -264,6 +271,9 @@ public String getHostName(){return this.data.getHost();}
 		this.engine.addAction(ea);
 		// TODO check all possible things
 	}
+	/**=============================================================================
+	 * 	Signals the end of this player's turn
+	 =============================================================================*/
 	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
@@ -277,6 +287,13 @@ public String getHostName(){return this.data.getHost();}
 
 		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
 	}
+	/**=============================================================================
+	 * 	Signals the start of this player's maiden travel. 
+	 *  There must be a path from one terminus to another, passing next to all of
+	 *  this player's buildings. 
+	 *  @param terminus : the starting point
+	 *  @param playerName 
+	 =============================================================================*/
 	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionUncompletedPath
 	{
 		if(!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();
@@ -291,6 +308,11 @@ public String getHostName(){return this.data.getHost();}
 
 		this.engine.addAction(ea);
 	}
+	/**=============================================================================
+	 * Moves the player's streetcar following the tramMovement. 
+	 * It must use a pre-existing track on the board, cannot go backwards, 
+	 * and cannot be longer than the maximum allowed speed.
+	 =============================================================================*/
 	public synchronized void moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();

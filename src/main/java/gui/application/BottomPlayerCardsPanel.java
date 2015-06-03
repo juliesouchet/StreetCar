@@ -19,7 +19,6 @@ public class BottomPlayerCardsPanel extends Panel{
 	TilePanel tilePanel3;
 	TilePanel tilePanel4;
 	TilePanel tilePanel5;
-	Data data;
 	Color playerColor;
 	
 	public BottomPlayerCardsPanel() {
@@ -32,18 +31,44 @@ public class BottomPlayerCardsPanel extends Panel{
 	
 	protected void placeAvatar() {
 		try {
-			playerColor = data.getPlayerColor(this.getPlayer().getPlayerName());
+			PlayerIHM player  = StreetCar.player;
+			Data data = player.getGameData();
+			String playerName = player.getPlayerName();
+			playerColor = data.getPlayerColor(playerName);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	protected void placeTiles() {
-		tilePanel1 = new TilePanel();
-		tilePanel2 = new TilePanel();
-		tilePanel3 = new TilePanel();
-		tilePanel4 = new TilePanel();
-		tilePanel5 = new TilePanel();
+		PlayerIHM player  = StreetCar.player;
+		Data data = player.getGameData();
+		
+		try {
+			tilePanel1 = new TilePanel(data.getHandTile(player.getPlayerName(), 0));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel2 = new TilePanel(data.getHandTile(player.getPlayerName(), 1));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel3 = new TilePanel(data.getHandTile(player.getPlayerName(), 2));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel4 = new TilePanel(data.getHandTile(player.getPlayerName(), 3));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel5 = new TilePanel(data.getHandTile(player.getPlayerName(), 4));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
 		tilePanel1.setBounds(20, 80, 50, 50);
 		tilePanel2.setBounds(80, 80, 50, 50);
@@ -59,9 +84,12 @@ public class BottomPlayerCardsPanel extends Panel{
 	}
 	
 	protected void placeObjectives() {
+
+		PlayerIHM player  = StreetCar.player;
+		Data data = player.getGameData();
 		String playerName = null;
 		try {
-			playerName = this.getPlayer().getPlayerName();
+			playerName = StreetCar.player.getPlayerName();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -89,13 +117,5 @@ public class BottomPlayerCardsPanel extends Panel{
 
 		//g.drawRect(350, 80, 50, 50); //station1
 		//g.drawRect(410, 80, 50, 50); //station2
-	}
-	
-	public Data getData() {
-		return this.getPlayer().getGameData();
-	}
-	
-	public PlayerIHM getPlayer() {
-		return ((GameController)(this.getFrameController())).player;
 	}
 }

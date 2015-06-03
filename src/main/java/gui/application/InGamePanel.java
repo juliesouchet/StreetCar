@@ -35,17 +35,15 @@ public class InGamePanel extends Panel {
 	TitlePanel titlePanel;
 	MapPanel mapPanel;
 	ArrayList<PlayerPanel> playerPanels = new ArrayList<PlayerPanel>();
-	Data data;
 	String[] playersTab;
 
 	// Constructors
 	
 	InGamePanel(GameController gc) {
+		// TODO valz comment : was commented
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
-    	
-    	this.data = gc.player.getGameData();
     	
     	this.setupGameMapPanel();
     	this.setupChatPanel();
@@ -79,7 +77,7 @@ public class InGamePanel extends Panel {
 		mapPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 		
 		BottomPlayerPanel bottomPlayerPanel = new BottomPlayerPanel();
-		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);		
+		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
 	}
 	
 	private void setupChatPanel() {
@@ -105,9 +103,8 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupPlayersPanel() { 	
-		//this.playersTab = data.getPlayerOrder(); TODO
-		int nbPlayers = 4;
-		//int nbPlayers = data.getNbrPlayer();
+		//this.playersTab = StreetCar.player.getGameData().getPlayerOrder(); //TODO
+		int nbPlayers = StreetCar.player.getGameData().getNbrPlayer();
 		
     	this.playersSidebarPanel = new Panel();
     	this.playersSidebarPanel.setLayout(null);
@@ -122,7 +119,7 @@ public class InGamePanel extends Panel {
     	int y = 40;
     	System.out.println(nbPlayers);
     	for (int i=0; i<nbPlayers-1; i++) {
-    		PlayerPanel playerPanel = new PlayerPanel("gbvdf"); //TODO
+    		PlayerPanel playerPanel = new PlayerPanel("Adversary"); //TODO
     		playerPanels.add (playerPanel);
     		if (i<nbPlayers-1) { //last bar not displayed
     			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
@@ -144,8 +141,10 @@ public class InGamePanel extends Panel {
 	// Actions
 	
 	public void validate() {
+		// TODO: uncomment and fix
+		/*
 		try {
-			this.getPlayer().validate();
+			StreetCar.player.validate();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e) {
@@ -154,15 +153,15 @@ public class InGamePanel extends Panel {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	public void beginTrip() {
 		System.out.println("THE TERMINUS IS UNDEFINED FOR THE MOMENT");
-		PlayerIHM player = this.getPlayer();
+		PlayerIHM player = StreetCar.player;
 		Point terminus = new Point();
 		try {
-			this.getPlayer().startMaidenTravel(player.getPlayerName(), terminus);
+			player.startMaidenTravel(player.getPlayerName(), terminus);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionNotYourTurn e) {
@@ -179,20 +178,12 @@ public class InGamePanel extends Panel {
 	
 	// Refresh game
 	
-	public Data getData() {
-		return this.data;
-	}
-	
-	public PlayerIHM getPlayer() {
-		return ((GameController)(this.getFrameController())).player;
-	}
-	
 	public void refreshGame(PlayerIHM player, Data data) {
+		// TODO valz comment : was commented
 		System.out.println("REFRESH GAME");
 		this.mapPanel.refreshGame(player, data);
 		for (PlayerPanel playerPanel : this.playerPanels) {
 			playerPanel.refreshGame(player, data);
 		}
-		this.data = data;
 	}
 }

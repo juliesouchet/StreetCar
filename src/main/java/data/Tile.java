@@ -505,7 +505,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (additionalPath != null)								// Case replaceable
 		{
 			for (int i=0; i<=tSize; i++)						//		Add all the new paths
-				additionalPath[i].setPath(tPath[i]);	
+				additionalPath[i].setPath(tPath[i]);
 		}
 		return tSize;
 	}

@@ -26,116 +26,6 @@ import main.java.util.Util;
 
 public class Data implements Serializable
 {
-	
-	
-	
-	
-	
-	
-	
-	//TODO Wish list de Ulysse:
-/*		public class possibleActionsSet
-		{
-			public static final int maxCardinal = 6000;
-			private int cardinal;
-			Action[] acceptablesActions;
-
-
-			private possibleActionsSet(int size)				// majorant du nombre d'actions possibles
-			{
-				this.cardinal= 0;
-				this.acceptablesActions = new Action[size];
-			}
-
-			public Action getAction(int index){
-				return this.acceptablesActions[index];
-			}
-		}
-		/**
-		 * @return
-		 * L'ensemble des actions possible pour le joueur spécifié (c'est son tour de jouer)
-		 */
-/*		public possibleActionsSet getPossibleActions(String playerName)
-		{
-			possibleActionsSet result = new possibleActionsSet(possibleActionsSet.maxCardinal);
-			PlayerInfo pi = playerInfoList.get(playerName);
-			Hand hand = pi.hand;
-			Tile t1, t2, oldT;
-			Direction[] uniqueDirTab1, uniqueDirTab2;
-			Point origin;
-			LinkedList<Point> neighbors;
-			
-			// Building
-			if(!pi.startedMaidenTravel) {
-				for (int i = 0; i < hand.getSize(); i++) {					// first tile from the hand
-					t1 = hand.get(i);
-					uniqueDirTab1 = t1.getUniqueDirectionTab();
-					for (int d1 = 0; d1 < t1.getUniqueDirectionPtr(); d1++) {	// each rotation of the 1st tile (minus the duplicates)
-						t1.setDirection(uniqueDirTab1[d1]);
-						
-						for (int j = i; j < hand.getSize(); j++) {			// second tile from the hand
-							t2 = hand.get(j);
-							uniqueDirTab2 = t2.getUniqueDirectionTab();
-							for (int d2 = 0; d2 < t2.getUniqueDirectionPtr(); d2++) {// each rotation of the 2nd tile (minus the duplicates)
-								t2.setDirection(uniqueDirTab2[d2]);						
-							
-								for (int x = 0; x < board.length; x++) {			// each square of the board
-									for (int y = 0; y < board[x].length; y++) {
-										
-										if(isAcceptableTilePlacement(x, y, t1)) { // simple build t1
-											result.acceptablesActions[result.cardinal] = Action.newBuildSimpleAction(new Point(x,y), t1);
-											result.cardinal++;
-										}
-										// TODO si la première pose est un échange, tester les poses de la tuile récupérée
-										oldT = getTile(x, y);
-										setTile(x, y, t1);
-										for (Point p : getAccessibleNeighborsPositions(x, y)) {	// double build t1 & neighbors (t2)
-											if(isAcceptableTilePlacement(p.x, p.y, t2)) {
-												result.acceptablesActions[result.cardinal] = Action.newBuildDoubleAction(new Point(x,y), t1, p, t2);
-												result.cardinal++;
-											}
-										}
-										setTile(x, y, oldT);
-										
-									}
-								}
-								
-							}
-						}
-						
-					}
-				}
-			}
-			
-			// Traveling
-			else {	// pi.startedMaidenTravel
-				origin = pi.tramPosition;
-				neighbors = getAccessibleNeighborsPositions(origin.x, origin.y);
-				// TODO interdire les retours en arrière
-				for (Point inter : neighbors) {
-					if(distance(inter, origin) <= maxPlayerSpeed || getTile(inter).isStop()) {
-						Point[] destination = {inter};
-						result.acceptablesActions[result.cardinal] = Action.newMoveAction(destination);
-						result.cardinal++;
-					}
-					neighbors.addAll(getAccessibleNeighborsPositions(inter.x, inter.y));
-				}
-			}
-			return result; //TODO implémenter la méthode
-		}
-		// END ulysse'swish list
-
-		/**
-		 * @param p1
-		 * @param p2
-		 * @return distance de manhattan entre p1 et p2
-		 */
-		@SuppressWarnings("unused")
-/*		private int distance(Point p1, Point p2) {
-			return Math.abs(p1.x-p2.x)+Math.abs(p1.y-p2.y);
-		}
-	*/
-	
 // --------------------------------------------
 // Attributes:
 // --------------------------------------------
@@ -152,6 +42,7 @@ public class Data implements Serializable
 	public static final int				minSpeed				= 1;
 	public static final int				maxSpeed				= 10;
 	public static final int				maxPossibleAction		= 6000;
+	public static final int				maxNbrTramPath			= 4 ^ maxSpeed;
 
 	private static int[]				existingLine;
 	private static String[][][]			existingBuildingInLine;
@@ -175,10 +66,21 @@ public class Data implements Serializable
 	private Path[]						tmpPathTab		= Tile.initPathTab();// Optimization attribute
 	private Tile[]						tmpRotation1;
 	private Tile[]						tmpRotation2;
+	private PathFinder					pathFinder		= new PathFinder();
+	private PathFinderMulti				pathFinderMulti	= new PathFinderMulti();
+	private Point[][]					pathMatrix		= initPossibleTramPathMatrix();
 
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
+	/**
+	 * Creates the game data
+	 * @param gameName : the name of this game (as given by the host)
+	 * @param boardName : the initial board
+	 * @param nbrBuildingInLine : the amount of obligatory stops
+	 * @throws ExceptionUnknownBoardName
+	 * @throws RuntimeException
+	 */
 	public Data(String gameName, String boardName, int nbrBuildingInLine) throws ExceptionUnknownBoardName, RuntimeException
 	{
 		File f = new File(boardDirectory + boardName);
@@ -210,6 +112,9 @@ public class Data implements Serializable
 		}
 	}
 	private Data(){}
+	/**==============================================================
+	 *  Returns a deep copy of the current data, as seen by the player (the hidden informations are not given)
+	 ================================================================ */
 	public Data getClone(String playerName)
 	{
 		Data res = new Data();
@@ -231,6 +136,7 @@ public class Data implements Serializable
 		res.maxPlayerSpeed			= this.maxPlayerSpeed;
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
+		res.playerOrder				= (this.playerOrder== null)	? null : cpS.copyTab(playerOrder);
 
 		return res;
 	}
@@ -244,7 +150,7 @@ public class Data implements Serializable
 	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; } // TODO rename this method
 	
 	/**================================================
-	 * Add a player to the present game
+	 * @return Add a player to the present game
 	 ==================================================*/
 	public void addPlayer(PlayerInterface p, String playerName, boolean isHost, boolean isHuman) throws ExceptionFullParty
 	{
@@ -256,7 +162,7 @@ public class Data implements Serializable
 		if (isHost) this.host = new String(playerName);
 	}
 	/**==============================================================
-	 * Set the player's color.  Every color matches an unique line.
+	 * @return Set the player's color.  Every color matches an unique line.
 	 * This function initialize the player's line and the player's buildings
 	 ================================================================*/
 	public void setPlayerColor(String playerName, Color playerColor)
@@ -270,7 +176,7 @@ public class Data implements Serializable
 		this.remainingColors.remove(playerColor);
 	}
 	/**================================================
-	 * Remove a player from the present game
+	 * @return Remove a player from the present game
 	 ==================================================*/
 	public void removePlayer(String playerName)
 	{
@@ -283,7 +189,7 @@ public class Data implements Serializable
 		this.playerInfoList.remove(playerName);
 	}
 	/**================================================
-	 * Start the game:
+	 * @return Start the game: </br>
 	 * Check whether all the parameters have been set
 	 * Pick the player order (random)
 	 ==================================================*/
@@ -310,7 +216,7 @@ public class Data implements Serializable
 		this.skipTurn();
 	}
 	/**===================================================
-	 * Makes the game forward to the next player's turn
+	 * @return Makes the game forward to the next player's turn
 	 =====================================================*/
 	public void skipTurn()
 	{
@@ -326,7 +232,7 @@ public class Data implements Serializable
 		this.board[x][y] = t;
 	}
 	/**===================================================
-	 * Places the given tile on the board.  If the board had an non empty tile, the old tile is put in the player's hand.
+	 * @return Places the given tile on the board.  If the board had an non empty tile, the old tile is put in the player's hand.
 	 * The tile is removed from the player's hand.
 	 =====================================================*/
 	public void	placeTile(String playerName, int x, int y, Tile t)
@@ -350,7 +256,7 @@ public class Data implements Serializable
 		history.addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
 	}
 	/**===================================================
-	 * Draw a tile from the deck.  This tile is put in the player's hand
+	 * @return Draw a tile from the deck.  This tile is put in the player's hand
 	 =====================================================*/
 	public void drawTile(String playerName, int nbrCards)
 	{
@@ -364,7 +270,7 @@ public class Data implements Serializable
 		}
 	}
 	/**===================================================
-	 * Draw a tile from a player's hand.  This tile is put in the player's hand
+	 * @return Draw a tile from a player's hand.  This tile is put in the player's hand
 	 =====================================================*/
 	public void pickTileFromPlayer(String playerName, String chosenPlayerName, Tile tile)
 	{
@@ -374,10 +280,16 @@ public class Data implements Serializable
 		dst.remove(tile);
 		src.add(tile);
 	}
+	/**==================================================
+	 * @return The player declares the start of his maiden travel 
+	 ====================================================*/
 	public void startMaidenTravel(String playerName)
 	{
 		playerInfoList.get(playerName).startedMaidenTravel = true;
 	}
+	/**================================================
+	 * @return The player moves his streetcar
+	 ==================================================*/
 	public void setTramPosition(String playerName, Point newPosition)
 	{
 		PlayerInfo pi = playerInfoList.get(playerName);
@@ -387,6 +299,11 @@ public class Data implements Serializable
 		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
 	}
 // TODO: Enlever les LinkedList
+	/**==========================================================================
+	 * @return The player chooses the destination of his maiden travel (the opposite terminus from his starting terminus)
+	 * @param playerName : the player
+	 * @param dest : the two points corresponding to the ending terminus
+	 =============================================================================*/
 	public void	setDestinationTerminus(String playerName, Point[] dest)
 	{
 		Point[] tab = playerInfoList.get(playerName).endTerminus;
@@ -400,7 +317,14 @@ public class Data implements Serializable
 // --------------------------------------------
 // Getter relative to travel:
 // --------------------------------------------
+	/**=============================================================
+	 *  @return  the current position of this player's streetcar 
+	 * (or null if he hasn't started yet his maiden travel)
+	 * ============================================================= */
 	public Point	getTramPosition(String playerName)							{return new Point(playerInfoList.get(playerName).tramPosition);}
+	/**=============================================================
+	 * @return true if this terminus belongs to that player
+	 * ============================================================= */
 	public boolean	isPlayerTerminus(String playerName, Point terminus)
 	{
 		Point[] terminusTab = playerInfoList.get(playerName).terminus;
@@ -414,7 +338,7 @@ public class Data implements Serializable
 	public PlayerInterface		getRemotePlayer(String playerName)				{return this.playerInfoList.get(playerName).player;}
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
-	public boolean				istHost(String playerName)						{return this.host.equals(playerName);}
+	public boolean				isHost(String playerName)						{return this.host.equals(playerName);}
 	public boolean				isPlayerLogged(String name)						{return this.playerInfoList.containsKey(name);}
 	public int					getHandSize(String playerName)					{return this.playerInfoList.get(playerName).hand.getSize();}
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex);}
@@ -427,12 +351,18 @@ public class Data implements Serializable
 	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
 // TODO: Enlever les LinkedList
+	/**======================================================
+	 * @return true if this player still has actions to do in his turn
+	 ======================================================== */
 	public boolean				hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
 		LinkedList<Action> lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
 
-		if		(lastActions.size() == 0) return true;
+		if (lastActions.size() == 0)
+		{
+			return true;
+		}
 		else if (lastActions.size() == 1)
 		{
 			Action a = lastActions.getFirst();
@@ -442,6 +372,9 @@ public class Data implements Serializable
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
 	}
 // TODO: Enlever les LinkedList
+	/**======================================================
+	 *  @return true if this player is at the start of his turn (and he hasn't done anything yet)
+	 ======================================================== */
 	public boolean isStartOfTurn(String playerName)
 	{
 		if(!isPlayerTurn(playerName)) return false;
@@ -491,7 +424,7 @@ public class Data implements Serializable
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
-	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
+	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return this.pathFinder.getPath(this, p0, p1);}
 	public boolean				pathExistsBetween(Point p1, Point p2)			{return getShortestPath(p1, p2) != null;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
@@ -511,14 +444,30 @@ public class Data implements Serializable
 		if ((y < 0) || (y >= getHeight()))	return false;
 		return true;
 	}
+	/**=================================================
+	 *  @return true if (x,y) is on the edge of the board 
+	 * (meaning, the one-square wide band around the board with the termini)
+	 =================================================== */
 	public boolean	isOnEdge(int x, int y)
 	{
 		if ((x == 0) || (x == getWidth()-1))	return true;
 		if ((y == 0) || (y == getHeight()-1))	return true;
 		return false;
 	}
+	/**=======================================================================
+	 * @return true if all the tiles have been played but no player can win
+	 ========================================================================= */
+	public boolean isGameBlocked()
+	{
+		if(!isEmptyDeck()) return false;
+		for(String playerName : this.playerInfoList.keySet())
+		{
+			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
+		}
+		return true;
+	}
 	/**===============================================================
-	 * @return if the deposit of the tile t on the board at the position <x, y> is possible
+	 * @return if the deposit of the tile t on the board at the position (x, y) is possible
 	 =================================================================*/
 	public boolean isAcceptableTilePlacement(int x, int y, Tile t)
 	{
@@ -530,7 +479,7 @@ public class Data implements Serializable
 
 		Tile nt = Tile.specialNonRealTileConstructor(tmpPathTab, additionalPathSize, t);
 		int accessibleDirection = nt.getAccessibleDirections();
-		for (Direction d: Direction.DIRECTION_LIST)														// Check whether the new tile is suitable with the <x, y> neighborhood
+		for (Direction d: Direction.DIRECTION_LIST)														// Check whether the new tile is suitable with the (x,y) neighborhood
 		{
 			if (!d.isDirectionInList(accessibleDirection)) continue;
 			Point neighbor = d.getNeighbour(x, y);
@@ -563,7 +512,7 @@ public class Data implements Serializable
 		return res;
 	}
 	/**============================================================
-	 * @return the list of the neighbor coordinates that can be acceded from the <x,y> cell
+	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell
 	 ==============================================================*/
 	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
 	{
@@ -579,7 +528,7 @@ public class Data implements Serializable
 		return res;
 	}
 	/**============================================================
-	 * @return the list of the neighbor tiles that can be acceded from the <x,y> cell
+	 * @return the list of the neighbor tiles that can be acceded from the (x,y) cell
 	 ==============================================================*/
 	public LinkedList<Tile> getAccessibleNeighborsTiles(int x, int y)
 	{
@@ -595,7 +544,7 @@ public class Data implements Serializable
 		return res;
 	}
 	/**============================================================
-	 * @returns the list of directions d such as the neighbor d has a path to the current tile <x, y>
+	 * @returns the list of directions d such as the neighbor d has a path to the current tile (x,y)
 	 ==============================================================*/
 	public LinkedList<Direction> getPathsLeadingToTile(int x, int y)
 	{
@@ -634,7 +583,7 @@ public class Data implements Serializable
 		return null;
 	}
 	/**=========================================================================
-	 * @return the position of the building next to the given position, or null if no buildinf is found in the neighborhood
+	 * @return the position of the building next to the given position, or null if no building is found in the neighborhood
 	 ===========================================================================*/
 	public Point isBuildingAround(int x, int y)
 	{
@@ -652,7 +601,7 @@ public class Data implements Serializable
 	}
 	/**===============================================================
 	 * @return the list of the neighbors connected to the current tile
-	 * (<x, y> has a path to the neighbor and the neighbor has a path to <x, y>)
+	 * ((x,y) has a path to the neighbor and the neighbor has a path to (x,y))
 	 =================================================================*/
 	public LinkedList<Point> getConnectedNeighborPositions(int x, int y)
 	{
@@ -734,25 +683,29 @@ public class Data implements Serializable
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
 
-		int res = 0, nbrRotation1, nbrRotation2;
-		Point lastTramPosition = this.playerInfoList.get(playerName).previousTramPosition;
+		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
+		Point lastTramPosition		= this.playerInfoList.get(playerName).previousTramPosition;
+		Point currentTramPosition	= this.playerInfoList.get(playerName).tramPosition;
+		Point startTerminus;
 		Tile t, oldT1;
+		boolean trackCompleted;
 
-		if (this.hasStartedMaidenTravel(playerName))												// Case is on trip
+		trackCompleted = this.isTrackCompleted(playerName);
+		if ((this.hasStartedMaidenTravel(playerName)) || (trackCompleted))							// Case: can move tram
 		{
-			
-			
-			
-//TODO			return ......;
-		}
-		if (this.isTrackCompleted(playerName))														// Case Can start maiden travel
-		{
-			
-			
-			
-			
-			
-// TODO         return;
+			if (trackCompleted)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];		//		Case Can start maiden travel
+			else				startTerminus = null;
+			for (int l = 1; l<=this.maxPlayerSpeed; l++)
+			{
+				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, currentTramPosition, l, this.pathMatrix);
+				for (int i=0; i<nbrPath; i++)
+				{
+					if (this.pathMatrix[i][1].equals(lastTramPosition)) continue;
+					resTab[res].getAction().setTravelAction(startTerminus, this.pathMatrix[i], l);
+					res ++;
+				}
+			}
+			return res;
 		}
 																									// Case is building
 		for (int h1 = 0; h1<this.getHandSize(playerName); h1++)										//		For each player's hand tile
@@ -768,14 +721,12 @@ public class Data implements Serializable
 						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;	//		Case player may start maiden travel next turn
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
-						if (this.getHandSize(playerName) == 1)										//		Case no second hand tile
+						if (this.isTrackCompleted(playerName))			//TODO************************** Peut etre evite en ajoutant un coup inutile
 						{
-							if (this.isTrackCompleted(playerName))			//TODO************************** Peut etre evite en ajoutant un coup inutile
-							{
-// TODO								resTab[res].addActionStartTripNextTurn() SIMPLE BUILDING + START_TRIP_NEXT_TURN;
-								res ++;
-							}
+							resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
+							res ++;
 						}
+						else if (this.getHandSize(playerName) == 1)	;								//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
 						else
 						{
 							for (int h2 = 0; h2<this.getHandSize(playerName); h2++)					//		For each second player's hand tile
@@ -790,7 +741,7 @@ public class Data implements Serializable
 										for (int r2=0; r2<nbrRotation2; r2++)						//		For each second tile rotation
 										{
 											if (!this.isAcceptableTilePlacement(x2, y2, tmpRotation2[r2])) continue;
-/// TODO									resTab[res].addActionDoubleBuilding();
+											resTab[res].getAction().setDoubleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
 											res ++;
 										}
 									}
@@ -915,6 +866,19 @@ public class Data implements Serializable
 		}
 
 		if (ptrRes != 4) throw new RuntimeException("Wrong terminus for line " + line + ": ");
+		return res;
+	}
+	private Point[][] initPossibleTramPathMatrix()
+	{
+		Point[][] res = new Point[Data.maxNbrTramPath][Data.maxSpeed];
+
+		for (int x=0; x<Data.maxNbrTramPath; x++)
+		{
+			for (int y=0; y<Data.maxSpeed; y++)
+			{
+				res[x][y] = new Point();
+			}
+		}
 		return res;
 	}
 	/**=====================================================================

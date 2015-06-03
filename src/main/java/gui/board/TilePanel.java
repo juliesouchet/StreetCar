@@ -44,6 +44,7 @@ public class TilePanel extends Panel implements Transferable {
 	
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
+		if (this.tile == null) return;
 		TileImage tileImage = new TileImage(this.tile);
 		int min = Math.min(this.getWidth(), this.getHeight());
 		tileImage.drawInGraphics(g2d, 0, 0, min);

@@ -5,8 +5,11 @@ import javax.swing.SwingUtilities;
 import main.java.gui.util.Constants;
 import main.java.gui.util.OS;
 import main.java.gui.util.UserDefaults;
+import main.java.player.PlayerIHM;
 
 public class StreetCar {
+	
+	public static PlayerIHM player;
 	
 	public static void registersDefaults() {
 		UserDefaults ud = UserDefaults.getSharedInstance();
