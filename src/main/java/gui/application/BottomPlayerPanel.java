@@ -4,7 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.rmi.RemoteException;
 
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.gui.components.Button;
 import main.java.gui.components.Panel;
 
@@ -15,7 +19,7 @@ public class BottomPlayerPanel extends Panel {
 
 	BottomPlayerCardsPanel cardsPanel;
 	Panel buttonsPanel;
-	
+
 	Button validateButton;
 	Button beginTripButton;
 	
@@ -46,6 +50,7 @@ public class BottomPlayerPanel extends Panel {
 
 		beginTripButton = new Button("Begin trip", null);
 		validateButton = new Button("Validate", null);
+		validateButton.addAction(this, "validate");
 
 		beginTripButton.setBounds(10, 25, 130, 40);
 		validateButton.setBounds(10, 85, 130, 40);
@@ -54,7 +59,22 @@ public class BottomPlayerPanel extends Panel {
 		buttonsPanel.add(validateButton);
 		this.add(buttonsPanel, BorderLayout.EAST);	
 	}
-
+	
+	public void validate() {
+		System.out.println("validate");
+		try {
+			StreetCar.player.validate();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (ExceptionGameHasNotStarted e) {
+			e.printStackTrace();
+		} catch (ExceptionNotYourTurn e) {
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			e.printStackTrace();
+		}
+	}
+	
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawRect(20, 20, 50, 50); //avatar

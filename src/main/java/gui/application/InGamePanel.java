@@ -192,22 +192,6 @@ public class InGamePanel extends Panel {
 	
 	// Actions
 	
-	public void validate() {
-		// TODO: uncomment and fix
-		/*
-		try {
-			StreetCar.player.validate();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (ExceptionGameHasNotStarted e) {
-			e.printStackTrace();
-		} catch (ExceptionNotYourTurn e) {
-			e.printStackTrace();
-		} catch (ExceptionForbiddenAction e) {
-			e.printStackTrace();
-		}*/
-	}
-	
 	public void beginTrip() {
 		System.out.println("THE TERMINUS IS UNDEFINED FOR THE MOMENT");
 		PlayerIHM player = StreetCar.player;
