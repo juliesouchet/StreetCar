@@ -4,10 +4,12 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import main.java.data.Data;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
 import main.java.gui.components.ImagePanel;
 import main.java.gui.util.Resources;
+import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
 public class RulesMenuPanel extends MenuPanel {
@@ -110,4 +112,7 @@ public class RulesMenuPanel extends MenuPanel {
 		GameController mfc = (GameController)this.getFrameController();
 		mfc.showWelcomeMenuPanel();
 	}
+
+	@Override
+	public void refreshMenu(PlayerIHM player, Data data) { }
 }
