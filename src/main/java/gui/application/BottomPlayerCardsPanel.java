@@ -41,11 +41,34 @@ public class BottomPlayerCardsPanel extends Panel{
 	}
 	
 	protected void placeTiles() {
-		tilePanel1 = new TilePanel();
-		tilePanel2 = new TilePanel();
-		tilePanel3 = new TilePanel();
-		tilePanel4 = new TilePanel();
-		tilePanel5 = new TilePanel();
+		PlayerIHM player  = StreetCar.player;
+		Data data = player.getGameData();
+		
+		try {
+			tilePanel1 = new TilePanel(data.getHandTile(player.getPlayerName(), 0));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel2 = new TilePanel(data.getHandTile(player.getPlayerName(), 1));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel3 = new TilePanel(data.getHandTile(player.getPlayerName(), 2));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel4 = new TilePanel(data.getHandTile(player.getPlayerName(), 3));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		try {
+			tilePanel5 = new TilePanel(data.getHandTile(player.getPlayerName(), 4));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
 		tilePanel1.setBounds(20, 80, 50, 50);
 		tilePanel2.setBounds(80, 80, 50, 50);
