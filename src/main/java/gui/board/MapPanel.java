@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.Tile;
-import main.java.gui.application.GameController;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
@@ -43,6 +42,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	// Cells positions
 	
 	protected void updateMapGeometry() {
+		if (this.data == null) return;
 		this.mapWidth = (int) (0.96 * Math.min(this.getWidth(), this.getHeight()));
 		this.cellWidth = this.mapWidth / this.data.getWidth();
 	    this.originX = (this.getWidth() - Math.round(this.mapWidth)) / 2;
@@ -116,14 +116,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	
 	// Refresh game
 
-	public Data getData() {
-		return this.data;
-	}
-	
-	public PlayerIHM getPlayer() {
-		return ((GameController)(this.getFrameController())).player;
-	}
-	
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.data = data;
 		this.updateMapGeometry();

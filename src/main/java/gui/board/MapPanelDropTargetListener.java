@@ -15,6 +15,7 @@ import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
+import main.java.gui.application.StreetCar;
 import main.java.player.PlayerIHM;
 
 class MapPanelDropTargetListener implements DropTargetListener {
@@ -61,7 +62,7 @@ class MapPanelDropTargetListener implements DropTargetListener {
 			e.printStackTrace();
 		}
 		
-		PlayerIHM player = this.mapPanel.getPlayer();
+		PlayerIHM player = StreetCar.player;
 		Data data = player.getGameData();
 		Tile tile = data.getBoard()[p.x][p.y];
 		try {

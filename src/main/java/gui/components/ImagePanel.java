@@ -1,7 +1,10 @@
 package main.java.gui.components;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import javax.swing.BorderFactory;
 
 @SuppressWarnings("serial")
 public class ImagePanel extends Panel{
@@ -14,6 +17,7 @@ public class ImagePanel extends Panel{
     
     public ImagePanel() {
        this(null);
+       this.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
     }
     
     public ImagePanel(BufferedImage image) {

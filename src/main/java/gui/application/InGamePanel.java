@@ -35,7 +35,6 @@ public class InGamePanel extends Panel {
 	TitlePanel titlePanel;
 	MapPanel mapPanel;
 	ArrayList<PlayerPanel> playerPanels = new ArrayList<PlayerPanel>();
-	Data data;
 	String[] playersTab;
 
 	// Constructors
@@ -44,8 +43,6 @@ public class InGamePanel extends Panel {
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
-    	
-    	this.data = gc.player.getGameData();
     	
     	this.setupGameMapPanel();
     	this.setupChatPanel();
@@ -79,7 +76,7 @@ public class InGamePanel extends Panel {
 		mapPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 		
 		BottomPlayerPanel bottomPlayerPanel = new BottomPlayerPanel();
-		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);		
+		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
 	}
 	
 	private void setupChatPanel() {
@@ -144,7 +141,7 @@ public class InGamePanel extends Panel {
 	// Actions
 	
 	public void validate() {
-		try {
+		/*try {
 			this.getPlayer().validate();
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -154,15 +151,15 @@ public class InGamePanel extends Panel {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	public void beginTrip() {
 		System.out.println("THE TERMINUS IS UNDEFINED FOR THE MOMENT");
-		PlayerIHM player = this.getPlayer();
+		PlayerIHM player = StreetCar.player;
 		Point terminus = new Point();
 		try {
-			this.getPlayer().startMaidenTravel(player.getPlayerName(), terminus);
+			player.startMaidenTravel(player.getPlayerName(), terminus);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionNotYourTurn e) {
@@ -179,20 +176,11 @@ public class InGamePanel extends Panel {
 	
 	// Refresh game
 	
-	public Data getData() {
-		return this.data;
-	}
-	
-	public PlayerIHM getPlayer() {
-		return ((GameController)(this.getFrameController())).player;
-	}
-	
 	public void refreshGame(PlayerIHM player, Data data) {
 		System.out.println("REFRESH GAME");
 		this.mapPanel.refreshGame(player, data);
 		for (PlayerPanel playerPanel : this.playerPanels) {
 			playerPanel.refreshGame(player, data);
 		}
-		this.data = data;
 	}
 }

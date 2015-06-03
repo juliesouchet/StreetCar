@@ -8,6 +8,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import main.java.gui.application.GameController;
+import main.java.gui.application.StreetCar;
 import main.java.gui.components.Button;
 import main.java.gui.components.Label;
 import main.java.gui.components.TextField;
@@ -112,7 +113,8 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 		
 		GameController gc = this.getGameController();
 		try {
-			gc.player = PlayerIHM.launchPlayer(playerName,
+			
+			StreetCar.player = PlayerIHM.launchPlayer(playerName,
 					                           gameName, 
 					                           "newOrleans",
 					                           2,

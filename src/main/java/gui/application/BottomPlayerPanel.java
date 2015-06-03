@@ -5,10 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
-import main.java.data.Data;
 import main.java.gui.components.Button;
 import main.java.gui.components.Panel;
-import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
 public class BottomPlayerPanel extends Panel {
@@ -70,13 +68,4 @@ public class BottomPlayerPanel extends Panel {
 		g.drawRect(350, 80, 50, 50); //station1
 		g.drawRect(410, 80, 50, 50); //station2
 	}
-	
-	public Data getData() {
-		return this.getPlayer().getGameData();
-	}
-	
-	public PlayerIHM getPlayer() {
-		return ((GameController)(this.getFrameController())).player;
-	}
-	
 }

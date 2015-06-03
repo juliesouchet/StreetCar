@@ -9,6 +9,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import main.java.gui.application.GameController;
+import main.java.gui.application.StreetCar;
 import main.java.gui.components.Button;
 import main.java.gui.components.Label;
 import main.java.gui.components.TextField;
@@ -113,7 +114,7 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 		
 		GameController gc = this.getGameController();
 		try {
-			gc.player = PlayerIHM.launchPlayer(playerName, 
+			StreetCar.player = PlayerIHM.launchPlayer(playerName, 
 											   gameName,
 											   "newOrleans",
 											    2,
@@ -121,8 +122,9 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 											    addressField.getText(),
 											    gc);
 
-			Color playerColor = gc.player.getGameData().getRandomUnusedColor();
-			gc.player.setPlayerColor(playerColor);
+			Color playerColor = StreetCar.player.getGameData().getRandomUnusedColor();
+			
+			StreetCar.player.setPlayerColor(playerColor);
 			gc.showClientWaitingRoomPanel();
 		} catch (Exception e)	{
 		     Toolkit.getDefaultToolkit().beep();
