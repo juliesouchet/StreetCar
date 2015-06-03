@@ -50,7 +50,8 @@ public class Dumbest extends PlayerAutomaton {
 // TODO que faire s'il n'y a aucun choix valide ?			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
 		choix = Action.newBuildSimpleAction(i, j, t);
-		
+System.out.println("choixxxxxx " + choix);
+System.out.println("tuileeeeee " + t);
 		return choix;
 	}
 

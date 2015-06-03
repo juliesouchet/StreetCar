@@ -20,6 +20,13 @@ public class Util
 		else if	(color.equals("black"))		return Color.black;
 		else	throw new RuntimeException("Unknown color: " + color);
 	}
+	
+	/**
+	 * Echange les cases d'un tableau.
+	 * @param tab Le tableau à traiter
+	 * @param i L'indice du premier élément (doit appartenir aux indices accessibles du tableau)
+	 * @param j L'indice du deuxième élément (doit appartenir aux indices accessibles du tableau)
+	 */
 	public static void swapTab(Object[] tab, int i, int j)
 	{
 		Object tmp = tab [i];

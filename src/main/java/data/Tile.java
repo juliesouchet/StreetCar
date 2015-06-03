@@ -106,7 +106,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 			this.terminusDescription	= tile.terminusDescription;
 			this.cardinal				= tile.cardinal;
 			this.tileDirection			= tile.tileDirection;
-			copyPathTab(pathList, this.pathTab, ptrPathTab);		// TODO Faux
+			copyPathTab(pathList, this.pathTab, ptrPathTab);
 			this.ptrPathTab				= tile.ptrPathTab;
 		}
 		else throw new RuntimeException("Unhandeled case");
@@ -116,7 +116,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * Constructeur générique
 	 */
 	private Tile(){}
-//TODO verifier tous ceux qui l'appelent
 	
 	/**
 	 * Clone la tuile (Deep clone: toutes les attributs sont clones)
@@ -215,7 +214,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 				d0 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i)));
 				d1 = Direction.parse(Integer.parseInt(""+imageFileName.charAt(i+1)));
 				res.ptrPathTab ++;
-				res.pathTab[res.ptrPathTab].setPath(d0, d1);		// TODO Faux
+				res.pathTab[res.ptrPathTab].setPath(d0, d1);
 			}
 			return res;
 		}
@@ -272,22 +271,16 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * (fait aussi tourner les path)
 	 * @param dir
 	 */
-	public void setDirection(Direction dir) {
+	public void setDirection(Direction dir)
+	{
 		int val = ((dir.getVal() - this.tileDirection.getVal() + 4)%4);
-		switch(val) {
-		case 0:
-			return;
-		case 1 :
-			this.turnRight();
-			break;
-		case 2 :
-			this.turnHalf();
-			break;
-		case 3 :
-			this.turnLeft();
-			break;
-		default :
-			throw new RuntimeException("Error tile.setDirection : from " + this.tileDirection + " to " + dir + " : " + val);
+		switch(val)
+		{
+			case 0	:					return;
+			case 1	:this.turnRight();	return;
+			case 2	:this.turnHalf();	return;
+			case 3	:this.turnLeft();	return;
+			default	:throw new RuntimeException("Error tile.setDirection : from " + this.tileDirection + " to " + dir + " : " + val);
 		}
 	}
 // --------------------------------------------
@@ -325,22 +318,28 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		
 		
 		if (!((Tile)o).tileID.equals(this.tileID)){return false;}
-		if (this.isTree()!=comparedTile.isTree() || this.isBuilding()!=comparedTile.isBuilding() || this.isStop()!=comparedTile.isStop() || this.isTerminus()!=comparedTile.isTerminus() ){
+//TODO condition verifiee par tileID
+/*		if (this.isTree()!=comparedTile.isTree() || this.isBuilding()!=comparedTile.isBuilding() || this.isStop()!=comparedTile.isStop() || this.isTerminus()!=comparedTile.isTerminus() ){
 			return false;
 		}
+//TODO condition verifiee par tileID
 		if ((this.buildingDescription==null && comparedTile.buildingDescription!=null) || (this.buildingDescription!=null && !this.buildingDescription.equals(comparedTile.buildingDescription)) ){
 			return false;
 		}
 
+//TODO condition verifiee par tileID
 		if (this.terminusDescription!=comparedTile.terminusDescription){
 			return false;
 		}
+//TODO condition verifiee par tileID
 		if (this.cardinal!=comparedTile.cardinal){
 			return false;
 		}
+****/
 		if  ((this.tileDirection==null && comparedTile.tileDirection!=null) || (this.tileDirection!=null && !this.tileDirection.equals(comparedTile.tileDirection))){
 			return false;
 		}
+
 		if (this.ptrPathTab!=comparedTile.ptrPathTab){
 			return false;
 		}
@@ -407,7 +406,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * Faux sinon.</br>
 	 */
 	public boolean	isEmpty()			{return ((!this.isBuilding) && (!this.isTerminus) && (this.ptrPathTab == -1));}
-	
+
 	/**
 	 * @return
 	 * Vrai si la tuile peut être une tuile du deck (c'est une tuile de rails).
@@ -460,55 +459,84 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		for (int i=0; i<=this.ptrPathTab; i++)
 		{
 			Path p = this.pathTab[i];
-			res = p.end0.addDirectionToList(res);	// TODO faux
+			res = p.end0.addDirectionToList(res);
 			res = p.end1.addDirectionToList(res);
 		}
 		return res;
 	}
 	/**=================================================
-	 * @return -1 if the current tile can not be replaced by t.  Otherwise, the function returns the number of additional path.</br>
-	 * Those path are filled in additionalPath.</br>
-	 * This function does not check if t is suitable for the current tile neighbors</br>
+	 *	Test if the calling tile can be replaced by the tile given as argument.
+	 * @return 
+	 * 	-1 if the current tile can not be replaced by addedTile.</br>
+	 * 	The number of additional path, is the current tile can be replaced by addedTile.</br>
+	 * 	Those path are added in additionalPath.</br>
+	 * 	REMARK: /!\ This function does not check if t is suitable for the current tile neighbors</br>
+	 * @Param addedTile
 	 * @param additionalPath: output parameter (can be null). Is filled with the t's paths that are not in the current tile
 	 * ===================================================*/
-	public int isReplaceable(Tile t, Path[] additionalPath)
+	public int isReplaceable(Tile addedTile, Path[] additionalPath)
 	{
 		if (this.isTree)	 return -1;
 		if (this.isBuilding) return -1;
 		if (this.isTerminus) return -1;
 		if (this.isStop)	 return -1;
 
-		Path[]	lPath	= initPathTab();
-		Path[]	tPath	= initPathTab();
-		int		lSize	= this.ptrPathTab;
-		int		tSize	= t.ptrPathTab;
-		copyPathTab(this.pathTab,	lPath, this.ptrPathTab);
-		copyPathTab(t.pathTab,		tPath, t.ptrPathTab);
-		for (int i=0; i<=tSize; i++)							// Remove the common paths
+		Path[]	localPath	= initPathTab();
+		Path[]	addedTilePath	= initPathTab();
+		int		localTileNumberOfPath	= this.ptrPathTab;
+		int		addedTileNumberOfPath	= addedTile.ptrPathTab;
+		copyPathTab(this.pathTab,	localPath, this.ptrPathTab);
+		copyPathTab(addedTile.pathTab,		addedTilePath, addedTile.ptrPathTab);
+		for (int i=0; i<=addedTileNumberOfPath; i++)							// Remove the common paths
 		{
-			Path pt = tPath[i];
-			for (int j=0; j<=lSize; j++)
+			Path bufferPathAddedTile = addedTilePath[i];
+			for (int j=0; j<=localTileNumberOfPath; j++)
 			{
-				Path pl = lPath[j];
-				if (pt.equals(pl))
+				Path bufferPathLocalTile = localPath[j];
+				if (bufferPathAddedTile.equals(bufferPathLocalTile))
 				{
-					Util.swapTab(tPath, i, tSize);
-					Util.swapTab(lPath, j, lSize);
-					i--;	tSize--;
-					j--;	lSize--;
+					Util.swapTab(addedTilePath, i, addedTileNumberOfPath);
+					Util.swapTab(localPath, j, localTileNumberOfPath);
+					i--;	addedTileNumberOfPath--;
+					j--;	localTileNumberOfPath--;
 					break;
 				}
 			}
 		}
 
-		if (lSize != -1)	return -1;							// Case local tile is not contained in t
-		if (tSize == -1)	return -1;							// Case local tile is equal to t
+		if (localTileNumberOfPath != -1)	return -1;							// Case local tile is not contained in t
+		if (addedTileNumberOfPath == -1)	return -1;							// Case local tile is equal to t
 		if (additionalPath != null)								// Case replaceable
 		{
-			for (int i=0; i<=tSize; i++)						//		Add all the new paths
-				additionalPath[i].setPath(tPath[i]);	
+			for (int i=0; i<=addedTileNumberOfPath; i++)						//		Add all the new paths
+				additionalPath[i].setPath(addedTilePath[i]);	
+
 		}
-		return tSize;
+		return addedTileNumberOfPath;
+	}
+	/**=============================================================
+	 * @return the number of different tiles that may be created by rotating the current one.</br>
+	 * This tiles are added to the input tab.</br>
+	 * The current tile is returned too.</br>
+	 * The input tab size must be 4 (or  higher).  Each one of its celle must have been initialized
+	 ===============================================================*/
+	public int getUniqueRotationList(Tile[] resTab)
+	{
+		int res = 0, i;
+		Tile tmp = this.getClone();
+
+		for (Direction dir: Direction.DIRECTION_LIST)
+		{
+			resTab[res].copy(tmp);
+			tmp.turnLeft();
+			for (i=0; i<res; i++) if (resTab[res].equalsStrong(resTab[i])) break;
+			if (i == res) res ++;
+		}
+// TODO a enlever apres les test
+if ((res <= 0) || (res > 4)) throw new RuntimeException("??????");
+
+
+		return res;
 	}
 	/**=============================================================
 	 * @return if this is a building the function returns its name (string).</br>  Else it returns null
