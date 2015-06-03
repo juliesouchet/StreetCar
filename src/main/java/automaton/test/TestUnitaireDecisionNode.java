@@ -207,7 +207,7 @@ public class TestUnitaireDecisionNode {
 		DecisionNode monNoeudDeDecision = null;
 		CoupleActionIndex maTableCoupleActionIndex[];
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
-		maTableCoupleActionIndex = monNoeudDeDecision.getPossibleFollowingAction();
+		maTableCoupleActionIndex = monNoeudDeDecision.getPossibleFollowingActionTable();
 		assertFalse(maTableCoupleActionIndex==null);
 		assertTrue(maTableCoupleActionIndex[0].getIndex()==-1); //Init a -1
 		assertTrue(maTableCoupleActionIndex[9].getIndex()==-1);
@@ -220,7 +220,7 @@ public class TestUnitaireDecisionNode {
 		monNoeudDeDecision = new DecisionNode(size, 1, "root");
 		assertTrue(monNoeudDeDecision.getSizeOfPossiblesActionsTable()==size);
 		for (int i=0;i<monNoeudDeDecision.getSizeOfPossiblesActionsTable();i++){
-			assertFalse(monNoeudDeDecision.getPossibleFollowingAction()[i]==null);
+			assertFalse(monNoeudDeDecision.getPossibleFollowingActionTable()[i]==null);
 		}
 	}
 

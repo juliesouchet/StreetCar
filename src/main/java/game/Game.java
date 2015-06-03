@@ -39,10 +39,10 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public final static String			applicationProtocol		= "rmi";
 	public final static String			AiDefaultName			= "AI Level ";
 
-	private Data						data;
-	private LoginInfo[]					loggedPlayerTable;
-	private Engine						engine;
-	private HashMap<String, Thread>	aiList;
+	protected Data						data;
+	protected LoginInfo[]				loggedPlayerTable;
+	protected Engine					engine;
+	protected HashMap<String, Thread>	aiList;
 
 // --------------------------------------------
 // Builder:
@@ -285,8 +285,9 @@ for (String str: this.data.getPlayerNameList())
 	}
 	/**=============================================================================
 	 * 	Signals the end of this player's turn
-	 =============================================================================*/
-	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	 =============================================================================
+	 * @throws ExceptionEndGame */
+	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionEndGame
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
@@ -296,6 +297,10 @@ for (String str: this.data.getPlayerNameList())
 			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction(); // on peut avoir une main non pleine, mais seulement si la pioche est vide
 			if(data.hasRemainingAction(playerName)) throw new ExceptionForbiddenAction();
 		}
+		// TODO ajouté par Julie pour tester les fins de partie
+		String winner = data.getWinner();
+		if(winner != null)											throw new ExceptionEndGame(winner);
+		if(data.isGameBlocked())									throw new ExceptionEndGame(null);
 
 		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
 	}

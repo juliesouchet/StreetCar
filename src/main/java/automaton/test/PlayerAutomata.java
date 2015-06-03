@@ -10,6 +10,7 @@ import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.game.ExceptionEndGame;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotEnougthTileInDeck;
@@ -196,6 +197,9 @@ public class PlayerAutomata implements InterfaceIHM
 						| ExceptionNotYourTurn | ExceptionForbiddenAction
 						| ExceptionTooManyActions | ExceptionNotEnougthTileInDeck | ExceptionTwoManyTilesToDraw e) {
 					e.printStackTrace();
+				} catch (ExceptionEndGame e) {
+					//e.printStackTrace();
+					System.out.println(e.getWinner() + " wins !!");
 				}
 			
 	

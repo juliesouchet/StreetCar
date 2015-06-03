@@ -7,8 +7,12 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.game.ExceptionEndGame;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -25,6 +29,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 // Attributes:
 // --------------------------------------------
 	private PlayerAutomaton	automaton;
+	private boolean			gameOver = false;
 
 // --------------------------------------------
 // Builder:
@@ -44,7 +49,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			case 1	:this.automaton	= new Dumbest(playerName);	break;
 			case 2	:this.automaton = new Traveler(playerName);	break;
-//			case 3	:this.automaton = new Traveler(playerName);	break;
+//			case 3	:this.automaton = new 3eme_niveau_de_difficulte(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
@@ -63,27 +68,30 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super.gameHasChanged(data);
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
-
-		if (data.hasRemainingAction(playerName))
+		if (gameOver)						return;
+		
+		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
-System.out.println("-----------PlayerName: " + playerName);
-System.out.println("-----------HandSize  : " + data.getHandSize(playerName));
-			Action a = this.automaton.makeChoice(data.getClone(playerName));
-
-// TODO: check action type
-			try					{super.placeTile(a.tile1, a.positionTile1);}
-			catch (Exception e) {e.printStackTrace(); return;}
+//System.out.println("-----------PlayerName: " + playerName);
+//System.out.println("-----------HandSize  : " + data.getHandSize(playerName));
+			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName)) {
+				Action a = this.automaton.makeChoice(data.getClone(playerName));
+	
+	// TODO: check action type, do others action types !!
+				try					{super.placeTile(a.tile1, a.positionTile1);}
+				catch (Exception e) {e.printStackTrace(); return;}
+			}
+			else System.out.println(playerName + " BLOCKED");
 			return;
 		}
 
 		int nbrCards = data.getPlayerRemainingTilesToDraw(playerName);
-		if (nbrCards > 0 && data.getNbrRemainingDeckTile() > 0)
+		if (nbrCards > 0 && data.getNbrRemainingDeckTile() > 0)		// pioche
 		{
 			try
 			{
 				if (!data.isEnougthTileInDeck(nbrCards))
 				{
-//throw new ExceptionNotEnougthTileInDeck(); TODO continuer à jouer jusqu'à ce que les mains soient vides
 					nbrCards = data.getNbrRemainingDeckTile();
 				}
 				super.drawTile(nbrCards);
@@ -91,10 +99,24 @@ System.out.println("-----------HandSize  : " + data.getHandSize(playerName));
 			catch (Exception e) {e.printStackTrace(); return;}
 			return;
 		}
-		else
+		else														// fin de tour
 		{
-			try					{super.validate();}
-			catch (Exception e) {e.printStackTrace(); return;}
+			try {
+				super.validate();
+			} catch (ExceptionGameHasNotStarted | ExceptionNotYourTurn
+					| ExceptionForbiddenAction e) {
+				e.printStackTrace();
+			} catch (ExceptionEndGame e) {
+				System.out.println("******************");
+				System.out.println("END OF GAME");
+				gameOver = true;
+				String winner = e.getWinner();
+				if(winner != null)
+					System.out.println(winner + " WINS !!");
+				else
+					System.out.println("GAME BLOCKED : NOBODY WINS");
+				System.out.println("******************");
+			}
 		}
 	}
 	public synchronized void excludePlayer() throws RemoteException

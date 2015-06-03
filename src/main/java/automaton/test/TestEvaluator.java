@@ -21,11 +21,12 @@ public class TestEvaluator {
 		/*================*
 		 *	Game setup
 		 *================*/
+		String playerName = "Testeur";
 		Game game = null;
 		LoginInfo[] initialLoginTable = 
 				// LoginInfo(isClosed, playerName, isHost, isHuman, iaLevel)
 				{
-				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.travelerLvl),
+				new LoginInfo(false,	playerName,	true,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
@@ -41,7 +42,6 @@ public class TestEvaluator {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
 		
-		String playerName = game.getHostName();
 		try {
 			data = game.getData(playerName);
 		} catch (RemoteException e) {
@@ -52,19 +52,16 @@ public class TestEvaluator {
 		 *	Simulation(s)
 		 *================*/
 		
-		nbrGamesSimulated = 1;
-		double victoryProb = Evaluator.evaluateSituationQuality(playerName, nbrGamesSimulated, data.getClone(playerName), PlayerAutomaton.dumbestLvl);
+		double victoryProb = Evaluator.evaluateSituationQuality(playerName, nbrGamesSimulated, data.getClone(playerName), PlayerAutomaton.travelerLvl);
 		
 		
 		/*=========================*
 		 *	Displaying the result
 		 *=========================*/
 		
-		System.out.println("=========================");
-		System.out.println("=========================");
-		System.out.println(playerName + " a une chance de gagner de " + victoryProb + "%");		
-		System.out.println("=========================");
-		System.out.println("=========================");
+		System.out.println("**************************************************");
+		System.out.println(playerName + " a une chance de gagner de " + victoryProb + "%");
+		System.out.println("**************************************************");
 		
 	}
 }

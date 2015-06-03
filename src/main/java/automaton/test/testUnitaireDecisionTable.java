@@ -47,7 +47,7 @@ public class testUnitaireDecisionTable {
 		Action action = null;
 
 		// Je créé la table de decision
-		maTableDeDecision = new DecisionTable(sizeTable, nodeTable);
+		maTableDeDecision = new DecisionTable(sizeTable, nodeTable, "leNomDuJoueur");
 
 		// Je créé un noeud qui me servira de buffer pour remplir la table
 		decisionNode = new DecisionNode(nodeTable, 0, "root");
@@ -107,7 +107,7 @@ public class testUnitaireDecisionTable {
 		DecisionTable maTableDeDecision = null;
 		int sizeTable=10;
 		int nodeTable=5;
-		maTableDeDecision= new DecisionTable(sizeTable, nodeTable);
+		maTableDeDecision = new DecisionTable(sizeTable, nodeTable, "leNomDuJoueur");
 
 		for(int i=0;i<maTableDeDecision.getSize();i++){
 			assertTrue(maTableDeDecision.slotIsFree(i)); // Les cases du tableaux ne sont pas occupés
@@ -145,7 +145,7 @@ public class testUnitaireDecisionTable {
 		Action action = null;
 
 		// Je créé la table de decision
-		maTableDeDecision = new DecisionTable(sizeTable, nodeTable);
+		maTableDeDecision = new DecisionTable(sizeTable, nodeTable, "leNomDuJoueur");
 
 		// Je créé un noeud qui me servira de buffer pour remplir la table
 		decisionNode = new DecisionNode(nodeTable, 0, "root");
@@ -173,7 +173,7 @@ public class testUnitaireDecisionTable {
 		DecisionTable maTableDeDecision = null;
 		int sizeTable=10;
 		int nodeTable=5;
-		maTableDeDecision= new DecisionTable(sizeTable, nodeTable);
+		maTableDeDecision = new DecisionTable(sizeTable, nodeTable, "leNomDuJoueur");
 		assertTrue(maTableDeDecision.getSize()==sizeTable);
 	}
 

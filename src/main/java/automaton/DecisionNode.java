@@ -95,7 +95,7 @@ public class DecisionNode {
 	 * toutes les actions faisables dans la configuration courante, et l'indice ou ca me mene dans le tableau
 	 * @return
 	 */
-	public CoupleActionIndex[] getPossibleFollowingAction(){
+	public CoupleActionIndex[] getPossibleFollowingActionTable(){
 		return this.possiblesActions;
 	}
 	
@@ -359,7 +359,7 @@ public class DecisionNode {
 				return false;
 			}
 			for (int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
-				if ( !this.getPossibleFollowingAction()[i].equals(otherNode.getPossibleFollowingAction()[i])){
+				if ( !this.getPossibleFollowingActionTable()[i].equals(otherNode.getPossibleFollowingActionTable()[i])){
 					return false;
 				}
 			}

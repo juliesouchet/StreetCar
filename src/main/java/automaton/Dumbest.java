@@ -26,14 +26,14 @@ public class Dumbest extends PlayerAutomaton {
 	}
 	
 	public Action makeChoice(Data currentconfig) {
-//TODO: -- riyane modif de Data			Hand myHand = currentConfig.getHand(name);
-// sert a ne plus faire de new dans les fonctions de data qui sont appelles par l'automate)
 		int handSize = currentconfig.getHandSize(name);
 		Action choix ;
 		Random rand = new Random();
 		Tile t;
 		int i, j, k;
 
+		if(handSize == 0 ) return null;
+		
 		do{
 			// On choisit un emplacement au hasard
 			i = rand.nextInt(currentconfig.getWidth());
@@ -42,7 +42,6 @@ public class Dumbest extends PlayerAutomaton {
 			// On choisit une tuile parmi les 5 de notre main
 			k = rand.nextInt(handSize);
 			t = currentconfig.getHandTile(name, k);
-//TODO: faux -- riyane			myHand.add(t);
 			//On la fait tourner
 			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
 				t.turnLeft();
@@ -50,8 +49,8 @@ public class Dumbest extends PlayerAutomaton {
 // TODO que faire s'il n'y a aucun choix valide ?			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
 		choix = Action.newBuildSimpleAction(i, j, t);
-System.out.println("choixxxxxx " + choix);
-System.out.println("tuileeeeee " + t);
+//System.out.println("choixxxxxx " + choix);
+//System.out.println("tuileeeeee " + t);
 		return choix;
 	}
 

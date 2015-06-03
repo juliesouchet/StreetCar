@@ -1,4 +1,4 @@
-package test.java.game;
+package test.java.data;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -19,37 +19,17 @@ public class TestUnitaireAction {
 		assertTrue(monAction.action==Action.NONE);
 	}
 
-	@Test
-	public void testNewStartTripNextTurnAction() {
-		Action monAction = Action.newStartTripNextTurnAction();
-		assertTrue(monAction.action==Action.START_TRIP_NEXT_TURN);
-	}
+//	@Test
+//	public void testNewStartTripNextTurnAction() {
+//		Action monAction = Action.newStartTripNextTurnAction();
+//		assertTrue(monAction.action==Action.START_TRIP_NEXT_TURN);
+//	}
 
 	@Test
 	public void testNewMoveAction() {
-		Point[] chemin = new Point[10];
-		for(int i=0; i<chemin.length;i++){
-			chemin[i] = new Point(i,i);
-		}
-		Action monAction = Action.newMoveAction(chemin);
-		assertTrue(monAction.action==Action.MOVE);
-		assertTrue(chemin[0].equals(new Point(0,0)));
-		assertTrue(chemin[9].equals(new Point(9,9)));
+
 	}
 
-	@Test
-	public void testNewBuildSimpleActionPointTile() {
-		Action monAction = Action.newBuildSimpleAction(new Point(1,1), Tile.parseTile("Tile_FFFFZZ060123"));
-		assertTrue(monAction.positionTile1.equals(new Point(1,1)));
-		assertTrue(monAction.tile1.equals(Tile.parseTile("Tile_FFFFZZ060123")));
-	}
-
-	@Test
-	public void testNewBuildSimpleActionIntIntTile() {
-		Action monAction = Action.newBuildSimpleAction(1,1, Tile.parseTile("Tile_FFFFZZ060123"));
-		assertTrue(monAction.positionTile1.equals(new Point(1,1)));
-		assertTrue(monAction.tile1.equals(Tile.parseTile("Tile_FFFFZZ060123")));
-	}
 
 	@Test
 	public void testNewBuildDoubleAction() {
@@ -62,7 +42,7 @@ public class TestUnitaireAction {
 
 	@Test
 	public void testGetClone() {
-		Action monActionSrc = Action.newStartTripNextTurnAction();
+		Action monActionSrc = Action.newBuildSimpleAction(new Point(1,1),Tile.parseTile("Tile_FFFFZZ060123"));
 		Action monActionCible = null;
 		monActionCible = monActionSrc.getClone();
 		assertFalse(monActionCible==monActionSrc);
@@ -72,7 +52,7 @@ public class TestUnitaireAction {
 		for(int i=0; i<chemin.length;i++){
 			chemin[i] = new Point(i,i);
 		}
-		monActionSrc = Action.newMoveAction(chemin);
+		monActionSrc = Action.newMoveAction(chemin,10);
 		monActionCible = null;
 		monActionCible = monActionSrc.getClone();
 		assertFalse(monActionCible==monActionSrc);

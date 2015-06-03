@@ -5,6 +5,7 @@ import main.java.data.Action;
 	public class CoupleActionIndex{
 
 		final static int NOT_SIGNIFICANT = -1;
+		public final static int SIGNIFICANT_BUT_NOT_TREATED_YET = -2;
 		
 		// L'action choisie
 		private Action action;

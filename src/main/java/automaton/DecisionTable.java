@@ -1,6 +1,5 @@
 package main.java.automaton;
 
-import main.java.data.Action;
 import main.java.data.Data;
 import main.java.util.TraceDebugAutomate;
 
@@ -12,24 +11,30 @@ import main.java.util.TraceDebugAutomate;
  *
  */
 public class DecisionTable {
-	
+
 	public static final int ALLY=0;
 	public static final int OPPONENT=1;
 	public static final int TABLE_IS_FULL=-1;
-	
-	
+
+
 	/* ===============================================================================================================
 	 * 			ATTRIBUTS
 	 * =============================================================================================================== */
 	private DecisionNode[] NodeTable;
 	private boolean[] freeSlots;
 	private int size;
-
+	private String myName;
 
 	/* ===============================================================================================================
 	 * 			GETTERS
 	 * =============================================================================================================== */
-	
+
+	/**
+	 * @return Le nom du player que cet table de décision simule.
+	 */
+	public String getMyName(){
+		return this.myName;
+	}
 	/**
 	 * renvoi la taille de la table
 	 * @return
@@ -37,7 +42,7 @@ public class DecisionTable {
 	public int getSize(){
 		return this.size;
 	}
-	
+
 	/**
 	 * Noeud de decision de la table a index
 	 * @param index
@@ -46,7 +51,7 @@ public class DecisionTable {
 	public DecisionNode getDecisionNode(int index){
 		return this.NodeTable[index];
 	}	
-	
+
 	/**
 	 * PRECONDITION: Le noeud doit avoir 1 action possible (retourne NOT_SIGNIFICANT (-1) sinon)
 	 * @param index
@@ -76,14 +81,14 @@ public class DecisionTable {
 		}
 		return indexBestActionInNode;
 	}		
-	
+
 	/**
 	 * PRECONDITION: Le noeud doit avoir 1 action possible (retourne -1 sinon)
 	 *
 	 * @param index
 	 * Numero de noeud dans le tableau
 	 * @return
- 	 * Le numero de l'action dans la liste des actions possibles ayant la configuration correspondante la plus desavantageuse
+	 * Le numero de l'action dans la liste des actions possibles ayant la configuration correspondante la plus desavantageuse
 	 */
 	public int getWorstActionIndex(int index){
 		int indexWorstActionInTable=-1;
@@ -107,7 +112,7 @@ public class DecisionTable {
 		}
 		return indexWorstActionInNode;
 	}	
-	
+
 	/**
 	 * Renvoi le statut de la case du tableau: vrai si la case est disponible pour enregistrer un noeud
 	 * @param index
@@ -117,7 +122,7 @@ public class DecisionTable {
 	public boolean slotIsFree(int index){
 		return this.freeSlots[index];
 	}	
-	
+
 	/**
 	 * Met la valeur de la taille de la table a size
 	 * @param size
@@ -131,7 +136,7 @@ public class DecisionTable {
 	 * @return
 	 * L'indice d'un slot contenant une donnée non pertinente sucestible d'être écrasée
 	 */
-	public int findFreeSlot(){
+	public int findFreeSlot(){	//TODO mais pas pressé: modifier cette implémentation: dans une pile d'index libre et on pioche dedans: plus rapide et permettra multi thread.
 		for (int i=0; i<this.getSize();i++){
 			if(this.slotIsFree(i)){
 				return i;
@@ -175,9 +180,11 @@ public class DecisionTable {
 	 * 	Taille du tableau de DecisionNode: correspond au nombre total d'action que la table peut traiter
 	 * @param maxCardinalActionPossible
 	 * 	Taille de la table d'action de chaque noeud: le nombre maximal d'action que chaque noeud pourra traiter: dois être un majorant.
+	 * @param myName nom du player que cette table de décision simule.
 	 * @throws ExceptionUnknownNodeType 
 	 */
-	public DecisionTable(int tableSize, int maxCardinalActionPossible) throws ExceptionUnknownNodeType{
+	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
+		this.myName = myName; //TODO vrai copy ou juste pointeur :s
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		this.setSize(tableSize);
@@ -187,7 +194,7 @@ public class DecisionTable {
 		}
 	}	
 
-	
+
 
 	/* ===============================================================================================================
 	 * 			UTILITAIRES
@@ -210,7 +217,7 @@ public class DecisionTable {
 		return result;
 	}
 
-	
+
 	/*
 	 * TODO finir implementation:
 	 * demander a julie fonctionnement Evaluator.evaluateSituationQuality (gameNumber? difficulty?)
@@ -229,42 +236,42 @@ public class DecisionTable {
 	 */
 	public void applyMinMax(int index, int type, int wantedDepth, Data currentConfiguration ){
 		double evaluatedQuality = DecisionNode.NOT_SIGNIFICANT;
-		Data.possibleActionsSet potentialActionsSet = null;
-		CoupleActionIndex bufferCoupleActionIndex = null;
+		String playerName = currentConfiguration.getPlayerTurn();
+		int numberOfPossiblesActions;
 		int aFreeSlot = 0;
+		
 		// Cas d'une feuille on estime la qualité avec la fonction de Julie
 		if(wantedDepth==0){ 
 			//evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty)
 			this.getDecisionNode(index).setQuality(evaluatedQuality);
 			this.getDecisionNode(index).setLeaf();
-			
-		// Cas d'une recurrence	
-		} else if(wantedDepth>0){
-			potentialActionsSet = currentConfiguration.getPossibleActions(currentConfiguration.getPlayerTurn());
-			/*TODO demander a Riyane un constructeur d'action abstrait que alloue la memoire*/
-			bufferCoupleActionIndex = new CoupleActionIndex( new Action(), CoupleActionIndex.NOT_SIGNIFICANT);
-			for (int i=0; i<potentialActionsSet.getCardinal(); i++){
-				// TODO indexFreeSlot = this.findFreeSlot();
-				bufferCoupleActionIndex.setIndex(aFreeSlot);
-				bufferCoupleActionIndex.setAction(potentialActionsSet.getAction(i));
-				this.getDecisionNode(index).setCoupleActionIndex(i, bufferCoupleActionIndex);
 
-// TODO				
-//				currentConfiguration.doAction(potentialActionsSet.getAction(i));
-//				this.applyMinMax(aFreeSlot, typeSuivant, wantedDepth-1, currentConfiguration);
-//				currentConfiguration.rollBack();
+			// Cas d'une recurrence	
+		} else if(wantedDepth>0){
+			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable()); //
+			for (int i=0; i<numberOfPossiblesActions; i++){
+				aFreeSlot = this.findFreeSlot();
+				
+				assert(this.getDecisionNode(index).getCoupleActionIndex(i).getIndex()==CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+				
+				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
+
+				// TODO				
+				//				currentConfiguration.doAction(potentialActionsSet.getAction(i));
+				//				this.applyMinMax(aFreeSlot, typeSuivant, wantedDepth-1, currentConfiguration);
+				//				currentConfiguration.rollBack();
 			}
-			if (type==ALLY){
+			if (playerName.equals(this.getMyName())){
 				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getBestActionIndex(index)).getQuality());
 			}
-			else if (type==OPPONENT){
+			else if (!playerName.equals(this.getMyName())){
 				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getWorstActionIndex(index)).getQuality());	
 
 			}
-					
+
 		}
 	}
-	
+
 
 
 }
