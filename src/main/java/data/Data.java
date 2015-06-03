@@ -153,18 +153,26 @@ public class Data implements Serializable
 	//TODO ajouté par Ulysse
 	public void doAction(Action action){
 		if (action.isMOVE()){
+			this.setTramPosition(this.getPlayerTurn(), action.tramwayMovement[action.ptrTramwayMovement]); //TODO ptrTramwaymovement ou -1 ?
 			return;
 		}
 		if (action.isBUILD_SIMPLE()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
 			return;
 		}
 		if (action.isTWO_BUILD_SIMPLE()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+			this.setTile(action.positionTile2.x, action.positionTile2.y, action.tile2);
 			return;
 		}
 		if (action.isBUILD_DOUBLE()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+			this.setTile(action.positionTile2.x, action.positionTile2.y, action.tile2);
 			return;
 		}
 		if (action.isBUILD_AND_START_TRIP_NEXT_TURN()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+			this.startMaidenTravel(this.getPlayerTurn());
 			return;
 		}
 
