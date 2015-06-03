@@ -149,6 +149,29 @@ public class Data implements Serializable
 // Setter:
 // --------------------------------------------
 	
+	
+	//TODO ajouté par Ulysse
+	public void doAction(Action action){
+		if (action.isMOVE()){
+			return;
+		}
+		if (action.isBUILD_SIMPLE()){
+			return;
+		}
+		if (action.isTWO_BUILD_SIMPLE()){
+			return;
+		}
+		if (action.isBUILD_DOUBLE()){
+			return;
+		}
+		if (action.isBUILD_AND_START_TRIP_NEXT_TURN()){
+			return;
+		}
+
+	}
+	
+	
+	
 	public void setPreviousTramPosition(String playerName, Point newPosition) { playerInfoList.get(playerName).previousTramPosition = newPosition; }
 	
 	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; } // TODO rename this method

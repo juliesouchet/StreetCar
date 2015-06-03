@@ -165,6 +165,30 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 */
 	public boolean isMoving()				{return ((this.action == MOVE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN));}
 
+	//Add by Ulysse
+	public boolean isNONE(){
+		return this.action==NONE;
+	}
+	public boolean isMOVE(){
+		return this.action==MOVE;
+	}
+	public boolean isBUILD_SIMPLE(){
+		return this.action==BUILD_SIMPLE;
+	}
+	public boolean isTWO_BUILD_SIMPLE(){
+		return this.action==TWO_BUILD_SIMPLE;
+	}
+	public boolean isBUILD_DOUBLE(){
+		return this.action==BUILD_DOUBLE;
+	}
+	public boolean isBUILD_AND_START_TRIP_NEXT_TURN(){
+		return this.action == BUILD_AND_START_TRIP_NEXT_TURN;
+	}
+	
+	
+	
+	
+	
 	@Override
 	public String	toString()
 	{

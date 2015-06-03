@@ -184,7 +184,7 @@ public class DecisionTable {
 	 * @throws ExceptionUnknownNodeType 
 	 */
 	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
-		this.myName = myName; //TODO vrai copy ou juste pointeur :s
+		this.myName = myName; //TODO vrai copy ou juste pointeur :s ?
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		this.setSize(tableSize);
@@ -234,7 +234,7 @@ public class DecisionTable {
 	 * @param currentConfiguration
 	 * 	le data courant: cad l'etat de la partie
 	 */
-	public void applyMinMax(int index, int type, int wantedDepth, Data currentConfiguration ){
+	public void applyMinMax(int index, int type, int wantedDepth, Data currentConfiguration ){ //TODO enlever argument type: inutile
 		double evaluatedQuality = DecisionNode.NOT_SIGNIFICANT;
 		String playerName = currentConfiguration.getPlayerTurn();
 		int numberOfPossiblesActions;
@@ -256,8 +256,10 @@ public class DecisionTable {
 				
 				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
 
+				currentConfiguration.doAction(this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
+			
+				this.applyMinMax(aFreeSlot, type, wantedDepth-1, currentConfiguration);
 				// TODO				
-				//				currentConfiguration.doAction(potentialActionsSet.getAction(i));
 				//				this.applyMinMax(aFreeSlot, typeSuivant, wantedDepth-1, currentConfiguration);
 				//				currentConfiguration.rollBack();
 			}
