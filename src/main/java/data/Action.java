@@ -41,6 +41,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		Action res = new Action();
 
 		res.action = MOVE;
+		res.ptrTramwayMovement = pathSize;
 		for (int i=0; i<pathSize; i++)
 		{
 			res.tramwayMovement[i].x = path[i].x;
@@ -48,6 +49,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		}
 		return res;
 	}
+
 	public static Action newBuildSimpleAction (int x, int y, Tile t)
 	{
 		Action res = new Action();
@@ -64,22 +66,6 @@ public class Action implements Serializable, CloneableInterface<Action>
 	{
 		return newBuildSimpleAction(position.x, position.y, t);
 	}
-
-	    
-	public static Action newBuildDoubleAction (Point position1, Tile tile1, Point position2, Tile tile2){
-		Action res = new Action();
-
-		res.action = BUILD_DOUBLE;
-		res.tile1.copy(tile1);
-		res.tile2.copy(tile2);
-		
-		res.positionTile1.x	= position1.x;
-		res.positionTile1.y	= position1.y;
-		res.positionTile1.x	= position2.x;
-		res.positionTile1.y	= position2.y;
-
-		return res;		
-	}
 	
 	public static Action newBuildTwoSimpleAction (Point position1, Tile tile1, Point position2, Tile tile2){
 		Action res = new Action();
@@ -95,7 +81,28 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		return res;		
 	}
-	
+	    
+	public static Action newBuildDoubleAction (Point position1, Tile tile1, Point position2, Tile tile2){
+		Action res = new Action();
+
+		res.action = BUILD_DOUBLE;
+		res.tile1.copy(tile1);
+		res.tile2.copy(tile2);
+		
+		res.positionTile1.x	= position1.x;
+		res.positionTile1.y	= position1.y;
+		res.positionTile2.x	= position2.x;
+		res.positionTile2.y	= position2.y;
+
+		return res;		
+	}
+
+	/**
+	 * Actin de poser une unique tuile et dire qu'on commence notre voyage au prochain tour.
+	 * @param position De la tuile a placer.
+	 * @param t tuile a placer.
+	 * @return Une instance de la classe action.
+	 */
 	public static Action newStartTripNextTurnAction (Point position, Tile t)	{
 		return newStartTripNextTurnAction(position.x, position.y, t);
 	}
@@ -110,6 +117,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		return res;
 	}
+
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------
@@ -134,7 +142,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 * Vrai si et seulement si l'action est de type construction simple.
 	 * Faux sinon.
 	 */
-	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE);}
+	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE || this.action == BUILD_AND_START_TRIP_NEXT_TURN);}
 	
 	/**
 	 * @return
@@ -242,11 +250,11 @@ public class Action implements Serializable, CloneableInterface<Action>
 // Local methods
 // -----------------------------------------------------
 	/**
-	 * Test de l'égalité aec une autre instance d'Action
+	 * Test de l'égalité avec une autre instance d'Action
 	 * @param otherAction
 	 * L'instance à comparer
 	 * @return
-	 * Vrai si les 2 actions représentent des actions équivalentes sur le plateu de jeu
+	 * Vrai si les 2 actions représentent des actions équivalentes sur le plateau de jeu
 	 * (c'est à dire: par exemple ne prend pas compte de l'attribut tile2 pour une pose simple...)
 	 */
 	public boolean equals(Action otherAction)
