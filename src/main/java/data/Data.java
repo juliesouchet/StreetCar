@@ -171,9 +171,9 @@ public class Data implements Serializable
 
 		if (!this.remainingColors.contains(playerColor)) throw new RuntimeException("Used color");
 
-		pi.color = new Color(playerColor.getRGB());
-		this.remainingColors.add(pi.color);
 		this.remainingColors.remove(playerColor);
+		this.remainingColors.add(pi.color);
+		pi.color = new Color(playerColor.getRGB());
 	}
 	/**================================================
 	 * @return Remove a player from the present game
@@ -437,6 +437,7 @@ public class Data implements Serializable
 	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
+	public LinkedList<Color>	getRemainingColors()							{return ((new Copier<Color>()).copyList(this.remainingColors));}
 	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
@@ -957,6 +958,7 @@ public String[][]remainingBuildingInLineSave;
 			this.hand					= Hand.initialHand.getClone();
 			i 							= rnd.nextInt(remainingColors.size());
 			this.color					= remainingColors.get(i);
+			remainingColors.remove(i);
 			i 							= rnd.nextInt(remainingLine.size());
 			this.line					= remainingLine.get(i);
 			remainingLine.remove(i);

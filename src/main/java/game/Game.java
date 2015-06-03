@@ -152,7 +152,7 @@ public String getHostName(){return this.data.getHost();}
 		if (oldPlayerIsOccupied)														// Case exclude old player
 		{
 			this.data.removePlayer(oldPlayerName);
-			if ((oldPlayerIsHuman) && (oldPlayerName != null))
+			if (oldPlayerIsHuman)////////// && (oldPlayerName != null))
 			{
 				PlayerInterface	oldPlayer	= this.data.getRemotePlayer(oldPlayerName);
 				this.engine.addAction(this.data, "excludePlayer", oldPlayer);
@@ -163,10 +163,22 @@ public String getHostName(){return this.data.getHost();}
 				this.aiList.remove(oldPlayerName);
 			}
 		}
-		else if (!newPlayerIsHuman)														// Case create AI player
+		if (!newPlayerIsHuman)															// Case create AI player
 		{
 			this.launchAIPlayer(newPlayerInfo);
 		}
+		
+System.out.println("******************************************************");
+System.out.println("Apres");
+for (LoginInfo li: this.loggedPlayerTable)
+{
+	System.out.println("---------------Player :" + li);
+	
+}
+for (String str: this.data.getPlayerNameList())
+{
+	System.out.println("---------------Player :" + str + ", color : " + this.data.getPlayerColor(str));
+}
 	}
 	/**================================================
 	 * @return Makes a player join the game
@@ -409,6 +421,7 @@ public String getHostName(){return this.data.getHost();}
 		{
 			li = this.loggedPlayerTable[i];
 			if (li.isClosed())									continue;
+			if (li.isOccupiedCell())							continue;
 			if (li.isHost() != isHost)							continue;
 			if (li.isHuman()!= isHuman)							continue;
 			if (!li.isHuman() && (li.getAiLevel() != aiLevel))	continue;

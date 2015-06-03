@@ -71,7 +71,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	/**===================================================
 	 * @return true if the action is a simple action
 	 =====================================================*/
-	public boolean isOnTurnAction()
+	public boolean isOneTurnAction()
 	{
 		return (this.action == BUILD_SIMPLE);
 	}
