@@ -34,6 +34,8 @@ public class Dumbest extends PlayerAutomaton {
 		Tile t;
 		int i, j, k;
 
+		if(handSize == 0 ) return null;
+		
 		do{
 			// On choisit un emplacement au hasard
 			i = rand.nextInt(currentconfig.getWidth());
@@ -50,8 +52,8 @@ public class Dumbest extends PlayerAutomaton {
 // TODO que faire s'il n'y a aucun choix valide ?			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
 		choix = Action.newBuildSimpleAction(i, j, t);
-System.out.println("choixxxxxx " + choix);
-System.out.println("tuileeeeee " + t);
+//System.out.println("choixxxxxx " + choix);
+//System.out.println("tuileeeeee " + t);
 		return choix;
 	}
 

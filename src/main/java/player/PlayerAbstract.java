@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
+import main.java.game.ExceptionEndGame;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionFullParty;
@@ -106,10 +107,10 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tui
 	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
 System.out.println("--------------------------------");
-System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards);
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards + " | Reste " +(data.getNbrRemainingDeckTile()-nbrCards));
 		this.game.drawTile(playerName, nbrCards);
 	}
-	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionEndGame
 	{
 System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate");

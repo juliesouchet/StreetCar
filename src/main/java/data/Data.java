@@ -211,7 +211,6 @@ public class Data implements Serializable
 			this.playerOrder[i] = str;
 			i ++;
 		}
-
 		this.skipTurn();
 	}
 	/**===================================================
