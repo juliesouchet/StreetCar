@@ -7,16 +7,8 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.rmi.RemoteException;
 
-import main.java.data.Data;
 import main.java.data.Tile;
-import main.java.game.ExceptionForbiddenAction;
-import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotYourTurn;
-import main.java.game.ExceptionTooManyActions;
-import main.java.gui.application.StreetCar;
-import main.java.player.PlayerIHM;
 
 class MapPanelDropTargetListener implements DropTargetListener {
 
@@ -53,15 +45,16 @@ class MapPanelDropTargetListener implements DropTargetListener {
 		}
 		
 		System.out.println("DROP at point " + p);
+		Tile tile = null;
 		try {
 			Transferable transferable = dropEvent.getTransferable();
 			DataFlavor dataFlavor = transferable.getTransferDataFlavors()[0];
-			String transferedData = (String)transferable.getTransferData(dataFlavor);
-			System.out.println(transferedData);
+			Tile transferedTile = (Tile)transferable.getTransferData(dataFlavor);
+			System.out.println(transferedTile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		/*
 		PlayerIHM player = StreetCar.player;
 		Data data = player.getGameData();
 		Tile tile = data.getBoard()[p.x][p.y];
@@ -78,6 +71,6 @@ class MapPanelDropTargetListener implements DropTargetListener {
 		} catch (ExceptionTooManyActions e) {
 			e.printStackTrace();
 		}
-		
+		*/
 	}
 }
