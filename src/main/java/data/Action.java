@@ -23,7 +23,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public static final int BUILD_DOUBLE					= 3;
 	public static final int BUILD_AND_START_TRIP_NEXT_TURN	= 4;
 
-	public int		action;
+	public int		action = NONE;
 
 	public Point	positionTile1							= new Point(-1, -1);			// Build Attributes
 	public Point	positionTile2							= new Point(-1, -1);
@@ -68,19 +68,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------
-	/**===================================================
-	 * @return true if the action is a simple action
-	 =====================================================*/
-	public boolean isOnTurnAction()
-	{
-		return (this.action == BUILD_SIMPLE);
-	}
+
 	/**===================================================
 	 * @return true if the action is a double action (you can play one only of this action in by round)
 	 =====================================================*/
-	public boolean isTwoTurnAction()
+	public boolean isTwoStepAction()
 	{
-		return ((this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN));
+		return ((this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN) || this.action == MOVE);
 	}
 	/**
 	 * @return
