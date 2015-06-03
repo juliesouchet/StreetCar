@@ -170,6 +170,14 @@ return null;
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
+	/**
+	 * Creates the game data
+	 * @param gameName : the name of this game (as given by the host)
+	 * @param boardName : the initial board
+	 * @param nbrBuildingInLine : the amount of obligatory stops
+	 * @throws ExceptionUnknownBoardName
+	 * @throws RuntimeException
+	 */
 	public Data(String gameName, String boardName, int nbrBuildingInLine) throws ExceptionUnknownBoardName, RuntimeException
 	{
 		File f = new File(boardDirectory + boardName);
@@ -194,6 +202,7 @@ return null;
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
 	}
 	private Data(){}
+	/** Returns a copy of the current data, as seen by the player (the hidden informations are not given) */
 	public Data getClone(String playerName)
 	{
 		Data res = new Data();
@@ -358,10 +367,18 @@ return null;
 		dst.remove(tile);
 		src.add(tile);
 	}
+	/**
+	 * The player declares the start of his maiden travel 
+	 */
 	public void startMaidenTravel(String playerName)
 	{
 		playerInfoList.get(playerName).startedMaidenTravel = true;
 	}
+	/**
+	 * The player moves his streetcar
+	 * @param playerName
+	 * @param newPosition
+	 */
 	public void setTramPosition(String playerName, Point newPosition)
 	{
 		PlayerInfo pi = playerInfoList.get(playerName);
@@ -371,6 +388,11 @@ return null;
 		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
 	}
 // TODO: Enlever les LinkedList
+	/**
+	 * The player chooses the destination of his maiden travel (the opposite terminus from his starting terminus)
+	 * @param playerName : the player
+	 * @param dest : the two points corresponding to the ending terminus
+	 */
 	public void	setDestinationTerminus(String playerName, Point[] dest)
 	{
 		Point[] tab = playerInfoList.get(playerName).endTerminus;
@@ -384,7 +406,12 @@ return null;
 // --------------------------------------------
 // Getter relative to travel:
 // --------------------------------------------
+	/** Returns the current position of this player's streetcar 
+	 * (or null if he hasn't started yet his maiden travel) */
 	public Point	getTramPosition(String playerName)							{return new Point(playerInfoList.get(playerName).tramPosition);}
+	/**
+	 * Returns true if this terminus belongs to that player
+	 */
 	public boolean	isPlayerTerminus(String playerName, Point terminus)
 	{
 		Point[] terminusTab = playerInfoList.get(playerName).terminus;
@@ -395,22 +422,39 @@ return null;
 // --------------------------------------------
 // Getter relative to players:
 // --------------------------------------------
+	/** Returns the player with this name */
 	public PlayerInterface		getRemotePlayer(String playerName)				{return this.playerInfoList.get(playerName).player;}
+	/** Returns the number of this player's line */
 	public int					getPlayerLine(String playerName)				{return this.playerInfoList.get(playerName).line;}
+	/** Returns this player's color */
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
-	public boolean				istHost(String playerName)						{return this.host.equals(playerName);}
+	/** Return true if this player is hosting the game */
+	public boolean				isHost(String playerName)						{return this.host.equals(playerName);}
+	/** Returns true if there is a player with this name among the players of this game */
 	public boolean				isPlayerLogged(String name)						{return this.playerInfoList.containsKey(name);}
 	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
+	/** Returns the number of tile in this player's hand */
 	public int					getHandSize(String playerName)					{return this.playerInfoList.get(playerName).hand.getSize();}
+	/** Returns the tileIndex-nth tile in this player's hand */
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex);}
+	/** Returns true if this tile is in the player's hand */
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
+	/** Returns true if this player's name is already used by another */
 	public boolean				isUsedPlayerName(String playerName)				{return this.playerInfoList.keySet().contains(playerName);}
+	/** Returns the four points of this player's termini (two per terminus) */
 	public Point[]				getPlayerTerminusPosition(String playerName)	{return this.playerInfoList.get(playerName).terminus;}
+	/** Returns the buildings that this player must "visit" during his maiden travel. 
+	 * He must pass through stops that are next to the buildings (one each). */
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
+	/** Returns the number of cards to draw at the end of this player's turn */
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
+	/** Returns true if the player has started his maiden travel 
+	 * (his track is completed and his streetcar is on the board) */
 	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
+	/** Returns the previous position of this player's streetcar (one square backwards) */
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
 // TODO: Enlever les LinkedList
+	/** Returns true if this player still has actions to do in his turn */
 	public boolean				hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
@@ -426,6 +470,7 @@ return null;
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
 	}
 // TODO: Enlever les LinkedList
+	/** Returns true if this player is at the start of his turn (and he hasn't done anything yet) */
 	public boolean isStartOfTurn(String playerName)
 	{
 		if(!isPlayerTurn(playerName)) return false;
@@ -464,31 +509,102 @@ return null;
 // --------------------------------------------
 // Getter relative to game:
 // --------------------------------------------
+	/** Returns true if all the tiles have been played but no player can win */
+	public boolean				isGameBlocked() {
+		if(!isEmptyDeck())					return false;
+		Set<String> playerNameList = getPlayerNameList();
+		for(String playerName : playerNameList) {
+			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
+		}
+		return true;
+	}
+	/** Returns the name of the winner, null if the game is in progress */
 	public String				getWinner()										{return this.winner;}
+	/** Returns the total number of remaining tiles in the deck */
 	public int					getNbrRemainingDeckTile()						{return this.deck.getNbrRemainingDeckTile();} // ajouté par Julie
+	/** Returns the game name (the one given by the host at the creation) */
 	public String				getGameName()									{return new String(this.gameName);}
+	/** Returns the names of the players in the game (host + joiners) */
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	/** Returns a copy of the board */
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
+	/**
+	 * @param x
+	 * @param y
+	 * @return a copy of the tile at position (x,y)
+	 */
 	public Tile					getTile  (int x, int y)							{return this.board[x][y].getClone();}
 //TODO: peut etre pour l'ia 	public Tile					getTileIA(int x, int y)							{return this.board[x][y];}
+	/**
+	 * @param p
+	 * @return a copy of the tile at position p
+	 */
 	public Tile					getTile(Point p)								{return getTile(p.x, p.y);}
+	/**
+	 * @return the width of the board
+	 */
 	public int					getWidth()										{return this.board.length;}
+	/**
+	 * @return the height of the board
+	 */
 	public int					getHeight()										{return this.board[0].length;}
+	/**
+	 * @return the number of necessary stops in the game
+	 */
 	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
+	/**
+	 * Calculates the shortest path from p0 to p1 using tiles already on the board
+	 * @param p0
+	 * @param p1
+	 * @return the path if it exists, else null
+	 */
 	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return PathFinder.getPath(this, p0, p1);}
+	/**
+	 * @param p1
+	 * @param p2
+	 * @return true if there is a path between p1 and p2 using tiles already on the board, else false
+	 */
 	public boolean				pathExistsBetween(Point p1, Point p2)			{return getShortestPath(p1, p2) != null;}
+	/**
+	 * @return the number of players in the game (host included)
+	 */
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
+	/**
+	 * The maximum number of squares that a streetcar can go in one turn. 
+	 * This value goes up by 1 each time a streetcar moves, up to 10. 
+	 * If a streetcar stops before the limit, then the maximum speed becomes the traveled distance + 1.
+	 * @return the maximum speed
+	 */
 	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
+	/** The number of the current round */
 	public int					getRound()										{return this.round;}
+	/** The host's player name */
 	public String				getHost()										{return (this.host == null) ? null : new String(this.host);}
+	/** The playing order of the players (chosen randomly at the start of the game) */
 	public String[]				getPlayerOrder()								{return (new Copier<String>()).copyTab(playerOrder);}
+	/** The player that is currently playing */
 	public String				getPlayerTurn()									{return this.playerOrder[this.round%this.playerOrder.length];}
+	/**
+	 * @param c
+	 * @return true if this color is already used by another player */
 	public boolean				isUsedColor(Color c)							{return this.remainingColors.contains(c);}
+	/**
+	 * @param playerName
+	 * @return true if it is this player's turn to play
+	 */
 	public boolean				isPlayerTurn(String playerName)					{return (this.playerOrder == null) ? false : (this.getPlayerTurn().equals(playerName));}
+	/** Returns true if the deck is empty (there are no more tile to draw) */
 	public boolean				isEmptyDeck()									{return this.deck.isEmpty();}
+	/**
+	 * @param nbrTile
+	 * @return true if there is at least nbrTile tiles remaining in the deck
+	 */
 	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
+	/** Returns true if there are enough players to start */
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
+	/** Returns true if the host has launched the game */
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
+	/** Returns true if all the human players are initialized (?) */
 	public boolean				isAllHumanPlayersInitialized()
 	{
 		for (String str: this.playerInfoList.keySet())
@@ -499,12 +615,15 @@ return null;
 		}
 		return true;
 	}
+	/** Returns true if (x,y) is within the limits of the board */
 	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
 		if ((y < 0) || (y >= getHeight()))	return false;
 		return true;
 	}
+	/** Returns true if (x,y) is on the edge of the board 
+	 * (meaning, the one-square wide band around the board with the termini) */
 	public boolean	isOnEdge(int x, int y)
 	{
 		if ((x == 0) || (x == getWidth()-1))	return true;
@@ -512,7 +631,7 @@ return null;
 		return false;
 	}
 	/**===============================================================
-	 * @return if the deposit of the tile t on the board at the position <x, y> is possible
+	 * @return if the deposit of the tile t on the board at the position (x, y) is possible
 	 =================================================================*/
 	public boolean isAcceptableTilePlacement(int x, int y, Tile t)
 	{
@@ -524,7 +643,7 @@ return null;
 
 		Tile nt = Tile.specialNonRealTileConstructor(additionalPath, additionalPathSize, t);
 		int accessibleDirection = nt.getAccessibleDirections();
-		for (Direction d: Direction.DIRECTION_LIST)														// Check whether the new tile is suitable with the <x, y> neighborhood
+		for (Direction d: Direction.DIRECTION_LIST)														// Check whether the new tile is suitable with the (x,y) neighborhood
 		{
 			if (!d.isDirectionInList(accessibleDirection)) continue;
 			Point neighbor = d.getNeighbour(x, y);
@@ -557,7 +676,7 @@ return null;
 		return res;
 	}
 	/**============================================================
-	 * @return the list of the neighbor coordinates that can be acceded from the <x,y> cell
+	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell
 	 ==============================================================*/
 	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
 	{
@@ -573,7 +692,7 @@ return null;
 		return res;
 	}
 	/**============================================================
-	 * @return the list of the neighbor tiles that can be acceded from the <x,y> cell
+	 * @return the list of the neighbor tiles that can be acceded from the (x,y) cell
 	 ==============================================================*/
 	public LinkedList<Tile> getAccessibleNeighborsTiles(int x, int y)
 	{
@@ -589,7 +708,7 @@ return null;
 		return res;
 	}
 	/**============================================================
-	 * @returns the list of directions d such as the neighbor d has a path to the current tile <x, y>
+	 * @returns the list of directions d such as the neighbor d has a path to the current tile (x,y)
 	 ==============================================================*/
 	public LinkedList<Direction> getPathsLeadingToTile(int x, int y)
 	{
@@ -628,7 +747,7 @@ return null;
 		return null;
 	}
 	/**=========================================================================
-	 * @return the position of the building next to the given position, or null if no buildinf is found in the neighborhood
+	 * @return the position of the building next to the given position, or null if no building is found in the neighborhood
 	 ===========================================================================*/
 	public Point isBuildingAround(int x, int y)
 	{
@@ -646,7 +765,7 @@ return null;
 	}
 	/**===============================================================
 	 * @return the list of the neighbors connected to the current tile
-	 * (<x, y> has a path to the neighbor and the neighbor has a path to <x, y>)
+	 * ((x,y) has a path to the neighbor and the neighbor has a path to (x,y))
 	 =================================================================*/
 	public LinkedList<Point> getConnectedNeighborPositions(int x, int y)
 	{

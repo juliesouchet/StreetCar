@@ -66,6 +66,8 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 
 		if (data.hasRemainingAction(playerName))
 		{
+System.out.println("-----------PlayerName: " + playerName);
+System.out.println("-----------HandSize  : " + data.getHandSize(playerName));
 			Action a = this.automaton.makeChoice(data.getClone(playerName));
 			try					{super.placeTile(a.tile1, a.positionTile1);}
 			catch (Exception e) {e.printStackTrace(); return;}

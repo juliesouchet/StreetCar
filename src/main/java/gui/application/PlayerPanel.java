@@ -62,7 +62,8 @@ public class PlayerPanel extends Panel{
         super.paintComponent(g);
         
         //avatar
-        g.setColor(playerColor);
+        //g.setColor(playerColor); TODO valz
+        g.setColor(Color.YELLOW);
         g.fillRect(10, 5, 45, 45);
         g.setColor(Color.BLACK);
         g.drawRect(10, 5, 45, 45);

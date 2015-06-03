@@ -163,13 +163,13 @@ public class HostRoomMenuPanel extends MenuPanel {
 		System.out.println(data.getPlayerNameList());
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
-			for (int i=0; i<loginInfos.length; i++) {				
+			for (int i=0; i<loginInfos.length; i++) {
 				Label nameLabel = this.nameLabels.get(i);
 				ComboBox choiceComboBox = this.choiceComboBoxes.get(i);
 				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
 				
 				LoginInfo info = loginInfos[i];
-				
+
 				String playerName = (info.getPlayerName() == null) ? info.getPlayerName() : "";
 				nameLabel.setText(playerName);
 				choiceComboBox.setEditable(!info.isHost());

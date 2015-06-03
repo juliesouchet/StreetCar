@@ -40,6 +40,7 @@ public class InGamePanel extends Panel {
 	// Constructors
 	
 	InGamePanel(GameController gc) {
+		// TODO valz comment : was commented
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
@@ -141,8 +142,10 @@ public class InGamePanel extends Panel {
 	// Actions
 	
 	public void validate() {
-		/*try {
-			this.getPlayer().validate();
+		// TODO: uncomment and fix
+		/*
+		try {
+			StreetCar.player.validate();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e) {
@@ -177,6 +180,7 @@ public class InGamePanel extends Panel {
 	// Refresh game
 	
 	public void refreshGame(PlayerIHM player, Data data) {
+		// TODO valz comment : was commented
 		System.out.println("REFRESH GAME");
 		this.mapPanel.refreshGame(player, data);
 		for (PlayerPanel playerPanel : this.playerPanels) {
