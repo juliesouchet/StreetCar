@@ -165,31 +165,9 @@ public class HostRoomMenuPanel extends MenuPanel {
 			for (int i=0; i<loginInfos.length; i++) {
 				LoginInfo info = loginInfos[i];
 
-				if(info.isClosed()) { closeCell(i); }
-				else if(info.isOccupiedCell()) 
-				{ 
-					showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName())); 
-				}
-				else { openCell(i); }
-
-				/*
-				if (info.isClosed()) {
-					nameLabel.setText(" Connection closed", null);
-					choiceComboBox.setSelectedIndex(4);
-					avatarImagePanel.setBackground(Color.WHITE);
-
-				} else if (nameLabel.getText() == null && info.isHuman()) {
-					nameLabel.setText(" Waiting connection", null);
-					choiceComboBox.setSelectedIndex(0);
-					avatarImagePanel.setBackground(Color.WHITE);
-
-				} else if (!info.isHuman()) {
-					int level = info.getAiLevel();
-					choiceComboBox.setSelectedIndex(level);
-					nameLabel.setText(" AI", null);
-					//avatarImagePanel.setBackground(data.getPlayerColor(playerName));
-				}
-				 */
+				if(info.isClosed()) closeCell(i);
+				else if(info.isOccupiedCell()) showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName()));
+				else openCell(i);
 			}
 
 		} catch (Exception e) {

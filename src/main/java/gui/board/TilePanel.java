@@ -44,6 +44,7 @@ public class TilePanel extends Panel implements Transferable {
 	// Drawings
 	
 	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D)g;
 		if (this.tile == null) return;
 		TileImage tileImage = new TileImage(this.tile);
