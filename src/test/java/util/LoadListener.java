@@ -43,7 +43,6 @@ public class LoadListener implements MouseListener {
 				JOptionPane.QUESTION_MESSAGE, null, availableBoards.toArray(), "nom_du_terrain");
 		
 		if(fileName != null) {
-	//	System.out.println("Chargement : "+fileName);
 			Data data = null;
 			try {
 				Data.boardDirectory = "";

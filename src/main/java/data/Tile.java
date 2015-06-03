@@ -267,6 +267,29 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 */
 	public void setStop(boolean b){this.isStop = b;}
 
+	/**
+	 * Setter sur l'attribut tileDirection de la tuile 
+	 * (fait aussi tourner les path)
+	 * @param dir
+	 */
+	public void setDirection(Direction dir) {
+		int val = ((dir.getVal() - this.tileDirection.getVal() + 4)%4);
+		switch(val) {
+		case 0:
+			return;
+		case 1 :
+			this.turnRight();
+			break;
+		case 2 :
+			this.turnHalf();
+			break;
+		case 3 :
+			this.turnLeft();
+			break;
+		default :
+			throw new RuntimeException("Error tile.setDirection : from " + this.tileDirection + " to " + dir + " : " + val);
+		}
+	}
 // --------------------------------------------
 // Getters:
 // --------------------------------------------

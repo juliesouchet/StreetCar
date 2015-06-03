@@ -684,13 +684,13 @@ return null;
 				{
 					tileFileName	= sc.next();
 					res[x][y]		= Tile.parseTile(tileFileName);
-//					dir				= Direction.parse(sc.nextInt());
-sc.nextInt();
-///					res[x][y]		.setDirection(dir);
+					dir				= Direction.parse(sc.nextInt());
+					res[x][y]		.setDirection(dir);
 				}
 			}
+			sc.close();
 		}
-		catch (Exception e){throw new RuntimeException("Malformed board file");}
+		catch (Exception e){e.printStackTrace();throw new RuntimeException("Malformed board file");}
 
 		return res;
 	}
