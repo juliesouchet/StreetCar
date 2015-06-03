@@ -14,7 +14,6 @@ import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
-import main.java.game.ExceptionNonInitializedPlayer;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.gui.application.GameController;
 import main.java.gui.application.StreetCar;
@@ -116,8 +115,6 @@ public class HostRoomMenuPanel extends MenuPanel {
 			e.printStackTrace();
 		} catch (ExceptionNotEnougthPlayers e) {
 			e.printStackTrace();
-		} catch (ExceptionNonInitializedPlayer e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -165,31 +162,9 @@ public class HostRoomMenuPanel extends MenuPanel {
 			for (int i=0; i<loginInfos.length; i++) {
 				LoginInfo info = loginInfos[i];
 
-				if(info.isClosed()) { closeCell(i); }
-				else if(info.isOccupiedCell()) 
-				{ 
-					showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName())); 
-				}
-				else { openCell(i); }
-
-				/*
-				if (info.isClosed()) {
-					nameLabel.setText(" Connection closed", null);
-					choiceComboBox.setSelectedIndex(4);
-					avatarImagePanel.setBackground(Color.WHITE);
-
-				} else if (nameLabel.getText() == null && info.isHuman()) {
-					nameLabel.setText(" Waiting connection", null);
-					choiceComboBox.setSelectedIndex(0);
-					avatarImagePanel.setBackground(Color.WHITE);
-
-				} else if (!info.isHuman()) {
-					int level = info.getAiLevel();
-					choiceComboBox.setSelectedIndex(level);
-					nameLabel.setText(" AI", null);
-					//avatarImagePanel.setBackground(data.getPlayerColor(playerName));
-				}
-				 */
+				if(info.isClosed()) closeCell(i);
+				else if(info.isOccupiedCell()) showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName()));
+				else openCell(i);
 			}
 
 		} catch (Exception e) {

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -15,82 +16,95 @@ import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
 public class PlayerPanel extends Panel{
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	String nameOfPlayer = null;
 	Color playerColor;
 	ArrayList<TilePanel> tilePanels = new ArrayList<TilePanel>();
-	
+	ArrayList<TilePanel> buildingsPanels = new ArrayList<TilePanel>();
+
 	public PlayerPanel(String nameOfPlayer) {		
 		this.setBackground(Color.WHITE);
 		this.setPreferredSize(new Dimension(285, 175));
 		this.setLayout(null);
 		this.nameOfPlayer = nameOfPlayer;
+
 		JLabel nameOfPlayerLabel = new JLabel(nameOfPlayer);
 		nameOfPlayerLabel.setBounds(70, 5, 80, 30);
 		this.add(nameOfPlayerLabel);
-		setPlayerHandCards();
-	}
-	
-	public void setPlayerHandCards() {
+
+		int sizeOfCard = 45;
+		int spaceBetween = 10;
 		for (int i=0; i < 5; i++) {
 			TilePanel tilePanel = new TilePanel();
-	        int sizeOfCard = 45;
-	        int spaceBetween = 10;
 			tilePanel.setBounds(sizeOfCard*i + spaceBetween*(i+1), 60, sizeOfCard, sizeOfCard);
 			this.add(tilePanel);
+			tilePanels.add(tilePanel);
+		}
+
+		for (int i=0; i<2; i++) {
+			TilePanel tilePanel = new TilePanel();
+			tilePanel.setBounds(sizeOfCard*i + spaceBetween*(i+1), 115, sizeOfCard, sizeOfCard);
+			this.add(tilePanel);
+			buildingsPanels.add(tilePanel);
 		}
 	}
-	
+
 	public void refreshPlayerHandCards(String playerName) {
 		PlayerIHM player = StreetCar.player;
 		Data data = player.getGameData();
-		System.out.println("player name = " + playerName);
-		System.out.println(data.getHandSize(playerName));
 		for (int i=0; i<data.getHandSize(playerName); i++) {
 			Tile tile = data.getHandTile(playerName, i);
 			TilePanel tilePanel = tilePanels.get(i);
 			tilePanel.setTile(tile);
 		}
 	}
-	
-	public void setStationCards(String playerName) {
-		Point[] stationsPositions = StreetCar.player.getGameData().getPlayerAimBuildings(playerName);
-		for (int i=0; i<stationsPositions.length; i++) {
-			Point p = stationsPositions[i];
-			Tile tile = StreetCar.player.getGameData().getBoard()[p.x][p.y];
-			TilePanel tilePanel = new TilePanel(tile);
-			
-	        int sizeOfCard = 45;
-	        int spaceBetween = 10;
-			tilePanel.setBounds(sizeOfCard*i + spaceBetween*(i+1), 115, sizeOfCard, sizeOfCard);
-			this.add(tilePanel);
-		}
+
+	public void refreshStationCards(String playerName) {
+		PlayerIHM player = StreetCar.player;
+		Data data = player.getGameData();
+		try {
+			if(!player.getPlayerName().equals(playerName))
+			{
+				for (int i=0; i < 2; i++) {
+					TilePanel tilePanel = buildingsPanels.get(i);
+					tilePanel.setTile(null);
+					tilePanel.setBackground(Color.GRAY);
+				}
+			}
+			else
+			{
+				Point[] stationsPositions = data.getPlayerAimBuildings(playerName);
+				for (int i=0; i<stationsPositions.length; i++) {
+					Point p = stationsPositions[i];
+					Tile tile = data.getBoard()[p.x][p.y];
+					TilePanel tilePanel = buildingsPanels.get(i);
+					tilePanel.setTile(tile);
+				}
+			}
+		} catch (RemoteException e) { e.printStackTrace(); }
 	}
-	
+
 	protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        
-        //avatar
-        //g.setColor(playerColor); TODO valz
-        g.setColor(Color.YELLOW);
-        g.fillRect(10, 5, 45, 45);
-        g.setColor(Color.BLACK);
-        g.drawRect(10, 5, 45, 45);
-        
-        int[] xPoints = {230, 253, 276, 253};
-        int[] yPoints = {28, 5, 28, 51};
-        g.drawPolygon(xPoints, yPoints, 4);
-    }
+		super.paintComponent(g);
+
+		//avatar
+		g.setColor(playerColor);
+		g.fillRect(10, 5, 45, 45);
+		g.setColor(Color.BLACK);
+		g.drawRect(10, 5, 45, 45);
+
+		int[] xPoints = {230, 253, 276, 253};
+		int[] yPoints = {28, 5, 28, 51};
+		g.drawPolygon(xPoints, yPoints, 4);
+	}
 
 	// Refresh game
-	
+
 	public void refreshGame(PlayerIHM player, Data data) {
-		if (data == null) {
-			playerColor = data.getPlayerColor(nameOfPlayer);
-			refreshPlayerHandCards(nameOfPlayer);
-			setStationCards(nameOfPlayer);
-		}
+		playerColor = data.getPlayerColor(nameOfPlayer);
+		refreshPlayerHandCards(nameOfPlayer);
+		refreshStationCards(nameOfPlayer);
 	}
 }

@@ -7,11 +7,6 @@ import main.java.game.Game;
 
 public class TestAIvsAI {
 	
-	
-	
-	
-	
-	
 	public static void main(String[] args) throws ExceptionGameHasAlreadyStarted {
 		Game game = null;
 		
@@ -19,9 +14,9 @@ public class TestAIvsAI {
 		LoginInfo[] initialLoginTable = 
 				// LoginInfo(isClosed, playerName, isHost, isHuman, iaLevel)
 				{
-				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.travelerLvl),
-				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
-				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(false,	"1",	true,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(false,	"2",	false,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(false,	"3",	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)
 				};

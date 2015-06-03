@@ -40,7 +40,6 @@ public class InGamePanel extends Panel {
 	// Constructors
 	
 	InGamePanel(GameController gc) {
-		// TODO valz comment : was commented
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
@@ -109,24 +108,76 @@ public class InGamePanel extends Panel {
 		
     	this.playersSidebarPanel = new Panel();
     	this.playersSidebarPanel.setLayout(null);
-    	this.playersSidebarPanel.setPreferredSize(new Dimension(330, nbPlayers*185+30));
+    	this.playersSidebarPanel.setPreferredSize(new Dimension(330, (nbPlayers-1)*185+30));
     	this.playersSidebarPanel.setBackground(Color.WHITE);
     	this.playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
     	
 		titlePanel = new TitlePanel("Adversaries");
 		titlePanel.setBounds(0, 0, 329, 30);
-		playersSidebarPanel.add(titlePanel);
+		playersSidebarPanel.add(titlePanel);  	
+    	
+    	System.out.println(nbPlayers);
+    	
+    	// catch the number of bottom player
+    	int bottomPlayerIndex = 0;
+    	for (int i=0; i<nbPlayers; i++) {
+    		try {
+				if (playersTab[i].equals(StreetCar.player.getPlayerName())) {
+					bottomPlayerIndex = i;
+					break;
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+    	}
+    	System.out.println("ORDRE DES JOUEURS: ");
+    	for (int i=0; i<nbPlayers; i++) {
+    		System.out.println(playersTab[i]);
+    	}
+    	
+    	System.out.println("INDEX DE LOUIS: " + bottomPlayerIndex);
     	
     	int y = 40;
-    	System.out.println(nbPlayers);
-    	for (int i=0; i<nbPlayers; i++) {
-    		PlayerPanel playerPanel = new PlayerPanel(playersTab[i]); //TODO
-    		playerPanels.add (playerPanel);
-    		if (i<nbPlayers-1) { //last bar not displayed
-    			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+    	if (bottomPlayerIndex == nbPlayers-1) {  //if bottom player is the last  		
+    		for (int i=0; i<nbPlayers-1; i++) {
+    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
+        		playerPanels.add(playerPanel);
+        		if (i<nbPlayers-1) { //last bar not displayed
+        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+        		}
+        		playerPanel.setBounds(15, y+(185*i), 285, 175);
+        		playersSidebarPanel.add(playerPanel);
     		}
-    		playerPanel.setBounds(15, y+(185*i), 285, 175);
-    		playersSidebarPanel.add(playerPanel);
+    	} else if (bottomPlayerIndex == 0) { // if bottom player is the first
+    		for (int i=0; i<nbPlayers-1; i++) {
+    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i+1]);
+        		playerPanels.add(playerPanel);
+        		if (i<nbPlayers-1) { //last bar not displayed
+        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+        		}
+        		playerPanel.setBounds(15, y+(185*i), 285, 175);
+        		playersSidebarPanel.add(playerPanel);
+    		}
+    	} else {
+    		for (int i=0; i<nbPlayers-bottomPlayerIndex-1; i++) {
+    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i+bottomPlayerIndex+1]);
+        		playerPanels.add (playerPanel);
+        		if (i<nbPlayers-1) { //last bar not displayed
+        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+        		}
+        		playerPanel.setBounds(15, y+(185*i), 285, 175);
+        		playersSidebarPanel.add(playerPanel);
+    		}
+    		
+    		for (int i=nbPlayers-bottomPlayerIndex-1; i<nbPlayers-1; i++) {
+    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i-2]);
+        		playerPanels.add (playerPanel);
+        		if (i<nbPlayers-1) { //last bar not displayed
+        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+        		}
+        		playerPanel.setBounds(15, y+(185*i), 285, 175);
+        		playersSidebarPanel.add(playerPanel);
+    		}
     	}
     	
     	JScrollPane scrollPane = new JScrollPane(playersSidebarPanel);
@@ -140,22 +191,6 @@ public class InGamePanel extends Panel {
     }
 	
 	// Actions
-	
-	public void validate() {
-		// TODO: uncomment and fix
-		/*
-		try {
-			StreetCar.player.validate();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (ExceptionGameHasNotStarted e) {
-			e.printStackTrace();
-		} catch (ExceptionNotYourTurn e) {
-			e.printStackTrace();
-		} catch (ExceptionForbiddenAction e) {
-			e.printStackTrace();
-		}*/
-	}
 	
 	public void beginTrip() {
 		System.out.println("THE TERMINUS IS UNDEFINED FOR THE MOMENT");

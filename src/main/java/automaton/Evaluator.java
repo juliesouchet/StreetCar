@@ -1,9 +1,10 @@
 package main.java.automaton;
 
+import java.io.FileWriter;
+
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.LoginInfo;
-import main.java.game.Game;
+import main.java.game.GameSimulation;
 
 public class Evaluator {
 	
@@ -19,12 +20,6 @@ public class Evaluator {
 		double victoryProportion = 0;
 		int victoriesNumber = 0;
 		boolean win = false;
-		String[] playerNameList = new String[config.getPlayerNameList().size()];
-		int x = 0;
-		for(String name : config.getPlayerNameList()) {
-			playerNameList[x] = name;
-			x++;
-		}
 /*		
 	System.out.println("Initialisation des " + playerNameList.length + " joueurs : ");
 	for (int j = 0; j < playerNameList.length; j++) {
@@ -35,43 +30,19 @@ public class Evaluator {
 		
 		// Simulating the games
 		for(int i = 0; i < nbrGamesSimulated; i++) {
-			// Local version :
-			/*
-			Data data;
-			data = config.getClone(playerName);
-			win = localGameSimulation(playerNameList, data, playerName, aiLvl);
-			*/
 			
-			// Remote version :
-			Game game = null;			
-			for(int j = 0; j < LoginInfo.initialLoginTable.length; j++) { // Game setup
-				if(j<playerNameList.length) {					
-					boolean isClosed, isHost;
-					if(j<playerNameList.length) {
-						isHost = j==0;
-						isClosed = false;
-					}
-					else {
-						isHost = false;
-						isClosed = true;
-					}
-					LoginInfo.initialLoginTable[j] = new LoginInfo(isClosed, playerNameList[j], isHost, false, aiLvl);
-				}
-			}			
+			GameSimulation game = null;
 			try {
-				// TODO ne pas lancer la partie au départ, mais à partir de la config courante
-				Game.applicationPort = 5555;
-				game = new Game("Evaluator", "localhost", "src/test/resources/boards/test", 2);
+				String boardName = Data.boardDirectory + "tmp";
+				FileWriter fw = new FileWriter(boardName);
+				config.writeBoardInFile(fw);
+				fw.close();
+				game = GameSimulation.newGameSimulation(config.getClone(playerName), boardName, aiLvl);
 			} catch (Exception e) {
 				System.out.println("Game creation error"); e.printStackTrace();
-			}			
-			String hostName = game.getHostName();			
-			try {
-				game.hostStartGame(hostName);
-			} catch (Exception e) {
-				System.out.println("Game start error"); e.printStackTrace();
 			}
 			
+			win = game.isWinner(playerName);
 			
 			// Have we won ?
 			if(win) victoriesNumber++;
@@ -134,10 +105,10 @@ public class Evaluator {
 				
 				else { // MOVE action
 					if(!data.hasStartedMaidenTravel(currentPlayerName)
-						&& action.action != Action.START_TRIP_NEXT_TURN)
+						&& action.action != Action.BUILD_AND_START_TRIP_NEXT_TURN)
 						throw new RuntimeException(currentPlayerName+" tries to travel while in construction (round "+j+")");
 					
-					if(action.action == Action.START_TRIP_NEXT_TURN) {
+					if(action.action == Action.BUILD_AND_START_TRIP_NEXT_TURN) {
 	System.out.println(currentPlayerName + " START_TRIP_NEXT_TURN");
 						data.startMaidenTravel(currentPlayerName);
 					}
