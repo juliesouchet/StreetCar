@@ -77,7 +77,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName)) {
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
 	
-	// TODO: check action type
+	// TODO: check action type, do others action types !!
 				try					{super.placeTile(a.tile1, a.positionTile1);}
 				catch (Exception e) {e.printStackTrace(); return;}
 			}
@@ -107,12 +107,15 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 					| ExceptionForbiddenAction e) {
 				e.printStackTrace();
 			} catch (ExceptionEndGame e) {
+				System.out.println("******************");
+				System.out.println("END OF GAME");
 				gameOver = true;
 				String winner = e.getWinner();
 				if(winner != null)
 					System.out.println(winner + " WINS !!");
 				else
 					System.out.println("GAME BLOCKED : NOBODY WINS");
+				System.out.println("******************");
 			}
 		}
 	}

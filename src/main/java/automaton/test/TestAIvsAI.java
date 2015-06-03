@@ -16,7 +16,7 @@ public class TestAIvsAI {
 				{
 				new LoginInfo(false,	"1",	true,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(false,	"2",	false,	false,	PlayerAutomaton.dumbestLvl),
-				new LoginInfo(false,	"3",	false,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)
 				};

@@ -453,7 +453,7 @@ public class Data implements Serializable
 		return false;
 	}
 	/**=======================================================================
-	 * @return true if all the tiles have been played but no player can win
+	 * @return true if all the tiles have been placed but no player can win
 	 ========================================================================= */
 	public boolean isGameBlocked()
 	{
@@ -461,6 +461,8 @@ public class Data implements Serializable
 		for(String playerName : this.playerInfoList.keySet())
 		{
 			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
+// TODO si on ne peut plus rien poser (isAcceptableTilePlacement rend tjrs faux)
+// TODO tester les tuiles dans les mains des joueurs
 		}
 		return true;
 	}
