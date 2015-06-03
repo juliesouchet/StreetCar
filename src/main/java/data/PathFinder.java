@@ -16,7 +16,7 @@ public class PathFinder
 	 * Uses the A* algorithm.
 	 * The source and destination point are returned in the solution.
 	 ==============================================================*/
-	public static LinkedList<Point> getPath(Data data, Point pSrc, Point pDst)
+	public  LinkedList<Point> getPath(Data data, Point pSrc, Point pDst)
 	{
 		int w = data.getWidth();
 		int h = data.getHeight();
