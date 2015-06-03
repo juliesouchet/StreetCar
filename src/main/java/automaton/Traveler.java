@@ -22,9 +22,9 @@ public class Traveler extends PlayerAutomaton {
 		if(name == null) this.name = "Traveler";
 		else this.name = name;
 	}
-// TODO makeChoice : doit rendre une action ou un couple d'action ?
 	@Override
 	public Action makeChoice(Data currentConfig) {
+// TODO makeChoice : doit rendre une action ou un couple d'action ?
 		Action res = null;
 		Random r = new Random();
 		Tile t;
@@ -43,23 +43,20 @@ System.out.println("trackCompleted = " + trackCompleted);
 			int handSize = currentConfig.getHandSize(name);
 			if(handSize == 0) return null;
 			do{
-				// random position choice
 				i = r.nextInt(currentConfig.getWidth());
 				j = r.nextInt(currentConfig.getHeight());
 				
-				// random tile choice in the player's hand
 				k = r.nextInt(handSize);
 				t = currentConfig.getHandTile(name, k);
 
-				// random rotation
 				for(int rotation = 0; rotation < r.nextInt(4); rotation++) {
 					t.turnLeft();
 				}
+// TODO que faire s'il n'y a aucune action valide ?
 			}while( !currentConfig.isAcceptableTilePlacement(i, j, t));
 			
 			res = Action.newBuildSimpleAction(i, j, t);
 		}
-		/**/
 		
 		
 		/*==============
@@ -89,9 +86,9 @@ System.out.println("trackCompleted = " + trackCompleted);
 				currentConfig.setDestinationTerminus(name, (Point[])destinationTerminus.toArray());
 				
 				
-				if(currentConfig.hasDoneRoundFirstAction(getName())) { // TODO vérifier que la méthode correspond bien
+				if(currentConfig.hasDoneRoundFirstAction(getName())) {
 					// ends current turn and starts traveling next turn
-					//return Action.newStartTripNextTurnAction();
+					//return Action.newStartTripNextTurnAction(); TODO action 2 en 1 ?
 				}
 			}
 			
