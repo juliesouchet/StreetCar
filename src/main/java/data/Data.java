@@ -24,6 +24,10 @@ import main.java.util.Util;
 
 
 
+// TODO: quand on annule une action faire this.winner = null;
+// TODO: dire a l'ihm: apres chaque refresh, verifier si getWinner != null et si isGameBlocked
+
+
 public class Data implements Serializable
 {
 // --------------------------------------------
@@ -284,6 +288,7 @@ public class Data implements Serializable
 	public void startMaidenTravel(String playerName)
 	{
 		playerInfoList.get(playerName).startedMaidenTravel = true;
+// TODO: ajouter une action a l'historique
 	}
 	/**================================================
 	 * @return The player moves his streetcar
@@ -295,6 +300,7 @@ public class Data implements Serializable
 		pi.tramPosition = newPosition;
 		if (newPosition.equals(pi.endTerminus[0]))	this.winner = new String(playerName);
 		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
+// TODO: ajouter une action a l'historique
 	}
 // TODO: Enlever les LinkedList
 	/**==========================================================================
@@ -319,7 +325,10 @@ public class Data implements Serializable
 	 *  @return  the current position of this player's streetcar 
 	 * (or null if he hasn't started yet his maiden travel)
 	 * ============================================================= */
-	public Point	getTramPosition(String playerName)							{return new Point(playerInfoList.get(playerName).tramPosition);}
+	public Point	getTramPosition(String playerName)
+	{
+		return new Point(playerInfoList.get(playerName).tramPosition);
+	}
 	/**=============================================================
 	 * @return true if this terminus belongs to that player
 	 * ============================================================= */
@@ -352,7 +361,7 @@ public class Data implements Serializable
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
 	 ======================================================== */
-	public boolean				hasRemainingAction(String playerName)
+	public boolean hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
 		LinkedList<Action> lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
@@ -411,7 +420,6 @@ public class Data implements Serializable
 // --------------------------------------------
 // Getter relative to game:
 // --------------------------------------------
-	public String				getWinner()										{return this.winner;}
 	public int					getNbrRemainingDeckTile()						{return this.deck.getNbrRemainingDeckTile();} // ajouté par Julie
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
@@ -437,6 +445,22 @@ public class Data implements Serializable
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
 	public LinkedList<Color>	getRemainingColors()							{return ((new Copier<Color>()).copyList(this.remainingColors));}
+	public String				getWinner()										{return this.winner;}
+	/**=======================================================================
+	 * @return true if all the tiles have been placed but no player can win
+	 ========================================================================= */
+	public boolean isGameBlocked()
+	{
+		if(!isEmptyDeck()) return false;
+		for(String playerName : this.playerInfoList.keySet())
+		{
+			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
+			
+// TODO si on ne peut plus rien poser (isAcceptableTilePlacement rend tjrs faux)
+// TODO tester les tuiles dans les mains des joueurs
+		}
+		return true;
+	}
 	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
@@ -452,20 +476,6 @@ public class Data implements Serializable
 		if ((x == 0) || (x == getWidth()-1))	return true;
 		if ((y == 0) || (y == getHeight()-1))	return true;
 		return false;
-	}
-	/**=======================================================================
-	 * @return true if all the tiles have been placed but no player can win
-	 ========================================================================= */
-	public boolean isGameBlocked()
-	{
-		if(!isEmptyDeck()) return false;
-		for(String playerName : this.playerInfoList.keySet())
-		{
-			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
-// TODO si on ne peut plus rien poser (isAcceptableTilePlacement rend tjrs faux)
-// TODO tester les tuiles dans les mains des joueurs
-		}
-		return true;
 	}
 	/**===============================================================
 	 * @return if the deposit of the tile t on the board at the position (x, y) is possible

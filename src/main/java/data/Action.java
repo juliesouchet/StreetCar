@@ -64,9 +64,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	{
 		return newBuildSimpleAction(position.x, position.y, t);
 	}
-
-	    
-	public static Action newBuildDoubleAction (Point position1, Tile tile1, Point position2, Tile tile2){
+ 	public static Action newBuildDoubleAction (Point position1, Tile tile1, Point position2, Tile tile2){
 		Action res = new Action();
 
 		res.action = BUILD_DOUBLE;
@@ -110,6 +108,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		return res;
 	}
+
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------
@@ -118,7 +117,10 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 =====================================================*/
 	public boolean isTwoStepAction()
 	{
-		return ((this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN) || this.action == MOVE); //TODO check avec riyane
+		return ((this.action == TWO_BUILD_SIMPLE)				||
+				(this.action == BUILD_DOUBLE)					||
+				(this.action == BUILD_AND_START_TRIP_NEXT_TURN) ||
+				(this.action == MOVE));
 	}
 	/**
 	 * @return
@@ -126,7 +128,12 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 * Faux sinon.
 	 */
 	public boolean isConstructing()
-	{return ((this.action == BUILD_SIMPLE) || (this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) ||(this.action == BUILD_AND_START_TRIP_NEXT_TURN));}//TODO check avec riyane
+	{
+		return ((this.action == BUILD_SIMPLE)		||
+				(this.action == TWO_BUILD_SIMPLE)	||
+				(this.action == BUILD_DOUBLE)		||
+				(this.action == BUILD_AND_START_TRIP_NEXT_TURN));
+	}
 
 	/**
 	 * @return

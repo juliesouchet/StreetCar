@@ -1,6 +1,12 @@
 package main.java.game;
 
-public class ExceptionEndGame extends Exception {
+
+
+
+
+
+public class ExceptionEndGame extends Exception
+{
 	private static final long serialVersionUID = 3879911202438427100L;
 	String winner;
 

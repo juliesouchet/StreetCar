@@ -285,8 +285,7 @@ for (String str: this.data.getPlayerNameList())
 	}
 	/**=============================================================================
 	 * 	Signals the end of this player's turn
-	 =============================================================================
-	 * @throws ExceptionEndGame */
+	 =============================================================================*/
 	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionEndGame
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
@@ -294,10 +293,9 @@ for (String str: this.data.getPlayerNameList())
 
 		if(!data.hasStartedMaidenTravel(playerName))
 		{
-			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction(); // on peut avoir une main non pleine, mais seulement si la pioche est vide
+			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction();
 			if(data.hasRemainingAction(playerName)) throw new ExceptionForbiddenAction();
 		}
-		// TODO ajouté par Julie pour tester les fins de partie
 		String winner = data.getWinner();
 		if(winner != null)											throw new ExceptionEndGame(winner);
 		if(data.isGameBlocked())									throw new ExceptionEndGame(null);

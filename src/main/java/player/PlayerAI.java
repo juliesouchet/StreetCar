@@ -7,16 +7,15 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.game.ExceptionEndGame;
-import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
-import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
 import main.java.rubbish.InterfaceIHM;
+
+
+
 
 
 
@@ -29,7 +28,6 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 // Attributes:
 // --------------------------------------------
 	private PlayerAutomaton	automaton;
-	private boolean			gameOver = false;
 
 // --------------------------------------------
 // Builder:
@@ -68,17 +66,23 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super.gameHasChanged(data);
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
-		if (gameOver)						return;
-		
+		if (data.getWinner() != null)		return;
+		if (data.isGameBlocked())			return;
+
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
-//System.out.println("-----------PlayerName: " + playerName);
-//System.out.println("-----------HandSize  : " + data.getHandSize(playerName));
-			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName)) {
+			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName))
+			{
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
 	
-	// TODO: check action type, do others action types !!
-				try					{super.placeTile(a.tile1, a.positionTile1);}
+// TODO: check action type, do others action types !!
+				try
+				{
+					if		(a.isSimpleConstructing())		super.placeTile(a.tile1, a.positionTile1);
+					else if (a.isTwoSimpleConstructing())	{super.placeTile(a.tile1, a.positionTile1); super.placeTile(a.tile2, a.positionTile2);}
+else throw new RuntimeException("Not implemented yet");
+					
+				}
 				catch (Exception e) {e.printStackTrace(); return;}
 			}
 			else System.out.println(playerName + " BLOCKED");
@@ -101,22 +105,8 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		}
 		else														// fin de tour
 		{
-			try {
-				super.validate();
-			} catch (ExceptionGameHasNotStarted | ExceptionNotYourTurn
-					| ExceptionForbiddenAction e) {
-				e.printStackTrace();
-			} catch (ExceptionEndGame e) {
-				System.out.println("******************");
-				System.out.println("END OF GAME");
-				gameOver = true;
-				String winner = e.getWinner();
-				if(winner != null)
-					System.out.println(winner + " WINS !!");
-				else
-					System.out.println("GAME BLOCKED : NOBODY WINS");
-				System.out.println("******************");
-			}
+			try					{super.validate();}
+			catch (Exception e) {e.printStackTrace(); return;}
 		}
 	}
 	public synchronized void excludePlayer() throws RemoteException
