@@ -8,7 +8,9 @@ import java.rmi.RemoteException;
 
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.gui.components.Button;
 import main.java.gui.components.Panel;
 
@@ -63,7 +65,31 @@ public class BottomPlayerPanel extends Panel {
 	public void validate() {
 		System.out.println("validate");
 		try {
+			StreetCar.player.drawTile(2);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionGameHasNotStarted e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionNotYourTurn e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionNotEnougthTileInDeck e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionTwoManyTilesToDraw e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionForbiddenAction e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		try {
+
 			StreetCar.player.validate();
+
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e) {

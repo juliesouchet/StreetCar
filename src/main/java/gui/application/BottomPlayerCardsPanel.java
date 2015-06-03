@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.gui.board.TilePanel;
+import main.java.gui.components.Label;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
@@ -24,9 +25,25 @@ public class BottomPlayerCardsPanel extends Panel{
 	public BottomPlayerCardsPanel() {
 		this.setBackground(Color.WHITE);
 		this.setLayout(null);
+		placePlayerName();
 		placeAvatar();
 		placeTiles();
 		placeObjectives();
+	}
+	
+	protected void placePlayerName() {
+		PlayerIHM player  = StreetCar.player;
+		Data data = player.getGameData();
+		String playerName;
+		try {
+			playerName = player.getPlayerName();
+			Label playerNameLabel = new Label(playerName);
+			playerNameLabel.setBounds(80, 25, 150, 30);
+			this.add(playerNameLabel);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	protected void placeAvatar() {

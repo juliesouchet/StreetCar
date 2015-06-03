@@ -43,7 +43,7 @@ public class PlayerPanel extends Panel{
 			tilePanels.add(tilePanel);
 		}
 
-		for (int i=0; i<3; i++) {
+		for (int i=0; i<2; i++) {
 			TilePanel tilePanel = new TilePanel();
 			tilePanel.setBounds(sizeOfCard*i + spaceBetween*(i+1), 115, sizeOfCard, sizeOfCard);
 			this.add(tilePanel);
