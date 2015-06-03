@@ -701,6 +701,7 @@ public class Data implements Serializable
 				{
 					if (this.pathMatrix[i][1].equals(lastTramPosition)) continue;
 					resTab[res].getAction().setTravelAction(startTerminus, this.pathMatrix[i], l);
+					resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 					res ++;
 				}
 			}
@@ -723,6 +724,7 @@ public class Data implements Serializable
 						if (this.isTrackCompleted(playerName))			//TODO************************** Peut etre evite en ajoutant un coup inutile
 						{
 							resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
+							resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 							res ++;
 						}
 						else if (this.getHandSize(playerName) == 1)	;								//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
@@ -741,6 +743,7 @@ public class Data implements Serializable
 										{
 											if (!this.isAcceptableTilePlacement(x2, y2, tmpRotation2[r2])) continue;
 											resTab[res].getAction().setDoubleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
+											resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											res ++;
 										}
 									}
@@ -938,7 +941,7 @@ public class Data implements Serializable
 		public String[]				buildingInLine_name;
 		public Point[]				buildingInLine_position;
 		public Point[]				terminus;										// Complete player's terminus list
-//TODO: ulysse Ne plus stocker les action mais les data
+//TODO: ulysse Ne plus stocker les actions mais les data
 		public LinkedList<LinkedList<Action>>	history;							// organized by turns
 		public boolean				startedMaidenTravel		= false;				// Data relative to the travel
 		public Point				tramPosition			= null;

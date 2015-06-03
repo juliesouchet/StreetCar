@@ -24,7 +24,7 @@ public class testDecisionTable {
 		
 		System.out.println("toc");
 		try {
-			maTableDeDecision= new DecisionTable(50, 20);
+			maTableDeDecision= new DecisionTable(50, 20, "nomDuJoueur");
 		} catch (ExceptionUnknownNodeType e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,7 +127,7 @@ public class testDecisionTable {
 		 */
 		
 		// Je créé la table de decision
-		maTableDeDecision = new DecisionTable(sizeTable, nodeTable);
+		maTableDeDecision = new DecisionTable(sizeTable, nodeTable,"nomDuJoueur");
 
 		// Je créé un noeud qui me servira de buffer pour remplir la table
 		decisionNode = new DecisionNode(nodeTable, 0, "root");

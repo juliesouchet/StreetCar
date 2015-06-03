@@ -24,12 +24,18 @@ public class DecisionTable {
 	private DecisionNode[] NodeTable;
 	private boolean[] freeSlots;
 	private int size;
-
+	private String myName;
 
 	/* ===============================================================================================================
 	 * 			GETTERS
 	 * =============================================================================================================== */
 	
+	/**
+	 * @return Le nom du player que cet table de décision simule.
+	 */
+	public String getMyName(){
+		return this.myName;
+	}
 	/**
 	 * renvoi la taille de la table
 	 * @return
@@ -175,9 +181,11 @@ public class DecisionTable {
 	 * 	Taille du tableau de DecisionNode: correspond au nombre total d'action que la table peut traiter
 	 * @param maxCardinalActionPossible
 	 * 	Taille de la table d'action de chaque noeud: le nombre maximal d'action que chaque noeud pourra traiter: dois être un majorant.
+	 * @param myName nom du player que cette table de décision simule.
 	 * @throws ExceptionUnknownNodeType 
 	 */
-	public DecisionTable(int tableSize, int maxCardinalActionPossible) throws ExceptionUnknownNodeType{
+	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
+		this.myName = myName; //TODO vrai copy ou juste pointeur :s
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		this.setSize(tableSize);
@@ -229,7 +237,9 @@ public class DecisionTable {
 	 */
 	public void applyMinMax(int index, int type, int wantedDepth, Data currentConfiguration ){
 		double evaluatedQuality = DecisionNode.NOT_SIGNIFICANT;
-		Data.possibleActionsSet potentialActionsSet = null;
+		String playerName= currentConfiguration.getPlayerTurn();
+		int indexFreeSlot;
+		
 		CoupleActionIndex bufferCoupleActionIndex = null;
 		int aFreeSlot = 0;
 		// Cas d'une feuille on estime la qualité avec la fonction de Julie
@@ -240,11 +250,13 @@ public class DecisionTable {
 			
 		// Cas d'une recurrence	
 		} else if(wantedDepth>0){
-			potentialActionsSet = currentConfiguration.getPossibleActions(currentConfiguration.getPlayerTurn());
+			currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable()); //
+			
 			/*TODO demander a Riyane un constructeur d'action abstrait que alloue la memoire*/
 			bufferCoupleActionIndex = new CoupleActionIndex( new Action(), CoupleActionIndex.NOT_SIGNIFICANT);
 			for (int i=0; i<potentialActionsSet.getCardinal(); i++){
-				// TODO indexFreeSlot = this.findFreeSlot();
+				indexFreeSlot = this.findFreeSlot();
+				localCopyOfCurrentData.getPossibleActions(localCopyOfCurrentData.getPlayerTurn(), this.getDecisionNode(indexFreeSlot));
 				bufferCoupleActionIndex.setIndex(aFreeSlot);
 				bufferCoupleActionIndex.setAction(potentialActionsSet.getAction(i));
 				this.getDecisionNode(index).setCoupleActionIndex(i, bufferCoupleActionIndex);
