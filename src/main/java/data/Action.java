@@ -74,14 +74,15 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 =====================================================*/
 	public boolean isTwoStepAction()
 	{
-		return ((this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN) || this.action == MOVE);
+		return ((this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN) || this.action == MOVE); //TODO check avec riyane
 	}
 	/**
 	 * @return
 	 * Vrai si l'action est de type construction (simple ou double).
 	 * Faux sinon.
 	 */
-	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE) || (this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE));}
+	public boolean isConstructing()
+	{return ((this.action == BUILD_SIMPLE) || (this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) ||(this.action == BUILD_AND_START_TRIP_NEXT_TURN));}//TODO check avec riyane
 
 	/**
 	 * @return
