@@ -38,6 +38,7 @@ public class TilePanel extends Panel implements Transferable {
 	
 	public void setTile(Tile tile) {
 		this.tile = tile;
+		this.revalidate();
 	}
 	
 	// Drawings

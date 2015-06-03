@@ -66,10 +66,12 @@ public class TileImage {
 		BufferedImage image = this.getImage();
 		
 		AffineTransform at = new AffineTransform();
-		at.translate(x, y);
+		at.translate(x + width / 2, y + width / 2);
 		at.rotate(Math.toRadians(this.getRotation().getVal()*90));
 		at.scale((double)width / (double)image.getWidth(),
 				 (double)width / (double)image.getHeight());
+
+		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
 		
 		g2d.drawImage(image, at, null);
 	}

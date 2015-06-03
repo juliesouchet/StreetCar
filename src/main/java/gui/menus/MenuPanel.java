@@ -15,7 +15,7 @@ import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
-public class MenuPanel extends Panel {
+public abstract class MenuPanel extends Panel {
 
 	// Properties
 	
@@ -76,6 +76,6 @@ public class MenuPanel extends Panel {
 
 	// Refresh menu
 	
-	public void refreshMenu(PlayerIHM player, Data data) {}
+	public abstract void refreshMenu(PlayerIHM player, Data data);
 	
 }

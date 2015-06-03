@@ -2,8 +2,10 @@ package main.java.gui.menus;
 
 import java.awt.Rectangle;
 
+import main.java.data.Data;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Button;
+import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
 public class WelcomeMenuPanel extends MenuPanel {
@@ -73,5 +75,8 @@ public class WelcomeMenuPanel extends MenuPanel {
 		GameController gc = (GameController)this.getFrameController();
 		gc.quitGame();
 	}
+
+	@Override
+	public void refreshMenu(PlayerIHM player, Data data) { }
 	
 }

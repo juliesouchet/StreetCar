@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import main.java.data.Data;
 import main.java.gui.application.GameController;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Button;
@@ -160,4 +161,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 	public void removeUpdate(DocumentEvent e) {
 		updateCreateGameButton();
 	}
+
+	@Override
+	public void refreshMenu(PlayerIHM player, Data data) { }
 }

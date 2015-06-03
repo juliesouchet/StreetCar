@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 
@@ -18,8 +19,8 @@ public class PlayerPanel extends Panel{
 	private static final long serialVersionUID = 1L;
 	
 	String nameOfPlayer = null;
-	Data data;
 	Color playerColor;
+	ArrayList<TilePanel> tilePanels = new ArrayList<TilePanel>();
 	
 	public PlayerPanel(String nameOfPlayer) {		
 		this.setBackground(Color.WHITE);
@@ -29,14 +30,12 @@ public class PlayerPanel extends Panel{
 		JLabel nameOfPlayerLabel = new JLabel(nameOfPlayer);
 		nameOfPlayerLabel.setBounds(70, 5, 80, 30);
 		this.add(nameOfPlayerLabel);
-		
+		setPlayerHandCards();
 	}
 	
-	public void setPlayerHandCards(String playerName) {
-		for (int i=0; i<data.getHandSize(playerName); i++) {
-			Tile tile = data.getHandTile(playerName, i);
-			TilePanel tilePanel = new TilePanel(tile);
-			
+	public void setPlayerHandCards() {
+		for (int i=0; i < 5; i++) {
+			TilePanel tilePanel = new TilePanel();
 	        int sizeOfCard = 45;
 	        int spaceBetween = 10;
 			tilePanel.setBounds(sizeOfCard*i + spaceBetween*(i+1), 60, sizeOfCard, sizeOfCard);
@@ -44,11 +43,23 @@ public class PlayerPanel extends Panel{
 		}
 	}
 	
+	public void refreshPlayerHandCards(String playerName) {
+		PlayerIHM player = StreetCar.player;
+		Data data = player.getGameData();
+		System.out.println("player name = " + playerName);
+		System.out.println(data.getHandSize(playerName));
+		for (int i=0; i<data.getHandSize(playerName); i++) {
+			Tile tile = data.getHandTile(playerName, i);
+			TilePanel tilePanel = tilePanels.get(i);
+			tilePanel.setTile(tile);
+		}
+	}
+	
 	public void setStationCards(String playerName) {
-		Point[] stationsPositions = data.getPlayerAimBuildings(playerName);
+		Point[] stationsPositions = StreetCar.player.getGameData().getPlayerAimBuildings(playerName);
 		for (int i=0; i<stationsPositions.length; i++) {
 			Point p = stationsPositions[i];
-			Tile tile = data.getBoard()[p.x][p.y];
+			Tile tile = StreetCar.player.getGameData().getBoard()[p.x][p.y];
 			TilePanel tilePanel = new TilePanel(tile);
 			
 	        int sizeOfCard = 45;
@@ -68,12 +79,6 @@ public class PlayerPanel extends Panel{
         g.setColor(Color.BLACK);
         g.drawRect(10, 5, 45, 45);
         
-        //g.drawRect(230, 5, 46, 46); //rectangle for diamond
-        //g.drawLine(230, 28, 253, 5); //line1 for diamond
-        //g.drawLine(253, 5, 276, 28); //line2 for diamond
-        //g.drawLine(276, 28, 253, 51); //line3 for diamond
-        //g.drawLine(253, 51, 230, 28); //line4 for diamond
-        
         int[] xPoints = {230, 253, 276, 253};
         int[] yPoints = {28, 5, 28, 51};
         g.drawPolygon(xPoints, yPoints, 4);
@@ -82,10 +87,10 @@ public class PlayerPanel extends Panel{
 	// Refresh game
 	
 	public void refreshGame(PlayerIHM player, Data data) {
-		this.data = data;
 		if (data == null) {
 			playerColor = data.getPlayerColor(nameOfPlayer);
-			setPlayerHandCards(this.nameOfPlayer);
+			refreshPlayerHandCards(nameOfPlayer);
+			setStationCards(nameOfPlayer);
 		}
 	}
 }

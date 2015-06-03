@@ -102,9 +102,10 @@ public class InGamePanel extends Panel {
     	this.bigChatPanel.add(titlePanel, BorderLayout.NORTH);
 	}
 	
-	private void setupPlayersPanel() { 	
-		//this.playersTab = StreetCar.player.getGameData().getPlayerOrder(); //TODO
-		int nbPlayers = StreetCar.player.getGameData().getNbrPlayer();
+	private void setupPlayersPanel() {
+		Data data = StreetCar.player.getGameData();
+		this.playersTab = data.getPlayerOrder();
+		int nbPlayers = data.getNbrPlayer();
 		
     	this.playersSidebarPanel = new Panel();
     	this.playersSidebarPanel.setLayout(null);
@@ -118,8 +119,8 @@ public class InGamePanel extends Panel {
     	
     	int y = 40;
     	System.out.println(nbPlayers);
-    	for (int i=0; i<nbPlayers-1; i++) {
-    		PlayerPanel playerPanel = new PlayerPanel("Adversary"); //TODO
+    	for (int i=0; i<nbPlayers; i++) {
+    		PlayerPanel playerPanel = new PlayerPanel(playersTab[i]); //TODO
     		playerPanels.add (playerPanel);
     		if (i<nbPlayers-1) { //last bar not displayed
     			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
