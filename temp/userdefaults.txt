@@ -1,5 +1,3 @@
-#
-#Wed Jun 03 23:25:27 CEST 2015
 Language=en
 PlayerName=Louis
 UseFullScreen=false
