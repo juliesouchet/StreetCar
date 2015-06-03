@@ -89,7 +89,7 @@ System.out.println("trackCompleted = " + trackCompleted);
 				currentConfig.setDestinationTerminus(name, (Point[])destinationTerminus.toArray());
 				
 				
-				if(currentConfig.hasDoneFirstAction(getName())) { // TODO vérifier que la méthode correspond bien
+				if(currentConfig.hasDoneRoundFirstAction(getName())) { // TODO vérifier que la méthode correspond bien
 					// ends current turn and starts traveling next turn
 					return Action.newStartTripNextTurnAction();
 				}

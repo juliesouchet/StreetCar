@@ -36,6 +36,18 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Builder
 // -----------------------------------------------------
+	public static Action newMoveAction(Point[] path, int pathSize)
+	{
+		Action res = new Action();
+
+		res.action = MOVE;
+		for (int i=0; i<pathSize; i++)
+		{
+			res.tramwayMovement[i].x = path[i].x;
+			res.tramwayMovement[i].y = path[i].y;
+		}
+		return res;
+	}
 	public static Action newBuildSimpleAction (int x, int y, Tile t)
 	{
 		Action res = new Action();
