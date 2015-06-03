@@ -16,175 +16,78 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public static final long	serialVersionUID	= -7830218892745210163L;
 	public static final int		maxTramwayMove		= 145;
 
-	public static final int NONE					= -1;
-	public static final int MOVE					= 0;
-	public static final int BUILD_SIMPLE			= 1;
-	public static final int BUILD_DOUBLE			= 2;
-	public static final int START_TRIP_NEXT_TURN	= 3;
+	public static final int NONE							= -1;
+	public static final int MOVE							= 0;
+	public static final int BUILD_SIMPLE					= 1;
+	public static final int TWO_BUILD_SIMPLE				= 2;
+	public static final int BUILD_DOUBLE					= 3;
+	public static final int BUILD_AND_START_TRIP_NEXT_TURN	= 4;
 
 	public int		action;
 
-	public Point	positionTile1					= new Point(-1, -1);			// Build Attributes
-	public Point	positionTile2					= new Point(-1, -1);
-	public Tile		tile1							= Tile.specialNonRealTileConstructor(null, -1, null);
-	public Tile		tile2							= Tile.specialNonRealTileConstructor(null, -1, null);
+	public Point	positionTile1							= new Point(-1, -1);			// Build Attributes
+	public Point	positionTile2							= new Point(-1, -1);
+	public Tile		tile1									= Tile.specialNonRealTileConstructor(null, -1, null);
+	public Tile		tile2									= Tile.specialNonRealTileConstructor(null, -1, null);
 
-	public Point[]	tramwayMovement					= initMovementTab();			// Move Attributes
-	public int		ptrTramwayMovement				= -1;							//		Index of the last non null point
+	public Point[]	tramwayMovement							= initMovementTab();			// Move Attributes
+	public int		ptrTramwayMovement						= -1;							//		Index of the last non null point
 
 // -----------------------------------------------------
 // Builder
 // -----------------------------------------------------
-	/**
-	 * Constructeur genérique: la mémoire des attributs n'est pas allouée,
-	 * l'attribut action est mis a la valeur spéciale: NONE (-1)
-	 */
-	public Action(){ this.action = NONE;}
-	
-// TODO rajouter un param pour indiquer le terminus de depart
-	/**
-	 * Créer une instance d'une action de type start trip next turn.
-	 * Remarque fait un new Action()
-	 * @return
-	 * un objet Action avec l'attribut action à la valeur speciale: START_TRIP_NEXT_TURN (3)
-	 */
-	public static Action newStartTripNextTurnAction()
+	public static Action newMoveAction(Point[] path, int pathSize)
 	{
-		Action res	= new Action();
-		res.action	= START_TRIP_NEXT_TURN;
-		return res;
-	}
-	
-// TODO rajouter un param pour indiquer le terminus de depart
-	/**
-	 * Créé une instance d'Action de type mouvement du tramway
-	 * @param tramwayMovement
-	 * Tableau de point représentant la série de tuile par laquelle le tram va cheminer
-	 * @return
-	 * un objet Action avec l'attribut action à la valeur speciale: MOVE (3)
-	 */
-	public static Action newMoveAction(Point[] tramwayMovement)
-	{
-		Action res				= new Action();
-		res.action				= MOVE;
-		res.ptrTramwayMovement	= tramwayMovement.length-1;
-		for (int i=0; i<tramwayMovement.length; i++)
+		Action res = new Action();
+
+		res.action = MOVE;
+		for (int i=0; i<pathSize; i++)
 		{
-			res.tramwayMovement[i].x = tramwayMovement[i].x;
-			res.tramwayMovement[i].y = tramwayMovement[i].y;
+			res.tramwayMovement[i].x = path[i].x;
+			res.tramwayMovement[i].y = path[i].y;
 		}
 		return res;
 	}
-	/**
-	 * Créer une instance d'Action de type pose d'une unique tuile.
-	 * @param position
-	 * Position où l'on souhaite poser la tuile
-	 * @param tile
-	 * La tuile que l'on souhaite déposer
-	 * @return
-	 * un objet Action avec les attributs:
-	 * 		action=BUILD_SIMPLE
-	 * 		positionTile1= coordonnée du point position (copié)
-	 * 		tile1=tuile tile
-	 */
-	public static Action newBuildSimpleAction(Point position, Tile tile)
+	public static Action newBuildSimpleAction (int x, int y, Tile t)
 	{
-		Action res			= new Action();
+		Action res = new Action();
+
 		res.action			= BUILD_SIMPLE;
-		res.positionTile1.x	= position.x;
-		res.positionTile1.y	= position.y;
-		res.tile1			.copy(tile);
-		return res;
-	}
-	
-	/**
-	 * Créé une instance d'Action de type pose d'une unique tuile.
-	 * @param x
-	 * Abscisse où l'on souhaite poser la tuile
-	 * @param y
-	 * Ordonnée où l'on souhaite poser la tuile
-	 * @param tile
-	 * La tuile que l'on souhaite déposer
-	 * @return
-	 * un objet Action avec les attributs:
-	 * 		action=BUILD_SIMPLE
-	 * 		positionTile1= coordonnée du point position (copié)
-	 * 		tile1=tuile tile
-	 */
-	public static Action newBuildSimpleAction(int x, int y, Tile tile)
-	{
-		Action res			= new Action();
-		res.action			= BUILD_SIMPLE;
+		res.tile1			.copy(t);
 		res.positionTile1.x	= x;
 		res.positionTile1.y	= y;
-		res.tile1			.copy(tile);
+
 		return res;
 	}
 	
-	/**
-	 * Créé une instance d'Action de type pose de 2 tuiles
-	 * @param position1
-	 * Coordonnées de pose de la 1ere tuile
-	 * @param tile1
-	 * La 1ere tuile que l'on souhaite poser
-	 * @param position2
-	 * Coordonnées de pose de la 2nd tuile
-	 * @param tile2
-	 * La 2nd tuile que l'on souhaite poser
-	 * @return
-	 * un objet Action avec les attributs:
-	 * 		action=BUILD_DOUBLE
-	 * 		positionTile1= coordonnée du point position 1(copié)
-	 * 		tile1=tuile tile1
-	 * 		positionTile2= coordonnée du point position 2(copié)
-	 * 		tile2=tuile tile2
-	 */
-	public static Action newBuildDoubleAction(Point position1, Tile tile1, Point position2, Tile tile2)
+	public static Action newBuildSimpleAction (Point position, Tile t)
 	{
-		Action res			= new Action();
-		res.action			= BUILD_DOUBLE;
-		res.positionTile1.x	= position1.x;
-		res.positionTile1.y	= position1.y;
-		res.positionTile2.x	= position2.x;
-		res.positionTile2.y	= position2.y;
-		res.tile1			.copy(tile1);
-		res.tile2			.copy(tile2);
-		return res;
-	}
-	
-	/**
-	 * Alloue une nouvelle instance identique de l'action appelante
-	 * @return
-	 * Une instance d'Action
-	 */
-	public Action getClone()
-	{
-		Action res				= new Action();
-		res.action				= this.action;
-		res.positionTile1.x		= this.positionTile1.x;
-		res.positionTile1.y		= this.positionTile1.y;
-		res.positionTile2.x		= this.positionTile2.x;
-		res.positionTile2.y		= this.positionTile2.y;
-		res.tile1				.copy(this.tile1);
-		res.tile2				.copy(this.tile2);
-		res.ptrTramwayMovement	= this.ptrTramwayMovement;
-		for (int i=0; i<=this.ptrTramwayMovement; i++)
-		{
-			res.tramwayMovement[i].x = this.tramwayMovement[i].x;
-			res.tramwayMovement[i].y = this.tramwayMovement[i].y;
-		}
-		return res;
+		return newBuildSimpleAction(position.x, position.y, t);
 	}
 
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------
+	/**===================================================
+	 * @return true if the action is a simple action
+	 =====================================================*/
+	public boolean isOnTurnAction()
+	{
+		return (this.action == BUILD_SIMPLE);
+	}
+	/**===================================================
+	 * @return true if the action is a double action (you can play one only of this action in by round)
+	 =====================================================*/
+	public boolean isTwoTurnAction()
+	{
+		return ((this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN));
+	}
 	/**
 	 * @return
 	 * Vrai si l'action est de type construction (simple ou double).
 	 * Faux sinon.
 	 */
-	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE)	|| (this.action == BUILD_DOUBLE));}
+	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE) || (this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE));}
 
 	/**
 	 * @return
@@ -195,10 +98,17 @@ public class Action implements Serializable, CloneableInterface<Action>
 	
 	/**
 	 * @return
+	 * Vrai si et seulement si l'action est de type construction simple de deux tuiles.
+	 * Faux sinon.
+	 */
+	public boolean isTwoSimpleConstructing(){return  (this.action == TWO_BUILD_SIMPLE);}
+
+	/**
+	 * @return
 	 * Vrai si l'action est de type déplacement du tramway (déjà débuté ou pour le tour suivant)
 	 */
-	public boolean isMoving()				{return ((this.action == MOVE)			|| (this.action == START_TRIP_NEXT_TURN));}
-	
+	public boolean isMoving()				{return ((this.action == MOVE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN));}
+
 	@Override
 	public String	toString()
 	{
@@ -206,15 +116,91 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		switch(this.action)
 		{
-			case MOVE:					str += "MOVE : "				+ this.tramwayMovement.toString();	break;
-			case BUILD_SIMPLE:			str += "BUILD_SIMPLE: " 		+ this.positionTile1.toString()		+ this.tile1.toString();	break;
-			case BUILD_DOUBLE:			str += "BUILD_DOUBLE: " 		+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
-			case START_TRIP_NEXT_TURN:	str += "START_TRIP_NEXT_TURN";	break;
+			case MOVE:								str += "MOVE : "					+ this.tramwayMovement.toString();	break;
+			case BUILD_SIMPLE:						str += "BUILD_SIMPLE: " 			+ this.positionTile1.toString()		+ this.tile1.toString();	break;
+			case TWO_BUILD_SIMPLE:					str += "TWO_BUILD_SIMPL: "			+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
+			case BUILD_DOUBLE:						str += "BUILD_DOUBLE: " 			+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
+			case BUILD_AND_START_TRIP_NEXT_TURN:	str += "BUILD_START_TRIP_NEXT_TURN";break;
 		}
 		return str;
 	}
 	
-	//Ajout par Ulysse:
+
+// -----------------------------------------------------
+// Setter
+// -----------------------------------------------------
+	/**
+	 *	Affecte a l'appelant les parametres de src 
+	 *	/!\ Pas d'allocation de memoire
+	 *	/!\ Ne doit pas être appelé par une instance non allouée de Action.
+	 * @param src
+	 * Action dont on copie le contenu
+	 */
+	public void copy(Action src)
+	{
+		this.action				= src.action;
+		this.positionTile1.x	= (src.positionTile1 == null) ? null : src.positionTile1.x;
+		this.positionTile1.y	= (src.positionTile1 == null) ? null : src.positionTile1.y;
+		this.positionTile2.x	= (src.positionTile2 == null) ? null : src.positionTile2.x;
+		this.positionTile2.y	= (src.positionTile2 == null) ? null : src.positionTile2.y;
+		this.tile1				. copy(src.tile1);
+		this.tile2				. copy(src.tile2);
+		this.ptrTramwayMovement	= src.ptrTramwayMovement;
+		for (int i=0; i<=src.ptrTramwayMovement; i++)
+		{
+			this.tramwayMovement[i].x = src.tramwayMovement[i].x;
+			this.tramwayMovement[i].y = src.tramwayMovement[i].y;
+		}
+	}
+	/**===========================================================
+	 * Set the current Action to the given simple building action, and start trip nest turn
+	 =============================================================*/
+	public void setSimpleBuildingAndStartTripNextTurnAction(int x1, int y1, Tile t1)
+	{
+		this.action					= BUILD_AND_START_TRIP_NEXT_TURN;
+		this.positionTile1.x		= x1;
+		this.positionTile1.y		= y1;
+		this.tile1					.copy(t1);
+		this.positionTile2.x		= -1;
+		this.positionTile2.y		= -1;
+		this.ptrTramwayMovement		= -1;
+	}
+	/**===========================================================
+	 * Set the current Action to the given simple building action
+	 =============================================================*/
+	public void setDoubleBuildingAction(int x1, int y1, Tile t1, int x2, int y2, Tile t2)
+	{
+		this.action					= BUILD_SIMPLE;
+		this.positionTile1.x		= x1;
+		this.positionTile1.y		= y1;
+		this.tile1					.copy(t1);
+		this.positionTile2.x		= x2;
+		this.positionTile2.y		= y2;
+		this.tile2					.copy(t2);
+		this.ptrTramwayMovement		= -1;
+	}
+	/**===========================================================
+	 * Set the current Action to the given travel action
+	 =============================================================*/
+	public void setTravelAction(Point startTerminus, Point[] path, int length)
+	{
+		this.action					= MOVE;
+		this.positionTile1.x		= -1;
+		this.positionTile1.y		= -1;
+		this.positionTile2.x		= -1;
+		this.positionTile2.y		= -1;
+		this.ptrTramwayMovement		= length-1;
+
+		for (int i=0; i<length; i++)
+		{
+			this.tramwayMovement[i].x = path[i].x;
+			this.tramwayMovement[i].x = path[i].y;
+		}
+	}
+
+// -----------------------------------------------------
+// Local methods
+// -----------------------------------------------------
 	/**
 	 * Test de l'égalité aec une autre instance d'Action
 	 * @param otherAction
@@ -279,38 +265,33 @@ public class Action implements Serializable, CloneableInterface<Action>
 		}
 		return false;
 	}
-
-// -----------------------------------------------------
-// Setter
-// -----------------------------------------------------
 	/**
-	 *	Affecte a l'appelant les parametres de src 
-	 *	/!\ Pas d'allocation de memoire
-	 *	/!\ Ne doit pas être appelé par une instance non allouée de Action.
-	 * @param src
-	 * Action dont on copie le contenu
+	 * Alloue une nouvelle instance identique de l'action appelante
+	 * @return
+	 * Une instance d'Action
 	 */
-	public void copy(Action src)
+	public Action getClone()
 	{
-		this.action				= src.action;
-		this.positionTile1.x	= (src.positionTile1 == null) ? null : src.positionTile1.x;
-		this.positionTile1.y	= (src.positionTile1 == null) ? null : src.positionTile1.y;
-		this.positionTile2.x	= (src.positionTile2 == null) ? null : src.positionTile2.x;
-		this.positionTile2.y	= (src.positionTile2 == null) ? null : src.positionTile2.y;
-		this.tile1				. copy(src.tile1);
-		this.tile2				. copy(src.tile2);
-		this.ptrTramwayMovement	= src.ptrTramwayMovement;
-		for (int i=0; i<=src.ptrTramwayMovement; i++)
+		Action res				= new Action();
+		res.action				= this.action;
+		res.positionTile1.x		= this.positionTile1.x;
+		res.positionTile1.y		= this.positionTile1.y;
+		res.positionTile2.x		= this.positionTile2.x;
+		res.positionTile2.y		= this.positionTile2.y;
+		res.tile1				.copy(this.tile1);
+		res.tile2				.copy(this.tile2);
+		res.ptrTramwayMovement	= this.ptrTramwayMovement;
+		for (int i=0; i<=this.ptrTramwayMovement; i++)
 		{
-			this.tramwayMovement[i].x = src.tramwayMovement[i].x;
-			this.tramwayMovement[i].y = src.tramwayMovement[i].y;
+			res.tramwayMovement[i].x = this.tramwayMovement[i].x;
+			res.tramwayMovement[i].y = this.tramwayMovement[i].y;
 		}
+		return res;
 	}
 
 // -----------------------------------------------------
 // Private methods
 // -----------------------------------------------------
-
 	/**
 	 * Initialise un tableau de Point représentant un mouvement de tramway
 	 * @return

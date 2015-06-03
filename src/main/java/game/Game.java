@@ -227,10 +227,9 @@ public String getHostName(){return this.data.getHost();}
 	 * Init the game parameters.
 	 * Make the game begins
 	 ================================================*/
-	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers, ExceptionNonInitializedPlayer
+	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if (!this.data.isAllHumanPlayersInitialized())	throw new ExceptionNonInitializedPlayer();
 		if (!this.data.isGameReadyToStart())			throw new ExceptionNotEnougthPlayers();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
