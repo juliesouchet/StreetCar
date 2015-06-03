@@ -1,6 +1,7 @@
 package main.java.data;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 
@@ -8,8 +9,16 @@ import java.util.LinkedList;
 
 
 
-public class PathFinderMulti
+public class PathFinderMulti implements Serializable
 {
+	private static final long serialVersionUID = 696466158277006823L;
+
+	
+	
+	
+	
+	
+	
 	/**========================================================
 	 * @return the number of diffrent paths that:</br>
 	 * 		- Have the given length</br>

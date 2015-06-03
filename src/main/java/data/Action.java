@@ -52,7 +52,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 	{
 		Action res = new Action();
 
-		res.action		= BUILD_SIMPLE;
+		res.action			= BUILD_SIMPLE;
+		res.tile1			.copy(t);
 		res.positionTile1.x	= x;
 		res.positionTile1.y	= y;
 

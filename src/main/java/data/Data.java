@@ -198,19 +198,18 @@ public class Data implements Serializable
 		if (!this.isGameReadyToStart())	throw new RuntimeException("The game definition is not complete"); 
 		if (!this.host.equals(host))throw new RuntimeException("The starting host does not correspond the Data known host");
 
-// TODO: Enlever les LinkedList
-		LinkedList<String> players = new LinkedList<String> (this.getPlayerNameList());
-		Random rnd = new Random();
-		int i, size = players.size();
+		int size = this.getNbrPlayer();
 
 		this.round			= -1;
 		this.winner			= null;
 		this.playerOrder	= new String[size];				// Init playerOrder
-		for (int s=size-1; s>=0; s--)
+		this.playerOrder[0]	= this.getHost();
+		int i = 1;
+		for (String str: this.playerInfoList.keySet())
 		{
-			i = rnd.nextInt(s+1);
-			playerOrder[s] = players.get(i);
-			players.remove(i);
+			if (str.equals(host)) continue;
+			this.playerOrder[i] = str;
+			i ++;
 		}
 
 		this.skipTurn();

@@ -1,6 +1,7 @@
 package main.java.data;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 
@@ -9,8 +10,13 @@ import java.util.LinkedList;
 
 
 
-public class PathFinder
+public class PathFinder implements Serializable
 {
+	private static final long serialVersionUID = -6422634525567983202L;
+
+	
+	
+	
 	/**============================================================
 	 * @return the shortest path between pSrc and pDst in the guiven board. If no path exists, null is returned.
 	 * Uses the A* algorithm.
