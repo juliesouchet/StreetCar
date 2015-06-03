@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+import main.java.automaton.CoupleActionIndex;
 import main.java.data.Tile.Path;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionHostAlreadyExists;
@@ -25,20 +26,27 @@ import main.java.util.Util;
 
 public class Data implements Serializable
 {
+	
+	
+	
+	
+	
+	
+	
 	//TODO Wish list de Ulysse:
-		public class possibleActionsSet{
+/*		public class possibleActionsSet
+		{
 			public static final int maxCardinal = 6000;
 			private int cardinal;
-			Action[] acceptablesActions; 
-			private possibleActionsSet(int size){ // majorant du nombre d'actions possibles
+			Action[] acceptablesActions;
+
+
+			private possibleActionsSet(int size)				// majorant du nombre d'actions possibles
+			{
 				this.cardinal= 0;
 				this.acceptablesActions = new Action[size];
 			}
-			
-			public int getCardinal(){
-				return this.cardinal;
-			}
-			
+
 			public Action getAction(int index){
 				return this.acceptablesActions[index];
 			}
@@ -47,11 +55,9 @@ public class Data implements Serializable
 		 * @return
 		 * L'ensemble des actions possible pour le joueur spécifié (c'est son tour de jouer)
 		 */
-		public possibleActionsSet getPossibleActions(String playerName){
-return null;
-}
-///////// BUGS
-/*************			possibleActionsSet result = new possibleActionsSet(possibleActionsSet.maxCardinal);
+/*		public possibleActionsSet getPossibleActions(String playerName)
+		{
+			possibleActionsSet result = new possibleActionsSet(possibleActionsSet.maxCardinal);
 			PlayerInfo pi = playerInfoList.get(playerName);
 			Hand hand = pi.hand;
 			Tile t1, t2, oldT;
@@ -118,17 +124,17 @@ return null;
 			return result; //TODO implémenter la méthode
 		}
 		// END ulysse'swish list
-****************************/
+
 		/**
 		 * @param p1
 		 * @param p2
 		 * @return distance de manhattan entre p1 et p2
 		 */
 		@SuppressWarnings("unused")
-		private int distance(Point p1, Point p2) {
+/*		private int distance(Point p1, Point p2) {
 			return Math.abs(p1.x-p2.x)+Math.abs(p1.y-p2.y);
 		}
-	
+	*/
 	
 // --------------------------------------------
 // Attributes:
@@ -145,6 +151,7 @@ return null;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				minSpeed				= 1;
 	public static final int				maxSpeed				= 10;
+	public static final int				maxPossibleAction		= 6000;
 
 	private static int[]				existingLine;
 	private static String[][][]			existingBuildingInLine;
@@ -165,7 +172,9 @@ return null;
 	private String						host;
 	private String						winner;
 
-	private Path[]						additionalPath = Tile.initPathTab();// Optimization attribute
+	private Path[]						tmpPathTab		= Tile.initPathTab();// Optimization attribute
+	private Tile[]						tmpRotation1;
+	private Tile[]						tmpRotation2;
 
 // --------------------------------------------
 // Builder:
@@ -192,6 +201,13 @@ return null;
 		for (int j=minLine; j<=maxLine; j++) remainingLine.add(j);
 
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
+		this.tmpRotation1		= new Tile[4];											// Init optimization parameters
+		this.tmpRotation2		= new Tile[4];
+		for (int i=0; i<4; i++)
+		{
+			this.tmpRotation1[i]= this.board[0][0].getClone();
+			this.tmpRotation1[i]= this.board[0][0].getClone();
+		}
 	}
 	private Data(){}
 	public Data getClone(String playerName)
@@ -400,11 +416,11 @@ return null;
 	public Color				getPlayerColor(String playerName)				{return this.playerInfoList.get(playerName).color;}
 	public boolean				istHost(String playerName)						{return this.host.equals(playerName);}
 	public boolean				isPlayerLogged(String name)						{return this.playerInfoList.containsKey(name);}
-	public boolean				hasDoneFirstAction(String name)					{return this.playerOrder[0].equals(name);}
 	public int					getHandSize(String playerName)					{return this.playerInfoList.get(playerName).hand.getSize();}
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex);}
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
 	public boolean				isUsedPlayerName(String playerName)				{return this.playerInfoList.keySet().contains(playerName);}
+	public boolean				hasDoneRoundFirstAction(String playerName)		{return this.playerInfoList.get(playerName).hasDoneFirstRoundAction();}
 	public Point[]				getPlayerTerminusPosition(String playerName)	{return this.playerInfoList.get(playerName).terminus;}
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
@@ -489,16 +505,6 @@ return null;
 	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
-	public boolean				isAllHumanPlayersInitialized()
-	{
-		for (String str: this.playerInfoList.keySet())
-		{
-			PlayerInfo pi = this.playerInfoList.get(str);
-			if (!pi.isHuman)			continue;
-			if (!pi.isInitialized())	return false;
-		}
-		return true;
-	}
 	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
@@ -517,12 +523,12 @@ return null;
 	public boolean isAcceptableTilePlacement(int x, int y, Tile t)
 	{
 		Tile oldT = this.board[x][y];
-		int additionalPathSize = oldT.isReplaceable(t, additionalPath);
+		int additionalPathSize = oldT.isReplaceable(t, tmpPathTab);
 
 		if (additionalPathSize == -1)	return false;													// Check whether t contains the old t (remove Tile and Rule C)
 		if (this.isOnEdge(x, y))		return false;
 
-		Tile nt = Tile.specialNonRealTileConstructor(additionalPath, additionalPathSize, t);
+		Tile nt = Tile.specialNonRealTileConstructor(tmpPathTab, additionalPathSize, t);
 		int accessibleDirection = nt.getAccessibleDirections();
 		for (Direction d: Direction.DIRECTION_LIST)														// Check whether the new tile is suitable with the <x, y> neighborhood
 		{
@@ -719,6 +725,86 @@ return null;
 		int i = (new Random()).nextInt(this.remainingColors.size());
 		return this.remainingColors.get(i);
 	}
+	/**=============================================================
+	 * @return the number of different actions that may be realized at this step of the game.</br>
+	 * This actions are added to the input tab.</br>
+	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its celle must have been initialized
+	 ===============================================================*/
+	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
+	{
+		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
+
+		int res = 0, nbrRotation1, nbrRotation2;
+		Point lastTramPosition = this.playerInfoList.get(playerName).previousTramPosition;
+		Tile t, oldT1;
+
+		if (this.hasStartedMaidenTravel(playerName))												// Case is on trip
+		{
+			
+			
+			
+//TODO			return ......;
+		}
+		if (this.isTrackCompleted(playerName))														// Case Can start maiden travel
+		{
+			
+			
+			
+			
+			
+// TODO         return;
+		}
+																									// Case is building
+		for (int h1 = 0; h1<this.getHandSize(playerName); h1++)										//		For each player's hand tile
+		{
+			t				= this.getHandTile(playerName, h1);
+			nbrRotation1	= t.getUniqueRotationList(tmpRotation1);
+			for (int r1=0; r1<nbrRotation1; r1++)													//		For each first tile rotation
+			{
+				for (int x1=1; x1<this.getWidth()-1; x1++)											//		For each board cell
+				{
+					for (int y1=1; y1<this.getHeight()-1; y1++)
+					{
+						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;	//		Case player may start maiden travel next turn
+						oldT1 = this.board[x1][y1];
+						this.board[x1][y1] = tmpRotation1[r1];
+						if (this.getHandSize(playerName) == 1)										//		Case no second hand tile
+						{
+							if (this.isTrackCompleted(playerName))			//TODO************************** Peut etre evite en ajoutant un coup inutile
+							{
+// TODO								resTab[res].addActionStartTripNextTurn() SIMPLE BUILDING + START_TRIP_NEXT_TURN;
+								res ++;
+							}
+						}
+						else
+						{
+							for (int h2 = 0; h2<this.getHandSize(playerName); h2++)					//		For each second player's hand tile
+							{
+								if (h1 == h2) continue;
+								for (int x2=1; x2<this.getWidth()-1; x2++)							//		For each board cell
+								{
+									for (int y2=1; y2<this.getHeight()-1; y2++)
+									{
+										t				= this.getHandTile(playerName, h2);
+										nbrRotation2	= t.getUniqueRotationList(tmpRotation2);
+										for (int r2=0; r2<nbrRotation2; r2++)						//		For each second tile rotation
+										{
+											if (!this.isAcceptableTilePlacement(x2, y2, tmpRotation2[r2])) continue;
+/// TODO									resTab[res].addActionDoubleBuilding();
+											res ++;
+										}
+									}
+								}
+							}
+						}
+						this.board[x1][y1] = oldT1;
+					}
+				}
+			}
+		}
+
+		return res;
+	}
 
 // --------------------------------------------
 // Private methods:
@@ -845,9 +931,8 @@ return null;
 
 		for (String str: this.playerInfoList.keySet())
 		{
-			pi				= this.playerInfoList.get(str);
-			piRes			= new PlayerInfo();										// Shared Information
-			if (!pi.isInitialized()) {res.put(str, piRes); continue;}
+			pi							= this.playerInfoList.get(str);
+			piRes						= new PlayerInfo();										// Shared Information
 			piRes.player				= null;
 			piRes.isHuman				= pi.isHuman;
 			piRes.line					= pi.line;
@@ -926,10 +1011,14 @@ public String[][]remainingBuildingInLineSave;
 		// Getter
 		public LinkedList<Action> getLastActionHistory()
 		{
-			if (this.history.isEmpty()) return null;
+			if (this.history.isEmpty())	return null;
 			else						return this.history.getLast();
 		}
-		public boolean isInitialized() 	{return this.line > -1;}
+		public boolean hasDoneFirstRoundAction()
+		{
+			if (this.history.size() <= round)	return false;
+			else								return (!this.getLastActionHistory().isEmpty());
+		}
 		public void newRound()			{this.history.addLast(new LinkedList<Action>());}
 	}
 }

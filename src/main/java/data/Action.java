@@ -306,6 +306,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 			this.tramwayMovement[i].y = src.tramwayMovement[i].y;
 		}
 	}
+	public void copy
 
 // -----------------------------------------------------
 // Private methods
