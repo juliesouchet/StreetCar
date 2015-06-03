@@ -59,6 +59,11 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		return res;
 	}
+	
+	public static Action newBuildSimpleAction (Point position, Tile t)
+	{
+		return newBuildSimpleAction(position.x, position.y, t);
+	}
 
 // -----------------------------------------------------
 // Getter
