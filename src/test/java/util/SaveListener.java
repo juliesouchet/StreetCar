@@ -22,7 +22,6 @@ public class SaveListener implements MouseListener {
 				JOptionPane.QUESTION_MESSAGE, null, null, "nom_du_terrain");
 		
 		if(fileName != null) {
-	//	System.out.println("Sauvegarde : "+fileName);
 			FileWriter fw = null;
 			try {
 				fw = new FileWriter(BoardCreator.boardPath+fileName);

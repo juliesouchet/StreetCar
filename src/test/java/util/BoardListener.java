@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import main.java.data.Data;
+import main.java.data.Tile;
 import test.java.player.DataViewerFrame;
 import test.java.player.DataViewerFrame.ViewerPanel;
 
@@ -16,8 +17,6 @@ public class BoardListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(bc.getCurrentTile() == null) return;
-		
 		ViewerPanel panel = bc.getViewerPanel();
 		Data data = bc.getData();
 		int height, width, x, y, tileWidth, tileHeight;
@@ -29,8 +28,14 @@ public class BoardListener implements MouseListener {
 		x = (e.getX()-tileWidth/2)/tileWidth;
 		y = (e.getY()-tileHeight/2)/tileHeight;
 		
-		bc.drawTile(x, y);
-		panel.repaint();
+		if(bc.getCurrentTile() == null) {
+			Tile t = data.getTile(x, y);
+			System.out.println("Direction de la tuile cliquée = " + t.getTileDirection());
+		}
+		else {			
+			bc.drawTile(x, y);
+			panel.repaint();
+		}
 	}
 
 	@Override

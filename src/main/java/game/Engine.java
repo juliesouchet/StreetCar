@@ -129,7 +129,7 @@ public class Engine implements Runnable
 	{
 		PlayerInterface pi;
 
-		if ((data.isGameStarted()) || (data.istHost(playerName)))
+		if ((data.isGameStarted()) || (data.isHost(playerName)))
 		{
 			for (String name: data.getPlayerNameList()) data.getRemotePlayer(name).excludePlayer();
 			this.engineThread.interrupt();
@@ -140,8 +140,7 @@ public class Engine implements Runnable
 			for (String name: data.getPlayerNameList())
 			{
 				pi = data.getRemotePlayer(name);
-				if (name.equals(playerName))	pi.excludePlayer();
-				else							pi.gameHasChanged(data.getClone(name));
+				if (!name.equals(playerName))	pi.gameHasChanged(data.getClone(name));
 			}
 		}
 	}

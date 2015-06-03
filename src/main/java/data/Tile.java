@@ -231,7 +231,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * @param t
 	 * Tuile à recopier.
 	 */
-	public void setTile(Tile t)
+	public void copy(Tile t)
 	{
 		if (t == null)
 		{
@@ -267,12 +267,35 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 */
 	public void setStop(boolean b){this.isStop = b;}
 
+	/**
+	 * Setter sur l'attribut tileDirection de la tuile 
+	 * (fait aussi tourner les path)
+	 * @param dir
+	 */
+	public void setDirection(Direction dir) {
+		int val = ((dir.getVal() - this.tileDirection.getVal() + 4)%4);
+		switch(val) {
+		case 0:
+			return;
+		case 1 :
+			this.turnRight();
+			break;
+		case 2 :
+			this.turnHalf();
+			break;
+		case 3 :
+			this.turnLeft();
+			break;
+		default :
+			throw new RuntimeException("Error tile.setDirection : from " + this.tileDirection + " to " + dir + " : " + val);
+		}
+	}
 // --------------------------------------------
 // Getters:
 // --------------------------------------------
 	/**
-	 *	Vrai si l'ID des 2 tuiles est le même. (donc les tuiles sont sensés être les même à la rotation près) </br>
-	 *	/!\ Ne prend pas du tout en compte les autres attributs. 
+	 *	Vrai si l'ID des 2 tuiles est le même. (donc les tuiles sont sensés être les mêmes à la rotation et au stop près) </br>
+	 *	/!\ Ne prend pas du tout en compte les autres attributs 
 	 *	@param
 	 *	L'objet à comparer, retourne faux si null.
 	 *	@return
@@ -425,8 +448,9 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	}
 
 	/**==================================================
-	 * @return an int that represents the list of accessible directions:</br>
-	 * for i between [0 , 3] if the i th bit of the res equals 1, then the i th direction is accessible.</br>
+	 * @return
+	 *  The list of accessibles directions, represented by an int:</br>
+	 * 	For i in [0 , 3] if the digit i of the returned value equals 1, then the i th direction is accessible.</br>
 	 * The result may be parsed by Direction.isInList(Direction, res)</br>
 	 ====================================================*/
 	public int getAccessibleDirections()
@@ -487,7 +511,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return tSize;
 	}
 	/**=============================================================
-	 * @return if t is a building the function returns its name.  Else it returns null
+	 * @return if this is a building the function returns its name (string).</br>  Else it returns null
 	 ===============================================================*/
 	public String getBuildingName()
 	{
@@ -497,7 +521,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return tileID.substring(l, l+nbrBuildingDescriptionChar);
 	}
 	/**=============================================================
-	 * @return if t is a building the function returns its name(int).  Else it returns -1
+	 * @return if this is a terminus, the method returns its name(int).  Else it returns -1
 	 ===============================================================*/
 	public int getTerminusName()
 	{
@@ -537,6 +561,11 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		for (String s: acceptedTerminusDescription) if (td.equals(s)) return true;
 		return false;
 	}
+	
+	/**
+	 * Alloue un tableau de path, initialisé avec des paths West-West (donc déjà alloués)
+	 * @return Un tableau de Path de taille maxNbrPathInTile (5)
+	 */
 	public static Path[] initPathTab()
 	{
 		Path[] res = new Path[maxNbrPathInTile];
