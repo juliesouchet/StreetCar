@@ -110,7 +110,6 @@ public class HostRoomMenuPanel extends MenuPanel {
 		GameController gc = this.getGameController();
 		try {
 			StreetCar.player.hostStartGame();
-			gc.showInGamePanel();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {

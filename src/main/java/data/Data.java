@@ -224,7 +224,7 @@ return null;
 		res.maxPlayerSpeed			= this.maxPlayerSpeed;
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
-
+res.playerOrder = (playerOrder == null) ? null : cpS.copyTab(playerOrder);
 		return res;
 	}
 

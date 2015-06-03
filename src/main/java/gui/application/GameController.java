@@ -196,6 +196,9 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		if (this.menuPanel != null) {
 			this.menuPanel.refreshMenu(StreetCar.player, data);
 		}
+		if (data.isGameStarted() && !(this.getFrameContentPane() instanceof InGamePanel)) {
+			this.showInGamePanel();
+		}
 		if (this.getFrameContentPane() instanceof InGamePanel) {
 			InGamePanel panel = (InGamePanel)this.getFrameContentPane();
 			panel.refreshGame(StreetCar.player, data);
