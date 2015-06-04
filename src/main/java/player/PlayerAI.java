@@ -78,7 +78,8 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName))
 			{
-				Action a = this.automaton.makeChoice(data.getClone(playerName));
+				Action a = null;
+				a = this.automaton.makeChoice(data.getClone(playerName));
 	
 // TODO: check action type, do others action types !!
 				try

@@ -20,8 +20,16 @@ public class GameSimulation extends Game {
 		super(gameName, appIP, boardName, nbrBuildingInLine);
 	}
 
-	
-	static  public GameSimulation newGameSimulation(Data data, String boardName, int aiLvl)
+	/**
+	 * @param data : the data of the current game
+	 * @param boardName : the name of the file where the board is stored
+	 * @param aiLvl : the level of the AI that take the players' places
+	 * @return A game, that is a copy of the current state of the game, used for simulations.
+	 * @throws RemoteException
+	 * @throws ExceptionUnknownBoardName
+	 * @throws RuntimeException
+	 */
+	static public GameSimulation newGameSimulation(Data data, String boardName, int aiLvl)
 	throws RemoteException, ExceptionUnknownBoardName, RuntimeException
 	{	
 		String[] playerNameList = new String[data.getPlayerNameList().size()];
@@ -51,24 +59,22 @@ public class GameSimulation extends Game {
 	}
 
 
-	/*=============================
-	 *	Result of the simulation
-	 =============================*/
+	/**==========================================================
+	 *	Result of the simulation : has this player won ?
+	 ==========================================================*/
 	public boolean isWinner(String playerName)
 	{
-	System.out.println("SIMULATION : " + playerName);
 		boolean result = false;
-		
+		/*
 		String hostName = getHostName();
 		try {
-			this.hostStartGame(hostName);// Launch game
+			this.hostStartGame(hostName);	// Launch game
 		} catch (RemoteException | ExceptionForbiddenAction	| ExceptionNotEnougthPlayers e) {
 			e.printStackTrace();
 		}	
-		
-		// TODO récupérer le résultat de la partie
+		*/
+		// TODO rÃ©cupÃ©rer le rÃ©sultat de la partie
 
-	System.out.println("FIN DE LA SIMULATION");
 		return result;
 	}
 	

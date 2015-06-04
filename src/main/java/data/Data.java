@@ -391,7 +391,7 @@ public class Data implements Serializable
 	/**======================================================
 	 * @return true if this player can still place one of his tile on the board
 	 ======================================================*/
-	public boolean canPlaceTile(String playerName) {
+	private boolean canPlaceTile(String playerName) {
 System.out.print("CanPlaceTile " + playerName + " ? ");
 		for(int i = 0; i < getHandSize(playerName); i++) {
 			Tile t = getHandTile(playerName, i);
