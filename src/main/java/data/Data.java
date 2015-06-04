@@ -388,7 +388,7 @@ public class Data implements Serializable
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
-// TODO: Enlever les LinkedList
+	// TODO: Enlever les LinkedList
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
 	 ======================================================== */
@@ -478,22 +478,28 @@ public class Data implements Serializable
 	public LinkedList<Color>	getRemainingColors()							{return ((new Copier<Color>()).copyList(this.remainingColors));}
 	public String				getWinner()										{return this.winner;}
 	/**=======================================================================
-	 * @return true if all the tiles have been placed but no player can win
+	 * @return true if the player has no possible game, considering his hand, the deck and his travel
 	 ========================================================================= */
 	public boolean isGameBlocked(String playerName)
 	{
 		if ((!isEmptyDeck()) && (this.getHandSize(playerName) > 0))				return false;
 		if (hasStartedMaidenTravel(playerName))									return false;
 
+		Tile[] rotations = new Tile[4];
+		for(int j = 0; j < 4; j++)	rotations[j] = new Tile();
+
 		for (int i=0; i<this.getHandSize(playerName); i++)
 		{
 			Tile t = this.getHandTile(playerName, i);
-			for ()
-			for (int x=1; x<this.getWidth()-1; x++)
+			int nbrRotations = t.getUniqueRotationList(rotations);
+			for (int r=0; r<nbrRotations; r++)
 			{
-				for (int y=1; y<this.getHeight(); y++)
+				for (int x=1; x<this.getWidth()-1; x++)
 				{
-					if (this.isAcceptableTilePlacement(x, y, t))					return false;
+					for (int y=1; y<this.getHeight()-1; y++)
+					{
+						if (this.isAcceptableTilePlacement(x, y, rotations[r]))	return false;
+					}
 				}
 			}
 		}
@@ -726,7 +732,7 @@ public class Data implements Serializable
 	/**=============================================================
 	 * @return the number of different actions that may be realized at this step of the game.</br>
 	 * This actions are added to the input tab.</br>
-	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its celle must have been initialized
+	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized
 	 ===============================================================*/
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
 	{
@@ -770,7 +776,7 @@ public class Data implements Serializable
 						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;		//		Case player may start maiden travel next turn
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
-						if (this.isTrackCompleted(playerName))			//TODO************************** Peut etre evite en ajoutant un coup inutile
+						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
 						{
 							resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
 							resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);

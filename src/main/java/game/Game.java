@@ -249,42 +249,39 @@ for (String str: this.data.getPlayerNameList())
 	 * Places a tile from the player's hand on the board.
 	 * The given tile must belong to the player's hand
 	 * The given tile is removed from the player's hand
-	 ===============================================================================*/
-	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions
+	 ===============================================================================
+	 * @throws ExceptionPlayerIsBlocked 
+	 * @throws ExceptionGameIsOver */
+	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
 		if (!this.data.isInPlayerHand(playerName, t))							throw new ExceptionForbiddenAction();
 		if (!this.data.hasRemainingAction(playerName))							throw new ExceptionTooManyActions();
+		if (data.getWinner() != null)											throw new ExceptionPlayerIsBlocked();
+		if (data.isGameBlocked(playerName))										throw new ExceptionGameIsOver();
 		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
+		this.engine.addAction(this.data, "placeTile", playerName, position, t);
 	}
 	/**=============================================================================
 	 * Switch at once two tiles from the player's hand with two tiles on the board.
 	 * The tiles from the board are placed in the player's hand.
 	 ===============================================================================*/
-	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	public synchronized void replaceTwoTiles (String playerName, Tile tile1, Tile tile2, Point position1, Point position2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())				throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))	throw new ExceptionNotYourTurn();
 		if(data.hasStartedMaidenTravel(playerName))	throw new ExceptionForbiddenAction();
 
-		EngineAction ea = engine.new EngineAction(playerName, data, "replaceTwoTiles");
-
-		ea.tile = t1;
-		ea.secondTile = t2;
-		ea.position = p1;
-		ea.secondPosition = p2;
-
-		this.engine.addAction(ea);
-		// TODO check all possible things
+		this.engine.addAction(this.data, "placeTile", playerName, position1, tile1, position2, tile2);
+// TODO check all possible things
 	}
 	/**=============================================================================
 	 * 	Signals the end of this player's turn
 	 =============================================================================*/
-	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionEndGame
+	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
@@ -294,11 +291,8 @@ for (String str: this.data.getPlayerNameList())
 			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction();
 			if(data.hasRemainingAction(playerName)) throw new ExceptionForbiddenAction();
 		}
-		String winner = data.getWinner();
-		if(winner != null)											throw new ExceptionEndGame(winner);
-		if(data.isGameBlocked())									throw new ExceptionEndGame(null);
 
-		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
+		this.engine.addAction(this.data, "validate", playerName);
 	}
 	/**=============================================================================
 	 * 	Signals the start of this player's maiden travel. 
@@ -316,10 +310,7 @@ for (String str: this.data.getPlayerNameList())
 		if(data.hasStartedMaidenTravel(playerName))			throw new ExceptionForbiddenAction();
 		if(!data.isTrackCompleted(playerName))				throw new ExceptionUncompletedPath();
 
-		EngineAction ea = engine.new EngineAction(playerName, data, "startMaidenTravel");
-		ea.position = terminus;
-
-		this.engine.addAction(ea);
+		this.engine.addAction(this.data, "startMaidenTravel", playerName, terminus, null);
 	}
 	/**=============================================================================
 	 * Moves the player's streetcar following the tramMovement. 
@@ -377,7 +368,7 @@ for (String str: this.data.getPlayerNameList())
 		if (nbrCards > this.data.getPlayerRemainingTilesToDraw(playerName))		throw new ExceptionTwoManyTilesToDraw();
 		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(playerName, this.data, "drawTile", null, null, null, nbrCards);
+		this.engine.addAction(this.data, "drawTile", playerName, nbrCards);
 	}
 	/**=============================================================================
 	 * Draw a card from a player's hand.  Put this drawn card in the player's hand
@@ -443,7 +434,7 @@ for (String str: this.data.getPlayerNameList())
 
 		while(true)
 		{
-			if (this.data.isUsedPlayerName(playerName+nameAdd)) nameAdd += rnd.nextInt(10);
+			if (this.data.isUsedPlayerName(playerName+"_"+nameAdd)) nameAdd += rnd.nextInt(10);
 			else break;
 		}
 		if (!nameAdd.equals(""))	playerName += "_" + nameAdd;

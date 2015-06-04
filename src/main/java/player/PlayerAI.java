@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
+import main.java.automaton.Strongest;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
@@ -45,9 +46,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super(playerName, app, ihm);
 		switch (iaLevel)
 		{
-			case 1	:this.automaton	= new Dumbest(playerName);	break;
-			case 2	:this.automaton = new Traveler(playerName);	break;
-//			case 3	:this.automaton = new 3eme_niveau_de_difficulte(playerName);	break;
+			case PlayerAutomaton.dumbestLvl	:this.automaton	= new Dumbest(playerName);	break;
+			case PlayerAutomaton.travelerLvl	:this.automaton = new Traveler(playerName);	break;
+			case PlayerAutomaton.strongestLvl	:this.automaton = new Strongest(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
@@ -71,9 +72,10 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
-			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName) )/////////// TODO A ajouter apres changement julie|| !data.canPlaceTile(playerName))
+			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName) )
 			{
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
+				if (a == null) {System.out.println("AI has no actions left"); return;}
 
 				try
 				{
@@ -83,9 +85,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 					else if (a.isMOVE())
 					{
 						if (a.startTerminus != null)	super.startMaidenTravel(playerName, a.startTerminus);
-/////						super.moveTram(a.tramwayMovement, ptrTramwayMovement);
+						super.moveTram(a.tramwayMovement, a.ptrTramwayMovement);
 					}
-else throw new RuntimeException("??????");
+					else throw new RuntimeException("??????");
 
 				}
 				catch (Exception e) {e.printStackTrace(); return;}
@@ -110,8 +112,8 @@ else throw new RuntimeException("??????");
 		}
 		else														// fin de tour
 		{
-			try					{super.validate();}
-			catch (Exception e) {e.printStackTrace(); return;}
+				try			{super.validate();}
+				catch (Exception e) {e.printStackTrace(); return;}
 		}
 	}
 	public synchronized void excludePlayer() throws RemoteException

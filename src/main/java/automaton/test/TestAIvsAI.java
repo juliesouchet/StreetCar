@@ -14,8 +14,8 @@ public class TestAIvsAI {
 		LoginInfo[] initialLoginTable = 
 				// LoginInfo(isClosed, playerName, isHost, isHuman, iaLevel)
 				{
-				new LoginInfo(false,	"1",	true,	false,	PlayerAutomaton.dumbestLvl),
-				new LoginInfo(false,	"2",	false,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)

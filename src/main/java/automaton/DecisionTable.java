@@ -184,7 +184,7 @@ public class DecisionTable {
 	 * @throws ExceptionUnknownNodeType 
 	 */
 	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
-		this.myName = myName; //TODO vrai copy ou juste pointeur :s ?
+		this.myName = new String(myName); 		
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		this.setSize(tableSize);
@@ -227,46 +227,68 @@ public class DecisionTable {
 	 * Implémentation de l'algorithme minimax: la table de décision est calculée
 	 * @param index
 	 * 	L'indice du noeud en construction dans la table de decision
-	 * @param type
-	 *  noeud Min ou Noeud max (ALLY ou OPPONENT);
 	 * @param wantedDepth
 	 * 	la profondeur (restante) a explorer) 
 	 * @param currentConfiguration
 	 * 	le data courant: cad l'etat de la partie
 	 */
-	public void applyMinMax(int index, int type, int wantedDepth, Data currentConfiguration ){ //TODO enlever argument type: inutile
+	public void applyMinMax(int index, int wantedDepth, Data currentConfiguration ){
 		double evaluatedQuality = DecisionNode.NOT_SIGNIFICANT;
 		String playerName = currentConfiguration.getPlayerTurn();
 		int numberOfPossiblesActions;
 		int aFreeSlot = 0;
-		
+
+		Data copyDeCOnfigurationCourante = currentConfiguration.getClone(playerName); //TODO a enlever ça sera fait par le rollback
+
 		// Cas d'une feuille on estime la qualité avec la fonction de Julie
-		if(wantedDepth==0){ 
+		if(wantedDepth==0){
+			//===============================================================================//
+			TraceDebugAutomate.debugDecisionTableTrace("\t======Feuille["+index+"]======.\n");
 			//evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty)
+			evaluatedQuality = 50.0;
+
 			this.getDecisionNode(index).setQuality(evaluatedQuality);
 			this.getDecisionNode(index).setLeaf();
 
 			// Cas d'une recurrence	
 		} else if(wantedDepth>0){
-			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable()); //
+			//===============================================================================//
+			TraceDebugAutomate.debugDecisionTableTrace("\t======Noeud["+index+"]======.\n");
+
+			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable());
+			
+			//===============================================================================//
+			TraceDebugAutomate.debugDecisionTableTrace("numberOfPossiblesActions="+numberOfPossiblesActions+"\n");
+
 			for (int i=0; i<numberOfPossiblesActions; i++){
 				aFreeSlot = this.findFreeSlot();
-				
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("aFreeSlot="+aFreeSlot+"\n");
 				assert(this.getDecisionNode(index).getCoupleActionIndex(i).getIndex()==CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
-				
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("On set ce freeslot comme index de l'action en traitement.\n");
 				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
-
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("On fait l'action.\n");
 				currentConfiguration.doAction(this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
-			
-				this.applyMinMax(aFreeSlot, type, wantedDepth-1, currentConfiguration);
-				// TODO				
-				//				this.applyMinMax(aFreeSlot, typeSuivant, wantedDepth-1, currentConfiguration);
-				//				currentConfiguration.rollBack();
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("Appel récursif\n");
+				this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration);
+				
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("On rollback \n");
+				currentConfiguration = copyDeCOnfigurationCourante.getClone(myName);
+				// TODO			
+				//				currentConfiguration.rollBack(); //TODO a enlever ça sera fait par le rollback
 			}
 			if (playerName.equals(this.getMyName())){
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("C'est un noeud ou JE joue: noeud max\nOn set la qualité du noeud\n");
 				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getBestActionIndex(index)).getQuality());
 			}
 			else if (!playerName.equals(this.getMyName())){
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("C'est un noeud ou l'ADVERSAIRE joue: noeud min\n On set la qualité du noeud\n");
 				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getWorstActionIndex(index)).getQuality());	
 
 			}

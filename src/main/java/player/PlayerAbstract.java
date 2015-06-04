@@ -8,15 +8,16 @@ import java.rmi.server.UnicastRemoteObject;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
-import main.java.game.ExceptionEndGame;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionGameIsOver;
 import main.java.game.ExceptionNotEnougthPlayers;
 import main.java.game.ExceptionNotEnougthTileInDeck;
 import main.java.game.ExceptionNotEnougthTileInHand;
 import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionPlayerIsBlocked;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.game.ExceptionUncompletedPath;
@@ -97,7 +98,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		this.game.hostStartGame(playerName);
 	}
-	public synchronized void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions
+	public synchronized void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
 System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
@@ -109,7 +110,7 @@ System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards + " | Reste " +(data.getNbrRemainingDeckTile()-nbrCards));
 		this.game.drawTile(playerName, nbrCards);
 	}
-	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionEndGame
+	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate");

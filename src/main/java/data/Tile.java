@@ -115,7 +115,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	/**
 	 * Constructeur générique
 	 */
-	private Tile(){}
+	Tile(){}
 	
 	/**
 	 * Clone la tuile (Deep clone: toutes les attributs sont clones)
