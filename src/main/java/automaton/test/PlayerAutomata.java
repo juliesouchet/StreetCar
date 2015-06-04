@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import main.java.automaton.Dumbest;
+import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
@@ -187,7 +188,13 @@ public class PlayerAutomata implements InterfaceIHM
 // c une modif pour ne plus faire de new dans votre automate (je c que c pas claire, on en reparle)
 //				System.out.println("Main :" + player.getGameData().getHand(name));
 //				System.out.println();
-				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
+				Action choix_de_edouard = null;
+				try {
+					choix_de_edouard = edouard.makeChoice(player.getGameData());
+				} catch (ExceptionUnknownNodeType e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 				try {
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);

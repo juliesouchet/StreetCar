@@ -3,6 +3,7 @@ package main.java.player;
 import java.rmi.RemoteException;
 
 import main.java.automaton.Dumbest;
+import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
@@ -77,7 +78,13 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName))
 			{
-				Action a = this.automaton.makeChoice(data.getClone(playerName));
+				Action a = null;
+				try {
+					a = this.automaton.makeChoice(data.getClone(playerName));
+				} catch (ExceptionUnknownNodeType e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 	
 // TODO: check action type, do others action types !!
 				try

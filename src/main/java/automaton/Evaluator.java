@@ -20,27 +20,20 @@ public class Evaluator {
 		double victoryProportion = 0;
 		int victoriesNumber = 0;
 		boolean win = false;
-/*		
-	System.out.println("Initialisation des " + playerNameList.length + " joueurs : ");
-	for (int j = 0; j < playerNameList.length; j++) {
-		System.out.println((String) playerNameList[j]);
-	}
-*/	
-	
 		
-		// Simulating the games
+		// Simulating the games			
+		GameSimulation game = null;
+		try {
+			String boardName = Data.boardDirectory + "tmp";
+			FileWriter fw = new FileWriter(boardName);
+			config.writeBoardInFile(fw);
+			fw.close();
+			game = GameSimulation.newGameSimulation(config.getClone(playerName), boardName, aiLvl);
+		} catch (Exception e) {
+			System.out.println("Game creation error"); e.printStackTrace();
+		}
+		
 		for(int i = 0; i < nbrGamesSimulated; i++) {
-			
-			GameSimulation game = null;
-			try {
-				String boardName = Data.boardDirectory + "tmp";
-				FileWriter fw = new FileWriter(boardName);
-				config.writeBoardInFile(fw);
-				fw.close();
-				game = GameSimulation.newGameSimulation(config.getClone(playerName), boardName, aiLvl);
-			} catch (Exception e) {
-				System.out.println("Game creation error"); e.printStackTrace();
-			}
 			
 			win = game.isWinner(playerName);
 			
@@ -83,12 +76,15 @@ public class Evaluator {
 			for (int j = 0; j < automatonList.length; j++) {
 				// A player's turn
 				String currentPlayerName = playerNameList[j];
-	System.out.println("=======================================");
-	System.out.println("Tour " + round + " | " + currentPlayerName);
-				Action action = automatonList[j].makeChoice(data);
+				Action action = null;
+				try {
+					action = automatonList[j].makeChoice(data);
+				} catch (ExceptionUnknownNodeType e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				if(action.isConstructing()) {
-	System.out.println(currentPlayerName + " BUILD");
 					// Building action
 					int cardsToDraw = 0;
 					
@@ -109,12 +105,10 @@ public class Evaluator {
 						throw new RuntimeException(currentPlayerName+" tries to travel while in construction (round "+j+")");
 					
 					if(action.action == Action.BUILD_AND_START_TRIP_NEXT_TURN) {
-	System.out.println(currentPlayerName + " START_TRIP_NEXT_TURN");
 						data.startMaidenTravel(currentPlayerName);
 					}
 					
 					else { // action.action == Action.MOVE
-	System.out.println(currentPlayerName + " MOVE");
 						data.setTramPosition(currentPlayerName, action.tramwayMovement[action.tramwayMovement.length-1]);
 					}
 				}
@@ -122,11 +116,9 @@ public class Evaluator {
 				if(data.isTrackCompleted(currentPlayerName)) {
 					// A player has won => TODO (not counting the maiden travel)
 					win = playerName.equals(currentPlayerName);
-	System.out.println("Winner : " + currentPlayerName);
 					break;
 				}
 				
-	System.out.println("=======================================");
 			}
 			// TODO what if nobody wins ?
 			/*if(currentConfig.isEverybodyBlocked()) {
