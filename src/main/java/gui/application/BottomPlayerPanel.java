@@ -25,6 +25,7 @@ public class BottomPlayerPanel extends Panel {
 
 	Button validateButton;
 	Button beginTripButton;
+	Button resetButton;
 	
 	// Constructors
 
@@ -53,13 +54,22 @@ public class BottomPlayerPanel extends Panel {
 
 		beginTripButton = new Button("Begin trip", null);
 		validateButton = new Button("Validate", null);
+		resetButton = new Button("Reset this turn", null);
+		
+		beginTripButton.setEnabled(false);
+		validateButton.setEnabled(false);
+		resetButton.setEnabled(false);
+		
 		validateButton.addAction(this, "validate");
-
-		beginTripButton.setBounds(10, 25, 130, 40);
-		validateButton.setBounds(10, 85, 130, 40);
+		resetButton.addAction(this, "reset");
+		
+		beginTripButton.setBounds(0, 10, 140, 35);
+		validateButton.setBounds(0, 50, 140, 35);
+		resetButton.setBounds(0, 90, 140, 35);
 
 		buttonsPanel.add(beginTripButton);
 		buttonsPanel.add(validateButton);
+		buttonsPanel.add(resetButton);
 		this.add(buttonsPanel, BorderLayout.EAST);	
 	}
 	
@@ -68,29 +78,20 @@ public class BottomPlayerPanel extends Panel {
 		try {
 			StreetCar.player.drawTile(2);
 		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionNotYourTurn e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionNotEnougthTileInDeck e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionTwoManyTilesToDraw e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionForbiddenAction e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
 		try {
-
 			StreetCar.player.validate();
-
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e) {
@@ -104,8 +105,12 @@ public class BottomPlayerPanel extends Panel {
 		}
 	}
 	
+	public void reset() {
+		// TODO: go back to initial state of the beginning of the turn
+	}
+	
 	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+		/*super.paintComponent(g);
 		g.drawRect(20, 20, 50, 50); //avatar
 		
 		g.drawRect(20, 80, 50, 50); //card1
@@ -115,6 +120,6 @@ public class BottomPlayerPanel extends Panel {
 		g.drawRect(260, 80, 50, 50); //card5		
 
 		g.drawRect(350, 80, 50, 50); //station1
-		g.drawRect(410, 80, 50, 50); //station2
+		g.drawRect(410, 80, 50, 50); //station2*/
 	}
 }

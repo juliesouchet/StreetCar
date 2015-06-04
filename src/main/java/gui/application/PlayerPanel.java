@@ -7,11 +7,13 @@ import java.awt.Point;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
 import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.gui.board.TilePanel;
+import main.java.gui.components.AvatarPanel;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
@@ -24,25 +26,43 @@ public class PlayerPanel extends Panel{
 	ArrayList<TilePanel> tilePanels = new ArrayList<TilePanel>();
 	ArrayList<TilePanel> buildingsPanels = new ArrayList<TilePanel>();
 
+	int sizeOfCard = 45;
+	int spaceBetween = 10;
+
 	public PlayerPanel(String nameOfPlayer) {		
 		this.setBackground(Color.WHITE);
 		this.setPreferredSize(new Dimension(285, 175));
 		this.setLayout(null);
 		this.nameOfPlayer = nameOfPlayer;
-
+		placePlayerAvatar();
+		placePlayerName();
+		placePlayerCards();
+		placePlayerStations();
+	}
+	
+	protected void placePlayerAvatar() {
+		AvatarPanel avatarPanel = new AvatarPanel(Color.BLUE); //TODO: can not use playerColor -> null exception
+		avatarPanel.setBounds(10, 5, 45, 45);
+		avatarPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+		this.add(avatarPanel);
+	}
+	
+	protected void placePlayerName() {
 		JLabel nameOfPlayerLabel = new JLabel(nameOfPlayer);
-		nameOfPlayerLabel.setBounds(70, 5, 80, 30);
+		nameOfPlayerLabel.setBounds(70, 11, 80, 30);
 		this.add(nameOfPlayerLabel);
-
-		int sizeOfCard = 45;
-		int spaceBetween = 10;
+	}
+	
+	protected void placePlayerCards() {
 		for (int i=0; i < 5; i++) {
 			TilePanel tilePanel = new TilePanel();
 			tilePanel.setBounds(sizeOfCard*i + spaceBetween*(i+1), 60, sizeOfCard, sizeOfCard);
 			this.add(tilePanel);
 			tilePanels.add(tilePanel);
 		}
-
+	}
+	
+	protected void placePlayerStations() {
 		for (int i=0; i<2; i++) {
 			TilePanel tilePanel = new TilePanel();
 			tilePanel.setBounds(sizeOfCard*i + spaceBetween*(i+1), 115, sizeOfCard, sizeOfCard);
@@ -65,16 +85,13 @@ public class PlayerPanel extends Panel{
 		PlayerIHM player = StreetCar.player;
 		Data data = player.getGameData();
 		try {
-			if(!player.getPlayerName().equals(playerName))
-			{
+			if(!player.getPlayerName().equals(playerName)) {
 				for (int i=0; i < 2; i++) {
 					TilePanel tilePanel = buildingsPanels.get(i);
 					tilePanel.setTile(null);
 					tilePanel.setBackground(Color.GRAY);
 				}
-			}
-			else
-			{
+			} else {
 				Point[] stationsPositions = data.getPlayerAimBuildings(playerName);
 				for (int i=0; i<stationsPositions.length; i++) {
 					Point p = stationsPositions[i];
@@ -90,10 +107,10 @@ public class PlayerPanel extends Panel{
 		super.paintComponent(g);
 
 		//avatar
-		g.setColor(playerColor);
+		/*g.setColor(playerColor);
 		g.fillRect(10, 5, 45, 45);
 		g.setColor(Color.BLACK);
-		g.drawRect(10, 5, 45, 45);
+		g.drawRect(10, 5, 45, 45);*/
 
 		int[] xPoints = {230, 253, 276, 253};
 		int[] yPoints = {28, 5, 28, 51};
