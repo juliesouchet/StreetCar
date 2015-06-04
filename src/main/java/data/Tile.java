@@ -356,7 +356,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		for(int p1 = 0; p1 < this.ptrPathTab; p1++) {
 			int p2 = 0;
 			while(p2 < otherTile.ptrPathTab && !this.pathTab[p1].equals(otherTile.pathTab[p2]))	{
-	System.out.println("Compare " + this.pathTab[p1] + " et " + otherTile.pathTab[p2] + " = " + this.pathTab[p1].equals(otherTile.pathTab[p2]));
+System.out.println("compare " + this.pathTab[p1] + " et " + otherTile.pathTab[p2] + " = " +this.pathTab[p1].equals(otherTile.pathTab[p2]) );
 				p2++;
 			}
 			if(p2 >= otherTile.ptrPathTab) return false; // the path p1 is not in the other tile
@@ -382,6 +382,17 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 * REMARQUE: Par défault à WEST.</br>
 	 */
 	public Direction getTileDirection()	{return this.tileDirection;}
+	
+	/**
+	 * @return Le tableau contenant tous les rails de la tuile
+	 */
+	public Path[] getPathTab() {return this.pathTab;}
+	
+	/**
+	 * @return Le pointeur sur la dernière case de pathTab non null </br>
+	 * (= le nombre de rails sur la tuile - 1)
+	 */
+	public int getPtrPathTab() {return this.ptrPathTab;}
 	
 	/**
 	 * @return

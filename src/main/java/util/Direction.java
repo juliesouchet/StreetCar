@@ -116,4 +116,7 @@ public enum Direction implements Serializable
 			default	: throw new RuntimeException("Unknown direction: " + this);
 		}
 	}
+	public final boolean equals(Direction d) {
+		return this.dir == d.dir;
+	}
 }

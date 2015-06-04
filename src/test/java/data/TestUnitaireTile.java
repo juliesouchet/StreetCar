@@ -87,15 +87,36 @@ public class TestUnitaireTile {
 	}
 	
 	@Test
+	public void testPathEquals() {
+		Tile tuile1 = Tile.parseTile("Tile_FFFFZZ2113"),
+			tuile2 = Tile.parseTile("Tile_FFFFZZ2113"); // tuile ligne droite
+		Path[] pathTab1 = tuile1.getPathTab(),
+			pathTab2 = tuile2.getPathTab();
+		assertTrue("Les deux path égaux sont considérés différents", pathTab1[0].equals(pathTab2[0]));
+		
+		tuile2.turnHalf();
+		pathTab2 = tuile2.getPathTab();
+		assertTrue("Les deux path égaux (symétriques et opposés) sont considérés différents", pathTab1[0].equals(pathTab2[0]));
+	
+		tuile1 = Tile.parseTile("Tile_FFFFZZ2003"); // tuile courbe
+		tuile1 = Tile.parseTile("Tile_FFFFZZ2003");
+		tuile2.turnHalf();
+		pathTab1 = tuile1.getPathTab();
+		pathTab2 = tuile2.getPathTab();
+		assertFalse("Les deux path différents (non symétriques et opposés) sont considérés différents", pathTab1[0].equals(pathTab2[0]));
+	}
+	
+	// TODO a faire marcher
+	@Test
 	public void testIsEquivalent(){
-		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
-		Tile maTileB = Tile.parseTile("Tile_FFFFZZ99");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ2113"); // tuile ligne droite
+		Tile maTileB = Tile.parseTile("Tile_FFFFZZ2113");
 		assertTrue("les deux tuiles parsées à partir du même ID sont considérées différentes", maTileA.isEquivalent(maTileB));
 		
 		maTileA.turnHalf();
 		assertTrue("les deux tuiles (symétriques) sont considérées différentes après rotation 1/2", maTileA.isEquivalent(maTileB));
 		
-		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003"); // tuile courbe
 		maTileB = Tile.parseTile("Tile_FFFFZZ2003");
 		maTileB.turnHalf();
 		assertFalse("les deux tuiles (non symétriques) sont considérées identiques après rotation 1/2", maTileA.isEquivalent(maTileB));
@@ -1466,10 +1487,11 @@ assertTrue(0==maTileA.isReplaceable(Tile.parseTile("Tile_FFFFZZ100203"), additio
 
 	}
 
+	// TODO a faire marcher
 	@Test
 	public void TestUniqueRotations() {
-		Tile maTuileSymetrique = Tile.parseTile("Tile_FFFFZZ2113"),
-			maTuileNonSymetrique = Tile.parseTile("Tile_FFFFZZ2003");
+		Tile maTuileSymetrique = Tile.parseTile("Tile_FFFFZZ2113"), // tuile ligne droite
+			maTuileNonSymetrique = Tile.parseTile("Tile_FFFFZZ2003"); // tuile courbe
 		Tile[] resTabSym = new Tile[4],
 			resTabNonSym = new Tile[4];
 		for(int i = 0; i < 4; i++) {
