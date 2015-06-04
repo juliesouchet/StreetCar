@@ -13,7 +13,7 @@ import main.java.data.Data;
 import main.java.game.ExceptionEndGame;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotEnougthTileInDeck;
+import main.java.game.ExceptionNotEnoughTilesInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
@@ -215,7 +215,7 @@ public class PlayerAutomata implements InterfaceIHM
 					if(i%2 == 0)	player.validate();
 				} catch (RemoteException | ExceptionGameHasNotStarted
 						| ExceptionNotYourTurn | ExceptionForbiddenAction
-						| ExceptionTooManyActions | ExceptionNotEnougthTileInDeck | ExceptionTwoManyTilesToDraw e) {
+						| ExceptionTooManyActions | ExceptionNotEnoughTilesInDeck | ExceptionTwoManyTilesToDraw e) {
 					e.printStackTrace();
 				} catch (ExceptionEndGame e) {
 					//e.printStackTrace();

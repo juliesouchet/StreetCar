@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 import main.java.game.ExceptionEndGame;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotEnougthTileInDeck;
+import main.java.game.ExceptionNotEnoughTilesInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.gui.components.Button;
@@ -76,7 +76,7 @@ public class BottomPlayerPanel extends Panel {
 		} catch (ExceptionNotYourTurn e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ExceptionNotEnougthTileInDeck e1) {
+		} catch (ExceptionNotEnoughTilesInDeck e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionTwoManyTilesToDraw e1) {
