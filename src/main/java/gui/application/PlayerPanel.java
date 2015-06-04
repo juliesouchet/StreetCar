@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
 import main.java.data.Data;
@@ -43,7 +42,6 @@ public class PlayerPanel extends Panel{
 	protected void placePlayerAvatar() {
 		AvatarPanel avatarPanel = new AvatarPanel(Color.BLUE); //TODO: can not use playerColor -> null exception
 		avatarPanel.setBounds(10, 5, 45, 45);
-		avatarPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 		this.add(avatarPanel);
 	}
 	
