@@ -388,7 +388,29 @@ public class Data implements Serializable
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
-// TODO: Enlever les LinkedList
+	/**======================================================
+	 * @return true if this player can still place one of his tile on the board
+	 ======================================================*/
+	public boolean canPlaceTile(String playerName) {
+System.out.print("CanPlaceTile " + playerName + " ? ");
+		for(int i = 0; i < getHandSize(playerName); i++) {
+			Tile t = getHandTile(playerName, i);
+			Tile[] rotations = new Tile[4];
+			for(int j = 0; j < 4; j++)	rotations[j] = new Tile();
+			int nbrRotations = t.getUniqueRotationList(rotations);
+			for(int r = 0; r < nbrRotations; r++) {
+				t.setDirection(Direction.parse(r));
+				for(int x = 1; x < getWidth()-1; x++) {
+					for(int y = 1; y < getHeight()-1; y++) {
+						if(isAcceptableTilePlacement(x, y, t))	{System.out.println("Yes");return true;}
+					}
+				}
+			}
+		}
+		System.out.println("No");
+		return false;
+	}
+	// TODO: Enlever les LinkedList
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
 	 ======================================================== */
@@ -486,9 +508,10 @@ public class Data implements Serializable
 		for(String playerName : this.playerInfoList.keySet())
 		{
 			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
-			
-// TODO si on ne peut plus rien poser (isAcceptableTilePlacement rend tjrs faux)
-// TODO tester les tuiles dans les mains des joueurs
+		}
+		for(String playerName : this.playerInfoList.keySet())
+		{
+			if(canPlaceTile(playerName))	return false;
 		}
 		return true;
 	}
@@ -719,7 +742,7 @@ public class Data implements Serializable
 	/**=============================================================
 	 * @return the number of different actions that may be realized at this step of the game.</br>
 	 * This actions are added to the input tab.</br>
-	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its celle must have been initialized
+	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized
 	 ===============================================================*/
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
 	{

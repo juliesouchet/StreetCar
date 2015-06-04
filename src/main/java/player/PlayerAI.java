@@ -8,8 +8,12 @@ import main.java.automaton.Strongest;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.game.ExceptionEndGame;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -106,8 +110,19 @@ else throw new RuntimeException("Not implemented yet");
 		}
 		else														// fin de tour
 		{
-			try					{super.validate();}
-			catch (Exception e) {e.printStackTrace(); return;}
+			try {
+				super.validate();
+			} catch (ExceptionGameHasNotStarted | ExceptionNotYourTurn
+					| ExceptionForbiddenAction e) {
+				e.printStackTrace();
+			} catch (ExceptionEndGame e) {
+				System.out.println("END GAME");
+				String winner = e.getWinner();
+				if(winner != null)
+					System.out.println("WINNER : " + winner);
+				else
+					System.out.println("NO WINNER");
+			}
 		}
 	}
 	public synchronized void excludePlayer() throws RemoteException
