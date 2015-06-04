@@ -33,7 +33,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Attributes:
 // --------------------------------------------
 	public static final String			gameMessageHeader		= "Street Car application: ";
-	public static int					applicationPort			= 5000;
+	public static int					applicationPort			= 5001;
 	public final static String			applicationProtocol		= "rmi";
 	public final static String			AiDefaultName			= "AI Level ";
 
@@ -175,19 +175,6 @@ System.out.println("Game.setLoginInfo: no change to do");
 			notifyAll = false;
 		}
 		if (notifyAll) this.engine.addAction(data, "notifyAllPlayers");
-
-
-System.out.println("******************************************************");
-System.out.println("Game: Apres setLoginInfo");
-for (LoginInfo li: this.loggedPlayerTable)
-{
-	System.out.println("---------------Player :" + li);
-	
-}
-for (String str: this.data.getPlayerNameList())
-{
-	System.out.println("---------------Player :" + str + ", color : " + this.data.getPlayerColor(str));
-}
 	}
 	/**================================================
 	 * @return Makes a player join the game
@@ -205,7 +192,6 @@ for (String str: this.data.getPlayerNameList())
 	{
 		String	playerName	= player.getPlayerName();
 		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
-System.out.println("iiiiiiiiindex new: " + playerIndex );
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
 		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExpected();
@@ -283,10 +269,17 @@ System.out.println("iiiiiiiiindex new: " + playerIndex );
 	 ===============================================================================*/
 	public synchronized void replaceTwoTiles (String playerName, Tile tile1, Tile tile2, Point position1, Point position2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
-		if (!this.data.isGameStarted())				throw new ExceptionGameHasNotStarted();
+//TODO
+/****		if (!this.data.isGameStarted())				throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))	throw new ExceptionNotYourTurn();
+		if (!this.data.isAcceptableTilePlacement(position1.x, position1.y, t1,
+												 position2.x, position1.y, ))	throw new ExceptionForbiddenAction();
+		if (!this.data.isInPlayerHand(playerName, t))							throw new ExceptionForbiddenAction();
+		if (!this.data.hasRemainingAction(playerName))							throw new ExceptionTooManyActions();
+		if (data.getWinner() != null)											throw new ExceptionPlayerIsBlocked();
+		if (data.isGameBlocked(playerName))										throw new ExceptionGameIsOver();
 		if(data.hasStartedMaidenTravel(playerName))	throw new ExceptionForbiddenAction();
-
+*****/
 		this.engine.addAction(this.data, "placeTile", playerName, position1, tile1, position2, tile2);
 // TODO check all possible things
 	}
