@@ -57,7 +57,7 @@ public class BottomPlayerPanel extends Panel {
 		resetButton = new Button("Reset this turn", null);
 		
 		beginTripButton.setEnabled(false);
-		validateButton.setEnabled(false);
+		//validateButton.setEnabled(false);
 		resetButton.setEnabled(false);
 		
 		validateButton.addAction(this, "validate");
