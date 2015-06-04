@@ -2,16 +2,16 @@ package main.java.gui.board;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
 import main.java.data.Tile;
 import main.java.gui.util.Resources;
-import main.java.util.Direction;
 
 public class TileImage {
 
-	// Static
+	// Private
 	
 	static private Hashtable<String, BufferedImage> tilesHashTable = null;
 	
@@ -19,58 +19,46 @@ public class TileImage {
 		tilesHashTable = new Hashtable<String, BufferedImage>();
 	}
 	
-	// Properties
+	// Public
 	
-	private String tileID;
-	private BufferedImage tileImage;
-	private Direction rotation;
-	
-	// Constructors
-	
-	public TileImage(Tile tile) {
-		this.tileID = tile.getTileID();
-		this.rotation = tile.getTileDirection();
-	}
-	
-	// Getters
-	
-	public BufferedImage getImage() {		
-		if (this.tileImage != null) {
-			return this.tileImage;
-		}
-
-		this.tileImage = tilesHashTable.get(this.tileID);
-		if (this.tileImage != null) {
-			return this.tileImage;
+	public static BufferedImage getImage(Tile tile) {
+		String tileID = tile.getTileID();
+		BufferedImage tileImage = null;
+		
+		tileImage = tilesHashTable.get(tileID);
+		if (tileImage != null) {
+			return tileImage;
 		}
 		
-		this.tileImage = Resources.imageNamed(this.tileID);
-		if (this.tileImage != null) { 
-			tilesHashTable.put(this.tileID, this.tileImage);
-			return this.tileImage;
+		tileImage = Resources.imageNamed(tileID);
+		if (tileImage != null) { 
+			tilesHashTable.put(tileID, tileImage);
+			return tileImage;
 		}
-		return this.tileImage;
-	}	
-	
-	public Direction getRotation() {
-		return this.rotation;
+		
+		return tileImage;
 	}
 	
-	public String getTileID() {
-		return this.tileID;
+	public static BufferedImage getRotatedImage(Tile tile) {
+		BufferedImage image = TileImage.getImage(tile);
+		
+		AffineTransform at = new AffineTransform();
+		at.translate(image.getWidth() / 2, image.getHeight() / 2);
+		at.rotate(Math.toRadians(tile.getTileDirection().getVal()*90));
+		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
+		
+		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+	    return op.filter(image, null);
 	}
 	
-	// Drawings
-	
-	public void drawInGraphics(Graphics2D g2d, int x, int y, int width) {
-		BufferedImage image = this.getImage();
+	public static void drawTile(Graphics2D g2d, Tile tile, int x, int y, int width) {
+		BufferedImage image = TileImage.getImage(tile);
 		
 		AffineTransform at = new AffineTransform();
 		at.translate(x + width / 2, y + width / 2);
-		at.rotate(Math.toRadians(this.getRotation().getVal()*90));
+		at.rotate(Math.toRadians(tile.getTileDirection().getVal()*90));
 		at.scale((double)width / (double)image.getWidth(),
 				 (double)width / (double)image.getHeight());
-
 		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
 		
 		g2d.drawImage(image, at, null);
