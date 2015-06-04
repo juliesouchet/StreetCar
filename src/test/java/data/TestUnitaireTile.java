@@ -615,7 +615,7 @@ assertTrue(0==maTileA.isReplaceable(Tile.parseTile("Tile_FFFFZZ100203"), additio
 		assertTrue(maTileA.getBuildingName()==null);
 		
 		maTileA = Tile.parseTile("Tile_FTFFAZ01");
-		assertFalse(maTileA.getBuildingName()==null);//TODO assertTrue que ca renvoi exactement la chaine voulue
+		assertTrue(maTileA.getBuildingName().equals("A"));
 
 		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
 		assertTrue(maTileA.getBuildingName()==null);
@@ -1451,5 +1451,13 @@ assertTrue(0==maTileA.isReplaceable(Tile.parseTile("Tile_FFFFZZ100203"), additio
 
 	}
 
+	@Test
+	public void TestUniqueRotations() {
+		Tile maTuileSymetrique = Tile.parseTile("Tile_FFFFZZ2113"),
+			maTuileNonSymetrique = Tile.parseTile("Tile_FFFFZZ2003");
+		
+		Tile[] resTabSym = new Tile[4],
+			resTabNonSym = new Tile[4];
+	}
 
 }

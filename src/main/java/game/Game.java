@@ -272,7 +272,7 @@ System.out.println("iiiiiiiiindex new: " + playerIndex );
 		if (!this.data.isInPlayerHand(playerName, t))							throw new ExceptionForbiddenAction();
 		if (!this.data.hasRemainingAction(playerName))							throw new ExceptionTooManyActions();
 		if (data.getWinner() != null)											throw new ExceptionPlayerIsBlocked();
-		if (data.isGameBlocked(playerName))										throw new ExceptionGameIsOver();
+		if (data.isGameBlocked())												throw new ExceptionGameIsOver();
 		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
 		this.engine.addAction(this.data, "placeTile", playerName, position, t);

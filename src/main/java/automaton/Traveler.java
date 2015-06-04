@@ -23,7 +23,6 @@ public class Traveler extends PlayerAutomaton {
 	}
 	@Override
 	public Action makeChoice(Data currentConfig) {
-// TODO makeChoice : doit rendre une action ou un couple d'action ?
 		Action res = null;
 		Random r = new Random();
 		int i, j;
@@ -71,7 +70,7 @@ System.out.println("trackCompleted = " + trackCompleted);
 				
 				if(currentConfig.hasDoneRoundFirstAction(getName())) {
 					// ends current turn and starts traveling next turn
-					//return Action.newStartTripNextTurnAction(); TODO action 2 en 1 ?
+					//return Action.newStartTripNextTurnAction(); TODO Action.BUILD_AND_START_TRIP_NEXT_TURN
 				}
 			}
 			
@@ -111,15 +110,15 @@ System.out.println("trackCompleted = " + trackCompleted);
 	 * using only rail tracks already present on the board
 	 * @param checkpoints
 	 * @param data
-	 * @return
+	 * @return a list that concatenates the shortest paths from one checkpoint to another
 	 */
 	public LinkedList<Point> getShortestItinerary(LinkedList<Point> checkpoints, Data data)
 	{
 		 LinkedList<Point> result = new LinkedList<Point>();
 		 Point origin, destination;
 		 ListIterator<Point> iterator = checkpoints.listIterator();
-		// if(!iterator.hasNext()) TODO traiter le cas : plus de checkpoints
-			// throw new RuntimeException("No more checkpoints");
+		if(!iterator.hasNext())
+			 throw new RuntimeException("Traveler " + name + " is already at his destination");
 		 
 		 destination = iterator.next();
 		 while(iterator.hasNext()) {
