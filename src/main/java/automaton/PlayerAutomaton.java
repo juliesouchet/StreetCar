@@ -17,14 +17,15 @@ import main.java.data.Data;
  */
 public abstract class PlayerAutomaton {
 	public static final int dumbestLvl = 1,
-							travelerLvl = 2;
+							travelerLvl = 2,
+							strongestLvl = 3;
 	protected String name;
 	
 	/**
 	 * Donne la décision d'action faite par l'automate
 	 * @throws ExceptionUnknownNodeType 
 	 */
-	public abstract Action makeChoice(Data currentConfig) throws ExceptionUnknownNodeType;
+	public abstract Action makeChoice(Data currentConfig);
 
 	public String getName() {
 		return name;
