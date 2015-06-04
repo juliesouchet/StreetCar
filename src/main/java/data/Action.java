@@ -32,11 +32,12 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 	public Point[]	tramwayMovement							= initMovementTab();			// Move Attributes
 	public int		ptrTramwayMovement						= -1;							//		Index of the last non null point
+	public Point	startTerminus							= null;
 
 // -----------------------------------------------------
 // Builder
 // -----------------------------------------------------
-	public static Action newMoveAction(Point[] path, int pathSize)
+	public static Action newMoveAction(Point[] path, int pathSize, Point startTerminus)
 	{
 		Action res = new Action();
 
@@ -47,6 +48,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 			res.tramwayMovement[i].x = path[i].x;
 			res.tramwayMovement[i].y = path[i].y;
 		}
+		res.startTerminus = (startTerminus == null) ? null : new Point(startTerminus);
 		return res;
 	}
 
@@ -145,25 +147,6 @@ public class Action implements Serializable, CloneableInterface<Action>
 				(this.action == BUILD_AND_START_TRIP_NEXT_TURN));
 	}
 
-	/**
-	 * @return
-	 * Vrai si et seulement si l'action est de type construction simple.
-	 * Faux sinon.
-	 */
-	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE || this.action == BUILD_AND_START_TRIP_NEXT_TURN);}
-	
-	/**
-	 * @return
-	 * Vrai si et seulement si l'action est de type construction simple de deux tuiles.
-	 * Faux sinon.
-	 */
-	public boolean isTwoSimpleConstructing(){return  (this.action == TWO_BUILD_SIMPLE);}
-
-	/**
-	 * @return
-	 * Vrai si l'action est de type déplacement du tramway (déjà débuté ou pour le tour suivant)
-	 */
-	public boolean isMoving()				{return ((this.action == MOVE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN));}
 
 	//Add by Ulysse
 	public boolean isNONE(){
@@ -231,6 +214,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 			this.tramwayMovement[i].x = src.tramwayMovement[i].x;
 			this.tramwayMovement[i].y = src.tramwayMovement[i].y;
 		}
+		this.startTerminus = (src.startTerminus == null) ? null : new Point(src.startTerminus);
+
 	}
 	/**===========================================================
 	 * Set the current Action to the given simple building action, and start trip nest turn
@@ -276,6 +261,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 			this.tramwayMovement[i].x = path[i].x;
 			this.tramwayMovement[i].x = path[i].y;
 		}
+		this.startTerminus			= (startTerminus == null) ? null : new Point(startTerminus);
 	}
 
 // -----------------------------------------------------
@@ -303,12 +289,16 @@ public class Action implements Serializable, CloneableInterface<Action>
 		}
 		TraceDebugData.debugActionEquals("\t otherAction et this are instanciated : CONTINUE \n");
 
-		if(this.isMoving() && otherAction.isMoving()){
+		if(this.isMOVE() && otherAction.isMOVE()){
 			TraceDebugData.debugActionEquals("\t Both isMoving(): CONTINUE \n");
 			if (this.ptrTramwayMovement!=otherAction.ptrTramwayMovement){
 				TraceDebugData.debugActionEquals("\t ptrTramwayMovement different: return FALSE \n");
 				return false;
 			}
+		if (!this.startTerminus.equals(otherAction.ptrTramwayMovement)){
+			TraceDebugData.debugActionEquals("\t startTerminus different: return FALSE \n");
+			return false;
+		}
 			TraceDebugData.debugActionEquals("\t ptrTramwayMovement are equals: return CONTINUE \n");
 			for (int i=0; i<= this.ptrTramwayMovement;i++){
 				if(!(this.tramwayMovement[i].equals(otherAction.tramwayMovement[i]))){
@@ -319,7 +309,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 			return true;
 		}
 
-		if(this.isSimpleConstructing() && otherAction.isSimpleConstructing()){
+		if(this.isBUILD_SIMPLE() && otherAction.isBUILD_SIMPLE()){
 			if(!this.positionTile1.equals(otherAction.positionTile1)){
 				return false;
 			}
@@ -361,6 +351,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.tile1				.copy(this.tile1);
 		res.tile2				.copy(this.tile2);
 		res.ptrTramwayMovement	= this.ptrTramwayMovement;
+		res.startTerminus		= (this.startTerminus == null) ? null : new Point(this.startTerminus);
 		for (int i=0; i<=this.ptrTramwayMovement; i++)
 		{
 			res.tramwayMovement[i].x = this.tramwayMovement[i].x;

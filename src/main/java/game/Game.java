@@ -8,8 +8,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Random;
 
 import main.java.data.Data;
@@ -328,27 +326,27 @@ for (String str: this.data.getPlayerNameList())
 	 * It must use a pre-existing track on the board, cannot go backwards, 
 	 * and cannot be longer than the maximum allowed speed.
 	 =============================================================================*/
-	public synchronized void moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	public synchronized void moveTram (String playerName, Point[] tramMovement, int ptrTramwayMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))			throw new ExceptionNotYourTurn();
 
 		if(!data.hasStartedMaidenTravel(playerName))		throw new ExceptionForbiddenAction();
 		if(!data.isStartOfTurn(playerName))					throw new ExceptionForbiddenAction();
-		if(tramMovement.size() > data.getMaximumSpeed())	throw new ExceptionForbiddenAction();
-		if(tramMovement.size() < Data.minSpeed)				throw new ExceptionForbiddenAction();
-		if(tramMovement.size() > Data.maxSpeed)				throw new ExceptionForbiddenAction();
+		if(ptrTramwayMovement >= data.getMaximumSpeed())	throw new ExceptionForbiddenAction();
+		if(ptrTramwayMovement < Data.minSpeed-1)			throw new ExceptionForbiddenAction();
+		if(ptrTramwayMovement >= Data.maxSpeed)				throw new ExceptionForbiddenAction();
 
 		Point currentPosition = data.getTramPosition(playerName);
+		Point nextPosition;
 
-		if(!data.pathExistsBetween(currentPosition, tramMovement.getLast())) throw new ExceptionForbiddenAction();
-		if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
+		if(!data.pathExistsBetween(currentPosition, tramMovement[ptrTramwayMovement])) throw new ExceptionForbiddenAction();
+		if(data.getPreviousTramPosition(playerName).equals(tramMovement[0])) throw new ExceptionForbiddenAction();
 
-		Iterator<Point> tramPathIterator = tramMovement.iterator();
-		Point previousPosition = null, nextPosition;
-		while(tramPathIterator.hasNext())
+		Point previousPosition = null;
+		for (int ptr=0; ptr<= ptrTramwayMovement; ptr++)
 		{
-			nextPosition = tramPathIterator.next();
+			nextPosition = tramMovement[ptr];
 			if(previousPosition != null)
 			{
 				if(previousPosition.equals(nextPosition)) throw new ExceptionForbiddenAction();
@@ -356,9 +354,8 @@ for (String str: this.data.getPlayerNameList())
 			if(!data.getAccessibleNeighborsPositions(currentPosition.x, currentPosition.y).contains(nextPosition))  throw new ExceptionForbiddenAction();
 			if(data.getTile(currentPosition.x, currentPosition.y).isStop())
 			{
-				if(tramPathIterator.hasNext()) throw new ExceptionForbiddenAction();
+				if(ptr != ptrTramwayMovement) throw new ExceptionForbiddenAction();
 			}
-			
 			previousPosition = currentPosition;
 			currentPosition = nextPosition;
 		}

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.LoginInfo;
@@ -120,9 +119,9 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 	{
 		game.onQuitGame(playerName);
 	}
-	public synchronized void moveTram(LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	public synchronized void moveTram(Point[] tramMovement, int ptrTramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
-		game.moveTram(playerName, tramMovement);
+		game.moveTram(playerName, tramMovement, ptrTramMovement);
 	}
 
 	public synchronized void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand 

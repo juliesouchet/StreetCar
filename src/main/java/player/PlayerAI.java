@@ -66,22 +66,27 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super.gameHasChanged(data);
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
-		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());return;}
-		if (data.isGameBlocked())			{System.out.println("The game is blocked"); return;}
+		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());	return;}
+		if (data.isGameBlocked(playerName))	{System.out.println("The game is blocked");					return;}
 
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
-			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName))
+			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName) )/////////// TODO A ajouter apres changement julie|| !data.canPlaceTile(playerName))
 			{
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
-	
-// TODO: check action type, do others action types !!
+
 				try
 				{
-					if		(a.isSimpleConstructing())		super.placeTile(a.tile1, a.positionTile1);
-					else if (a.isTwoSimpleConstructing())	{super.placeTile(a.tile1, a.positionTile1); super.placeTile(a.tile2, a.positionTile2);}
-else throw new RuntimeException("Not implemented yet");
-					
+					if ((a.isBUILD_SIMPLE()) || (a.isBUILD_AND_START_TRIP_NEXT_TURN()))		super.placeTile(a.tile1, a.positionTile1);
+					else if (a.isTWO_BUILD_SIMPLE())										{super.placeTile(a.tile1, a.positionTile1); super.placeTile(a.tile2, a.positionTile2);}
+					else if (a.isBUILD_DOUBLE())											super.replaceTwoTiles(a.tile1, a.tile2, a.positionTile1, a.positionTile2);
+					else if (a.isMOVE())
+					{
+						if (a.startTerminus != null)	super.startMaidenTravel(playerName, a.startTerminus);
+/////						super.moveTram(a.tramwayMovement, ptrTramwayMovement);
+					}
+else throw new RuntimeException("??????");
+
 				}
 				catch (Exception e) {e.printStackTrace(); return;}
 			}

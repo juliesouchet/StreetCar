@@ -72,41 +72,8 @@ public class Engine implements Runnable
 			}
 		}
 	}
-	/** @return add an event to the engine action queue*/
-	public void addAction(Data data, String function)
-	{
-		addAction(new EngineAction(null, null, data, function, null, null, null, -1, null, null, null, null));
-	}
-	/** @return add an event to the engine action queue*/
-	public void addAction(Data data, String function, PlayerInterface pi)
-	{
-		addAction(new EngineAction(pi, null, data, function, null, null, null, -1, null, null, null, null));
-	}
-	/** @return add an event to the engine action queue*/
-	public void addAction(Data data, String function, String playerName)
-	{
-		addAction(new EngineAction(null, playerName, data, function, null, null, null, -1, null, null, null, null));
-	}
-	/** @return add an event to the engine action queue*/
-	public void addAction(Data data, String function, String playerName, String chosenPlayerName, Tile t)
-	{
-		addAction(new EngineAction(null, playerName, data, function, null, t, null, -1, null, null, null, chosenPlayerName));
-	}
-	/** @return add an event to the engine action queue*/
-	public void addAction(Data data, String function, String playerName, Color playerColor, boolean isHost)
-	{
-		addAction(new EngineAction(null, playerName, data, function, null, null, null, -1, playerColor, null, isHost, null));
-	}
-	/** @return add an event to the engine action queue*/
-	public void addAction(Data data, String function, String playerName, boolean isHuman, boolean isHost, PlayerInterface pi)
-	{
-		addAction(new EngineAction(pi, playerName, data, function, null, null, null, null, null, isHost, isHuman, null));
-	}
-	/** @return add an event to the engine action queue*/
-	public void addAction(String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, int nbrCardsToDraw)
-	{
-		addAction(new EngineAction(null, playerName, data, function, position, tile, tramMovement, nbrCardsToDraw, null, false, null, null));
-	}
+	
+	
 	/** @return add an event to the engine action queue*/
 	public void addAction(EngineAction ea)
 	{
@@ -235,10 +202,11 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void moveTram() throws RemoteException
 	{
-		Data	data		= this.toExecute.data;
-		String playerName = toExecute.playerName;
-		LinkedList<Point> tramMovement = toExecute.tramMovement;
-		data.setTramPosition(playerName, tramMovement.getLast());
+		Data	data			= this.toExecute.data;
+		String	playerName		= this.toExecute.playerName;
+		Point[]	tramMovement	= this.toExecute.tramMovement;
+		int		ptrTramMovement	= this.toExecute.ptrTramMovement;
+//TODO		data.setTramPosition(playerName, tramMovement.getLast());
 
 		Point[] terminus = data.getPlayerTerminusPosition(playerName);
 		Point position = data.getTramPosition(playerName);
@@ -316,14 +284,15 @@ public class Engine implements Runnable
 		public Point			secondPosition;
 		public Tile				tile;
 		public Tile				secondTile;
-		public LinkedList<Point>tramMovement;
+		public Point[]			tramMovement;
+		public Integer			ptrTramMovement;
 		public Integer			nbrCardsToDraw; // TODO val discuss this with riyane
 		public String 			chosenPlayer;
 		public Boolean			isHost;
 		public Boolean			isHuman;
 
 		// Builder
-		public EngineAction (PlayerInterface pi, String playerName, Data data, String function, Point position, Tile tile, LinkedList<Point> tramMovement, Integer nbrCardsToDraw, Color playerColor, Boolean isHost, Boolean isHuman, String chosenPlayer)
+		public EngineAction (PlayerInterface pi, String playerName, Data data, String function, Point position, Tile tile, Point[] tramMovement, Integer ptrTramMovement, Integer nbrCardsToDraw, Color playerColor, Boolean isHost, Boolean isHuman, String chosenPlayer)
 		{
 			this.player			= pi;
 			this.playerName		= playerName;
@@ -332,6 +301,7 @@ public class Engine implements Runnable
 			this.position		= position;
 			this.tile			= tile;
 			this.tramMovement	= tramMovement;
+			this.ptrTramMovement= ptrTramMovement;
 			this.nbrCardsToDraw	= nbrCardsToDraw;
 			this.playerColor	= playerColor;
 			this.chosenPlayer	= chosenPlayer;
@@ -340,7 +310,7 @@ public class Engine implements Runnable
 		}
 		public EngineAction(String playerName, Data data, String Function)
 		{
-			this(null, playerName, data, Function, null, null, null, -1, null, false, null, null);
+			this(null, playerName, data, Function, null, null, null, null, -1, null, false, null, null);
 		}
 	}
 }
