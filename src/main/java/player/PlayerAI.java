@@ -66,8 +66,8 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super.gameHasChanged(data);
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
-		if (data.getWinner() != null)		return;
-		if (data.isGameBlocked())			return;
+		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());return;}
+		if (data.isGameBlocked())			{System.out.println("The game is blocked"); return;}
 
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
