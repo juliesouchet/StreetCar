@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import main.java.data.Data;
 import main.java.data.Tile;
@@ -15,11 +16,7 @@ import main.java.player.PlayerIHM;
 @SuppressWarnings("serial")
 public class BottomPlayerCardsPanel extends Panel{
 	
-	TilePanel tilePanel1;
-	TilePanel tilePanel2;
-	TilePanel tilePanel3;
-	TilePanel tilePanel4;
-	TilePanel tilePanel5;
+	ArrayList<TilePanel> tilePanels = new ArrayList<TilePanel>();
 	Color playerColor;
 	
 	public BottomPlayerCardsPanel() {
@@ -33,10 +30,8 @@ public class BottomPlayerCardsPanel extends Panel{
 	
 	protected void placePlayerName() {
 		PlayerIHM player  = StreetCar.player;
-		Data data = player.getGameData();
-		String playerName;
 		try {
-			playerName = player.getPlayerName();
+			String playerName = player.getPlayerName();
 			Label playerNameLabel = new Label(playerName);
 			playerNameLabel.setBounds(80, 25, 150, 30);
 			this.add(playerNameLabel);
@@ -60,44 +55,19 @@ public class BottomPlayerCardsPanel extends Panel{
 	protected void placeTiles() {
 		PlayerIHM player  = StreetCar.player;
 		Data data = player.getGameData();
-		
 		try {
-			tilePanel1 = new TilePanel(data.getHandTile(player.getPlayerName(), 0));
+			String playerName = player.getPlayerName();
+			for (int i = 0; i < 5; i++) {
+				Tile tile = data.getHandTile(playerName, i);
+				TilePanel tilePanel = new TilePanel(tile);
+				tilePanel.setEditable(true);
+				tilePanel.setDraggable(true);
+				tilePanel.setBounds(20 + 60 * i, 80, 50, 50);
+				this.add(tilePanel);
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		try {
-			tilePanel2 = new TilePanel(data.getHandTile(player.getPlayerName(), 1));
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		try {
-			tilePanel3 = new TilePanel(data.getHandTile(player.getPlayerName(), 2));
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		try {
-			tilePanel4 = new TilePanel(data.getHandTile(player.getPlayerName(), 3));
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		try {
-			tilePanel5 = new TilePanel(data.getHandTile(player.getPlayerName(), 4));
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		
-		tilePanel1.setBounds(20, 80, 50, 50);
-		tilePanel2.setBounds(80, 80, 50, 50);
-		tilePanel3.setBounds(140, 80, 50, 50);
-		tilePanel4.setBounds(200, 80, 50, 50);
-		tilePanel5.setBounds(260, 80, 50, 50);
-		
-		this.add(tilePanel1);
-		this.add(tilePanel2);
-		this.add(tilePanel3);
-		this.add(tilePanel4);
-		this.add(tilePanel5);
 	}
 	
 	protected void placeObjectives() {

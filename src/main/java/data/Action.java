@@ -23,7 +23,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public static final int BUILD_DOUBLE					= 3;
 	public static final int BUILD_AND_START_TRIP_NEXT_TURN	= 4;
 
-	public int		action;
+	public int		action = NONE;
 
 	public Point	positionTile1							= new Point(-1, -1);			// Build Attributes
 	public Point	positionTile2							= new Point(-1, -1);
@@ -41,6 +41,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		Action res = new Action();
 
 		res.action = MOVE;
+		res.ptrTramwayMovement = pathSize;
 		for (int i=0; i<pathSize; i++)
 		{
 			res.tramwayMovement[i].x = path[i].x;
@@ -48,6 +49,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		}
 		return res;
 	}
+
 	public static Action newBuildSimpleAction (int x, int y, Tile t)
 	{
 		Action res = new Action();
@@ -65,36 +67,90 @@ public class Action implements Serializable, CloneableInterface<Action>
 		return newBuildSimpleAction(position.x, position.y, t);
 	}
 
+	
+	public static Action newBuildTwoSimpleAction (Point position1, Tile tile1, Point position2, Tile tile2){
+		Action res = new Action();
+
+		res.action = TWO_BUILD_SIMPLE;
+		res.tile1.copy(tile1);
+		res.tile2.copy(tile2);
+		
+		res.positionTile1.x	= position1.x;
+		res.positionTile1.y	= position1.y;
+		res.positionTile1.x	= position2.x;
+		res.positionTile1.y	= position2.y;
+
+		return res;		
+	}
+	    
+	public static Action newBuildDoubleAction (Point position1, Tile tile1, Point position2, Tile tile2){
+		Action res = new Action();
+
+		res.action = BUILD_DOUBLE;
+		res.tile1.copy(tile1);
+		res.tile2.copy(tile2);
+		
+		res.positionTile1.x	= position1.x;
+		res.positionTile1.y	= position1.y;
+		res.positionTile2.x	= position2.x;
+		res.positionTile2.y	= position2.y;
+
+		return res;		
+	}
+
+	/**
+	 * Actin de poser une unique tuile et dire qu'on commence notre voyage au prochain tour.
+	 * @param position De la tuile a placer.
+	 * @param t tuile a placer.
+	 * @return Une instance de la classe action.
+	 */
+	public static Action newStartTripNextTurnAction (Point position, Tile t)	{
+		return newStartTripNextTurnAction(position.x, position.y, t);
+	}
+
+	public static Action newStartTripNextTurnAction (int x, int y, Tile t)	{
+		Action res = new Action();
+
+		res.action			= BUILD_AND_START_TRIP_NEXT_TURN;
+		res.tile1			.copy(t);
+		res.positionTile1.x	= x;
+		res.positionTile1.y	= y;
+
+		return res;
+	}
+
 // -----------------------------------------------------
 // Getter
 // -----------------------------------------------------
 	/**===================================================
-	 * @return true if the action is a simple action
-	 =====================================================*/
-	public boolean isOnTurnAction()
-	{
-		return (this.action == BUILD_SIMPLE);
-	}
-	/**===================================================
 	 * @return true if the action is a double action (you can play one only of this action in by round)
 	 =====================================================*/
-	public boolean isTwoTurnAction()
+	public boolean isTwoStepAction()
 	{
-		return ((this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN));
+		return ((this.action == TWO_BUILD_SIMPLE)				||
+				(this.action == BUILD_DOUBLE)					||
+				(this.action == BUILD_AND_START_TRIP_NEXT_TURN) ||
+				(this.action == MOVE));
 	}
 	/**
 	 * @return
 	 * Vrai si l'action est de type construction (simple ou double).
 	 * Faux sinon.
 	 */
-	public boolean isConstructing()			{return ((this.action == BUILD_SIMPLE) || (this.action == TWO_BUILD_SIMPLE) || (this.action == BUILD_DOUBLE));}
+	public boolean isConstructing()
+	{
+		return ((this.action == BUILD_SIMPLE)		||
+				(this.action == TWO_BUILD_SIMPLE)	||
+				(this.action == BUILD_DOUBLE)		||
+				(this.action == BUILD_AND_START_TRIP_NEXT_TURN));
+	}
 
 	/**
 	 * @return
 	 * Vrai si et seulement si l'action est de type construction simple.
 	 * Faux sinon.
 	 */
-	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE);}
+	public boolean isSimpleConstructing()	{return  (this.action == BUILD_SIMPLE || this.action == BUILD_AND_START_TRIP_NEXT_TURN);}
 	
 	/**
 	 * @return
@@ -109,6 +165,30 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 */
 	public boolean isMoving()				{return ((this.action == MOVE) || (this.action == BUILD_AND_START_TRIP_NEXT_TURN));}
 
+	//Add by Ulysse
+	public boolean isNONE(){
+		return this.action==NONE;
+	}
+	public boolean isMOVE(){
+		return this.action==MOVE;
+	}
+	public boolean isBUILD_SIMPLE(){
+		return this.action==BUILD_SIMPLE;
+	}
+	public boolean isTWO_BUILD_SIMPLE(){
+		return this.action==TWO_BUILD_SIMPLE;
+	}
+	public boolean isBUILD_DOUBLE(){
+		return this.action==BUILD_DOUBLE;
+	}
+	public boolean isBUILD_AND_START_TRIP_NEXT_TURN(){
+		return this.action == BUILD_AND_START_TRIP_NEXT_TURN;
+	}
+	
+	
+	
+	
+	
 	@Override
 	public String	toString()
 	{
@@ -202,11 +282,11 @@ public class Action implements Serializable, CloneableInterface<Action>
 // Local methods
 // -----------------------------------------------------
 	/**
-	 * Test de l'égalité aec une autre instance d'Action
+	 * Test de l'égalité avec une autre instance d'Action
 	 * @param otherAction
 	 * L'instance à comparer
 	 * @return
-	 * Vrai si les 2 actions représentent des actions équivalentes sur le plateu de jeu
+	 * Vrai si les 2 actions représentent des actions équivalentes sur le plateau de jeu
 	 * (c'est à dire: par exemple ne prend pas compte de l'attribut tile2 pour une pose simple...)
 	 */
 	public boolean equals(Action otherAction)

@@ -24,6 +24,10 @@ import main.java.util.Util;
 
 
 
+// TODO: quand on annule une action faire this.winner = null;
+// TODO: dire a l'ihm: apres chaque refresh, verifier si getWinner != null et si isGameBlocked
+
+
 public class Data implements Serializable
 {
 // --------------------------------------------
@@ -145,6 +149,37 @@ public class Data implements Serializable
 // Setter:
 // --------------------------------------------
 	
+	
+	//TODO ajouté par Ulysse
+	public void doAction(Action action){
+		if (action.isMOVE()){
+			this.setTramPosition(this.getPlayerTurn(), action.tramwayMovement[action.ptrTramwayMovement]); //TODO ptrTramwaymovement ou -1 ?
+			return;
+		}
+		if (action.isBUILD_SIMPLE()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+			return;
+		}
+		if (action.isTWO_BUILD_SIMPLE()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+			this.setTile(action.positionTile2.x, action.positionTile2.y, action.tile2);
+			return;
+		}
+		if (action.isBUILD_DOUBLE()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+			this.setTile(action.positionTile2.x, action.positionTile2.y, action.tile2);
+			return;
+		}
+		if (action.isBUILD_AND_START_TRIP_NEXT_TURN()){
+			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+			this.startMaidenTravel(this.getPlayerTurn());
+			return;
+		}
+
+	}
+	
+	
+	
 	public void setPreviousTramPosition(String playerName, Point newPosition) { playerInfoList.get(playerName).previousTramPosition = newPosition; }
 	
 	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; } // TODO rename this method
@@ -171,9 +206,9 @@ public class Data implements Serializable
 
 		if (!this.remainingColors.contains(playerColor)) throw new RuntimeException("Used color");
 
-		pi.color = new Color(playerColor.getRGB());
-		this.remainingColors.add(pi.color);
 		this.remainingColors.remove(playerColor);
+		this.remainingColors.add(pi.color);
+		pi.color = new Color(playerColor.getRGB());
 	}
 	/**================================================
 	 * @return Remove a player from the present game
@@ -284,6 +319,7 @@ public class Data implements Serializable
 	public void startMaidenTravel(String playerName)
 	{
 		playerInfoList.get(playerName).startedMaidenTravel = true;
+// TODO: ajouter une action a l'historique
 	}
 	/**================================================
 	 * @return The player moves his streetcar
@@ -295,6 +331,7 @@ public class Data implements Serializable
 		pi.tramPosition = newPosition;
 		if (newPosition.equals(pi.endTerminus[0]))	this.winner = new String(playerName);
 		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
+// TODO: ajouter une action a l'historique
 	}
 // TODO: Enlever les LinkedList
 	/**==========================================================================
@@ -319,7 +356,10 @@ public class Data implements Serializable
 	 *  @return  the current position of this player's streetcar 
 	 * (or null if he hasn't started yet his maiden travel)
 	 * ============================================================= */
-	public Point	getTramPosition(String playerName)							{return new Point(playerInfoList.get(playerName).tramPosition);}
+	public Point	getTramPosition(String playerName)
+	{
+		return new Point(playerInfoList.get(playerName).tramPosition);
+	}
 	/**=============================================================
 	 * @return true if this terminus belongs to that player
 	 * ============================================================= */
@@ -348,11 +388,33 @@ public class Data implements Serializable
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
-// TODO: Enlever les LinkedList
+	/**======================================================
+	 * @return true if this player can still place one of his tile on the board
+	 ======================================================*/
+	public boolean canPlaceTile(String playerName) {
+System.out.print("CanPlaceTile " + playerName + " ? ");
+		for(int i = 0; i < getHandSize(playerName); i++) {
+			Tile t = getHandTile(playerName, i);
+			Tile[] rotations = new Tile[4];
+			for(int j = 0; j < 4; j++)	rotations[j] = new Tile();
+			int nbrRotations = t.getUniqueRotationList(rotations);
+			for(int r = 0; r < nbrRotations; r++) {
+				t.setDirection(Direction.parse(r));
+				for(int x = 1; x < getWidth()-1; x++) {
+					for(int y = 1; y < getHeight()-1; y++) {
+						if(isAcceptableTilePlacement(x, y, t))	{System.out.println("Yes");return true;}
+					}
+				}
+			}
+		}
+		System.out.println("No");
+		return false;
+	}
+	// TODO: Enlever les LinkedList
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
 	 ======================================================== */
-	public boolean				hasRemainingAction(String playerName)
+	public boolean hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
 		LinkedList<Action> lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
@@ -411,7 +473,6 @@ public class Data implements Serializable
 // --------------------------------------------
 // Getter relative to game:
 // --------------------------------------------
-	public String				getWinner()										{return this.winner;}
 	public int					getNbrRemainingDeckTile()						{return this.deck.getNbrRemainingDeckTile();} // ajouté par Julie
 	public String				getGameName()									{return new String(this.gameName);}
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
@@ -436,6 +497,24 @@ public class Data implements Serializable
 	public boolean				isEnougthTileInDeck(int nbrTile)				{return (this.deck.getNbrRemainingDeckTile() >= nbrTile);}
 	public boolean				isGameReadyToStart()							{return (this.playerInfoList.size() >= minNbrPlayer);}
 	public boolean				isGameStarted()									{return this.playerOrder != null;}
+	public LinkedList<Color>	getRemainingColors()							{return ((new Copier<Color>()).copyList(this.remainingColors));}
+	public String				getWinner()										{return this.winner;}
+	/**=======================================================================
+	 * @return true if all the tiles have been placed but no player can win
+	 ========================================================================= */
+	public boolean isGameBlocked()
+	{
+		if(!isEmptyDeck()) return false;
+		for(String playerName : this.playerInfoList.keySet())
+		{
+			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
+		}
+		for(String playerName : this.playerInfoList.keySet())
+		{
+			if(canPlaceTile(playerName))	return false;
+		}
+		return true;
+	}
 	public boolean isWithinnBoard(int x, int y)
 	{
 		if ((x < 0) || (x >= getWidth()))	return false;
@@ -451,20 +530,6 @@ public class Data implements Serializable
 		if ((x == 0) || (x == getWidth()-1))	return true;
 		if ((y == 0) || (y == getHeight()-1))	return true;
 		return false;
-	}
-	/**=======================================================================
-	 * @return true if all the tiles have been placed but no player can win
-	 ========================================================================= */
-	public boolean isGameBlocked()
-	{
-		if(!isEmptyDeck()) return false;
-		for(String playerName : this.playerInfoList.keySet())
-		{
-			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
-// TODO si on ne peut plus rien poser (isAcceptableTilePlacement rend tjrs faux)
-// TODO tester les tuiles dans les mains des joueurs
-		}
-		return true;
 	}
 	/**===============================================================
 	 * @return if the deposit of the tile t on the board at the position (x, y) is possible
@@ -677,7 +742,7 @@ public class Data implements Serializable
 	/**=============================================================
 	 * @return the number of different actions that may be realized at this step of the game.</br>
 	 * This actions are added to the input tab.</br>
-	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its celle must have been initialized
+	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized
 	 ===============================================================*/
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
 	{
@@ -722,7 +787,7 @@ public class Data implements Serializable
 						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;	//		Case player may start maiden travel next turn
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
-						if (this.isTrackCompleted(playerName))			//TODO************************** Peut etre evite en ajoutant un coup inutile
+						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
 						{
 							resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
 							resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
@@ -961,6 +1026,7 @@ public String[][]remainingBuildingInLineSave;
 			this.hand					= Hand.initialHand.getClone();
 			i 							= rnd.nextInt(remainingColors.size());
 			this.color					= remainingColors.get(i);
+			remainingColors.remove(i);
 			i 							= rnd.nextInt(remainingLine.size());
 			this.line					= remainingLine.get(i);
 			remainingLine.remove(i);

@@ -56,7 +56,7 @@ public class Evaluator {
 	
 	
 	@SuppressWarnings("unused")
-	private static boolean localGameSimulation(String[] playerNameList, Data data, String playerName, int aiLvl) {
+	private static boolean localGameSimulation(String[] playerNameList, Data data, String playerName, int aiLvl) throws ExceptionUnknownNodeType {
 		PlayerAutomaton[] automatonList = new PlayerAutomaton[playerNameList.length];
 		
 		// Initializing the automata

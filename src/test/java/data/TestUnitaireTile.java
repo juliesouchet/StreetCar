@@ -1,8 +1,7 @@
-package test.java.game;
+package test.java.data;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import main.java.data.Tile;
 import main.java.data.Tile.Path;
 import main.java.util.Direction;
@@ -89,12 +88,66 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testGetTileID() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		assertTrue(maTileA.getTileID().equals("Tile_FFFFZZ99"));
+		maTileA = Tile.parseTile("Tile_TFFFZZ06121323");
+		assertTrue(maTileA.getTileID().equals("Tile_TFFFZZ06121323"));
+		maTileA.turnLeft();
+		assertTrue(maTileA.getTileID().equals("Tile_TFFFZZ06121323"));
+		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
+		assertTrue(maTileA.getTileID().equals("Tile_TFFFZZ0401122303"));
 	}
 
 	@Test
 	public void testGetCardinal() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		
+		assertTrue(maTileA.getCardinal()==99);
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		assertTrue(maTileA.getCardinal()==20);
+		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
+		assertTrue(maTileA.getCardinal()==21);
+		maTileA = Tile.parseTile("Tile_FFFFZZ060123");
+		assertTrue(maTileA.getCardinal()==6);
+		maTileA = Tile.parseTile("Tile_FFFFZZ100102");
+		assertTrue(maTileA.getCardinal()==10);
+		maTileA = Tile.parseTile("Tile_FFFFZZ100103");
+		assertTrue(maTileA.getCardinal()==10);
+		maTileA = Tile.parseTile("Tile_FFFFZZ100203");
+		assertTrue(maTileA.getCardinal()==10);
+		maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FFFTZ10103");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FFFTZ10112");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FFFTZ10123");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FTFFAZ01");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FTFFBZ01");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FTFFCZ01");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FTFFDZ01");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_FTFFEZ01");
+		assertTrue(maTileA.getCardinal()==1);
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		assertTrue(maTileA.getCardinal()==4);
+		maTileA = Tile.parseTile("Tile_TFFFZZ02010223");
+		assertTrue(maTileA.getCardinal()==2);
+		maTileA = Tile.parseTile("Tile_TFFFZZ02021203");
+		assertTrue(maTileA.getCardinal()==2);
+		maTileA = Tile.parseTile("Tile_TFFFZZ06031323");
+		assertTrue(maTileA.getCardinal()==6);
+		maTileA = Tile.parseTile("Tile_TFFFZZ06121323");
+		assertTrue(maTileA.getCardinal()==6);
+		maTileA.turnLeft();
+		assertTrue(maTileA.getCardinal()==6);
+		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
+		assertTrue(maTileA.getCardinal()==4);
+	
 	}
 
 	@Test
@@ -108,28 +161,193 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testIsTree() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		assertFalse(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_FTFFBZ01");
+		assertFalse(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_FTFFCZ01");
+		assertFalse(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_FTFFDZ01");
+		assertFalse(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_FTFFEZ01");
+		assertFalse(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		assertTrue(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02010223");
+		assertTrue(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02021203");
+		assertTrue(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06031323");
+		assertTrue(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06121323");
+		assertTrue(maTileA.isTree());
+		maTileA.turnLeft();
+		assertTrue(maTileA.isTree());
+		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
+		assertTrue(maTileA.isTree());
 	}
 
 	@Test
 	public void testIsBuilding() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFFZZ060123");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100102");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100103");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100203");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFTZ10103");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFTZ10112");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FFFTZ10123");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FTFFAZ01");
+		assertTrue(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FTFFBZ01");
+		assertTrue(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FTFFCZ01");
+		assertTrue(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FTFFDZ01");
+		assertTrue(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_FTFFEZ01");
+		assertTrue(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02010223");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02021203");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06031323");
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06121323");
+		assertFalse(maTileA.isBuilding());
+		maTileA.turnLeft();
+		assertFalse(maTileA.isBuilding());
+		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
+		assertFalse(maTileA.isBuilding());
+		
 	}
 
 	@Test
 	public void testIsTerminus() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFFZZ060123");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100102");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100103");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100203");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		assertTrue(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFTZ10103");
+		assertTrue(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFTZ10112");
+		assertTrue(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FFFTZ10123");
+		assertTrue(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FTFFAZ01");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FTFFBZ01");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FTFFCZ01");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FTFFDZ01");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_FTFFEZ01");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02010223");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02021203");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06031323");
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06121323");
+		assertFalse(maTileA.isTerminus());
+		maTileA.turnLeft();
+		assertFalse(maTileA.isTerminus());
+		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
+		assertFalse(maTileA.isTerminus());
+	
 	}
 
 	@Test
 	public void testIsStop() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFTZ60123");
+		assertFalse(maTileA.isStop());
+		maTileA.setStop(true);
+		assertTrue(maTileA.isStop());
+		maTileA.setStop(false);
+		assertFalse(maTileA.isStop());
+	
 	}
 
 	@Test
 	public void testIsEmpty() {
-		fail("Not yet implemented");
-	}
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		assertTrue(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFFZZ2113");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFFZZ060123");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100102");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100103");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFFZZ100203");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFTZ10101");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFTZ10103");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFTZ10112");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FFFTZ10123");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FTFFAZ01");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FTFFBZ01");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FTFFCZ01");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FTFFDZ01");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_FTFFEZ01");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_TFFFZZ040213");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02010223");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_TFFFZZ02021203");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06031323");
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_TFFFZZ06121323");
+		assertFalse(maTileA.isEmpty());
+		maTileA.turnLeft();
+		assertFalse(maTileA.isEmpty());
+		maTileA = Tile.parseTile("Tile_TFFFZZ0401122303");
+		assertFalse(maTileA.isEmpty());	}
 
 	@Test
 	public void testIsDeckTile() {
@@ -225,7 +443,30 @@ public class TestUnitaireTile {
 
 	@Test
 	public void testSetDirection() {
-		fail("Not yet implemented");
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		maTileA.setDirection(Direction.NORTH);
+		assertTrue(maTileA.getTileDirection()==Direction.NORTH);
+		assertFalse(maTileA.getTileDirection()==Direction.EAST);
+		assertFalse(maTileA.getTileDirection()==Direction.WEST);
+		assertFalse(maTileA.getTileDirection()==Direction.SOUTH);
+
+		maTileA.setDirection(Direction.EAST);
+		assertFalse(maTileA.getTileDirection()==Direction.NORTH);
+		assertTrue(maTileA.getTileDirection()==Direction.EAST);
+		assertFalse(maTileA.getTileDirection()==Direction.WEST);
+		assertFalse(maTileA.getTileDirection()==Direction.SOUTH);
+		
+		maTileA.setDirection(Direction.WEST);
+		assertFalse(maTileA.getTileDirection()==Direction.NORTH);
+		assertFalse(maTileA.getTileDirection()==Direction.EAST);
+		assertTrue(maTileA.getTileDirection()==Direction.WEST);
+		assertFalse(maTileA.getTileDirection()==Direction.SOUTH);
+		
+		maTileA.setDirection(Direction.SOUTH);
+		assertFalse(maTileA.getTileDirection()==Direction.NORTH);
+		assertFalse(maTileA.getTileDirection()==Direction.EAST);
+		assertFalse(maTileA.getTileDirection()==Direction.WEST);
+		assertTrue(maTileA.getTileDirection()==Direction.SOUTH);
 	}
 
 	@Test

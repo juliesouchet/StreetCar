@@ -6,8 +6,8 @@ import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
-import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
+import main.java.automaton.Strongest;
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.game.ExceptionEndGame;
@@ -129,7 +129,7 @@ public class PlayerAutomata implements InterfaceIHM
 
 		try{
 			player = PlayerIHM.launchPlayer(name, gameName, boardName, nbrBuildingInLine, create, ip, this);
-			player.setPlayerColor(color);
+			//player.setPlayerColor(color);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 
@@ -160,7 +160,7 @@ public class PlayerAutomata implements InterfaceIHM
 	// --------------------------------------------
 	public void refresh(Data data)
 	{
-		PlayerAutomaton edouard = new Dumbest(name);
+		PlayerAutomaton edouard = new Strongest(name);
 		edouard.setName(name);
 //		boolean win = false;
 		/*System.out.println("------------------------------------");
@@ -187,7 +187,9 @@ public class PlayerAutomata implements InterfaceIHM
 // c une modif pour ne plus faire de new dans votre automate (je c que c pas claire, on en reparle)
 //				System.out.println("Main :" + player.getGameData().getHand(name));
 //				System.out.println();
-				Action choix_de_edouard = edouard.makeChoice(player.getGameData());
+				Action choix_de_edouard = null;
+					choix_de_edouard = edouard.makeChoice(player.getGameData());
+
 				
 				try {
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);

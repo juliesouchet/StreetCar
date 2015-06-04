@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
+import main.java.automaton.Strongest;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
@@ -22,6 +23,9 @@ import main.java.rubbish.InterfaceIHM;
 
 
 
+
+
+
 @SuppressWarnings("serial")
 public class PlayerAI extends PlayerAbstract implements Runnable
 {
@@ -29,7 +33,6 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 // Attributes:
 // --------------------------------------------
 	private PlayerAutomaton	automaton;
-	private boolean			gameOver = false;
 
 // --------------------------------------------
 // Builder:
@@ -47,9 +50,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super(playerName, app, ihm);
 		switch (iaLevel)
 		{
-			case 1	:this.automaton	= new Dumbest(playerName);	break;
-			case 2	:this.automaton = new Traveler(playerName);	break;
-//			case 3	:this.automaton = new 3eme_niveau_de_difficulte(playerName);	break;
+			case PlayerAutomaton.dumbestLvl	:this.automaton	= new Dumbest(playerName);	break;
+			case PlayerAutomaton.travelerLvl	:this.automaton = new Traveler(playerName);	break;
+			case PlayerAutomaton.strongestLvl	:this.automaton = new Strongest(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
@@ -68,17 +71,23 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super.gameHasChanged(data);
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
-		if (gameOver)						return;
-		
+		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());return;}
+		if (data.isGameBlocked())			{System.out.println("The game is blocked"); return;}
+
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
-//System.out.println("-----------PlayerName: " + playerName);
-//System.out.println("-----------HandSize  : " + data.getHandSize(playerName));
-			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName)) {
+			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName))
+			{
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
 	
-	// TODO: check action type, do others action types !!
-				try					{super.placeTile(a.tile1, a.positionTile1);}
+// TODO: check action type, do others action types !!
+				try
+				{
+					if		(a.isSimpleConstructing())		super.placeTile(a.tile1, a.positionTile1);
+					else if (a.isTwoSimpleConstructing())	{super.placeTile(a.tile1, a.positionTile1); super.placeTile(a.tile2, a.positionTile2);}
+else throw new RuntimeException("Not implemented yet");
+					
+				}
 				catch (Exception e) {e.printStackTrace(); return;}
 			}
 			else System.out.println(playerName + " BLOCKED");
@@ -107,15 +116,12 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 					| ExceptionForbiddenAction e) {
 				e.printStackTrace();
 			} catch (ExceptionEndGame e) {
-				System.out.println("******************");
-				System.out.println("END OF GAME");
-				gameOver = true;
+				System.out.println("END GAME");
 				String winner = e.getWinner();
 				if(winner != null)
-					System.out.println(winner + " WINS !!");
+					System.out.println("WINNER : " + winner);
 				else
-					System.out.println("GAME BLOCKED : NOBODY WINS");
-				System.out.println("******************");
+					System.out.println("NO WINNER");
 			}
 		}
 	}
