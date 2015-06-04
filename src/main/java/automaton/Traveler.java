@@ -45,6 +45,7 @@ System.out.println("trackCompleted = " + trackCompleted);
 		 *	Traveling	
 		 ===============*/
 		else {
+			Point startingPoint = null;
 			if(!currentConfig.hasStartedMaidenTravel(getName())) {
 				// Initializes the itinerary with randomly chosen extremities				
 				checkpoints = new LinkedList<Point> (Arrays.asList(currentConfig.getPlayerAimBuildings(getName())));
@@ -66,7 +67,7 @@ System.out.println("trackCompleted = " + trackCompleted);
 				}
 		// TODO setDestinationTerminus se fait dans l'action
 				currentConfig.setDestinationTerminus(name, (Point[])destinationTerminus.toArray());
-				
+				startingPoint = checkpoints.getFirst();
 				
 				if(currentConfig.hasDoneRoundFirstAction(getName())) {
 					// ends current turn and starts traveling next turn
@@ -96,7 +97,7 @@ System.out.println("trackCompleted = " + trackCompleted);
 			} while (i<streetcarMovement.length);
 			// Updates the new starting point
 			checkpoints.addFirst(streetcarMovement[streetcarMovement.length-1]);
-			res = Action.newMoveAction(streetcarMovement, streetcarMovement.length);
+			res = Action.newMoveAction(streetcarMovement, streetcarMovement.length, startingPoint);
 		}
 		
 		

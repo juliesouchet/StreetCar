@@ -3,7 +3,6 @@ package main.java.game;
 import java.rmi.RemoteException;
 
 import main.java.data.Data;
-import main.java.data.LoginInfo;
 
 public class GameSimulation extends Game {
 
@@ -29,32 +28,12 @@ public class GameSimulation extends Game {
 	 * @throws ExceptionUnknownBoardName
 	 * @throws RuntimeException
 	 */
-	static public GameSimulation newGameSimulation(Data data, String boardName, int aiLvl)
+	static public GameSimulation newGameSimulation(Data data, int aiLvl)
 	throws RemoteException, ExceptionUnknownBoardName, RuntimeException
 	{	
-		String[] playerNameList = new String[data.getPlayerNameList().size()];
-		int x = 0;
-		for(String name : data.getPlayerNameList()) {
-			playerNameList[x] = name;
-			x++;
-		}
-		
-		for(int j = 0; j < LoginInfo.initialLoginTable.length; j++) { // Game setup
-			if(j<playerNameList.length) {					
-				boolean isClosed, isHost;
-				if(j<playerNameList.length) {
-					isHost = j==0;
-					isClosed = false;
-				}
-				else {
-					isHost = false;
-					isClosed = true;
-				}
-				LoginInfo.initialLoginTable[j] = new LoginInfo(isClosed, playerNameList[j], isHost, false, aiLvl);
-			}
-		}
-		Game.applicationPort = 5555;		
-		GameSimulation game = new GameSimulation("Simulation", "localhost", boardName, data.nbrBuildingInLine());
+		Game.applicationPort = 5555;
+		GameSimulation game = new GameSimulation("Simulation", "localhost", "src/main/resources/boards/newOrleans", data.nbrBuildingInLine());
+		game.data = data;
 		return game;
 	}
 
@@ -65,16 +44,17 @@ public class GameSimulation extends Game {
 	public boolean isWinner(String playerName)
 	{
 		boolean result = false;
-		/*
+		
 		String hostName = getHostName();
 		try {
-			this.hostStartGame(hostName);	// Launch game
-		} catch (RemoteException | ExceptionForbiddenAction	| ExceptionNotEnougthPlayers e) {
+			this.hostStartGame(hostName);		// Launch game
+		} catch (RemoteException | ExceptionForbiddenAction
+				| ExceptionNotEnoughPlayers e) {
 			e.printStackTrace();
-		}	
-		*/
+		}
+		
 		// TODO récupérer le résultat de la partie
-
+//System.out.println("TODO : récupérer le résultat de la partie");
 		return result;
 	}
 	
