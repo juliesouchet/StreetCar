@@ -746,7 +746,7 @@ public class Data implements Serializable
 	 * This actions are added to the input tab.</br>
 	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized
 	 ===============================================================*/
-	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
+	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab, boolean writeActionsInTab)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
 		Tile[] tmpRotation1		= new Tile[4];											// Init optimization parameters
@@ -774,8 +774,10 @@ public class Data implements Serializable
 				for (int i=0; i<nbrPath; i++)
 				{
 					if (this.pathMatrix[i][1].equals(lastTramPosition)) continue;
-					resTab[res].getAction().setTravelAction(startTerminus, this.pathMatrix[i], l);
-					resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+					if(writeActionsInTab){
+						resTab[res].getAction().setTravelAction(startTerminus, this.pathMatrix[i], l);
+						resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+					}
 					res ++;
 				}
 			}
@@ -797,8 +799,10 @@ public class Data implements Serializable
 						this.board[x1][y1] = tmpRotation1[r1];
 						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
 						{
-							resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
-							resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+							if(writeActionsInTab){
+								resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
+								resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+							}
 							res ++;
 						}
 						else if (this.getHandSize(playerName) == 1)	;									//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
@@ -815,8 +819,10 @@ public class Data implements Serializable
 										for (int r2=0; r2<nbrRotation2; r2++)							//		For each second tile rotation
 										{
 											if (!this.isAcceptableTilePlacement(x2, y2, tmpRotation2[r2])) continue;
-											resTab[res].getAction().setTwoSimpleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
-											resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+											if(writeActionsInTab){
+												resTab[res].getAction().setTwoSimpleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
+												resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+											}
 											res ++;
 										}
 									}
