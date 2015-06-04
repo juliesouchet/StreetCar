@@ -140,17 +140,24 @@ public String getHostName(){return this.data.getHost();}
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
+		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))
+		{
+System.out.println("Game.setLoginInfo: no change to do");
+			return;
+		}
+
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
 		boolean	oldPlayerIsHuman	= this.loggedPlayerTable[playerToChangeIndex].isHuman();
 		boolean	newPlayerIsHuman	= newPlayerInfo.isHuman();
+		boolean notifyAll = false;
 
 		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
 		this.loggedPlayerTable[playerToChangeIndex].setFreeCell();
 		if (oldPlayerIsOccupied)														// Case exclude old player
 		{
 			this.data.removePlayer(oldPlayerName);
-			if (oldPlayerIsHuman)////////// && (oldPlayerName != null))
+			if ((oldPlayerIsHuman) && (oldPlayerName != null))
 			{
 				PlayerInterface	oldPlayer	= this.data.getRemotePlayer(oldPlayerName);
 				this.engine.addAction(this.data, "excludePlayer", oldPlayer);
@@ -159,16 +166,19 @@ public String getHostName(){return this.data.getHost();}
 			{
 				this.aiList.get(oldPlayerName).interrupt();
 				this.aiList.remove(oldPlayerName);
-				this.engine.addAction(data, "notifyAllPlayers");
 			}
+			notifyAll = true;
 		}
-		else if (!newPlayerIsHuman)															// Case create AI player
+		if (!newPlayerIsHuman)															// Case create AI player
 		{
 			this.launchAIPlayer(newPlayerInfo);
+			notifyAll = false;
 		}
+		if (notifyAll) this.engine.addAction(data, "notifyAllPlayers");
+
 
 System.out.println("******************************************************");
-System.out.println("Apres");
+System.out.println("Game: Apres setLoginInfo");
 for (LoginInfo li: this.loggedPlayerTable)
 {
 	System.out.println("---------------Player :" + li);
@@ -195,6 +205,7 @@ for (String str: this.data.getPlayerNameList())
 	{
 		String	playerName	= player.getPlayerName();
 		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
+System.out.println("iiiiiiiiindex new: " + playerIndex );
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
 		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExpected();

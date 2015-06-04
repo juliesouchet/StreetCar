@@ -159,12 +159,14 @@ public class Engine implements Runnable
 		Data data = this.toExecute.data;
 		PlayerInterface playerToExclude = this.toExecute.player;
 
-		for (String name: data.getPlayerNameList())
+/********		for (String name: data.getPlayerNameList())
 		{
 			pi = data.getRemotePlayer(name);
 			privateData	= data.getClone(name);
 			pi.gameHasChanged(privateData);
 		}
+********/
+		
 		playerToExclude.excludePlayer();
 	}
 	@SuppressWarnings("unused")
