@@ -30,13 +30,15 @@ public class Dumbest extends PlayerAutomaton {
 		Action choix ;
 		Random rand = new Random();
 		Tile t;
-		int i, j, k;
+		int i, j, k, nbEssais = 0;
 
 		if(handSize == 0 ) return null;
 // TODO que faire s'il n'y a aucun choix valide ?
 //		if(!currentconfig.canPlaceTile(name))	{System.out.println(name + " est bloqué");return null;}
 		
 		do{
+			nbEssais++;
+			if(nbEssais > 1000)	throw new RuntimeException(name + " cannot find a valid move");
 			// On choisit un emplacement au hasard
 			i = rand.nextInt(currentconfig.getWidth());
 			j = rand.nextInt(currentconfig.getHeight());

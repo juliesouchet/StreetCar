@@ -36,7 +36,8 @@ est-ce qu'on informe un joueur qui veut commencer son voyage d'inauguration qu'i
     + faire tourner x parties avec des automates et regarder les probabilités de victoire
     + comparer par rapport au chemin optimal
  * Couple/singleton d'actions : uniformiser
- * fin de partie : isGameBlocked : prendre en compte le cas où on ne peut plus rien poser (aucun choix acceptable)  
+ * ~~fin de partie : isGameBlocked : prendre en compte le cas où on ne peut plus rien poser (aucun choix acceptable)~~  
+ * Evaluator : régler les soucis de threads concurrents
  
 # GUI :
   * Dans les settings, rajouter la difficulté: nombre de bâtiments à relier dans une ligne (entre 2 et 3)

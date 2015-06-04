@@ -76,7 +76,6 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			{
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
 				if (a == null) {System.out.println("AI has no actions left"); return;}
-
 				try
 				{
 					if ((a.isBUILD_SIMPLE()) || (a.isBUILD_AND_START_TRIP_NEXT_TURN()))		super.placeTile(a.tile1, a.positionTile1);

@@ -388,7 +388,32 @@ public class Data implements Serializable
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
-	// TODO: Enlever les LinkedList
+
+	/**======================================================
+	 * @return true if this player can still place one of his tile on the board
+	 ======================================================*/
+/************************ JULIE
+	private boolean canPlaceTile(String playerName) {
+System.out.print("CanPlaceTile " + playerName + " ? ");
+		for(int i = 0; i < getHandSize(playerName); i++) {
+			Tile t = getHandTile(playerName, i);
+			Tile[] rotations = new Tile[4];
+			for(int j = 0; j < 4; j++)	rotations[j] = new Tile();
+			int nbrRotations = t.getUniqueRotationList(rotations);
+			for(int r = 0; r < nbrRotations; r++) {
+				t.setDirection(Direction.parse(r));
+				for(int x = 1; x < getWidth()-1; x++) {
+					for(int y = 1; y < getHeight()-1; y++) {
+						if(isAcceptableTilePlacement(x, y, t))	{System.out.println("Yes");return true;}
+					}
+				}
+			}
+		}
+		System.out.println("No");
+		return false;
+	}
+************************ JULIE**************/
+// TODO: Enlever les LinkedList
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
 	 ======================================================== */
