@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.rmi.RemoteException;
 
-import main.java.game.ExceptionEndGame;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionNotEnoughTilesInDeck;
@@ -98,8 +97,6 @@ public class BottomPlayerPanel extends Panel {
 		} catch (ExceptionNotYourTurn e) {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
-			e.printStackTrace();
-		} catch (ExceptionEndGame e) {
 			e.printStackTrace();
 		}
 	}

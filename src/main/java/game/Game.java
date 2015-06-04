@@ -159,13 +159,14 @@ public String getHostName(){return this.data.getHost();}
 			{
 				this.aiList.get(oldPlayerName).interrupt();
 				this.aiList.remove(oldPlayerName);
+				this.engine.addAction(data, "notifyAllPlayers");
 			}
 		}
-		if (!newPlayerIsHuman)															// Case create AI player
+		else if (!newPlayerIsHuman)															// Case create AI player
 		{
 			this.launchAIPlayer(newPlayerInfo);
 		}
-		
+
 System.out.println("******************************************************");
 System.out.println("Apres");
 for (LoginInfo li: this.loggedPlayerTable)
@@ -429,16 +430,18 @@ for (String str: this.data.getPlayerNameList())
 	{
 		PlayerAI	newPlayer	= null;
 		String		playerName	= AiDefaultName + newPlayerInfo.getAiLevel();
-		String		nameAdd		= "";
+		String		nameAdd		= "", str;
 		Random		rnd			= new Random();
 
 		while(true)
 		{
-			if (this.data.isUsedPlayerName(playerName+"_"+nameAdd)) nameAdd += rnd.nextInt(10);
+			if (nameAdd.equals(""))	str = playerName;
+			else					str = "_" + nameAdd;
+			if (this.data.isUsedPlayerName(str)) nameAdd += rnd.nextInt(10);
 			else break;
 		}
-		if (!nameAdd.equals(""))	playerName += "_" + nameAdd;
 
+		if (!nameAdd.equals(""))	playerName += ("_" + nameAdd);
 		try					{newPlayer = new PlayerAI(playerName, newPlayerInfo.isHost(), this, newPlayerInfo.getAiLevel(), null);}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 		Thread t = new Thread(newPlayer);

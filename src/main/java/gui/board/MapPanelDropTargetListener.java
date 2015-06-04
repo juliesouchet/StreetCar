@@ -14,7 +14,9 @@ import java.rmi.RemoteException;
 import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionGameIsOver;
 import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionPlayerIsBlocked;
 import main.java.game.ExceptionTooManyActions;
 import main.java.gui.application.StreetCar;
 import main.java.player.PlayerIHM;
@@ -80,6 +82,11 @@ class MapPanelDropTargetListener implements DropTargetListener {
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
 		} catch (ExceptionTooManyActions e) {
+			e.printStackTrace();
+		} catch (ExceptionPlayerIsBlocked e) {
+			e.printStackTrace();
+		} catch (ExceptionGameIsOver e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

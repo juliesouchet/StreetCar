@@ -2,7 +2,6 @@ package main.java.automaton.test;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -10,13 +9,6 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Strongest;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.game.ExceptionEndGame;
-import main.java.game.ExceptionForbiddenAction;
-import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotEnoughTilesInDeck;
-import main.java.game.ExceptionNotYourTurn;
-import main.java.game.ExceptionTooManyActions;
-import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -213,13 +205,8 @@ public class PlayerAutomata implements InterfaceIHM
 					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
 					player.drawTile(1);
 					if(i%2 == 0)	player.validate();
-				} catch (RemoteException | ExceptionGameHasNotStarted
-						| ExceptionNotYourTurn | ExceptionForbiddenAction
-						| ExceptionTooManyActions | ExceptionNotEnoughTilesInDeck | ExceptionTwoManyTilesToDraw e) {
+				} catch (Exception e) {
 					e.printStackTrace();
-				} catch (ExceptionEndGame e) {
-					//e.printStackTrace();
-					System.out.println(e.getWinner() + " wins !!");
 				}
 			
 	
