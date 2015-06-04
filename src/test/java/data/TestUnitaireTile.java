@@ -106,7 +106,6 @@ public class TestUnitaireTile {
 		assertFalse("Les deux path différents (non symétriques et opposés) sont considérés différents", pathTab1[0].equals(pathTab2[0]));
 	}
 	
-	// TODO a faire marcher
 	@Test
 	public void testIsEquivalent(){
 		Tile maTileA = Tile.parseTile("Tile_FFFFZZ2113"); // tuile ligne droite
@@ -1487,7 +1486,6 @@ assertTrue(0==maTileA.isReplaceable(Tile.parseTile("Tile_FFFFZZ100203"), additio
 
 	}
 
-	// TODO a faire marcher
 	@Test
 	public void TestUniqueRotations() {
 		Tile maTuileSymetrique = Tile.parseTile("Tile_FFFFZZ2113"), // tuile ligne droite
