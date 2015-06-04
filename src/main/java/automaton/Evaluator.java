@@ -49,7 +49,7 @@ public class Evaluator {
 	
 	
 	@SuppressWarnings("unused")
-	private static boolean localGameSimulation(String[] playerNameList, Data data, String playerName, int aiLvl) {
+	private static boolean localGameSimulation(String[] playerNameList, Data data, String playerName, int aiLvl) throws ExceptionUnknownNodeType {
 		PlayerAutomaton[] automatonList = new PlayerAutomaton[playerNameList.length];
 		
 		// Initializing the automata
@@ -77,12 +77,7 @@ public class Evaluator {
 				// A player's turn
 				String currentPlayerName = playerNameList[j];
 				Action action = null;
-				try {
-					action = automatonList[j].makeChoice(data);
-				} catch (ExceptionUnknownNodeType e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				action = automatonList[j].makeChoice(data);
 				
 				if(action.isConstructing()) {
 					// Building action

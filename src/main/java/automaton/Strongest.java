@@ -20,8 +20,14 @@ public class Strongest extends PlayerAutomaton {
 		else this.name = playerName;
 	}
 	
-	public Action makeChoice(Data currentconfig) throws ExceptionUnknownNodeType {
-		DecisionTable myDecisionTable = new DecisionTable(Data.maxPossibleAction*2, Data.maxPossibleAction, currentconfig.getPlayerTurn()); //TODO Faire cette allocation dans le constructeur et ce contenter d'un reset ici.
+	public Action makeChoice(Data currentconfig){
+		DecisionTable myDecisionTable = null;
+		try {
+			myDecisionTable = new DecisionTable(Data.maxPossibleAction*2, Data.maxPossibleAction, currentconfig.getPlayerTurn());
+		} catch (ExceptionUnknownNodeType e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} //TODO Faire cette allocation dans le constructeur et ce contenter d'un reset ici.
 		myDecisionTable.applyMinMax(0, 1, currentconfig);
 		return myDecisionTable.getDecisionNode(0).getCoupleActionIndex(myDecisionTable.getBestActionIndex(0)).getAction();
 

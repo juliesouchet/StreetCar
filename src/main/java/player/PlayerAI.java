@@ -3,8 +3,8 @@ package main.java.player;
 import java.rmi.RemoteException;
 
 import main.java.automaton.Dumbest;
-import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.automaton.PlayerAutomaton;
+import main.java.automaton.Strongest;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
@@ -50,9 +50,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super(playerName, app, ihm);
 		switch (iaLevel)
 		{
-			case 1	:this.automaton	= new Dumbest(playerName);	break;
-			case 2	:this.automaton = new Traveler(playerName);	break;
-//			case 3	:this.automaton = new 3eme_niveau_de_difficulte(playerName);	break;
+			case PlayerAutomaton.dumbestLvl	:this.automaton	= new Dumbest(playerName);	break;
+			case PlayerAutomaton.travelerLvl	:this.automaton = new Traveler(playerName);	break;
+			case PlayerAutomaton.strongestLvl	:this.automaton = new Strongest(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
@@ -79,12 +79,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName))
 			{
 				Action a = null;
-				try {
-					a = this.automaton.makeChoice(data.getClone(playerName));
-				} catch (ExceptionUnknownNodeType e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				a = this.automaton.makeChoice(data.getClone(playerName));
 	
 // TODO: check action type, do others action types !!
 				try
