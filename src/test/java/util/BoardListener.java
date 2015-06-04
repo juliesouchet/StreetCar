@@ -30,7 +30,7 @@ public class BoardListener implements MouseListener {
 		
 		if(bc.getCurrentTile() == null) {
 			Tile t = data.getTile(x, y);
-			System.out.println("Direction de la tuile cliquée = " + t.getTileDirection());
+			System.out.println("Direction de la tuile cliquÃ©e = " + t.getTileDirection());
 		}
 		else {			
 			bc.drawTile(x, y);

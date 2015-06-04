@@ -4,6 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -16,7 +17,8 @@ import test.java.player.DataViewerFrame.ViewerPanel;
 
 
 public class BoardCreator implements Runnable {
-	static final String boardPath = "src/test/resources/boards/";
+	static final String testBoardPath = "src/test/resources/boards/";
+	static final String mainBoardPath = "src/main/resources/boards/";
 	final int padding = 200;
 	
 	Tile currentTile = null;
@@ -38,11 +40,27 @@ public class BoardCreator implements Runnable {
 		JButton buttonSave, buttonLoad;
 		ViewerPanel board;
 		// Lecture du terrain initial
+		Data.boardDirectory = "";
+		Object[] selectionValues = {5,12};
+		int boardSize = (int) JOptionPane.showInputDialog(
+						null,
+						null,
+						"Size of the board :",
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						selectionValues ,
+						12);
 		try {
-			data = new Data("Board Creator", "newOrleans", 2);
+			if(boardSize == 12) {
+				data = new Data("Board Creator", mainBoardPath+"newOrleans", 2);
+			}
+			else if(boardSize == 5) {
+				data = new Data("Board Creator", testBoardPath+"newOrleans5", 2); 
+			}
 		} catch (ExceptionUnknownBoardName | RuntimeException e) {
 			e.printStackTrace();
 		}
+		
 		frame = new DataViewerFrame();
 
 		// Terrain
