@@ -85,6 +85,21 @@ public class TestUnitaireTile {
 		assertTrue(maTileA.equals(maTileB));
 
 	}
+	
+	@Test
+	public void testIsEquivalent(){
+		Tile maTileA = Tile.parseTile("Tile_FFFFZZ99");
+		Tile maTileB = Tile.parseTile("Tile_FFFFZZ99");
+		assertTrue("les deux tuiles parsées à partir du même ID sont considérées différentes", maTileA.isEquivalent(maTileB));
+		
+		maTileA.turnHalf();
+		assertTrue("les deux tuiles (symétriques) sont considérées différentes après rotation 1/2", maTileA.isEquivalent(maTileB));
+		
+		maTileA = Tile.parseTile("Tile_FFFFZZ2003");
+		maTileB = Tile.parseTile("Tile_FFFFZZ2003");
+		maTileB.turnHalf();
+		assertFalse("les deux tuiles (non symétriques) sont considérées identiques après rotation 1/2", maTileA.isEquivalent(maTileB));
+	}
 
 	@Test
 	public void testGetTileID() {
@@ -1455,9 +1470,16 @@ assertTrue(0==maTileA.isReplaceable(Tile.parseTile("Tile_FFFFZZ100203"), additio
 	public void TestUniqueRotations() {
 		Tile maTuileSymetrique = Tile.parseTile("Tile_FFFFZZ2113"),
 			maTuileNonSymetrique = Tile.parseTile("Tile_FFFFZZ2003");
-		
 		Tile[] resTabSym = new Tile[4],
 			resTabNonSym = new Tile[4];
+		for(int i = 0; i < 4; i++) {
+			resTabNonSym[i] = Tile.parseTile("Tile_FFFFZZ99");
+			resTabSym[i] = Tile.parseTile("Tile_FFFFZZ99");
+		}
+		int nbRotationsSym = maTuileSymetrique.getUniqueRotationList(resTabSym),
+			nbRotationsNonSym = maTuileNonSymetrique.getUniqueRotationList(resTabNonSym);
+		assertTrue("la tuile symétrique a " + nbRotationsSym + " rotations uniques", nbRotationsSym==2);
+		assertTrue("la tuile non symétrique a " + nbRotationsNonSym + " rotations uniques", nbRotationsNonSym==4);
 	}
 
 }

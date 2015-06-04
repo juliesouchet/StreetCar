@@ -287,12 +287,12 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // Getters:
 // --------------------------------------------
 	/**
-	 *	Vrai si l'ID des 2 tuiles est le même. (donc les tuiles sont sensés être les mêmes à la rotation et au stop près) </br>
+	 *	Vrai si l'ID des 2 tuiles est le même. (donc les tuiles sont censés être les mêmes à la rotation et au stop près) </br>
 	 *	/!\ Ne prend pas du tout en compte les autres attributs 
 	 *	@param
-	 *	L'objet à comparer, retourne faux si null.
+	 *	o : L'objet à comparer, retourne faux si null.
 	 *	@return
-	 *	Vrai si les instances représentent la même tuile
+	 *	Vrai si les instances représentent la même tuile</br>
 	 *	Faux sinon
 	 */
 	public boolean	equals(Object o)	{return (o != null) && (o instanceof Tile) && ((Tile)o).tileID.equals(this.tileID);}
@@ -301,8 +301,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 /**
  * Compare la tuile intégralement: </br>
  * (Prend en compte l'orientation)
- * @param o
- * L'objet à comparer.
+ * @param o : L'objet à comparer.
  * @return
  * Vrai si les 2 tuiles sont strictement identiques </br>
  * Faux sinon.
@@ -314,12 +313,9 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (!(o instanceof Tile)){return false;}
 		comparedTile = (Tile) o;
 
-		
-		
-		
 		if (!((Tile)o).tileID.equals(this.tileID)){return false;}
 //TODO condition verifiee par tileID
-/*		if (this.isTree()!=comparedTile.isTree() || this.isBuilding()!=comparedTile.isBuilding() || this.isStop()!=comparedTile.isStop() || this.isTerminus()!=comparedTile.isTerminus() ){
+/*if (this.isTree()!=comparedTile.isTree() || this.isBuilding()!=comparedTile.isBuilding() || this.isStop()!=comparedTile.isStop() || this.isTerminus()!=comparedTile.isTerminus() ){
 			return false;
 		}
 //TODO condition verifiee par tileID
@@ -351,7 +347,22 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return true;
 	}
 	
-	
+	/**
+	 * @param otherTile : the tile compared with the calling one
+	 * @return true if the two tiles have the same paths (ignoring the order)
+	 */
+	public boolean isEquivalent(Tile otherTile) {
+		if(this.ptrPathTab != otherTile.ptrPathTab)		return false;
+		for(int p1 = 0; p1 < this.ptrPathTab; p1++) {
+			int p2 = 0;
+			while(p2 < otherTile.ptrPathTab && !this.pathTab[p1].equals(otherTile.pathTab[p2]))	{
+	System.out.println("Compare " + this.pathTab[p1] + " et " + otherTile.pathTab[p2] + " = " + this.pathTab[p1].equals(otherTile.pathTab[p2]));
+				p2++;
+			}
+			if(p2 >= otherTile.ptrPathTab) return false; // the path p1 is not in the other tile
+		}
+		return true;
+	}
 	
 	/**
 	 * @return
@@ -529,7 +540,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		{
 			resTab[res].copy(tmp);
 			tmp.turnLeft();
-			for (i=0; i<res; i++) if (resTab[res].equalsStrong(resTab[i])) break;
+			for (i=0; i<res; i++) if (resTab[res].isEquivalent(resTab[i])) break;
 			if (i == res) res ++;
 		}
 // TODO a enlever apres les test
