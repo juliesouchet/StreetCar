@@ -153,7 +153,7 @@ public class PlayerAutomata implements InterfaceIHM
 
 
 		}
-	}	
+	}
 
 
 	// --------------------------------------------
@@ -185,7 +185,7 @@ public class PlayerAutomata implements InterfaceIHM
 		
 		DecisionNode monNoeudDedecision = null;
 		try {
-			monNoeudDedecision = new DecisionNode(600000, 0, "root");
+			monNoeudDedecision = new DecisionNode(4000000, 0, "root");
 		} catch (ExceptionUnknownNodeType e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

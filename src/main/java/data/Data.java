@@ -139,42 +139,46 @@ public class Data implements Serializable
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
-	
-	
-	//TODO ajouté par Ulysse
-	public void doAction(Action action){
-		if (action.isMOVE()){
-			this.setTramPosition(this.getPlayerTurn(), action.tramwayMovement[action.ptrTramwayMovement]); //TODO ptrTramwaymovement ou -1 ?
+	/**===================================================================
+	 * @return gathers all the possible action setters on this data
+	 =====================================================================*/
+	public void doAction(String playerName, Action action)
+	{
+		if (action.isMOVE())
+		{
+			if (action.startTerminus != null)
+// TODO: avoir avec travel pour set terminus point
+			this.setTramPosition(playerName, action.tramwayMovement[action.ptrTramwayMovement]); //TODO ptrTramwaymovement ou -1 ?
 			return;
 		}
-		if (action.isBUILD_SIMPLE()){
-			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
+		if (action.isBUILD_SIMPLE())
+		{
+			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 			return;
 		}
-		if (action.isTWO_BUILD_SIMPLE()){
-			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
-			this.setTile(action.positionTile2.x, action.positionTile2.y, action.tile2);
+		if (action.isTWO_BUILD_SIMPLE())
+		{
+			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
+			this.placeTile(playerName, action.positionTile2.x, action.positionTile2.y, action.tile2);
 			return;
 		}
-		if (action.isBUILD_DOUBLE()){
-			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
-			this.setTile(action.positionTile2.x, action.positionTile2.y, action.tile2);
+		if (action.isBUILD_DOUBLE())
+		{
+			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1, action.positionTile2.x, action.positionTile2.y, action.tile2);
 			return;
 		}
-		if (action.isBUILD_AND_START_TRIP_NEXT_TURN()){
-			this.setTile(action.positionTile1.x, action.positionTile1.y, action.tile1);
-			this.startMaidenTravel(this.getPlayerTurn());
+		if (action.isBUILD_AND_START_TRIP_NEXT_TURN())
+		{
+			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 			return;
 		}
-
 	}
 	
 	
 	
 	public void setPreviousTramPosition(String playerName, Point newPosition) { playerInfoList.get(playerName).previousTramPosition = newPosition; }
-	
-	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; } // TODO rename this method
-	
+	public void setMaximumSpeed(int newMaxSpeed) { this.maxPlayerSpeed = newMaxSpeed; }
+
 	/**================================================
 	 * @return Add a player to the present game
 	 ==================================================*/
@@ -275,9 +279,18 @@ public class Data implements Serializable
 			if (this.isStopNextToBuilding(building) == null)
 				this.board[x][y].setStop(true);
 		}
-// TODO: Enlever les LinkedList
 		LinkedList<Action> history = pi.getLastActionHistory();
 		history.addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
+	}
+	/**===================================================
+	 * @return Places the two given tiles on the board.</br>
+	 * If the board had an non empty tile, the old tile is put in the player's hand.
+	 * The tiles are  removed from the player's hand.
+	 =====================================================*/
+	public void	placeTile(String playerName, int x1, int y1, Tile t1, int x2, int y2, Tile t2)
+	{
+// TODO
+		throw new RuntimeException("Not implemented yet");
 	}
 	/**===================================================
 	 * @return Draw a tile from the deck.  This tile is put in the player's hand
@@ -324,7 +337,6 @@ public class Data implements Serializable
 		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
 // TODO: ajouter une action a l'historique
 	}
-// TODO: Enlever les LinkedList
 	/**==========================================================================
 	 * @return The player chooses the destination of his maiden travel (the opposite terminus from his starting terminus)
 	 * @param playerName : the player
@@ -404,7 +416,6 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 		return false;
 	}
 ************************ JULIE**************/
-// TODO: Enlever les LinkedList
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
 	 ======================================================== */
@@ -425,7 +436,6 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 		else if (lastActions.size() == 2) return false;
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
 	}
-// TODO: Enlever les LinkedList
 	/**======================================================
 	 *  @return true if this player is at the start of his turn (and he hasn't done anything yet)
 	 ======================================================== */
@@ -472,7 +482,6 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public Tile					getTile  (int x, int y)							{return this.board[x][y].getClone();}
-//TODO: peut etre pour l'ia 	public Tile					getTileIA(int x, int y)							{return this.board[x][y];}
 	public Tile					getTile(Point p)								{return getTile(p.x, p.y);}
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
@@ -566,6 +575,15 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 		LinkedList<Direction> plt = this.getPathsLeadingToTile(x, y);									//		Rule D
 		for (Direction dir: plt)	if (!t.isPathTo(dir))								return false;
 		return true;
+	}
+	/**===============================================================
+	 * @return if the deposit of the two tiles together on the board at the position (x1, y1), (x2, y2) is possible
+	 =================================================================*/
+	public boolean isAcceptableTilePlacement(int x, int y, Tile tile1, int x2, int y2, Tile tile2)
+	{
+// TODO Auto-generated method stub
+		if (x > -10) throw new RuntimeException("Not implemented yet");
+		return false;
 	}
 	/**============================================================
 	 * @return a list of the neighbor coordinates.  This function
@@ -809,9 +827,8 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 						else if (this.getHandSize(playerName) == 1)	;									//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
 						else
 						{
-							for (int h2 = h1+1; h2<this.getHandSize(playerName); h2++)						//		For each second player's hand tile
+							for (int h2 = h1+1; h2<this.getHandSize(playerName); h2++)					//		For each second player's hand tile
 							{
-								if (h1 == h2) continue;
 								for (int x2=1; x2<this.getWidth()-1; x2++)								//		For each board cell
 								{
 									for (int y2=1; y2<this.getHeight()-1; y2++)

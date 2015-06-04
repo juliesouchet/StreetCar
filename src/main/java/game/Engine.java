@@ -193,8 +193,15 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void replaceTwoTiles () throws RemoteException
 	{
-// TODO replace by notifyPlayer()
-		this.notifyAllPlayers();
+		String	playerName	= this.toExecute.playerName;
+		Data	data		= this.toExecute.data;
+		Point	position1	= this.toExecute.position1;
+		Tile	tile1		= this.toExecute.tile1;
+		Point	position2	= this.toExecute.position2;
+		Tile	tile2		= this.toExecute.tile2;
+
+		data.placeTile(playerName, position1.x, position1.y, tile2, position2.x, position2.y, tile1);
+		this.notifyPlayer(playerName);
 	}
 
 	@SuppressWarnings("unused")
