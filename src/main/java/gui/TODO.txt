@@ -1,8 +1,9 @@
-- activer le bouton VALIDER cliquable que lorsque le joueur a joué 2 coups
+ï»¿- activer le bouton VALIDER cliquable que lorsque le joueur a jouÃ© 2 coups
 - implanter la methode du bouton ANNULER CE TOUR
-- activer le bouton ANNULER CE TOUR que lorsque au moins une carte est joué
-- fixer le problème de rafraichissement de bottomPlayerPanel après un tour
+- activer le bouton ANNULER CE TOUR que lorsque au moins une carte est jouÃ©
+- fixer le problÃ¨me de rafraichissement de bottomPlayerPanel aprÃ¨s un tour
+- enlever le system de pouvoir drag depuis le terrain vers le terrain
 
 Riyane
-mettre un délai lorsque l'IA joue (1 a 2s)
+mettre un dÃ©lai lorsque l'IA joue (1 a 2s)
 Mettre les tuiles corner et side autour du terrain
