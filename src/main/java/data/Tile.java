@@ -355,11 +355,10 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if(this.ptrPathTab != otherTile.ptrPathTab)		return false;
 		for(int p1 = 0; p1 <= this.ptrPathTab; p1++) {
 			int p2 = 0;
-			while(p2 < otherTile.ptrPathTab && !this.pathTab[p1].equals(otherTile.pathTab[p2]))	{
-System.out.println("compare " + this.pathTab[p1] + " et " + otherTile.pathTab[p2] + " = " +this.pathTab[p1].equals(otherTile.pathTab[p2]) );
+			while(p2 <= otherTile.ptrPathTab && !this.pathTab[p1].equals(otherTile.pathTab[p2]))	{
 				p2++;
 			}
-			if(p2 >= otherTile.ptrPathTab) return false; // the path p1 is not in the other tile
+			if(p2 > otherTile.ptrPathTab)	return false; // the path p1 is not in the other tile
 		}
 		return true;
 	}
