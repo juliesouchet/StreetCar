@@ -1,13 +1,12 @@
 package main.java.automaton.test;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.util.Random;
 import java.util.Scanner;
 
+import main.java.automaton.DecisionNode;
+import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.automaton.PlayerAutomaton;
-import main.java.automaton.Strongest;
-import main.java.data.Action;
 import main.java.data.Data;
 import main.java.game.Game;
 import main.java.game.GameInterface;
@@ -29,13 +28,17 @@ public class PlayerAutomata implements InterfaceIHM
 	// --------------------------------------------
 	private DataViewerFrame frame;
 
-	
+
 	private PlayerIHM player = null;
 	private String name;
 	private int i = 0;
 	private int nbCoups = 100;
-	
-	private boolean isFirstRefresh = true;
+
+	private boolean firstRefreshDone = false;
+	private boolean secondRefreshDone = false;
+
+	PlayerAutomaton edouard ;
+
 	// --------------------------------------------
 	// Builder:
 	// --------------------------------------------
@@ -48,7 +51,6 @@ public class PlayerAutomata implements InterfaceIHM
 		PlayerAI playerIA = null;
 		GameInterface game = null;
 
-		
 
 		while (true)
 		{
@@ -114,7 +116,7 @@ public class PlayerAutomata implements InterfaceIHM
 		Color color;
 		TraceDebugAutomate.decisionTableTrace=true;
 
-			
+
 		if ( i== 0)	{
 			create = true; name = "joueurA"; gameName = "jeu"; color = Color.red; ip = null;
 		} else { //if ( i== 1) {
@@ -148,11 +150,7 @@ public class PlayerAutomata implements InterfaceIHM
 				TraceDebugAutomate.debugDecisionTableTrace("Partie lancée\n");
 			}catch (Exception e)	{e.printStackTrace();}
 
-			
-			
-			//player.getGameData().drawCard(name,1);
-			//refresh(player.getGameData());
-			//System.out.println("============================\n");
+
 
 		}
 	}	
@@ -163,56 +161,45 @@ public class PlayerAutomata implements InterfaceIHM
 	// --------------------------------------------
 	public void refresh(Data data)
 	{
-		
+
 		//=======================================
 		TraceDebugAutomate.debugDecisionTableTrace("Refresh called\n");
-		
-		if (isFirstRefresh){
-			isFirstRefresh = false;
+
+		if (!firstRefreshDone){
+			firstRefreshDone = true;
 			return;
 		}
+//			else if(!secondRefreshDone){
+//			secondRefreshDone = true;
+//			//=======================================
+//			TraceDebugAutomate.debugDecisionTableTrace("Allocating Strongest\n");
+//			this.edouard = new Strongest(data.getPlayerTurn());
+//			//=======================================
+//			TraceDebugAutomate.debugDecisionTableTrace("Created new strongest\n");
+//		}
 		
+//		Action myAction = edouard.makeChoice(data);
 		//=======================================
-		TraceDebugAutomate.debugDecisionTableTrace("Create new strongest\n");
-		PlayerAutomaton edouard = new Strongest(name); //TODO deplacer cette initialisation pour pas la refaire a chaque fois !!!!
-		edouard.setName(name);
-
-		if (this.frame!=null && (i <= nbCoups)){
-			i++;
-			if(player.getGameData().isTrackCompleted(name)) {
-//				System.out.println("Chemin completé (tour " + i + ")");
-//				win = true;
-				this.frame.setGameData(data);
-			}else{
-				Point[] objectifsTerminus = null;
-				Point[] objectifsArrets = null;
-				objectifsTerminus = player.getGameData().getPlayerTerminusPosition(name);
-				objectifsArrets=player.getGameData().getPlayerAimBuildings(name);
-//				System.out.println("Objectifs : " + objectifs);
-//				if(!win) System.out.println("Chemin non complété");
-				
-//				System.out.println(" TOUR " + (i+1));
-// TODO: --Riyane:
-// g pas voulu coriger l'erreur
-// c une modif pour ne plus faire de new dans votre automate (je c que c pas claire, on en reparle)
-//				System.out.println("Main :" + player.getGameData().getHand(name));
-//				System.out.println();
-				Action choix_de_edouard = null;
-				choix_de_edouard = edouard.makeChoice(player.getGameData());
-
-				
-				try {
-					player.placeTile(choix_de_edouard.tile1 ,choix_de_edouard.positionTile1);
-					player.drawTile(1);
-					if(i%2 == 0)	player.validate();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			
-	
-				this.frame.setGameData(data);
-			}
+		TraceDebugAutomate.debugDecisionTableTrace("Strongest made a choice \n");
+		
+		
+		DecisionNode monNoeudDedecision = null;
+		try {
+			monNoeudDedecision = new DecisionNode(600000, 0, "root");
+		} catch (ExceptionUnknownNodeType e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		if(data==null){
+			System.out.println("data est null");
+		}
+		
+		
+		int nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), monNoeudDedecision.getPossibleFollowingActionTable());
+		System.out.println("nbActionsPossibles="+nbActionsPossibles);
+		//data.doAction(myAction);		
+		
+		this.frame.setGameData(data);
 	}
 
 	// --------------------------------------------

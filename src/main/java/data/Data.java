@@ -141,6 +141,14 @@ public class Data implements Serializable
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
 		res.playerOrder				= (this.playerOrder== null)	? null : cpS.copyTab(playerOrder);
+		
+		res.tmpRotation1		= new Tile[4];											// Init optimization parameters
+		res.tmpRotation2		= new Tile[4];
+		for (int i=0; i<4; i++)
+		{
+			res.tmpRotation1[i]= this.board[0][0].getClone();
+			res.tmpRotation1[i]= this.board[0][0].getClone();
+		}
 
 		return res;
 	}
@@ -388,12 +396,10 @@ public class Data implements Serializable
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
 	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
-
 	/**======================================================
 	 * @return true if this player can still place one of his tile on the board
 	 ======================================================*/
-/************************ JULIE
-	private boolean canPlaceTile(String playerName) {
+	public boolean canPlaceTile(String playerName) {
 System.out.print("CanPlaceTile " + playerName + " ? ");
 		for(int i = 0; i < getHandSize(playerName); i++) {
 			Tile t = getHandTile(playerName, i);
@@ -412,8 +418,7 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 		System.out.println("No");
 		return false;
 	}
-************************ JULIE**************/
-// TODO: Enlever les LinkedList
+	// TODO: Enlever les LinkedList
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
 	 ======================================================== */
@@ -503,30 +508,18 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 	public LinkedList<Color>	getRemainingColors()							{return ((new Copier<Color>()).copyList(this.remainingColors));}
 	public String				getWinner()										{return this.winner;}
 	/**=======================================================================
-	 * @return true if the player has no possible game, considering his hand, the deck and his travel
+	 * @return true if all the tiles have been placed but no player can win
 	 ========================================================================= */
-	public boolean isGameBlocked(String playerName)
+	public boolean isGameBlocked()
 	{
-		if ((!isEmptyDeck()) && (this.getHandSize(playerName) > 0))				return false;
-		if (hasStartedMaidenTravel(playerName))									return false;
-
-		Tile[] rotations = new Tile[4];
-		for(int j = 0; j < 4; j++)	rotations[j] = new Tile();
-
-		for (int i=0; i<this.getHandSize(playerName); i++)
+		if(!isEmptyDeck()) return false;
+		for(String playerName : this.playerInfoList.keySet())
 		{
-			Tile t = this.getHandTile(playerName, i);
-			int nbrRotations = t.getUniqueRotationList(rotations);
-			for (int r=0; r<nbrRotations; r++)
-			{
-				for (int x=1; x<this.getWidth()-1; x++)
-				{
-					for (int y=1; y<this.getHeight()-1; y++)
-					{
-						if (this.isAcceptableTilePlacement(x, y, rotations[r]))	return false;
-					}
-				}
-			}
+			if(getHandSize(playerName)>0 || hasStartedMaidenTravel(playerName))	return false;
+		}
+		for(String playerName : this.playerInfoList.keySet())
+		{
+			if(canPlaceTile(playerName))	return false;
 		}
 		return true;
 	}
@@ -766,14 +759,15 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
 		Point lastTramPosition		= this.playerInfoList.get(playerName).previousTramPosition;
 		Point currentTramPosition	= this.playerInfoList.get(playerName).tramPosition;
-		Point startTerminus			= this.getPlayerTerminusPosition(playerName)[0];
+		Point startTerminus;
 		Tile t, oldT1;
+		boolean trackCompleted;
 
-		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
+		trackCompleted = this.isTrackCompleted(playerName);
+		if ((this.hasStartedMaidenTravel(playerName)) || (trackCompleted))							// Case: can move tram
 		{
-// TODO s'arreter au stop
-			if (startTerminus == null)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];	//		Case Can start maiden travel
-			else						startTerminus = null;
+			if (trackCompleted)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];		//		Case Can start maiden travel
+			else				startTerminus = null;
 			for (int l = 1; l<=this.maxPlayerSpeed; l++)
 			{
 				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, currentTramPosition, l, this.pathMatrix);
@@ -787,18 +781,21 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 			}
 			return res;
 		}
-																										// Case is building
-		for (int h1 = 0; h1<this.getHandSize(playerName); h1++)											//		For each player's hand tile
+																									// Case is building
+		for (int h1 = 0; h1<this.getHandSize(playerName); h1++)										//		For each player's hand tile
 		{
 			t				= this.getHandTile(playerName, h1);
-			nbrRotation1	= t.getUniqueRotationList(tmpRotation1);
-			for (int r1=0; r1<nbrRotation1; r1++)														//		For each first tile rotation
+			
+			
+			//nbrRotation1	= t.getUniqueRotationList(tmpRotation1); //TODO je teste sans cette optimisation.
+			nbrRotation1 = 4;
+			for (int r1=0; r1<nbrRotation1; r1++)													//		For each first tile rotation
 			{
-				for (int x1=1; x1<this.getWidth()-1; x1++)												//		For each board cell
+				for (int x1=1; x1<this.getWidth()-1; x1++)											//		For each board cell
 				{
 					for (int y1=1; y1<this.getHeight()-1; y1++)
 					{
-						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;		//		Case player may start maiden travel next turn
+						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;	//		Case player may start maiden travel next turn
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
 						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
@@ -807,19 +804,19 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 							resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 							res ++;
 						}
-						else if (this.getHandSize(playerName) == 1)	;									//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
+						else if (this.getHandSize(playerName) == 1)	;								//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
 						else
 						{
-							for (int h2 = 0; h2<this.getHandSize(playerName); h2++)						//		For each second player's hand tile
+							for (int h2 = 0; h2<this.getHandSize(playerName); h2++)					//		For each second player's hand tile
 							{
 								if (h1 == h2) continue;
-								for (int x2=1; x2<this.getWidth()-1; x2++)								//		For each board cell
+								for (int x2=1; x2<this.getWidth()-1; x2++)							//		For each board cell
 								{
 									for (int y2=1; y2<this.getHeight()-1; y2++)
 									{
 										t				= this.getHandTile(playerName, h2);
 										nbrRotation2	= t.getUniqueRotationList(tmpRotation2);
-										for (int r2=0; r2<nbrRotation2; r2++)							//		For each second tile rotation
+										for (int r2=0; r2<nbrRotation2; r2++)						//		For each second tile rotation
 										{
 											if (!this.isAcceptableTilePlacement(x2, y2, tmpRotation2[r2])) continue;
 											resTab[res].getAction().setDoubleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
