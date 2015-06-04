@@ -22,8 +22,9 @@ public abstract class PlayerAutomaton {
 	
 	/**
 	 * Donne la décision d'action faite par l'automate
+	 * @throws ExceptionUnknownNodeType 
 	 */
-	public abstract Action makeChoice(Data currentConfig);
+	public abstract Action makeChoice(Data currentConfig) throws ExceptionUnknownNodeType;
 
 	public String getName() {
 		return name;
