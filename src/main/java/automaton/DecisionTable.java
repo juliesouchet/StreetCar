@@ -184,7 +184,7 @@ public class DecisionTable {
 	 * @throws ExceptionUnknownNodeType 
 	 */
 	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
-		this.myName = myName; //TODO vrai copy ou juste pointeur :s ?
+		this.myName = new String(myName); 		
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		this.setSize(tableSize);
@@ -227,22 +227,25 @@ public class DecisionTable {
 	 * Implémentation de l'algorithme minimax: la table de décision est calculée
 	 * @param index
 	 * 	L'indice du noeud en construction dans la table de decision
-	 * @param type
-	 *  noeud Min ou Noeud max (ALLY ou OPPONENT);
 	 * @param wantedDepth
 	 * 	la profondeur (restante) a explorer) 
 	 * @param currentConfiguration
 	 * 	le data courant: cad l'etat de la partie
 	 */
-	public void applyMinMax(int index, int type, int wantedDepth, Data currentConfiguration ){ //TODO enlever argument type: inutile
+	public void applyMinMax(int index, int wantedDepth, Data currentConfiguration ){
 		double evaluatedQuality = DecisionNode.NOT_SIGNIFICANT;
 		String playerName = currentConfiguration.getPlayerTurn();
 		int numberOfPossiblesActions;
 		int aFreeSlot = 0;
 		
+		Data copyDeCOnfigurationCourante = currentConfiguration.getClone(playerName); //TODO a enlever ça sera fait par le rollback
+		
 		// Cas d'une feuille on estime la qualité avec la fonction de Julie
 		if(wantedDepth==0){ 
 			//evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty)
+			evaluatedQuality = 0.5;
+			
+			
 			this.getDecisionNode(index).setQuality(evaluatedQuality);
 			this.getDecisionNode(index).setLeaf();
 
@@ -250,18 +253,21 @@ public class DecisionTable {
 		} else if(wantedDepth>0){
 			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable()); //
 			for (int i=0; i<numberOfPossiblesActions; i++){
-				aFreeSlot = this.findFreeSlot();
+
 				
+				aFreeSlot = this.findFreeSlot();
+		
 				assert(this.getDecisionNode(index).getCoupleActionIndex(i).getIndex()==CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 				
 				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
 
 				currentConfiguration.doAction(this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
 			
-				this.applyMinMax(aFreeSlot, type, wantedDepth-1, currentConfiguration);
-				// TODO				
-				//				this.applyMinMax(aFreeSlot, typeSuivant, wantedDepth-1, currentConfiguration);
-				//				currentConfiguration.rollBack();
+				this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration);
+				
+				currentConfiguration = copyDeCOnfigurationCourante.getClone(myName);
+				// TODO			
+				//				currentConfiguration.rollBack(); //TODO a enlever ça sera fait par le rollback
 			}
 			if (playerName.equals(this.getMyName())){
 				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getBestActionIndex(index)).getQuality());
