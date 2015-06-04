@@ -198,7 +198,7 @@ for (String str: this.data.getPlayerNameList())
 		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
-		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExcpected();
+		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExpected();
 		if (this.data.isPlayerLogged(playerName))			throw new ExceptionUsedPlayerName();
 		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
@@ -239,10 +239,10 @@ for (String str: this.data.getPlayerNameList())
 	 * Init the game parameters.
 	 * Make the game begins
 	 ================================================*/
-	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
+	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnoughPlayers
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if (!this.data.isGameReadyToStart())			throw new ExceptionNotEnougthPlayers();
+		if (!this.data.isGameReadyToStart())			throw new ExceptionNotEnoughPlayers();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
 		this.engine.addAction(this.data, "hostStartGame", playerName);
@@ -372,11 +372,11 @@ for (String str: this.data.getPlayerNameList())
 	/**=============================================================================
 	 * Draw a card from the deck.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
+	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnougthTileInDeck();
+		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnoughTilesInDeck();
 		if (nbrCards > this.data.getPlayerRemainingTilesToDraw(playerName))		throw new ExceptionTwoManyTilesToDraw();
 		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
@@ -385,13 +385,13 @@ for (String str: this.data.getPlayerNameList())
 	/**=============================================================================
 	 * Draw a card from a player's hand.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void pickTileFromPlayer (String playerName, String chosenPlayerName, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand
+	public synchronized void pickTileFromPlayer (String playerName, String chosenPlayerName, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand
 	{
 		if (!this.data.isGameStarted())										throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))							throw new ExceptionNotYourTurn();
 		if (this.data.getPlayerRemainingTilesToDraw(playerName) == 0)		throw new ExceptionTwoManyTilesToDraw();
 		if (!this.data.hasStartedMaidenTravel(chosenPlayerName))			throw new ExceptionForbiddenAction();
-		if (this.data.getHandSize(chosenPlayerName) == 0)					throw new ExceptionNotEnougthTileInHand();
+		if (this.data.getHandSize(chosenPlayerName) == 0)					throw new ExceptionNotEnoughTilesInHand();
 		if (playerName.equals(chosenPlayerName))							throw new ExceptionForbiddenAction();
 		if(data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 

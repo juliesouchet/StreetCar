@@ -14,7 +14,7 @@ import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
-import main.java.game.ExceptionNotEnougthPlayers;
+import main.java.game.ExceptionNotEnoughPlayers;
 import main.java.gui.application.GameController;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Button;
@@ -113,7 +113,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
-		} catch (ExceptionNotEnougthPlayers e) {
+		} catch (ExceptionNotEnoughPlayers e) {
 			e.printStackTrace();
 		}
 	}

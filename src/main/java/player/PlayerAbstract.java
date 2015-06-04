@@ -14,9 +14,9 @@ import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotEnougthPlayers;
-import main.java.game.ExceptionNotEnougthTileInDeck;
-import main.java.game.ExceptionNotEnougthTileInHand;
+import main.java.game.ExceptionNotEnoughPlayers;
+import main.java.game.ExceptionNotEnoughTilesInDeck;
+import main.java.game.ExceptionNotEnoughTilesInHand;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
@@ -94,7 +94,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		this.data = data;
 		if (this.ihm != null) this.ihm.refresh(data);
 	}
-	public synchronized void hostStartGame()	throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
+	public synchronized void hostStartGame()	throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnoughPlayers
 	{
 		this.game.hostStartGame(playerName);
 	}
@@ -104,7 +104,7 @@ System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
 		this.game.placeTile(playerName, t, position);
 	}
-	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
+	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
 System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards + " | Reste " +(data.getNbrRemainingDeckTile()-nbrCards));
@@ -125,7 +125,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 		game.moveTram(playerName, tramMovement);
 	}
 
-	public synchronized void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand 
+	public synchronized void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand 
 	{
 		game.pickTileFromPlayer(chosenPlayer, chosenPlayer, tile);
 	}

@@ -13,7 +13,7 @@ import main.java.data.Data;
 import main.java.game.ExceptionEndGame;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotEnougthTileInDeck;
+import main.java.game.ExceptionNotEnoughTilesInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
@@ -22,6 +22,7 @@ import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
+import main.java.util.TraceDebugAutomate;
 import test.java.player.DataViewerFrame;
 
 
@@ -41,6 +42,8 @@ public class PlayerAutomata implements InterfaceIHM
 	private String name;
 	private int i = 0;
 	private int nbCoups = 100;
+	
+	private boolean isFirstRefresh = true;
 	// --------------------------------------------
 	// Builder:
 	// --------------------------------------------
@@ -52,6 +55,8 @@ public class PlayerAutomata implements InterfaceIHM
 		PlayerIHM playerIHM = null;
 		PlayerAI playerIA = null;
 		GameInterface game = null;
+
+		
 
 		while (true)
 		{
@@ -115,7 +120,9 @@ public class PlayerAutomata implements InterfaceIHM
 		String gameName, ip;
 		boolean create;
 		Color color;
+		TraceDebugAutomate.decisionTableTrace=true;
 
+			
 		if ( i== 0)	{
 			create = true; name = "joueurA"; gameName = "jeu"; color = Color.red; ip = null;
 		} else { //if ( i== 1) {
@@ -142,7 +149,11 @@ public class PlayerAutomata implements InterfaceIHM
 		{
 
 			try	{
+				//=======================================
+				TraceDebugAutomate.debugDecisionTableTrace("Lancement de la partie\n");
 				player.hostStartGame();
+				//=======================================
+				TraceDebugAutomate.debugDecisionTableTrace("Partie lancée\n");
 			}catch (Exception e)	{e.printStackTrace();}
 
 			
@@ -160,13 +171,20 @@ public class PlayerAutomata implements InterfaceIHM
 	// --------------------------------------------
 	public void refresh(Data data)
 	{
-		PlayerAutomaton edouard = new Strongest(name);
+		
+		//=======================================
+		TraceDebugAutomate.debugDecisionTableTrace("Refresh called\n");
+		
+		if (isFirstRefresh){
+			isFirstRefresh = false;
+			return;
+		}
+		
+		//=======================================
+		TraceDebugAutomate.debugDecisionTableTrace("Create new strongest\n");
+		PlayerAutomaton edouard = new Strongest(name); //TODO deplacer cette initialisation pour pas la refaire a chaque fois !!!!
 		edouard.setName(name);
-//		boolean win = false;
-		/*System.out.println("------------------------------------");
-		System.out.println("Refresh");
-		System.out.println("\t Host\t: "	+ data.getHost());
-		System.out.println("\t Round\t: "	+ data.getRound());*/
+
 		if (this.frame!=null && (i <= nbCoups)){
 			i++;
 			if(player.getGameData().isTrackCompleted(name)) {
@@ -188,7 +206,7 @@ public class PlayerAutomata implements InterfaceIHM
 //				System.out.println("Main :" + player.getGameData().getHand(name));
 //				System.out.println();
 				Action choix_de_edouard = null;
-					choix_de_edouard = edouard.makeChoice(player.getGameData());
+				choix_de_edouard = edouard.makeChoice(player.getGameData());
 
 				
 				try {
@@ -197,7 +215,7 @@ public class PlayerAutomata implements InterfaceIHM
 					if(i%2 == 0)	player.validate();
 				} catch (RemoteException | ExceptionGameHasNotStarted
 						| ExceptionNotYourTurn | ExceptionForbiddenAction
-						| ExceptionTooManyActions | ExceptionNotEnougthTileInDeck | ExceptionTwoManyTilesToDraw e) {
+						| ExceptionTooManyActions | ExceptionNotEnoughTilesInDeck | ExceptionTwoManyTilesToDraw e) {
 					e.printStackTrace();
 				} catch (ExceptionEndGame e) {
 					//e.printStackTrace();

@@ -116,7 +116,7 @@ public class InGamePanel extends Panel {
 		titlePanel.setBounds(0, 0, 329, 30);
 		playersSidebarPanel.add(titlePanel);  	
     	
-    	System.out.println(nbPlayers);
+    	System.out.println("NUMBER OF PLAYERS: " + nbPlayers);
     	
     	// catch the number of bottom player
     	int bottomPlayerIndex = 0;
@@ -130,12 +130,10 @@ public class InGamePanel extends Panel {
 				e.printStackTrace();
 			}
     	}
-    	System.out.println("ORDRE DES JOUEURS: ");
+    	System.out.println("PLAYERS ORDER: ");
     	for (int i=0; i<nbPlayers; i++) {
-    		System.out.println(playersTab[i]);
+    		System.out.println(i+1 + ". " + playersTab[i]);
     	}
-    	
-    	System.out.println("INDEX DE LOUIS: " + bottomPlayerIndex);
     	
     	int y = 40;
     	if (bottomPlayerIndex == nbPlayers-1) {  //if bottom player is the last  		

@@ -8,7 +8,6 @@ import java.util.Random;
 
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Tile;
 
 /**
  * Acts like the Dumbest one while building, but checks if its objectives are completed. 
@@ -27,8 +26,7 @@ public class Traveler extends PlayerAutomaton {
 // TODO makeChoice : doit rendre une action ou un couple d'action ?
 		Action res = null;
 		Random r = new Random();
-		Tile t;
-		int i, j, k;
+		int i, j;
 boolean trackCompleted = currentConfig.isTrackCompleted(getName());
 /*
 System.out.println("PlayerLine     : " + currentConfig.getPlayerLine(getName()));
@@ -39,23 +37,7 @@ System.out.println("trackCompleted = " + trackCompleted);
 		 *	Building
 		 =============*/
 		if(!trackCompleted) {
-			// Random tile and position choice for construction (extracted from Dumbest)
-			int handSize = currentConfig.getHandSize(name);
-			if(handSize == 0) return null;
-			do{
-				i = r.nextInt(currentConfig.getWidth());
-				j = r.nextInt(currentConfig.getHeight());
-				
-				k = r.nextInt(handSize);
-				t = currentConfig.getHandTile(name, k);
-
-				for(int rotation = 0; rotation < r.nextInt(4); rotation++) {
-					t.turnLeft();
-				}
-// TODO que faire s'il n'y a aucune action valide ?
-			}while( !currentConfig.isAcceptableTilePlacement(i, j, t));
-			
-			res = Action.newBuildSimpleAction(i, j, t);
+			res = new Dumbest(name).makeChoice(currentConfig);
 		}
 		
 		
