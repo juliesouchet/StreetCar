@@ -237,42 +237,58 @@ public class DecisionTable {
 		String playerName = currentConfiguration.getPlayerTurn();
 		int numberOfPossiblesActions;
 		int aFreeSlot = 0;
-		
+
 		Data copyDeCOnfigurationCourante = currentConfiguration.getClone(playerName); //TODO a enlever ça sera fait par le rollback
-		
+
 		// Cas d'une feuille on estime la qualité avec la fonction de Julie
-		if(wantedDepth==0){ 
+		if(wantedDepth==0){
+			//===============================================================================//
+			TraceDebugAutomate.debugDecisionTableTrace("\t======Feuille["+index+"]======.\n");
 			//evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty)
 			evaluatedQuality = 0.5;
-			
-			
+
 			this.getDecisionNode(index).setQuality(evaluatedQuality);
 			this.getDecisionNode(index).setLeaf();
 
 			// Cas d'une recurrence	
 		} else if(wantedDepth>0){
-			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable()); //
-			for (int i=0; i<numberOfPossiblesActions; i++){
+			//===============================================================================//
+			TraceDebugAutomate.debugDecisionTableTrace("\t======Noeud["+index+"]======.\n");
 
-				
-				aFreeSlot = this.findFreeSlot();
-		
-				assert(this.getDecisionNode(index).getCoupleActionIndex(i).getIndex()==CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
-				
-				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
-
-				currentConfiguration.doAction(this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
+			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable());
 			
+			//===============================================================================//
+			TraceDebugAutomate.debugDecisionTableTrace("numberOfPossiblesActions="+numberOfPossiblesActions+"\n");
+
+			for (int i=0; i<numberOfPossiblesActions; i++){
+				aFreeSlot = this.findFreeSlot();
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("aFreeSlot="+aFreeSlot+"\n");
+				assert(this.getDecisionNode(index).getCoupleActionIndex(i).getIndex()==CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("On set ce freeslot comme index de l'action en traitement.\n");
+				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("On fait l'action.\n");
+				currentConfiguration.doAction(this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("Appel récursif\n");
 				this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration);
 				
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("On rollback \n");
 				currentConfiguration = copyDeCOnfigurationCourante.getClone(myName);
 				// TODO			
 				//				currentConfiguration.rollBack(); //TODO a enlever ça sera fait par le rollback
 			}
 			if (playerName.equals(this.getMyName())){
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("C'est un noeud ou JE joue: noeud max\nOn set la qualité du noeud\n");
 				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getBestActionIndex(index)).getQuality());
 			}
 			else if (!playerName.equals(this.getMyName())){
+				//===============================================================================//
+				TraceDebugAutomate.debugDecisionTableTrace("C'est un noeud ou l'ADVERSAIRE joue: noeud min\n On set la qualité du noeud\n");
 				this.getDecisionNode(index).setQuality(this.getDecisionNode(this.getWorstActionIndex(index)).getQuality());	
 
 			}
