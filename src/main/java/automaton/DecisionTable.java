@@ -245,7 +245,7 @@ public class DecisionTable {
 			//===============================================================================//
 			TraceDebugAutomate.debugDecisionTableTrace("\t======Feuille["+index+"]======.\n");
 			//evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty)
-			evaluatedQuality = 0.5;
+			evaluatedQuality = 50.0;
 
 			this.getDecisionNode(index).setQuality(evaluatedQuality);
 			this.getDecisionNode(index).setLeaf();
