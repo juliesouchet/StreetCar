@@ -86,7 +86,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 						if (a.startTerminus != null)	super.startMaidenTravel(playerName, a.startTerminus);
 						super.moveTram(a.tramwayMovement, a.ptrTramwayMovement);
 					}
-					else throw new RuntimeException("??????");
+					else throw new RuntimeException("Unknown action : " + a);
 
 				}
 				catch (Exception e) {e.printStackTrace(); return;}

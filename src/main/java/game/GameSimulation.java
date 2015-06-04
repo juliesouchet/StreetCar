@@ -38,9 +38,7 @@ public class GameSimulation extends Game {
 	}
 
 
-	/**==========================================================
-	 *	Result of the simulation : has this player won ?
-	 ==========================================================*/
+	/**	Result of the simulation : has this player won ? */
 	public boolean isWinner(String playerName)
 	{
 		boolean result = false;
@@ -54,7 +52,6 @@ public class GameSimulation extends Game {
 		}
 		
 		// TODO récupérer le résultat de la partie
-//System.out.println("TODO : récupérer le résultat de la partie");
 		return result;
 	}
 	
