@@ -68,8 +68,6 @@ public class Data implements Serializable
 	private String						winner;
 
 	private Path[]						tmpPathTab		= Tile.initPathTab();// Optimization attribute
-	private Tile[]						tmpRotation1;
-	private Tile[]						tmpRotation2;
 	private PathFinder					pathFinder		= new PathFinder();
 	private PathFinderMulti				pathFinderMulti	= new PathFinderMulti();
 	private Point[][]					pathMatrix		= initPossibleTramPathMatrix();
@@ -107,13 +105,7 @@ public class Data implements Serializable
 		for (int j=minLine; j<=maxLine; j++) remainingLine.add(j);
 
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
-		this.tmpRotation1		= new Tile[4];											// Init optimization parameters
-		this.tmpRotation2		= new Tile[4];
-		for (int i=0; i<4; i++)
-		{
-			this.tmpRotation1[i]= this.board[0][0].getClone();
-			this.tmpRotation1[i]= this.board[0][0].getClone();
-		}
+
 	}
 	private Data(){}
 	/**==============================================================
@@ -746,6 +738,17 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 	 ===============================================================*/
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
 	{
+		
+		Tile[] tmpRotation1;
+		Tile[] tmpRotation2;
+		tmpRotation1		= new Tile[4];											// Init optimization parameters
+		tmpRotation2		= new Tile[4];
+		for (int i=0; i<4; i++)
+		{
+			tmpRotation1[i]= this.board[0][0].getClone();
+			tmpRotation2[i]= this.board[0][0].getClone();
+		}
+		
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
 
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
@@ -811,6 +814,7 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 											resTab[res].getAction().setDoubleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
 											resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											res ++;
+System.out.println("res="+res);
 										}
 									}
 								}
