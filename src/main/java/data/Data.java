@@ -68,8 +68,6 @@ public class Data implements Serializable
 	private String						winner;
 
 	private Path[]						tmpPathTab		= Tile.initPathTab();// Optimization attribute
-	private Tile[]						tmpRotation1;
-	private Tile[]						tmpRotation2;
 	private PathFinder					pathFinder		= new PathFinder();
 	private PathFinderMulti				pathFinderMulti	= new PathFinderMulti();
 	private Point[][]					pathMatrix		= initPossibleTramPathMatrix();
@@ -107,13 +105,6 @@ public class Data implements Serializable
 		for (int j=minLine; j<=maxLine; j++) remainingLine.add(j);
 
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
-		this.tmpRotation1		= new Tile[4];											// Init optimization parameters
-		this.tmpRotation2		= new Tile[4];
-		for (int i=0; i<4; i++)
-		{
-			this.tmpRotation1[i]= this.board[0][0].getClone();
-			this.tmpRotation1[i]= this.board[0][0].getClone();
-		}
 	}
 	private Data(){}
 	/**==============================================================
@@ -505,6 +496,7 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 	/**=======================================================================
 	 * @return true if the player has no possible game, considering his hand, the deck and his travel
 	 ========================================================================= */
+// TODO ne marche pas
 	public boolean isGameBlocked(String playerName)
 	{
 		if ((!isEmptyDeck()) && (this.getHandSize(playerName) > 0))				return false;
@@ -762,6 +754,13 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
+		Tile[] tmpRotation1		= new Tile[4];											// Init optimization parameters
+		Tile[] tmpRotation2		= new Tile[4];
+		for (int i=0; i<4; i++)
+		{
+			tmpRotation1[i]= this.board[0][0].getClone();
+			tmpRotation2[i]= this.board[0][0].getClone();
+		}
 
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
 		Point lastTramPosition		= this.playerInfoList.get(playerName).previousTramPosition;
@@ -810,7 +809,7 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 						else if (this.getHandSize(playerName) == 1)	;									//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
 						else
 						{
-							for (int h2 = 0; h2<this.getHandSize(playerName); h2++)						//		For each second player's hand tile
+							for (int h2 = h1+1; h2<this.getHandSize(playerName); h2++)						//		For each second player's hand tile
 							{
 								if (h1 == h2) continue;
 								for (int x2=1; x2<this.getWidth()-1; x2++)								//		For each board cell
@@ -822,7 +821,7 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 										for (int r2=0; r2<nbrRotation2; r2++)							//		For each second tile rotation
 										{
 											if (!this.isAcceptableTilePlacement(x2, y2, tmpRotation2[r2])) continue;
-											resTab[res].getAction().setDoubleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
+											resTab[res].getAction().setTwoSimpleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
 											resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											res ++;
 										}

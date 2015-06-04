@@ -353,7 +353,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 */
 	public boolean isEquivalent(Tile otherTile) {
 		if(this.ptrPathTab != otherTile.ptrPathTab)		return false;
-		for(int p1 = 0; p1 < this.ptrPathTab; p1++) {
+		for(int p1 = 0; p1 <= this.ptrPathTab; p1++) {
 			int p2 = 0;
 			while(p2 < otherTile.ptrPathTab && !this.pathTab[p1].equals(otherTile.pathTab[p2]))	{
 System.out.println("compare " + this.pathTab[p1] + " et " + otherTile.pathTab[p2] + " = " +this.pathTab[p1].equals(otherTile.pathTab[p2]) );

@@ -220,6 +220,20 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 	}
 	/**===========================================================
+	 * Set the current Action to the given two simple building actions
+	 =============================================================*/
+	public void setTwoSimpleBuildingAction(int x1, int y1, Tile t1, int x2, int y2, Tile t2)
+	{
+		this.action					= TWO_BUILD_SIMPLE;
+		this.positionTile1.x		= x1;
+		this.positionTile1.y		= y1;
+		this.tile1					.copy(t1);
+		this.positionTile2.x		= x2;
+		this.positionTile2.y		= y2;
+		this.tile2					.copy(t2);
+		this.ptrTramwayMovement		= -1;
+	}
+	/**===========================================================
 	 * Set the current Action to the given simple building action, and start trip nest turn
 	 =============================================================*/
 	public void setSimpleBuildingAndStartTripNextTurnAction(int x1, int y1, Tile t1)
@@ -237,7 +251,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 =============================================================*/
 	public void setDoubleBuildingAction(int x1, int y1, Tile t1, int x2, int y2, Tile t2)
 	{
-		this.action					= BUILD_SIMPLE;
+		this.action					= BUILD_DOUBLE;
 		this.positionTile1.x		= x1;
 		this.positionTile1.y		= y1;
 		this.tile1					.copy(t1);
