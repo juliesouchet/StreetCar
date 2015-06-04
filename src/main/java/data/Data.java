@@ -787,7 +787,7 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;	//		Case player may start maiden travel next turn
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
-						if (this.isTrackCompleted(playerName))			//TODO************************** Peut etre evite en ajoutant un coup inutile
+						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
 						{
 							resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
 							resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
