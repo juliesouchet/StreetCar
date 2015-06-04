@@ -151,12 +151,6 @@ public class HostRoomMenuPanel extends MenuPanel {
 	// Refresh menu
 
 	public void refreshMenu(PlayerIHM player, Data data) {
-		if (data == null) {
-			System.out.println("DATA VAUT NULL");
-			return;
-		}
-
-		System.out.println(data.getPlayerNameList());
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i=0; i<loginInfos.length; i++) {
@@ -190,14 +184,14 @@ public class HostRoomMenuPanel extends MenuPanel {
 	{
 		nameLabels.get(cellIndex).setText(" Waiting for connection", null);
 		choiceComboBoxes.get(cellIndex).setSelectedIndex(0);
-		avatarImagePanels.get(cellIndex).setBackground(Color.WHITE);
+		avatarImagePanels.get(cellIndex).setBackground(Color.gray);
 	}
 
 	private void closeCell(int cellIndex) 
 	{
 		nameLabels.get(cellIndex).setText(" Connection closed", null);
 		choiceComboBoxes.get(cellIndex).setSelectedIndex(4);
-		avatarImagePanels.get(cellIndex).setBackground(Color.WHITE);
+		avatarImagePanels.get(cellIndex).setBackground(Color.gray);
 	}
 
 }
