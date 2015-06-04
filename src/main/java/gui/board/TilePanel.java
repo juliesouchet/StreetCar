@@ -91,10 +91,19 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 			return;
 		}
 		
+		Direction newDirection = null;
 		if (this.tile != null && this.editable != false) {
-			Direction newDirection = this.tile.getTileDirection().turnLeft();
-			this.tile.setDirection(newDirection);
-			this.repaint();
+			if(e.getButton() == MouseEvent.BUTTON1) {
+				newDirection = this.tile.getTileDirection().turnLeft();
+		    }	    
+		    else if(e.getButton() == MouseEvent.BUTTON3) {
+				newDirection = this.tile.getTileDirection().turnRight();		    	
+		    }
+			
+			if (newDirection != null) {
+				this.tile.setDirection(newDirection);
+				this.repaint();
+			}
 		}
 	}
 	

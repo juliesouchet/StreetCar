@@ -5,7 +5,7 @@ package main.java.game;
 
 
 @SuppressWarnings("serial")
-public class ExceptionNotEnougthTileInHand extends Exception
+public class ExceptionNotEnoughTilesInDeck extends Exception
 {
 
 }

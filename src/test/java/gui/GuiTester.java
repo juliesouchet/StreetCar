@@ -15,9 +15,9 @@ import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotEnougthPlayers;
-import main.java.game.ExceptionNotEnougthTileInDeck;
-import main.java.game.ExceptionNotEnougthTileInHand;
+import main.java.game.ExceptionNotEnoughPlayers;
+import main.java.game.ExceptionNotEnoughTilesInDeck;
+import main.java.game.ExceptionNotEnoughTilesInHand;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTooManyActions;
 import main.java.game.ExceptionTwoManyTilesToDraw;
@@ -87,7 +87,7 @@ public class GuiTester {
 
 		@Override
 		public void hostStartGame() throws RemoteException,
-				ExceptionForbiddenAction, ExceptionNotEnougthPlayers {
+				ExceptionForbiddenAction, ExceptionNotEnoughPlayers {
 			// TODO Auto-generated method stub
 			
 		}
@@ -147,7 +147,7 @@ public class GuiTester {
 		@Override
 		public void drawTile(int nbrCards) throws RemoteException,
 				ExceptionGameHasNotStarted, ExceptionNotYourTurn,
-				ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw {
+				ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw {
 			// TODO Auto-generated method stub
 			
 		}
@@ -156,7 +156,7 @@ public class GuiTester {
 		public void pickTileFromPlayer(String chosenPlayer, Tile tile)
 				throws RemoteException, ExceptionGameHasNotStarted,
 				ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw,
-				ExceptionForbiddenAction, ExceptionNotEnougthTileInHand {
+				ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand {
 			// TODO Auto-generated method stub
 			
 		}

@@ -63,6 +63,14 @@ public class LoginInfo implements Serializable, CloneableInterface<LoginInfo>
 	public boolean	isHuman()						{return this.isHuman;}
 	public int		getAiLevel()					{return this.aiLevel;}
 	public boolean	isOccupiedCell()				{return (this.playerName != null);}
+	public boolean equals(LoginInfo li)
+	{
+		if (this.isClosed	!= li.isClosed)						return false;
+		if (this.isHost		!= li.isHost)						return false;
+		if (this.isHuman	!= li.isHuman)						return false;
+		if ((!this.isHuman) && (this.aiLevel != li.aiLevel))	return false;
+		return true;
+	}
 
 // --------------------------------------------
 // Local Methodes:

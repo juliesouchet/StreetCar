@@ -8,12 +8,8 @@ import main.java.automaton.Strongest;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.game.ExceptionEndGame;
-import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
-import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -71,22 +67,27 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super.gameHasChanged(data);
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
-		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());return;}
-		if (data.isGameBlocked())			{System.out.println("The game is blocked"); return;}
+		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());	return;}
+		if (data.isGameBlocked(playerName))	{System.out.println("The game is blocked");					return;}
 
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
-			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName))
+			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName) )
 			{
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
-	
-// TODO: check action type, do others action types !!
+				if (a == null) {System.out.println("AI has no actions left"); return;}
 				try
 				{
-					if		(a.isSimpleConstructing())		super.placeTile(a.tile1, a.positionTile1);
-					else if (a.isTwoSimpleConstructing())	{super.placeTile(a.tile1, a.positionTile1); super.placeTile(a.tile2, a.positionTile2);}
-else throw new RuntimeException("Not implemented yet");
-					
+					if ((a.isBUILD_SIMPLE()) || (a.isBUILD_AND_START_TRIP_NEXT_TURN()))		super.placeTile(a.tile1, a.positionTile1);
+					else if (a.isTWO_BUILD_SIMPLE())										{super.placeTile(a.tile1, a.positionTile1); super.placeTile(a.tile2, a.positionTile2);}
+					else if (a.isBUILD_DOUBLE())											super.replaceTwoTiles(a.tile1, a.tile2, a.positionTile1, a.positionTile2);
+					else if (a.isMOVE())
+					{
+						if (a.startTerminus != null)	super.startMaidenTravel(playerName, a.startTerminus);
+						super.moveTram(a.tramwayMovement, a.ptrTramwayMovement);
+					}
+					else throw new RuntimeException("??????");
+
 				}
 				catch (Exception e) {e.printStackTrace(); return;}
 			}
@@ -110,19 +111,8 @@ else throw new RuntimeException("Not implemented yet");
 		}
 		else														// fin de tour
 		{
-			try {
-				super.validate();
-			} catch (ExceptionGameHasNotStarted | ExceptionNotYourTurn
-					| ExceptionForbiddenAction e) {
-				e.printStackTrace();
-			} catch (ExceptionEndGame e) {
-				System.out.println("END GAME");
-				String winner = e.getWinner();
-				if(winner != null)
-					System.out.println("WINNER : " + winner);
-				else
-					System.out.println("NO WINNER");
-			}
+				try			{super.validate();}
+				catch (Exception e) {e.printStackTrace(); return;}
 		}
 	}
 	public synchronized void excludePlayer() throws RemoteException

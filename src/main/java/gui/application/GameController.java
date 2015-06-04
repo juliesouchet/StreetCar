@@ -193,7 +193,14 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 
 	public void refresh(Data data) {
 		System.out.println("RESFRESH DU GAME");
+		String winner = data.getWinner();
+		if(winner != null)
+		{
+			// TODO declare victor
+		}
+		// TODO if(data.isBlocked ou isGameBlocked)
 		if (this.menuPanel != null) {
+			System.out.println("REFRESH MENU IS CALLED");
 			this.menuPanel.refreshMenu(StreetCar.player, data);
 		}
 		if (data.isGameStarted() && !(this.getFrameContentPane() instanceof InGamePanel)) {

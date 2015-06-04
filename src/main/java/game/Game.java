@@ -8,8 +8,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Random;
 
 import main.java.data.Data;
@@ -142,17 +140,24 @@ public String getHostName(){return this.data.getHost();}
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
+		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))
+		{
+System.out.println("Game.setLoginInfo: no change to do");
+			return;
+		}
+
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
 		boolean	oldPlayerIsHuman	= this.loggedPlayerTable[playerToChangeIndex].isHuman();
 		boolean	newPlayerIsHuman	= newPlayerInfo.isHuman();
+		boolean notifyAll = false;
 
 		this.loggedPlayerTable[playerToChangeIndex] = newPlayerInfo.getClone();
 		this.loggedPlayerTable[playerToChangeIndex].setFreeCell();
 		if (oldPlayerIsOccupied)														// Case exclude old player
 		{
 			this.data.removePlayer(oldPlayerName);
-			if (oldPlayerIsHuman)////////// && (oldPlayerName != null))
+			if ((oldPlayerIsHuman) && (oldPlayerName != null))
 			{
 				PlayerInterface	oldPlayer	= this.data.getRemotePlayer(oldPlayerName);
 				this.engine.addAction(this.data, "excludePlayer", oldPlayer);
@@ -162,14 +167,18 @@ public String getHostName(){return this.data.getHost();}
 				this.aiList.get(oldPlayerName).interrupt();
 				this.aiList.remove(oldPlayerName);
 			}
+			notifyAll = true;
 		}
 		if (!newPlayerIsHuman)															// Case create AI player
 		{
 			this.launchAIPlayer(newPlayerInfo);
+			notifyAll = false;
 		}
-		
+		if (notifyAll) this.engine.addAction(data, "notifyAllPlayers");
+
+
 System.out.println("******************************************************");
-System.out.println("Apres");
+System.out.println("Game: Apres setLoginInfo");
 for (LoginInfo li: this.loggedPlayerTable)
 {
 	System.out.println("---------------Player :" + li);
@@ -196,9 +205,10 @@ for (String str: this.data.getPlayerNameList())
 	{
 		String	playerName	= player.getPlayerName();
 		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
+System.out.println("iiiiiiiiindex new: " + playerIndex );
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
-		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExcpected();
+		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExpected();
 		if (this.data.isPlayerLogged(playerName))			throw new ExceptionUsedPlayerName();
 		if (this.data.isGameStarted())						throw new ExceptionGameHasAlreadyStarted();
 		if ((isHost) && (this.data.getHost() != null))		throw new ExceptionHostAlreadyExists();
@@ -239,10 +249,10 @@ for (String str: this.data.getPlayerNameList())
 	 * Init the game parameters.
 	 * Make the game begins
 	 ================================================*/
-	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnougthPlayers
+	public synchronized void hostStartGame(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotEnoughPlayers
 	{
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
-		if (!this.data.isGameReadyToStart())			throw new ExceptionNotEnougthPlayers();
+		if (!this.data.isGameReadyToStart())			throw new ExceptionNotEnoughPlayers();
 
 		for (LoginInfo li: this.loggedPlayerTable) li.setIsClosed(true);
 		this.engine.addAction(this.data, "hostStartGame", playerName);
@@ -251,42 +261,39 @@ for (String str: this.data.getPlayerNameList())
 	 * Places a tile from the player's hand on the board.
 	 * The given tile must belong to the player's hand
 	 * The given tile is removed from the player's hand
-	 ===============================================================================*/
-	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions
+	 ===============================================================================
+	 * @throws ExceptionPlayerIsBlocked 
+	 * @throws ExceptionGameIsOver */
+	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
 		if (!this.data.isInPlayerHand(playerName, t))							throw new ExceptionForbiddenAction();
 		if (!this.data.hasRemainingAction(playerName))							throw new ExceptionTooManyActions();
+		if (data.getWinner() != null)											throw new ExceptionPlayerIsBlocked();
+		if (data.isGameBlocked(playerName))										throw new ExceptionGameIsOver();
 		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(playerName, this.data, "placeTile", position, t, null, -1);
+		this.engine.addAction(this.data, "placeTile", playerName, position, t);
 	}
 	/**=============================================================================
 	 * Switch at once two tiles from the player's hand with two tiles on the board.
 	 * The tiles from the board are placed in the player's hand.
 	 ===============================================================================*/
-	public synchronized void replaceTwoTiles (String playerName, Tile t1, Tile t2, Point p1, Point p2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	public synchronized void replaceTwoTiles (String playerName, Tile tile1, Tile tile2, Point position1, Point position2) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())				throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))	throw new ExceptionNotYourTurn();
 		if(data.hasStartedMaidenTravel(playerName))	throw new ExceptionForbiddenAction();
 
-		EngineAction ea = engine.new EngineAction(playerName, data, "replaceTwoTiles");
-
-		ea.tile = t1;
-		ea.secondTile = t2;
-		ea.position = p1;
-		ea.secondPosition = p2;
-
-		this.engine.addAction(ea);
-		// TODO check all possible things
+		this.engine.addAction(this.data, "placeTile", playerName, position1, tile1, position2, tile2);
+// TODO check all possible things
 	}
 	/**=============================================================================
 	 * 	Signals the end of this player's turn
 	 =============================================================================*/
-	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionEndGame
+	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
@@ -296,11 +303,8 @@ for (String str: this.data.getPlayerNameList())
 			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction();
 			if(data.hasRemainingAction(playerName)) throw new ExceptionForbiddenAction();
 		}
-		String winner = data.getWinner();
-		if(winner != null)											throw new ExceptionEndGame(winner);
-		if(data.isGameBlocked())									throw new ExceptionEndGame(null);
 
-		this.engine.addAction(playerName, data, "validate", null, null, null, -1);
+		this.engine.addAction(this.data, "validate", playerName);
 	}
 	/**=============================================================================
 	 * 	Signals the start of this player's maiden travel. 
@@ -318,37 +322,34 @@ for (String str: this.data.getPlayerNameList())
 		if(data.hasStartedMaidenTravel(playerName))			throw new ExceptionForbiddenAction();
 		if(!data.isTrackCompleted(playerName))				throw new ExceptionUncompletedPath();
 
-		EngineAction ea = engine.new EngineAction(playerName, data, "startMaidenTravel");
-		ea.position = terminus;
-
-		this.engine.addAction(ea);
+		this.engine.addAction(this.data, "startMaidenTravel", playerName, terminus, null);
 	}
 	/**=============================================================================
 	 * Moves the player's streetcar following the tramMovement. 
 	 * It must use a pre-existing track on the board, cannot go backwards, 
 	 * and cannot be longer than the maximum allowed speed.
 	 =============================================================================*/
-	public synchronized void moveTram (String playerName, LinkedList<Point> tramMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	public synchronized void moveTram (String playerName, Point[] tramMovement, int ptrTramwayMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
 	{
 		if (!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))			throw new ExceptionNotYourTurn();
 
 		if(!data.hasStartedMaidenTravel(playerName))		throw new ExceptionForbiddenAction();
 		if(!data.isStartOfTurn(playerName))					throw new ExceptionForbiddenAction();
-		if(tramMovement.size() > data.getMaximumSpeed())	throw new ExceptionForbiddenAction();
-		if(tramMovement.size() < Data.minSpeed)				throw new ExceptionForbiddenAction();
-		if(tramMovement.size() > Data.maxSpeed)				throw new ExceptionForbiddenAction();
+		if(ptrTramwayMovement >= data.getMaximumSpeed())	throw new ExceptionForbiddenAction();
+		if(ptrTramwayMovement < Data.minSpeed-1)			throw new ExceptionForbiddenAction();
+		if(ptrTramwayMovement >= Data.maxSpeed)				throw new ExceptionForbiddenAction();
 
 		Point currentPosition = data.getTramPosition(playerName);
+		Point nextPosition;
 
-		if(!data.pathExistsBetween(currentPosition, tramMovement.getLast())) throw new ExceptionForbiddenAction();
-		if(data.getPreviousTramPosition(playerName).equals(tramMovement.getFirst())) throw new ExceptionForbiddenAction();
+		if(!data.pathExistsBetween(currentPosition, tramMovement[ptrTramwayMovement])) throw new ExceptionForbiddenAction();
+		if(data.getPreviousTramPosition(playerName).equals(tramMovement[0])) throw new ExceptionForbiddenAction();
 
-		Iterator<Point> tramPathIterator = tramMovement.iterator();
-		Point previousPosition = null, nextPosition;
-		while(tramPathIterator.hasNext())
+		Point previousPosition = null;
+		for (int ptr=0; ptr<= ptrTramwayMovement; ptr++)
 		{
-			nextPosition = tramPathIterator.next();
+			nextPosition = tramMovement[ptr];
 			if(previousPosition != null)
 			{
 				if(previousPosition.equals(nextPosition)) throw new ExceptionForbiddenAction();
@@ -356,9 +357,8 @@ for (String str: this.data.getPlayerNameList())
 			if(!data.getAccessibleNeighborsPositions(currentPosition.x, currentPosition.y).contains(nextPosition))  throw new ExceptionForbiddenAction();
 			if(data.getTile(currentPosition.x, currentPosition.y).isStop())
 			{
-				if(tramPathIterator.hasNext()) throw new ExceptionForbiddenAction();
+				if(ptr != ptrTramwayMovement) throw new ExceptionForbiddenAction();
 			}
-			
 			previousPosition = currentPosition;
 			currentPosition = nextPosition;
 		}
@@ -372,26 +372,26 @@ for (String str: this.data.getPlayerNameList())
 	/**=============================================================================
 	 * Draw a card from the deck.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnougthTileInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
+	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
-		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnougthTileInDeck();
+		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnoughTilesInDeck();
 		if (nbrCards > this.data.getPlayerRemainingTilesToDraw(playerName))		throw new ExceptionTwoManyTilesToDraw();
 		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(playerName, this.data, "drawTile", null, null, null, nbrCards);
+		this.engine.addAction(this.data, "drawTile", playerName, nbrCards);
 	}
 	/**=============================================================================
 	 * Draw a card from a player's hand.  Put this drawn card in the player's hand
 	 ===============================================================================*/
-	public synchronized void pickTileFromPlayer (String playerName, String chosenPlayerName, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnougthTileInHand
+	public synchronized void pickTileFromPlayer (String playerName, String chosenPlayerName, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand
 	{
 		if (!this.data.isGameStarted())										throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))							throw new ExceptionNotYourTurn();
 		if (this.data.getPlayerRemainingTilesToDraw(playerName) == 0)		throw new ExceptionTwoManyTilesToDraw();
 		if (!this.data.hasStartedMaidenTravel(chosenPlayerName))			throw new ExceptionForbiddenAction();
-		if (this.data.getHandSize(chosenPlayerName) == 0)					throw new ExceptionNotEnougthTileInHand();
+		if (this.data.getHandSize(chosenPlayerName) == 0)					throw new ExceptionNotEnoughTilesInHand();
 		if (playerName.equals(chosenPlayerName))							throw new ExceptionForbiddenAction();
 		if(data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
@@ -441,16 +441,18 @@ for (String str: this.data.getPlayerNameList())
 	{
 		PlayerAI	newPlayer	= null;
 		String		playerName	= AiDefaultName + newPlayerInfo.getAiLevel();
-		String		nameAdd		= "";
+		String		nameAdd		= "", str;
 		Random		rnd			= new Random();
 
 		while(true)
 		{
-			if (this.data.isUsedPlayerName(playerName+nameAdd)) nameAdd += rnd.nextInt(10);
+			if (nameAdd.equals(""))	str = playerName;
+			else					str = "_" + nameAdd;
+			if (this.data.isUsedPlayerName(str)) nameAdd += rnd.nextInt(10);
 			else break;
 		}
-		if (!nameAdd.equals(""))	playerName += "_" + nameAdd;
 
+		if (!nameAdd.equals(""))	playerName += ("_" + nameAdd);
 		try					{newPlayer = new PlayerAI(playerName, newPlayerInfo.isHost(), this, newPlayerInfo.getAiLevel(), null);}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 		Thread t = new Thread(newPlayer);

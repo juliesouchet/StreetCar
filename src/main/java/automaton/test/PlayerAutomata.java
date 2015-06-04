@@ -197,7 +197,7 @@ public class PlayerAutomata implements InterfaceIHM
 		
 		int nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), monNoeudDedecision.getPossibleFollowingActionTable());
 		System.out.println("nbActionsPossibles="+nbActionsPossibles);
-		//data.doAction(myAction);
+		//data.doAction(myAction);		
 		
 		this.frame.setGameData(data);
 	}

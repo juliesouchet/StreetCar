@@ -188,15 +188,9 @@ public class DecisionTable {
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		this.setSize(tableSize);
-		DecisionNode monNoeudDeDecision ;
-		//=======================================
-		TraceDebugAutomate.debugDecisionTableTrace("Start allocating the nodes: \n");
 		for(int i=0;i<this.getSize();i++){
-			//=======================================
-			if(i==100)TraceDebugAutomate.debugDecisionTableTrace(i+"\n");
-			monNoeudDeDecision = new DecisionNode(maxCardinalActionPossible, 0, "leaf&root");
-
-			this.initDecisionNode(i, monNoeudDeDecision);
+			this.initDecisionNode(i, new DecisionNode(maxCardinalActionPossible, 0, "root"));
+			this.freeSlots[i]=true;
 		}
 	}	
 

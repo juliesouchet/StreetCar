@@ -68,6 +68,8 @@ public class Data implements Serializable
 	private String						winner;
 
 	private Path[]						tmpPathTab		= Tile.initPathTab();// Optimization attribute
+	private Tile[]						tmpRotation1;
+	private Tile[]						tmpRotation2;
 	private PathFinder					pathFinder		= new PathFinder();
 	private PathFinderMulti				pathFinderMulti	= new PathFinderMulti();
 	private Point[][]					pathMatrix		= initPossibleTramPathMatrix();
@@ -105,7 +107,13 @@ public class Data implements Serializable
 		for (int j=minLine; j<=maxLine; j++) remainingLine.add(j);
 
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
-
+		this.tmpRotation1		= new Tile[4];											// Init optimization parameters
+		this.tmpRotation2		= new Tile[4];
+		for (int i=0; i<4; i++)
+		{
+			this.tmpRotation1[i]= this.board[0][0].getClone();
+			this.tmpRotation1[i]= this.board[0][0].getClone();
+		}
 	}
 	private Data(){}
 	/**==============================================================
@@ -133,6 +141,14 @@ public class Data implements Serializable
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
 		res.playerOrder				= (this.playerOrder== null)	? null : cpS.copyTab(playerOrder);
+		
+		res.tmpRotation1		= new Tile[4];											// Init optimization parameters
+		res.tmpRotation2		= new Tile[4];
+		for (int i=0; i<4; i++)
+		{
+			res.tmpRotation1[i]= this.board[0][0].getClone();
+			res.tmpRotation1[i]= this.board[0][0].getClone();
+		}
 
 		return res;
 	}
@@ -418,7 +434,7 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 		else if (lastActions.size() == 1)
 		{
 			Action a = lastActions.getFirst();
-			return (a.isSimpleConstructing());
+			return (a.isBUILD_SIMPLE());
 		}
 		else if (lastActions.size() == 2) return false;
 		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
@@ -738,17 +754,6 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 	 ===============================================================*/
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab)
 	{
-		
-		Tile[] tmpRotation1;
-		Tile[] tmpRotation2;
-		tmpRotation1		= new Tile[4];											// Init optimization parameters
-		tmpRotation2		= new Tile[4];
-		for (int i=0; i<4; i++)
-		{
-			tmpRotation1[i]= this.board[0][0].getClone();
-			tmpRotation2[i]= this.board[0][0].getClone();
-		}
-		
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
 
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
@@ -780,7 +785,10 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 		for (int h1 = 0; h1<this.getHandSize(playerName); h1++)										//		For each player's hand tile
 		{
 			t				= this.getHandTile(playerName, h1);
-			nbrRotation1	= t.getUniqueRotationList(tmpRotation1);
+			
+			
+			//nbrRotation1	= t.getUniqueRotationList(tmpRotation1); //TODO je teste sans cette optimisation.
+			nbrRotation1 = 4;
 			for (int r1=0; r1<nbrRotation1; r1++)													//		For each first tile rotation
 			{
 				for (int x1=1; x1<this.getWidth()-1; x1++)											//		For each board cell
@@ -814,7 +822,6 @@ System.out.print("CanPlaceTile " + playerName + " ? ");
 											resTab[res].getAction().setDoubleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
 											resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											res ++;
-System.out.println("res="+res);
 										}
 									}
 								}
