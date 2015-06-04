@@ -7,8 +7,12 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.game.ExceptionEndGame;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -66,8 +70,8 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super.gameHasChanged(data);
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
-		if (data.getWinner() != null)		return;
-		if (data.isGameBlocked())			return;
+		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());return;}
+		if (data.isGameBlocked())			{System.out.println("The game is blocked"); return;}
 
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
@@ -105,8 +109,19 @@ else throw new RuntimeException("Not implemented yet");
 		}
 		else														// fin de tour
 		{
-			try					{super.validate();}
-			catch (Exception e) {e.printStackTrace(); return;}
+			try {
+				super.validate();
+			} catch (ExceptionGameHasNotStarted | ExceptionNotYourTurn
+					| ExceptionForbiddenAction e) {
+				e.printStackTrace();
+			} catch (ExceptionEndGame e) {
+				System.out.println("END GAME");
+				String winner = e.getWinner();
+				if(winner != null)
+					System.out.println("WINNER : " + winner);
+				else
+					System.out.println("NO WINNER");
+			}
 		}
 	}
 	public synchronized void excludePlayer() throws RemoteException

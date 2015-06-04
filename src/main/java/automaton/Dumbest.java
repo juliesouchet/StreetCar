@@ -33,6 +33,8 @@ public class Dumbest extends PlayerAutomaton {
 		int i, j, k;
 
 		if(handSize == 0 ) return null;
+// TODO que faire s'il n'y a aucun choix valide ?
+//		if(!currentconfig.canPlaceTile(name))	{System.out.println(name + " est bloqué");return null;}
 		
 		do{
 			// On choisit un emplacement au hasard
@@ -46,7 +48,6 @@ public class Dumbest extends PlayerAutomaton {
 			for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
 				t.turnLeft();
 			}
-// TODO que faire s'il n'y a aucun choix valide ?			
 		}while( !currentconfig.isAcceptableTilePlacement(i, j, t));
 		choix = Action.newBuildSimpleAction(i, j, t);
 //System.out.println("choixxxxxx " + choix);
