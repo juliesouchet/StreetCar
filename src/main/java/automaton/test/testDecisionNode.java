@@ -17,11 +17,13 @@ public class testDecisionNode {
 
 
 	public static void main(String[] args) {
-		TraceDebugAutomate.decisionNodeTrace=false;
+		TraceDebugAutomate.decisionNodeTrace=true;
 		DecisionNode monNoeudDeDecision = null;
-		int taille_de_case = 5;
-		int nb_de_case = 1;
+		int taille_de_case = 6000;
+		int nb_de_case = 6000;
 		long sommeTps = 0;
+		boolean[] freeSlots = new boolean[nb_de_case];
+		DecisionNode[] mesNoeudsDeDecision = new DecisionNode[nb_de_case];
 		/*
 		 * Notes:
 		 * decisionNode Trace:moyenne pour 1case de 5000actions= 7.09E-7s 
@@ -35,6 +37,11 @@ public class testDecisionNode {
 			try {
 				long tmps1 = System.nanoTime();
 				monNoeudDeDecision = new DecisionNode(taille_de_case, 0, "leaf&root");
+				TraceDebugAutomate.debugDecisionNodeTrace("toc1");
+				mesNoeudsDeDecision[i]=monNoeudDeDecision;
+				TraceDebugAutomate.debugDecisionNodeTrace("toc["+i+"]\n");
+
+				freeSlots[i]=true;
 				long tmps2 = System.nanoTime();
 				//TraceDebugAutomate.debugDecisionNodeTrace("Temps pour new decisionNode de taille "+taille_de_case+" = "+ (tmps2-tmps1)*Math.pow(10.0, -9)+"s \n");
 				sommeTps+=(tmps2-tmps1);
@@ -51,7 +58,7 @@ public class testDecisionNode {
 		
 		
 		//Affichage
-		System.out.println(monNoeudDeDecision.toString());
+		//System.out.println(monNoeudDeDecision.toString());
 
 		Tile maTile = Tile.parseTile("Tile_FFFFZZ060123");
 		Action monAction = Action.newBuildSimpleAction(new Point(5,4), maTile);
@@ -67,14 +74,14 @@ public class testDecisionNode {
 		monNoeudDeDecision.setCoupleActionIndex(1, monCoupleActionIndex2);
 		monNoeudDeDecision.setQuality(100.0);
 
-		System.out.println("(1)"+monNoeudDeDecision.toString());
+		//System.out.println("(1)"+monNoeudDeDecision.toString());
 
 		monNoeudDeDecision.setQuality(50.0);
 		monNoeudDeDecision.setDepth(1);
 		monNoeudDeDecision.setLeaf();
 		monCoupleActionIndex1.setIndex(8);
 		
-		System.out.println("(2)"+monNoeudDeDecision.toString());
+		//System.out.println("(2)"+monNoeudDeDecision.toString());
 
 
 

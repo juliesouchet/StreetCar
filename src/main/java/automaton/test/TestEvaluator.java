@@ -14,19 +14,20 @@ public class TestEvaluator {
 	public static void main(String[] args) {
 		String boardName = "src/test/resources/boards/test";
 		int nbrBuildingInLine = 2;
-		Data data = null;
-		String gameName = "Simulation";
+		String gameName = "TestEvaluator";
+		String ip = "localhost";
 		int nbrGamesSimulated  = 1;
+		Data data = null;
 		
 		/*================*
 		 *	Game setup
 		 *================*/
-		String playerName = "Testeur";
+		String playerName;
 		Game game = null;
 		LoginInfo[] initialLoginTable = 
 				// LoginInfo(isClosed, playerName, isHost, isHuman, iaLevel)
 				{
-				new LoginInfo(false,	playerName,	true,	false,	PlayerAutomaton.travelerLvl),
+				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
@@ -37,11 +38,11 @@ public class TestEvaluator {
 		}
 		Data.boardDirectory = "";
 		try {
-			game = new Game(gameName, "localhost", boardName, nbrBuildingInLine);
+			game = new Game(gameName, ip, boardName, nbrBuildingInLine);
 		} catch (Exception e) {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
-		
+		playerName = game.getHostName();
 		try {
 			data = game.getData(playerName);
 		} catch (RemoteException e) {
@@ -52,16 +53,17 @@ public class TestEvaluator {
 		 *	Simulation(s)
 		 *================*/
 		
+		@SuppressWarnings("unused")
 		double victoryProb = Evaluator.evaluateSituationQuality(playerName, nbrGamesSimulated, data.getClone(playerName), PlayerAutomaton.travelerLvl);
 		
 		
 		/*=========================*
 		 *	Displaying the result
 		 *=========================*/
-		
+/*		
 		System.out.println("**************************************************");
 		System.out.println(playerName + " a une chance de gagner de " + victoryProb + "%");
 		System.out.println("**************************************************");
-		
+*/		
 	}
 }

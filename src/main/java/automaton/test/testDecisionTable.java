@@ -18,13 +18,17 @@ public class testDecisionTable {
 	 */
 	public static void main(String[] args) throws ExceptionUnknownNodeType {
 		DecisionTable maTableDeDecision = null;
-		TraceDebugAutomate.decisionTableTrace=false;
+		TraceDebugAutomate.decisionTableTrace=true;
 		DecisionNode monNoeudDeDecision = null;
 
 		
 		System.out.println("toc");
 		try {
-			maTableDeDecision= new DecisionTable(50, 20, "nomDuJoueur");
+			long tmps1 = System.nanoTime();
+			maTableDeDecision= new DecisionTable(6000, 6000, "nomDuJoueur");
+			long tmps2 = System.nanoTime();
+			TraceDebugAutomate.debugDecisionNodeTrace("Temps pour 6000 new decision	Node de taille 6000 = "+ (tmps2-tmps1)+"nano s \n");
+
 		} catch (ExceptionUnknownNodeType e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

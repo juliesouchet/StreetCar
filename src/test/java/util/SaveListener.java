@@ -24,7 +24,7 @@ public class SaveListener implements MouseListener {
 		if(fileName != null) {
 			FileWriter fw = null;
 			try {
-				fw = new FileWriter(BoardCreator.boardPath+fileName);
+				fw = new FileWriter(BoardCreator.testBoardPath+fileName);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

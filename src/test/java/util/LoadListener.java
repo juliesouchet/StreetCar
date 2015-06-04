@@ -25,7 +25,7 @@ public class LoadListener implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {		
 		// Building a list of all pre-existing boards
-		Path path = (new File(BoardCreator.boardPath)).toPath();
+		Path path = (new File(BoardCreator.testBoardPath)).toPath();
 		Vector<String> availableBoards = new Vector<String>();
 		availableBoards.add("src/main/resources/boards/newOrleans");
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
