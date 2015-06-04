@@ -44,7 +44,7 @@ public class PlayerIHM extends PlayerAbstract
  	 ===========================================================================*/
 	public static PlayerIHM launchPlayer(String playerName, String gameName, String boardName, int nbrBuildingInLine, boolean gameCreation, String applicationIP, InterfaceIHM ihm) throws RemoteException, NotBoundException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionUnknownBoardName, ExceptionHostAlreadyExists, ExceptionGameHasAlreadyStarted
 	{
-		String localIP = NetworkTools.firstFreeSocketInfo().IP;
+		String localIP = NetworkTools.myIPAddress();
 		GameInterface game;
 
 		if (gameCreation)															// App thread creation

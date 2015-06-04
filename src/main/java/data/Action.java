@@ -106,11 +106,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 	 * @param t tuile a placer.
 	 * @return Une instance de la classe action.
 	 */
-	public static Action newStartTripNextTurnAction (Point position, Tile t)	{
-		return newStartTripNextTurnAction(position.x, position.y, t);
+	public static Action newBildAndStartTripNextTurnAction (Point position, Tile t)
+	{
+		return newBildAndStartTripNextTurnAction(position.x, position.y, t);
 	}
 
-	public static Action newStartTripNextTurnAction (int x, int y, Tile t)	{
+	public static Action newBildAndStartTripNextTurnAction (int x, int y, Tile t)
+	{
 		Action res = new Action();
 
 		res.action			= BUILD_AND_START_TRIP_NEXT_TURN;

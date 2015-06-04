@@ -1,9 +1,11 @@
 package main.java.util;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
-import java.net.UnknownHostException;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 
 
@@ -14,48 +16,78 @@ public class NetworkTools
 // --------------------------------------------
 // Attributs:
 // --------------------------------------------
-	public static final int minPort	= 2222;
-	public static final int maxPort	= 4444;
+	public static final int		minPort		= 2222;
+	public static final int		maxPort		= 4444;
+	public static final String	localHost1	= "127.0.0.1";
+	public static final String	localHost2	= "127.0.1.1";
 
 // --------------------------------------------
 // Local methodes:
 // --------------------------------------------
-	public static class InetLocalHost
-	{
-		public String	IP		= null;
-		public int		port	= -1;
-		public String	name	= null;
-	}
-	public static int firstFreePort()	{return firstFreeSocketInfo().port;}
-	public static String myIPAddress()	{return firstFreeSocketInfo().IP;}
-	/**===============================================================
-	 * @return the ip address of the local machine
-	 * @return the first free port in the local machine
-	 =================================================================*/
-	public static InetLocalHost firstFreeSocketInfo()
+	/**============================================================
+	 * @return Scan the machine open ports and return the first free one
+	 ==============================================================*/
+	public static int firstFreePort()
 	{
 		ServerSocket server;
-		InetLocalHost res = new InetLocalHost();
 
-		try
-		{
-			InetAddress inetadr = InetAddress.getLocalHost();
-			res.IP		= (String) InetAddress.getLocalHost().getHostAddress();	// IP
-			res.name	= inetadr.getCanonicalHostName();						// Host Name
-		}
-		catch (UnknownHostException e) {e.printStackTrace(); System.exit(0);}
-		
 		for (int i=minPort; i<=maxPort; i++)
 		{
 			try
 			{
 				server = new ServerSocket(i);
 				server.close();
-				res.port= i;													// Port
-				return res;
+				return i;
 			}
 			catch (IOException e) {}
 		}
 		throw new RuntimeException("No Free ports found between " + minPort + " and " + maxPort);
+	}
+	/**============================================================
+	 * @return Return my IP address, or local host if no IP address is found
+	 ==============================================================*/
+	public static String myIPAddress()
+	{
+		Enumeration<NetworkInterface> interfaces;
+		String str;
+
+		try							{interfaces = NetworkInterface.getNetworkInterfaces();}
+		catch (SocketException e)	{return new String(localHost1);}
+
+		while(interfaces.hasMoreElements())
+		{
+			for(InterfaceAddress ia : interfaces.nextElement().getInterfaceAddresses())
+			{
+				str = ia.getAddress().toString();
+				if (str.charAt(0) == '/') str = str.substring(1);
+				if (!isIPV4(str))			continue;
+				if (str.equals(localHost1))	continue;
+				if (str.equals(localHost2))	continue;
+				return str;
+			}
+		}
+		return new String(localHost1);
+	}
+	/**============================================================
+	 * @return Return true if the given string is a correct IP v4 address
+	 ==============================================================*/
+	public static boolean isIPV4(String address)
+	{
+		String 		delim	= "[.]";
+		String[]	res		= address.split(delim);
+		int x;
+
+		for (int i=0; i<4; i++)
+		{
+			if (i >= res.length)	return false;
+			try
+			{
+				x = Integer.parseInt(res[i]);
+				if (x < 0)			return false;
+				if (x > 255)		return false;
+			}
+			catch (Exception e)		{return false;}
+		}
+		return true;
 	}
 }
