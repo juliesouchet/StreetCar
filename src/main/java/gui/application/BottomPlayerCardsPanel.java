@@ -6,8 +6,6 @@ import java.awt.Point;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-
 import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.gui.board.TilePanel;
@@ -55,7 +53,6 @@ public class BottomPlayerCardsPanel extends Panel{
 			playerColor = data.getPlayerColor(playerName);
 			AvatarPanel avatarPanel = new AvatarPanel(playerColor);
 			avatarPanel.setBounds(20, 20, 50, 50);
-			avatarPanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 			this.add(avatarPanel);
 		} catch (RemoteException e) {
 			e.printStackTrace();
