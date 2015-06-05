@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNoPreviousGameToReach;
 import main.java.game.ExceptionNotEnoughTilesInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTwoManyTilesToDraw;
@@ -26,6 +27,7 @@ public class BottomPlayerPanel extends Panel {
 	boolean canBeginTrip = false;
 	String playerName;
 	int numberOfCardPlayed;
+	PlayerIHM player;
 
 	Button validateButton;
 	Button beginTripButton;
@@ -111,6 +113,21 @@ public class BottomPlayerPanel extends Panel {
 	
 	public void reset() {
 		// TODO: go back to initial state of the beginning of the turn
+		try {
+			player.rollBack();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionNotYourTurn e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionNoPreviousGameToReach e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void beginTrip() {
@@ -158,6 +175,7 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	public void refreshGame(PlayerIHM player, Data data) {
+		this.player = player;
 		player = StreetCar.player;
 		try {
 			playerName = player.getPlayerName();
