@@ -9,11 +9,15 @@ import main.java.gui.util.Resources;
 @SuppressWarnings("serial")
 public class AvatarPanel extends Panel{
 
-	Color avatarColor;
+	Color avatarColor = null;
 	BufferedImage bufferedImage;
 	
-	public AvatarPanel(Color avatarColor) {
+	public AvatarPanel() {
 		super();
+	}
+	
+	public AvatarPanel(Color avatarColor) {
+		this();
 		this.avatarColor = avatarColor;
 		chooseAvatar();
 	}
@@ -34,6 +38,16 @@ public class AvatarPanel extends Panel{
 		} else {
 			bufferedImage = Resources.imageNamed("avatar_not_found");;
 		}		
+	}
+	
+	public Color getColor() {
+		return this.avatarColor;
+	}
+	
+	public void setColor(Color avatarColor) {
+		this.avatarColor = avatarColor;
+		chooseAvatar();
+		this.repaint();
 	}
 	
 	protected void paintComponent(Graphics g) {
