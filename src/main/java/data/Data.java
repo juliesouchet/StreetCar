@@ -158,23 +158,23 @@ public class Data implements Serializable
 	 =========================================================*/
 	public void getPreviousDataAndRollBack()
 	{
-		PlayerInfo	pi	= this.playerInfoList.get(this.getPlayerTurn());
-		HistoryCell	hc	= pi.getLastActionHistory();
-		String playerName;
+		PlayerInfo	pi			= this.playerInfoList.get(this.getPlayerTurn());
+		HistoryCell	hc			= pi.getLastActionHistory();
+		String		playerName	= this.getPlayerTurn();
 		int x, y;
-/*
+//TODO traiter la pioche
+//TODO   FINIIIIIIIIIIIIIR
 		if (hc != null)																										// Case player has done an action this round
 		{
-			playerName = this.getPlayerTurn();
 			if (hc.action2 != null)																							//		Case undo round second game
 			{
 				if (hc.action2.isBUILD_SIMPLE())
 				{
 					x = hc.action2.positionTile2.x;
 					y = hc.action2.positionTile2.y;
-					if (hc.oldTile2 != null)	this.board[x][y] = hc.oldTile2;												//			Case: game was a tile improve
-					else						this.board[x][y] = this.getNewEmptyTile();
-					 pi.hand.add(hc.action2.tile1);
+					if (hc.oldTile2 != null)	{this.board[x][y] = hc.oldTile2; pi.hand.remove(hc.oldTile2);}				//			Case: game was a tile improve
+					else						 this.board[x][y] = this.getNewEmptyTile();
+					pi.hand.add(hc.action2.tile1);
 				}
 				else throw new RuntimeException("????");
 				hc.action2	= null;
@@ -184,21 +184,42 @@ public class Data implements Serializable
 			{
 				if (hc.action1.isBUILD_SIMPLE() || hc.action1.isBUILD_AND_START_TRIP_NEXT_TURN())
 				{
-					
+					x = hc.action1.positionTile1.x;
+					y = hc.action1.positionTile1.y;
+					if (hc.oldTile1 != null)	{this.board[x][y] = hc.oldTile1; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
+					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
+					pi.hand.add(hc.action1.tile1);
 				}
 				else if (hc.action1.isBUILD_DOUBLE())
 				{
-					
+					x = hc.action1.positionTile1.x;
+					y = hc.action1.positionTile1.y;
+					if (hc.oldTile1 != null)	{this.board[x][y] = hc.oldTile1;; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
+					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
+					pi.hand.add(hc.action1.tile1);
+					x = hc.action1.positionTile2.x;
+					y = hc.action1.positionTile2.y;
+					if (hc.oldTile2 != null)	{this.board[x][y] = hc.oldTile2; pi.hand.remove(hc.oldTile2);}				//			Case: game was a tile improve
+					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
+					pi.hand.add(hc.action1.tile2);
+				}
+				else if (hc.action1.isMOVE())
+				{
+					// TODO check avec travel
 				}
 				else throw new RuntimeException("????");
-				
+				hc.action1	= null;
+				hc.oldTile1	= null;
+				hc.oldTile2	= null;
 			}
 		}
 		else																													// Case player ha
 		{
-			
+			this.playerInfoList.get(playerName).undoRound();
+			this.round --;
+			this.getPreviousDataAndRollBack();
 		}
-*/		throw new RuntimeException("Pas fini");
+		throw new RuntimeException("Pas fini");
 	}
 
 // --------------------------------------------
@@ -343,8 +364,7 @@ public class Data implements Serializable
 		Point building = this.isBuildingAround(x, y);
 		if (building != null)																	// Case put stop next to building
 		{
-			if (this.isStopNextToBuilding(building) == null)
-				this.board[x][y].setStop(true);
+			if (this.isStopNextToBuilding(building) == null) this.board[x][y].setStop(true);
 		}
 		pi.getLastActionHistory().addLastAction(Action.newBuildSimpleAction(x, y, t), oldTH, null);	// Update player's history
 	}
@@ -698,9 +718,8 @@ public class Data implements Serializable
 		for (Direction dir: Direction.DIRECTION_LIST)
 		{
 			p = dir.getNeighbour(building.x, building.y);
-			if (this.isWithinnBoard(p.x, p.y))	continue;
-			t = this.board[p.x][p.y];
-			if (t.isStop())	return p;
+			if (!this.isWithinnBoard(p.x, p.y))	continue;
+			if (this.board[p.x][p.y].isStop())	return p;
 		}
 		return null;
 	}
@@ -715,7 +734,7 @@ public class Data implements Serializable
 		for (Direction dir: Direction.DIRECTION_LIST)
 		{
 			neighbor = dir.getNeighbour(x, y);
-			if (this.isWithinnBoard(neighbor.x, neighbor.y))	continue;
+			if (!this.isWithinnBoard(neighbor.x, neighbor.y))	continue;
 			neighborT = this.board[neighbor.x][neighbor.y];
 			if (neighborT.isBuilding())	return neighbor;
 		}
@@ -1137,7 +1156,8 @@ System.out.println("iciiiii, trackCompleted");
 			if (this.history.size() <= round)	return false;
 			else								return (!this.getLastActionHistory().isEmpty());
 		}
-		public void newRound() {this.history.addLast(new HistoryCell());}
+		public void newRound()	{this.history.addLast(new HistoryCell());}
+		public void undoRound() {this.history.removeLast();}
 	}
 
 // --------------------------------------------

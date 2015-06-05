@@ -1,33 +1,45 @@
 package main.java.automaton.test;
 
-import main.java.automaton.DecisionTable;
+import main.java.data.Data;
+import main.java.game.ExceptionUnknownBoardName;
 
 
 
 public class testGrandeStruct {
 
 	public static void main(String[] args) {
-		DecisionTable maTaDecisionTable = null;
-
-		int compteur = 0;
-		int nombreActions1 = 0;
-		int nombreActions = 0;
-
-for(nombreActions1=4;nombreActions1<1000;nombreActions1+=10){
-		for (int profondeur = 0; profondeur <= 10; profondeur++){
-			nombreActions = nombreActions1;
-			for(int i = 0; i<profondeur;i++){
-				compteur += nombreActions+((nombreActions-2)*nombreActions);
-				nombreActions = nombreActions-2;
-				if(nombreActions==0) break;
+	//	DecisionTable maDecisionTable = null;
+		Data[] monTableauDeData = new Data[100000];
+		
+		for(int i=0; i<100000; i++){
+			try {
+				monTableauDeData[i]= new Data("jeu", "newOrleans", 2);
+				if(i%1000==0)System.out.println(i);
+			} catch (ExceptionUnknownBoardName | RuntimeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			System.out.println("nombreActions="+nombreActions+" profondeur="+profondeur+" compteur="+compteur);
-			compteur = 0;
-			if(nombreActions==0) break;
-
 		}
-		System.out.println();
-}
+		
+//		int compteur = 0;
+//		int nombreActions1 = 0;
+//		int nombreActions = 0;
+//
+//for(nombreActions1=4;nombreActions1<1000;nombreActions1+=10){
+//		for (int profondeur = 0; profondeur <= 10; profondeur++){
+//			nombreActions = nombreActions1;
+//			for(int i = 0; i<profondeur;i++){
+//				compteur += nombreActions+((nombreActions-2)*nombreActions);
+//				nombreActions = nombreActions-2;
+//				if(nombreActions==0) break;
+//			}
+//			System.out.println("nombreActions="+nombreActions+" profondeur="+profondeur+" compteur="+compteur);
+//			compteur = 0;
+//			if(nombreActions==0) break;
+//
+//		}
+//		System.out.println();
+//}
 
 		//		int[][][] ma_matrice_dentiers = new int[6000][6000][17];
 		//		

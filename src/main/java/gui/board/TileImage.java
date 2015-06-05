@@ -1,5 +1,6 @@
 package main.java.gui.board;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -60,8 +61,13 @@ public class TileImage {
 		at.scale((double)width / (double)image.getWidth(),
 				 (double)width / (double)image.getHeight());
 		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
-		
 		g2d.drawImage(image, at, null);
+		
+		if (tile.isStop()) {
+			System.out.println("IS STOP !!!!!!!!!!!!!!!!!!!!");
+			g2d.setColor(Color.RED);
+			g2d.fillRect(width/2-5, width/2-5, 10, 10);
+		}
 	}
 	
 }
