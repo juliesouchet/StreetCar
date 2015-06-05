@@ -36,5 +36,10 @@ public class MovingMapPanel extends Panel {
 			int y = (this.getHeight() - bufferedImage.getHeight()) / 2;
 			g.drawImage(bufferedImage, x, y, null);
 		}
+		
+
+		g.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		
 	}
 }
