@@ -156,6 +156,36 @@ public class DecisionNode {
 		return this.getQuality()!=NOT_SIGNIFICANT;
 	}
 	
+	/**
+	 * @return L'index dans la table des actions possibles CoupleActionIndex ayant la meilleur qualité. 
+	 */
+	public int getBestActionIndex(){
+		double bestValue=-1.0;
+		int indexBestValue=-1;
+		for(int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
+			if(this.actionIsSignificant(i) && bestValue<=this.getCoupleActionIndex(i).getQuality()){
+				bestValue=this.getCoupleActionIndex(i).getQuality();
+				indexBestValue=i;
+			}
+		}
+		return indexBestValue;
+	}
+
+	/**
+	 * @return L'index dans la table des actions possibles CoupleActionIndex ayant la pire qualité. 
+	 */
+	public int getWorstActionIndex(){
+		double worstValue=101.0;
+		int indexWorstValue=-1;
+		for(int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
+			if(this.actionIsSignificant(i) && worstValue>=this.getCoupleActionIndex(i).getQuality()){
+				worstValue=this.getCoupleActionIndex(i).getQuality();
+				indexWorstValue=i;
+			}
+		}
+		return indexWorstValue;
+	}
+	
 	/* ===============================================================================================================
 	 * 			SETTER
 	 * =============================================================================================================== */
@@ -256,6 +286,20 @@ public class DecisionNode {
 		this.setQuality(NOT_SIGNIFICANT);
 	}
 	
+	/**
+	 * Fixe la qualité du noeud à la qualité du meilleur des choix possibles.
+	 */
+	public void setNodeQualityToBestChoice(){
+		this.setQuality(this.getCoupleActionIndex(this.getBestActionIndex()).getQuality());
+	}
+	
+	/**
+	 * Fixe la qualité du noeud à la qualité du pire des choix possibles.
+	 */
+	public void setNodeQualityToWorstChoice(){
+		this.setQuality(this.getCoupleActionIndex(this.getWorstActionIndex()).getQuality());
+	}
+	
 	/* ===============================================================================================================
 	 * 			CONSTRUCTEURS
 	 * =============================================================================================================== */
@@ -275,7 +319,7 @@ public class DecisionNode {
 		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
 		// On rempli la table avec des actions (du coup non significatives)
 		for(int i=0; i<numberMaxOfPossibleActions;i++){
-			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), CoupleActionIndex.NOT_SIGNIFICANT);
+			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), CoupleActionIndex.NOT_SIGNIFICANT, 0.0);
 		}
 		//A la creation on fixe la qualité a NOT_SIGNIFICANT tant qu'une valeur significative n'a pas été calculé
 		this.setQuality(NOT_SIGNIFICANT);
