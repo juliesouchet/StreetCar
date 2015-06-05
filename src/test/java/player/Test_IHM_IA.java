@@ -65,4 +65,10 @@ public class Test_IHM_IA implements InterfaceIHM
 		System.out.println("excludePlayer");
 		System.out.println("Not managed yet");
 	}
+
+	@Override
+	public void refreshMessages(String playerName, String message) {
+		// TODO Auto-generated method stub
+		
+	}
 }

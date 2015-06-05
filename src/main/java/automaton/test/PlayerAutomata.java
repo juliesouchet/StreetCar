@@ -222,4 +222,10 @@ public class PlayerAutomata implements InterfaceIHM
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void refreshMessages(String playerName, String message) {
+		// TODO Auto-generated method stub
+		
+	}
 }
