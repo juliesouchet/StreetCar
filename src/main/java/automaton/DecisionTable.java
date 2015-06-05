@@ -60,29 +60,9 @@ public class DecisionTable {
 	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
 	 */
 	public int getBestActionIndex(int index){
+		
+	return this.getDecisionNode(index).getBestActionIndex();
 
-		//TODO Je met une valeur de retour bidon car je vais devoir refaire cette fonction pour ne plus stocker toutes les actions mais les ecraser au fur et a mesure.
-		return 0;
-//		int indexBestActionInTable=DecisionNode.NOT_SIGNIFICANT;
-//		int indexBestActionInNode=DecisionNode.NOT_SIGNIFICANT;
-//		int indexCourantInTable;
-//		int indexCourantInNode;
-//		double bestValue = -1.0;
-//		double currentValue;
-//		DecisionNode decisionNode = this.getDecisionNode(index);
-//
-//		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
-//			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
-//				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
-//				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
-//				if( currentValue>=bestValue){
-//					indexBestActionInNode = indexCourantInNode;
-//					indexBestActionInTable = decisionNode.getCoupleActionIndex(indexBestActionInNode).getIndex();
-//					bestValue = this.getDecisionNode(indexBestActionInTable).getQuality();
-//				}
-//			}
-//		}
-//		return indexBestActionInNode;
 	}		
 
 	/**
@@ -94,26 +74,9 @@ public class DecisionTable {
 	 * Le numero de l'action dans la liste des actions possibles ayant la configuration correspondante la plus desavantageuse
 	 */
 	public int getWorstActionIndex(int index){
-		int indexWorstActionInTable=-1;
-		int indexWorstActionInNode=-1;
-		int indexCourantInTable;
-		int indexCourantInNode;
-		double worstValue=+101.0;
-		double currentValue;
-		DecisionNode decisionNode = this.getDecisionNode(index);
+		
+	return this.getDecisionNode(index).getWorstActionIndex();
 
-		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
-			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
-				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
-				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
-				if( currentValue<=worstValue){
-					indexWorstActionInNode = indexCourantInNode;
-					indexWorstActionInTable = decisionNode.getCoupleActionIndex(indexWorstActionInNode).getIndex();
-					worstValue = this.getDecisionNode(indexWorstActionInTable).getQuality();
-				}
-			}
-		}
-		return indexWorstActionInNode;
 	}	
 
 	/**

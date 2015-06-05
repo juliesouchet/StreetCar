@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.gui.application.GameController;
+import main.java.gui.components.AvatarPanel;
 import main.java.gui.components.Button;
 import main.java.gui.components.ComboBox;
-import main.java.gui.components.ImagePanel;
 import main.java.gui.components.Label;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
@@ -21,7 +21,7 @@ public class ClientRoomMenuPanel extends MenuPanel {
 	
 	private ArrayList<Label> nameLabels = new ArrayList<Label>();
 	private ArrayList<ComboBox> choiceComboBoxes = new ArrayList<ComboBox>();
-	private ArrayList<ImagePanel> avatarImagePanels = new ArrayList<ImagePanel>();
+	private ArrayList<AvatarPanel> avatarImagePanels = new ArrayList<AvatarPanel>();
 			
 	// Constructors
 	
@@ -48,7 +48,7 @@ public class ClientRoomMenuPanel extends MenuPanel {
 	    };
 	    
 	    for (int i = 0, y = 140; i < 5; i++, y += 50) {
-	    	ImagePanel imagePanel = new ImagePanel();
+	    	AvatarPanel imagePanel = new AvatarPanel();
 	    	imagePanel.setBounds(160, y, 40, 40);
 		    this.add(imagePanel);
 		    this.avatarImagePanels.add(imagePanel);
@@ -96,11 +96,12 @@ public class ClientRoomMenuPanel extends MenuPanel {
 			for (int i = 0; i < 5; i++) {
 				Label nameLabel = this.nameLabels.get(i);
 				ComboBox choiceComboBox = this.choiceComboBoxes.get(i);
-				ImagePanel avatarImagePanel = this.avatarImagePanels.get(i);
+				AvatarPanel avatarImagePanel = this.avatarImagePanels.get(i);
 				
 				LoginInfo info = loginInfos[i];
 				nameLabel.setText(info.getPlayerName());
 				choiceComboBox.setEditable(!info.isHost());
+				avatarImagePanel.setColor(data.getPlayerColor(info.getPlayerName()));
 				
 				System.out.println(i + " " + info);
 				if (info.isClosed()) {

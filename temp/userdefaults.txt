@@ -1,6 +1,6 @@
 #
-#Fri Jun 05 14:58:13 CEST 2015
+#Fri Jun 05 16:38:25 CEST 2015
 Language=en
-PlayerName=riyane
+PlayerName=lsdfqhysdliuf
 UseFullScreen=false
 GameName=jeux

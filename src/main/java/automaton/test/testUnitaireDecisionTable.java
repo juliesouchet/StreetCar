@@ -17,23 +17,23 @@ public class testUnitaireDecisionTable {
 
 
 	/*
-	 * 	-------------------------------------------------
-	 *	| 	0	|	1	|	2	|	3	|	4	|	5	|
-	 *	-------------------------------------------------
-	 * 	| 90.0	| 90.0	| 20.0	| 90.0	| 30.0	| 20.0	|
-	 * 	-------------------------------------------------
-	 * 	| 	0	|	1	|	1	|	2	|	2	|	2	|
-	 * 	-------------------------------------------------
-	 * 	| root	| int	| int	| leaf 	| leaf	| leaf	|	
-	 * 	=================================================
-	 * 	| <A;1>	| <A;3>	| <A;4> |	...	|	...	|	...	|
-	 * 	-------------------------------------------------
-	 * 	| <A;2>	| ...	| <A;5> |	...	|	...	|	...	|
-	 * 	-------------------------------------------------
-	 * 	|	...	| ...	| ...	|	...	|	...	|	...	|
-	 * 	-------------------------------------------------
-	 * 	|	...	| ...	| ...	|	...	|	...	|	...	|
-	 * 	-------------------------------------------------
+	 * 	--------------------------------------------------------------------------------------------------
+	 *	| 		0		|		1		|		2		|		3		|		4		|		5		|
+	 *	--------------------------------------------------------------------------------------------------
+	 * 	| 	90.0		| 	90.0		| 		20.0	|		90.0	|		30.0	|		20.0	|
+	 * 	--------------------------------------------------------------------------------------------------
+	 * 	| 		0		|		1		|		1		|		2		|		2		|		2		|
+	 * 	--------------------------------------------------------------------------------------------------
+	 * 	|	 root		|		int		|		int		|		leaf 	|	 	leaf	|		leaf	|	
+	 * 	==================================================================================================
+	 * 	|	<A;1;90.0>	| 	<A;3;90.0>	|	<A;4;30.0> 	|		...		|		...		|		...		|
+	 * 	--------------------------------------------------------------------------------------------------
+	 * 	|	 <A;2;20.0>	| 	...			|	<A;5;20.0>	|		...		|		...		|		...		|
+	 * 	--------------------------------------------------------------------------------------------------
+	 * 	|		...		|	 ...		|		...		|		...		|		...		|		...		|
+	 * 	--------------------------------------------------------------------------------------------------
+	 * 	|		...		| 	...			|		...		|		...		|		...		|		...		|
+	 * 	--------------------------------------------------------------------------------------------------
 	 *
 	 */
 	public DecisionTable tableTest() {
@@ -55,11 +55,13 @@ public class testUnitaireDecisionTable {
 		action = Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123"));
 
 		// Je créé un couple index action pour remplir la liste des actions possibles
-		coupleActionIndex = new CoupleActionIndex(action, 1);
+		coupleActionIndex = new CoupleActionIndex(action, 1, 90.0);
 
 		//Colonne 0
 		decisionNode.setCoupleActionIndex(0, coupleActionIndex);
 		coupleActionIndex.setIndex(2);
+		coupleActionIndex.setQuality(20.0);
+
 		decisionNode.setCoupleActionIndex(1, coupleActionIndex);
 		decisionNode.setQuality(90.0);
 
@@ -68,6 +70,7 @@ public class testUnitaireDecisionTable {
 		//Colonne 1
 		decisionNode = new DecisionNode(nodeTable, 1, "internalNode");
 		coupleActionIndex.setIndex(3);
+		coupleActionIndex.setQuality(90.0);
 		decisionNode.setCoupleActionIndex(0, coupleActionIndex);
 		decisionNode.setQuality(90.0);
 
@@ -77,8 +80,12 @@ public class testUnitaireDecisionTable {
 		//Colonne 2
 		decisionNode = new DecisionNode(nodeTable, 1, "internalNode");
 		coupleActionIndex.setIndex(4);
+		coupleActionIndex.setQuality(30.0);
+
 		decisionNode.setCoupleActionIndex(0, coupleActionIndex);
 		coupleActionIndex.setIndex(5);
+		coupleActionIndex.setQuality(20.0);
+
 		decisionNode.setCoupleActionIndex(1, coupleActionIndex);
 		decisionNode.setQuality(20.0);
 		maTableDeDecision.setDecisionNode(2, decisionNode);	
@@ -153,7 +160,7 @@ public class testUnitaireDecisionTable {
 		action = Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123"));
 
 		// Je créé un couple index action pour remplir la liste des actions possibles
-		coupleActionIndex = new CoupleActionIndex(action, 1);
+		coupleActionIndex = new CoupleActionIndex(action, 1, 0.0);
 
 		//Colonne 0
 		decisionNode.setCoupleActionIndex(0, coupleActionIndex);

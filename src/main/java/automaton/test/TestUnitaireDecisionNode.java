@@ -242,9 +242,9 @@ public class TestUnitaireDecisionNode {
 		monNoeudDeDecision = new DecisionNode(size, 0, "root");	// A l'initialisation, aucune action n'a été entrée:
 		assertTrue(monNoeudDeDecision.getNumberPossiblesActionsTable()==0); // Il y a 0 action possible
 		assertFalse(monNoeudDeDecision.getNumberPossiblesActionsTable()==1); // Il n'y a pas 1 action possible
-		CoupleActionIndex monCoupleActionIndex1 = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 1);
+		CoupleActionIndex monCoupleActionIndex1 = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 1, 8.0);
 		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex1);
-		CoupleActionIndex monCoupleActionIndex2 = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 2);
+		CoupleActionIndex monCoupleActionIndex2 = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 2, 45.0);
 		monNoeudDeDecision.setCoupleActionIndex(1, monCoupleActionIndex2);
 		assertTrue(monNoeudDeDecision.getNumberPossiblesActionsTable()==2);
 		assertFalse(monNoeudDeDecision.getNumberPossiblesActionsTable()==0);
@@ -265,7 +265,7 @@ public class TestUnitaireDecisionNode {
 
 		monNoeudDeDecision = new DecisionNode(size, 1, "root");
 		assertTrue(monNoeudDeDecision.getCoupleActionIndex(0).equals(monNoeudDeDecision.getCoupleActionIndex(1))); //La table des couples action/index est initialisé avec des valeurs par default, ils doivent donc etre egaux 2 a deux
-		monCoupleActionIndex = new CoupleActionIndex(monAction, 1);
+		monCoupleActionIndex = new CoupleActionIndex(monAction, 1, 34.0);
 		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex);
 		assertFalse(monCoupleActionIndex==monNoeudDeDecision.getCoupleActionIndex(0)); //Le couple a été copié, ce n'est pas le meme objet
 		assertTrue(monCoupleActionIndex.equals(monNoeudDeDecision.getCoupleActionIndex(0))); // Mais leur contenu est identique
@@ -306,7 +306,7 @@ public class TestUnitaireDecisionNode {
 		monNoeudDeDecisionSource = new DecisionNode(size, 0, "root");
 		monNoeudDeDecisionCible = new DecisionNode(size, 0, "root");
 
-		CoupleActionIndex monCoupleActionIndex = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 1);
+		CoupleActionIndex monCoupleActionIndex = new CoupleActionIndex(Action.newBuildSimpleAction(new Point(5,4), Tile.parseTile("Tile_FFFFZZ060123")), 1, 25.6);
 		monNoeudDeDecisionSource.setCoupleActionIndex(0, monCoupleActionIndex);
 		assertFalse(monNoeudDeDecisionCible.equals(monNoeudDeDecisionSource));
 		monNoeudDeDecisionCible.copy(monNoeudDeDecisionSource);
