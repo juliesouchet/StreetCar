@@ -159,16 +159,34 @@ public class Data implements Serializable
 	public void getPreviousDataAndRollBack()
 	{
 		PlayerInfo	pi	= this.playerInfoList.get(this.getPlayerTurn());
-		HistoryCell	hc	= pi.getLastActionHistory();;
+		HistoryCell	hc	= pi.getLastActionHistory();
+		int x, y;
 
-		if (hc != null)								// Case player
+/*		if (hc != null)								// Case player
+		{
+			if (hc.action2 != null)
+			{
+				if (hc.action2.isSimpleConstructing())
+				{
+					x = hc.action2.positionTile2.x;
+					y = hc.action2.positionTile2.y;
+					if (hc.oldTile2 != null)	this.board[x][y] = hc.oldTile2;
+					else						this.board[x][y] = this.getNewEmptyTile();
+				}
+				else throw new RuntimeException("????");
+				hc.action2	= null;
+				hc.oldTile2	= null;
+			}
+			else
+			{
+				
+			}
+		}
+		else
 		{
 			
 		}
-		
-		
-		
-		throw new RuntimeException("Pas fini");
+***/		throw new RuntimeException("Pas fini");
 	}
 
 // --------------------------------------------
@@ -1046,6 +1064,7 @@ System.out.println("iciiiii, trackCompleted");
 		}
 		return res;
 	}
+	public Tile getNewEmptyTile(){return this.board[0][0].getClone();}
 
 // --------------------------------------------
 // Player Info class:
