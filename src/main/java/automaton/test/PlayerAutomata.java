@@ -1,13 +1,23 @@
 package main.java.automaton.test;
 
 import java.awt.Color;
+import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
 import main.java.automaton.DecisionNode;
+import main.java.automaton.DecisionTable;
+import main.java.automaton.Dumbest;
 import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.automaton.PlayerAutomaton;
+import main.java.data.Action;
 import main.java.data.Data;
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionGameIsOver;
+import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionPlayerIsBlocked;
+import main.java.game.ExceptionTooManyActions;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -161,7 +171,10 @@ public class PlayerAutomata implements InterfaceIHM
 	// --------------------------------------------
 	public void refresh(Data data)
 	{
-
+		DecisionTable monNoeudDedecision = null;
+		int nbActionsPossibles = 0;
+		Action myAction = null;
+		
 		//=======================================
 		TraceDebugAutomate.debugDecisionTableTrace("Refresh called\n");
 
@@ -169,37 +182,61 @@ public class PlayerAutomata implements InterfaceIHM
 			firstRefreshDone = true;
 			return;
 		}
-//			else if(!secondRefreshDone){
-//			secondRefreshDone = true;
-//			//=======================================
-//			TraceDebugAutomate.debugDecisionTableTrace("Allocating Strongest\n");
-//			this.edouard = new Strongest(data.getPlayerTurn());
-//			//=======================================
-//			TraceDebugAutomate.debugDecisionTableTrace("Created new strongest\n");
-//		}
-		
-//		Action myAction = edouard.makeChoice(data);
-		//=======================================
-		TraceDebugAutomate.debugDecisionTableTrace("Strongest made a choice \n");
-		
-		
-		DecisionNode monNoeudDedecision = null;
+
 		try {
-			monNoeudDedecision = new DecisionNode(4000000, 0, "root");
+			nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), new DecisionNode(1, 0, "root").getPossibleFollowingActionTable(),false);
+		} catch (ExceptionUnknownNodeType e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		System.out.println("nbActionPossibles="+nbActionsPossibles);
+		int profondeurExplorable = 150000/nbActionsPossibles;
+		System.out.println("Profondeur explorable="+profondeurExplorable);
+		try {
+			monNoeudDedecision = new DecisionTable(nbActionsPossibles, profondeurExplorable, "joueurA");
 		} catch (ExceptionUnknownNodeType e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(data==null){
-			System.out.println("data est null");
+		if(profondeurExplorable==0){
+			edouard = new Dumbest("joueurA");
+			myAction = edouard.makeChoice(data);
+			try {
+				player.doAction("joueurA", myAction);
+			} catch (RemoteException | ExceptionGameHasNotStarted
+					| ExceptionNotYourTurn | ExceptionForbiddenAction
+					| ExceptionTooManyActions | ExceptionPlayerIsBlocked
+					| ExceptionGameIsOver e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			myAction = edouard.makeChoice(data);
+			try {
+				player.doAction("joueurA", myAction);
+			} catch (RemoteException | ExceptionGameHasNotStarted
+					| ExceptionNotYourTurn | ExceptionForbiddenAction
+					| ExceptionTooManyActions | ExceptionPlayerIsBlocked
+					| ExceptionGameIsOver e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+
 		}
 		
-		
-		int nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), monNoeudDedecision.getPossibleFollowingActionTable());
-		System.out.println("nbActionsPossibles="+nbActionsPossibles);
-		//data.doAction(myAction);		
+//		try {
+//			player.drawTile(2);
+//		} catch (RemoteException | ExceptionGameHasNotStarted
+//				| ExceptionNotYourTurn | ExceptionNotEnoughTilesInDeck
+//				| ExceptionTwoManyTilesToDraw | ExceptionForbiddenAction e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		System.out.println("pop");
+
 		
 		this.frame.setGameData(data);
+		System.out.println("game setted");
 	}
 
 	// --------------------------------------------
