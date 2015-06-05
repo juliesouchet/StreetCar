@@ -53,7 +53,7 @@ public class Strongest extends PlayerAutomaton {
 			}else{
 				myDecisionTable = new DecisionTable(nbActionsPossibles, profondeurExplorable, this.name);
 				currentConfig.getPossibleActions(name, myDecisionTable.getDecisionNode(0).getPossibleFollowingActionTable(), true);
-				myDecisionTable.applyMinMax(0, profondeurExplorable, currentConfig);
+				myDecisionTable.applyMinMax(0, profondeurExplorable, currentConfig, nbActionsPossibles);
 				myAction = myDecisionTable.getDecisionNode(0).getCoupleActionIndex(myDecisionTable.getBestActionIndex(0)).getAction();
 			}
 

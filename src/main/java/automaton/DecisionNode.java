@@ -280,7 +280,7 @@ public class DecisionNode {
 	 * Remet toutes les actions de la table de couples action possible/index comme non pertinentes
 	 */
 	public void reset(){
-		for(int i=0;i<this.getNumberPossiblesActionsTable();i++){
+		for(int i=0;i<this.getSizeOfPossiblesActionsTable();i++){
 			this.getCoupleActionIndex(i).setIndex(CoupleActionIndex.NOT_SIGNIFICANT);
 		}
 		this.setQuality(NOT_SIGNIFICANT);

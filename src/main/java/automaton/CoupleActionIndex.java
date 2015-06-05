@@ -6,7 +6,7 @@ import main.java.data.Action;
 
 		final static int NOT_SIGNIFICANT = -1;
 		public final static int SIGNIFICANT_BUT_NOT_TREATED_YET = -2;
-		
+		public final static double NON_SIGNIFICANT_QUALITY = -1.0;
 		// L'action choisie
 		private Action action;
 		//Nous mène à l'index du tableau de decision
