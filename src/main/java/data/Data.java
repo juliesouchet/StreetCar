@@ -158,8 +158,13 @@ public class Data implements Serializable
 	 =========================================================*/
 	public void getPreviousDataAndRollBack()
 	{
-		if (!playerName.equals(this.getPlayerTurn())) throw new RuntimeException("Not your turn");
+		PlayerInfo	pi	= this.playerInfoList.get(this.getPlayerTurn());
+		HistoryCell	hc	= pi.getLastActionHistory();;
 
+		if (hc != null)								// Case player
+		{
+			
+		}
 		
 		
 		

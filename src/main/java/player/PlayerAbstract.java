@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
@@ -105,7 +106,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tui
 		this.game.placeTile(playerName, t, position);
 	}
 	
-/*	public void doAction(String playerName, Action action) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
+	public void doAction(String playerName, Action action) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
 //		if (action.isMOVE())
 //		{
@@ -137,7 +138,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tui
 //		}
 	}
 	
-	*/
+	
 	
 	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
