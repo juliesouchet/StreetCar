@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Random;
 
 import main.java.util.CloneableInterface;
+import main.java.util.Copier;
 
 
 
@@ -46,10 +47,10 @@ public class Deck implements Serializable
 		this.stackSize = this.computeRemainingDeckSize();
 	}
 	private Deck(boolean b){}
-	public Deck getPlayerClone()
+	public Deck getClone()
 	{
 		Deck res		= new Deck(false);
-		res.stack		= null;
+		res.stack		= (new Copier<StackCell>()).copyList(this.stack);
 		res.stackSize	= this.stackSize;
 		return res;
 	}
@@ -115,6 +116,17 @@ public class Deck implements Serializable
 
 		if (sc == null)	throw new RuntimeException("Unknown tile: " + t.getTileID());
 		return (double)((double)sc.remaining / (double)this.stackSize);
+	}
+	public void setDeck(Deck deck)
+	{
+		this.stackSize = 0;
+		this.stack.clear();
+		for (StackCell sc: deck.stack)
+		{
+			this.stack.add(sc.getClone());
+			this.stackSize += sc.remaining;
+		}
+		if (this.stackSize != deck.stackSize)	throw new RuntimeException("Pfffff: this.size = " + this.stackSize + ", inputSize = " + deck.stackSize);
 	}
 
 // --------------------------------------------

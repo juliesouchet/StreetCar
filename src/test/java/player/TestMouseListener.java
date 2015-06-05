@@ -59,7 +59,7 @@ public class TestMouseListener implements MouseListener
 				this.player.placeTile(t, new Point(x, y));
 				return;
 			}
-			catch(Exception e)	{e.printStackTrace(); System.exit(0);}
+			catch(Exception e)	{e.printStackTrace(); return;}
 		}
 		throw new RuntimeException("No available game");
 	}

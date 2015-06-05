@@ -8,8 +8,11 @@ import main.java.automaton.Strongest;
 import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
+import main.java.game.ExceptionNoPreviousGameToReach;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
@@ -61,6 +64,10 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	public boolean isHumanPlayer()
 	{
 		return false;
+	}
+	public synchronized void rollBack() throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
+	{
+		throw new RuntimeException("The AI does not implement this method");
 	}
 	public synchronized void gameHasChanged(Data data) throws RemoteException
 	{

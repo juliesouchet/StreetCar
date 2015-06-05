@@ -104,12 +104,6 @@ public class PlayerPanel extends Panel{
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		//avatar
-		/*g.setColor(playerColor);
-		g.fillRect(10, 5, 45, 45);
-		g.setColor(Color.BLACK);
-		g.drawRect(10, 5, 45, 45);*/
-
 		int[] xPoints = {230, 253, 276, 253};
 		int[] yPoints = {28, 5, 28, 51};
 		g.drawPolygon(xPoints, yPoints, 4);

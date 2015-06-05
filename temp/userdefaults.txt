@@ -1,6 +1,6 @@
 #
-#Thu Jun 04 21:56:49 CEST 2015
+#Thu Jun 04 23:04:49 CEST 2015
 Language=en
-PlayerName=Louis
+PlayerName=riyane
 UseFullScreen=false
 GameName=jeux

@@ -6,13 +6,16 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.rmi.RemoteException;
 
+import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionNoPreviousGameToReach;
 import main.java.game.ExceptionNotEnoughTilesInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.gui.components.Button;
 import main.java.gui.components.Panel;
+import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
 public class BottomPlayerPanel extends Panel {
@@ -21,6 +24,10 @@ public class BottomPlayerPanel extends Panel {
 
 	BottomPlayerCardsPanel cardsPanel;
 	Panel buttonsPanel;
+	boolean canBeginTrip = false;
+	String playerName;
+	int numberOfCardPlayed;
+	PlayerIHM player;
 
 	Button validateButton;
 	Button beginTripButton;
@@ -59,8 +66,10 @@ public class BottomPlayerPanel extends Panel {
 		//validateButton.setEnabled(false);
 		resetButton.setEnabled(false);
 		
+		beginTripButton.addAction(this, "beginTrip");
 		validateButton.addAction(this, "validate");
 		resetButton.addAction(this, "reset");
+		
 		
 		beginTripButton.setBounds(0, 10, 140, 35);
 		validateButton.setBounds(0, 50, 140, 35);
@@ -104,6 +113,51 @@ public class BottomPlayerPanel extends Panel {
 	
 	public void reset() {
 		// TODO: go back to initial state of the beginning of the turn
+		try {
+			player.rollBack();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionNotYourTurn e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionNoPreviousGameToReach e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void beginTrip() {
+		// TODO
+	}
+	
+	protected void checkBeginTripButton() {
+		if (!canBeginTrip) {
+			beginTripButton.setEnabled(false);
+		} else {
+			beginTripButton.setEnabled(true);
+		}
+	}
+	
+	protected void checkValidateButton(Data data) {
+		numberOfCardPlayed = 5 - data.getHandSize(playerName);
+		if (numberOfCardPlayed == 2) {
+			validateButton.setEnabled(true);
+		} else {
+			validateButton.setEnabled(false);
+		}
+	}
+	
+	protected void checkResetButton(Data data) {
+		numberOfCardPlayed = 5 - data.getHandSize(playerName);
+		if (numberOfCardPlayed != 0) {
+			resetButton.setEnabled(true);
+		} else {
+			resetButton.setEnabled(false);
+		}
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -118,5 +172,23 @@ public class BottomPlayerPanel extends Panel {
 
 		g.drawRect(350, 80, 50, 50); //station1
 		g.drawRect(410, 80, 50, 50); //station2*/
+	}
+	
+	public void refreshGame(PlayerIHM player, Data data) {
+		this.player = player;
+		player = StreetCar.player;
+		try {
+			playerName = player.getPlayerName();
+			//System.out.println("BOTTOM PLAYER NAME : " + playerName);
+			canBeginTrip = data.isTrackCompleted(playerName);
+			checkBeginTripButton();
+			System.out.println("BEGIN TRIP BUTTON : " + canBeginTrip);
+			checkValidateButton(data);
+			checkResetButton(data);
+			//System.out.println("NUMBER OF CARD PLAYED : " + numberOfCardPlayed);
+			cardsPanel.refreshGame(player, data);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}		
 	}
 }

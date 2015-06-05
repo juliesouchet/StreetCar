@@ -32,6 +32,7 @@ public class InGamePanel extends Panel {
 	Panel centerMapPanel;
 	Panel playersSidebarPanel;
 	Panel deckAndTurnPanel;
+	BottomPlayerPanel bottomPlayerPanel;
 	TitlePanel titlePanel;
 	MapPanel mapPanel;
 	ArrayList<PlayerPanel> playerPanels = new ArrayList<PlayerPanel>();
@@ -75,7 +76,7 @@ public class InGamePanel extends Panel {
 		
 		mapPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 		
-		BottomPlayerPanel bottomPlayerPanel = new BottomPlayerPanel();
+		bottomPlayerPanel = new BottomPlayerPanel();
 		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
 	}
 	
@@ -219,5 +220,6 @@ public class InGamePanel extends Panel {
 		for (PlayerPanel playerPanel : this.playerPanels) {
 			playerPanel.refreshGame(player, data);
 		}
+		this.bottomPlayerPanel.refreshGame(player, data);
 	}
 }

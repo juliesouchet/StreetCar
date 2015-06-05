@@ -22,6 +22,7 @@ public class BottomPlayerCardsPanel extends Panel{
 	Label lineNumberLabel;
 	int lineNumber;
 	Color lineNumberBackgroundColor;
+	String playerName;
 	
 	public BottomPlayerCardsPanel() {
 		this.setBackground(Color.WHITE);
@@ -60,7 +61,7 @@ public class BottomPlayerCardsPanel extends Panel{
 	}
 	
 	protected void placeTiles() {
-		PlayerIHM player  = StreetCar.player;
+		PlayerIHM player = StreetCar.player;
 		Data data = player.getGameData();
 		try {
 			String playerName = player.getPlayerName();
@@ -106,14 +107,20 @@ public class BottomPlayerCardsPanel extends Panel{
 		this.add(lineNumberLabel);
 	}
 	
+	public void refreshPlayerHandCards(String playerName, Data data) { // TODO: not working
+		System.out.println("REFRESH PLAYER HAND CARDS CALLED");
+		System.out.println("NUMBER OF CARDS OF THE HAND : " + data.getHandSize(playerName));	
+		
+		for (int i=0; i<data.getHandSize(playerName); i++) {
+			Tile tile = data.getHandTile(playerName, i);
+			TilePanel tilePanel = new TilePanel(tile);
+			tilePanels.add(i, tilePanel);
+			System.out.println(tile);		
+		}
+	}
+	
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
-		// Avatar
-        /*g.setColor(playerColor);
-        g.fillRect(20, 20, 50, 50);
-        g.setColor(Color.BLACK);
-        g.drawRect(20, 20, 50, 50);*/
         
         // Line number
 		int[] xPoints = {260, 285, 310, 285};
@@ -144,5 +151,15 @@ public class BottomPlayerCardsPanel extends Panel{
 		g.fillPolygon(xPoints, yPoints, 4);
 		g.setColor(Color.BLACK);
         g.drawPolygon(xPoints, yPoints, 4);
+	}
+	
+	public void refreshGame(PlayerIHM player, Data data) {
+		player = StreetCar.player;
+		try {
+			playerName = player.getPlayerName();
+			refreshPlayerHandCards(playerName, data);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}		
 	}
 }
