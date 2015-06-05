@@ -160,33 +160,45 @@ public class Data implements Serializable
 	{
 		PlayerInfo	pi	= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc	= pi.getLastActionHistory();
+		String playerName;
 		int x, y;
-
-/*		if (hc != null)								// Case player
+/*
+		if (hc != null)																										// Case player has done an action this round
 		{
-			if (hc.action2 != null)
+			playerName = this.getPlayerTurn();
+			if (hc.action2 != null)																							//		Case undo round second game
 			{
-				if (hc.action2.isSimpleConstructing())
+				if (hc.action2.isBUILD_SIMPLE())
 				{
 					x = hc.action2.positionTile2.x;
 					y = hc.action2.positionTile2.y;
-					if (hc.oldTile2 != null)	this.board[x][y] = hc.oldTile2;
+					if (hc.oldTile2 != null)	this.board[x][y] = hc.oldTile2;												//			Case: game was a tile improve
 					else						this.board[x][y] = this.getNewEmptyTile();
+					 pi.hand.add(hc.action2.tile1);
 				}
 				else throw new RuntimeException("????");
 				hc.action2	= null;
 				hc.oldTile2	= null;
 			}
-			else
+			else																											//		Case undo round first game
 			{
+				if (hc.action1.isBUILD_SIMPLE() || hc.action1.isBUILD_AND_START_TRIP_NEXT_TURN())
+				{
+					
+				}
+				else if (hc.action1.isBUILD_DOUBLE())
+				{
+					
+				}
+				else throw new RuntimeException("????");
 				
 			}
 		}
-		else
+		else																													// Case player ha
 		{
 			
 		}
-***/		throw new RuntimeException("Pas fini");
+*/		throw new RuntimeException("Pas fini");
 	}
 
 // --------------------------------------------
