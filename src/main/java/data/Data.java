@@ -63,7 +63,7 @@ public class Data implements Serializable
 	private Tile[][]					board;
 	private Deck						deck;
 	private HashMap<String, PlayerInfo>	playerInfoList;
-	private int							round;
+	public int							round;
 	private int							maxPlayerSpeed;
 	private String[]					playerOrder;
 	private String						host;
@@ -156,9 +156,14 @@ public class Data implements Serializable
 	/**=======================================================
 	 * @return the previous game data.  The 
 	 =========================================================*/
-	public Data getPreviousDataAndRollBack()
+	public void getPreviousDataAndRollBack()
 	{
-return null;
+		if (!playerName.equals(this.getPlayerTurn())) throw new RuntimeException("Not your turn");
+
+		
+		
+		
+		throw new RuntimeException("Pas fini");
 	}
 
 // --------------------------------------------
@@ -427,8 +432,7 @@ return null;
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
 		HistoryCell lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
 
-		if (lastActions.isEmpty())			return true;
-		else								return lastActions.isSimpleAction();
+		return lastActions.hasRemainingAction();
 	}
 	/**======================================================
 	 *  @return true if this player is at the start of his turn (and he hasn't done anything yet)
@@ -1107,10 +1111,10 @@ System.out.println("iciiiii, trackCompleted");
 	{
 		// Attributes
 		private static final long serialVersionUID = 2412756799747914486L;
-		public Action	action1;
-		public Action	action2;
-		public Tile		oldTile1;
-		public Tile		oldTile2;
+		public Action	action1		= null;
+		public Action	action2		= null;
+		public Tile		oldTile1	= null;
+		public Tile		oldTile2	= null;;
 
 		// Builder
 		private HistoryCell(){}
@@ -1119,15 +1123,37 @@ System.out.println("iciiiii, trackCompleted");
 		public HistoryCell getClone()
 		{
 			HistoryCell res = new HistoryCell();
-			res.action1		= new Action();		if (this.action1 != null) res.action1.copy(this.action1);
-			res.action2		= new Action();		if (this.action2 != null) res.action2.copy(this.action2);
-			res.oldTile1	= new Tile();	res.oldTile1.copy(this.oldTile1);
-			res.oldTile2	= new Tile();	res.oldTile2.copy(this.oldTile2);
+			if (this.action1 != null)
+			{
+				res.action1	= new Action();
+				res.action1.copy(this.action1);
+			}
+			if (this.action2 != null)
+			{
+				res.action2	= new Action();
+				res.action2.copy(this.action2);
+			}
+			if (this.oldTile1 != null)
+			{
+				res.oldTile1 = new Tile();
+				res.oldTile1.copy(this.oldTile1);
+			}
+			if (this.oldTile2 != null)
+			{
+				res.oldTile2 = new Tile();
+				res.oldTile2.copy(this.oldTile2);
+			}
 
 			return res;
 		}
 		public boolean isEmpty()		{return (this.action1 == null);}
-		public boolean isSimpleAction()	{return !this.action1.isTwoStepAction();}
+		public boolean hasRemainingAction()
+		{
+			if (this.action1 == null)			return true;
+			if (this.action1.isTwoStepAction())	return false;
+			if (this.action2 == null)			return true;
+			else								return false;
+		}
 		public void addLastAction(Action a, Tile oldTile1, Tile oldTile2)
 		{
 			if (action1 == null)	this.action1 = a;
