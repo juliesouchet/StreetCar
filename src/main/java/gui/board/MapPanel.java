@@ -45,9 +45,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 		if (data == null) return;
 		
 		this.mapWidth = (int) (0.96 * Math.min(this.getWidth(), this.getHeight()));
-		this.cellWidth = this.mapWidth / data.getWidth();
-	    this.originX = (this.getWidth() - Math.round(this.mapWidth)) / 2;
-	    this.originY = (this.getHeight() - Math.round(this.mapWidth)) / 2;
+		this.cellWidth = Math.round((float)this.mapWidth / (float)data.getWidth());
+	    this.originX = (int)Math.round((float)(this.getWidth() - this.mapWidth) / 2.0);
+	    this.originY = (int)Math.round((float)(this.getHeight() - this.mapWidth) / 2.0);
 	    
 		this.repaint();
 	}
@@ -89,6 +89,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 			x = this.originX;
 			y += this.cellWidth;
 		}
+		
+		// TODO: add black border
+		//g2d.setColor(Color.BLACK);
+		//g2d.drawRect(this.originX, this.originY, this.mapWidth, this.mapWidth);
     }
 	
 	// Mouse Listener
