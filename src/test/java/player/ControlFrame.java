@@ -17,8 +17,8 @@ import main.java.player.PlayerIHM;
 public class ControlFrame
 {
 	// Attributes
-	private static final int	width	= 100;
-	private static final int	Height	= 200;
+	private static final int	width	= 200;
+	private static final int	Height	= 300;
 
 	private JFrame				frame;
 	private PlayerIHM			playerIHM;
@@ -29,13 +29,16 @@ public class ControlFrame
 
 		this.frame	= new JFrame("BLABLABLA");
 		this.frame.setSize(width, Height);
-		this.frame.setLayout(new GridLayout(2, 1));
+		this.frame.setLayout(new GridLayout(3, 1));
 		JButton drawTileButton = new JButton("Draw Tile");
 		JButton validateButton = new JButton("Validate");
+		JButton rollBackButton = new JButton("Roll back");
 		drawTileButton.addActionListener(new DrawTileListener());
 		validateButton.addActionListener(new ValidateListener());
+		rollBackButton.addActionListener(new RollBackListener());
 		this.frame.add(drawTileButton);
 		this.frame.add(validateButton);
+		this.frame.add(rollBackButton);
 
 		this.frame.setVisible(true);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,6 +61,14 @@ public class ControlFrame
 		public void actionPerformed(ActionEvent arg0)
 		{
 			try	{playerIHM.validate();}
+			catch (Exception e){e.printStackTrace();}
+		}
+	}
+	private class RollBackListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent arg0)
+		{
+			try	{playerIHM.rollBack();}
 			catch (Exception e){e.printStackTrace();}
 		}
 	}

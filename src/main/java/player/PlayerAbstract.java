@@ -130,7 +130,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 		game.pickTileFromPlayer(chosenPlayer, chosenPlayer, tile);
 	}
 
-	public void replaceTwoTiles(Tile t1, Tile t2, Point p1, Point p2)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	public void replaceTwoTiles(Tile t1, Tile t2, Point p1, Point p2)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
 		game.replaceTwoTiles(playerName, t1, t2, p1, p2);
 	}

@@ -26,15 +26,21 @@ public class TestPossibleChoiceRiyane
 		Data data = null;
 		int nbrChoice;
 
+System.out.println("Testeteur: ");
 		try					{data = new Data("Test game", boardName, nbrBuildingInLine);}
 		catch(Exception e)	{e.printStackTrace(); return;}
 		data.addPlayer(null, playerName, true, false);
 		data.hostStartGame(playerName);
-		try					{monNoeudDedecision = new DecisionNode(4000000, 0, "root");}
+long temps = (System.nanoTime() * (10^9));
+		try					{monNoeudDedecision = new DecisionNode(700000, 0, "root");}
 		catch (Exception e)	{e.printStackTrace();}
-System.out.println("Debut du test: " + System.nanoTime()); 
-		nbrChoice = data.getPossibleActions(playerName, monNoeudDedecision.getPossibleFollowingActionTable());
-System.out.println("Fin du test: " + System.nanoTime()); 
-		System.out.println("Nbr possible choice = " + nbrChoice);
+long dt = (System.nanoTime() * (10^9)) - temps;
+temps = System.nanoTime();
+System.out.println("Temps de chargement          : " + dt); 
+System.out.println("Debut du test"); 
+		nbrChoice = data.getPossibleActions(playerName, monNoeudDedecision.getPossibleFollowingActionTable(), true);
+dt = (System.nanoTime() * (10^9)) - temps;
+System.out.println("Temps Data.getPossibleAction : " + dt + "\tsecondes"); 
+System.out.println("Nbr possible choice = " + nbrChoice);
 	}
 }

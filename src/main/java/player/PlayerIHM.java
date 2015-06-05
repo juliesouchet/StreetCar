@@ -4,9 +4,12 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import main.java.data.Data;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionGameHasAlreadyStarted;
 import main.java.game.ExceptionHostAlreadyExists;
+import main.java.game.ExceptionNoPreviousGameToReach;
+import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionUnknownBoardName;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
@@ -83,6 +86,10 @@ public class PlayerIHM extends PlayerAbstract
 	public synchronized void excludePlayer() throws RemoteException
 	{
 		if (super.ihm != null)	super.ihm.excludePlayer();
+	}
+	public synchronized void rollBack() throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
+	{
+		super.game.rollBack(playerName);
 	}
 
 // --------------------------------------------

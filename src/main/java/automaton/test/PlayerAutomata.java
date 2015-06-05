@@ -186,7 +186,8 @@ public class PlayerAutomata implements InterfaceIHM
 		DecisionNode monNoeudDedecision = null;
 		try {
 			monNoeudDedecision = new DecisionNode(4000000, 0, "root");
-		} catch (ExceptionUnknownNodeType e) {
+		} catch (ExceptionUnknownNodeType e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

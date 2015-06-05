@@ -2,6 +2,11 @@ package test.java.data;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.LinkedList;
+
+import main.java.data.Deck;
 import main.java.data.Tile;
 import main.java.data.Tile.Path;
 import main.java.util.Direction;
@@ -83,7 +88,23 @@ public class TestUnitaireTile {
 
 		maTileA.setStop(true);
 		assertTrue(maTileA.equals(maTileB));
+		
 
+		File f			= new File(Deck.stackDirectory);
+		String[] IDList	= f.list();
+		LinkedList<Tile> tileList = new LinkedList<Tile>();
+		Deck d = new Deck();
+		for (String str: IDList)
+		{
+			Tile t = Tile.parseTile(str);
+			if (t.isDeckTile()) tileList.add(t);
+		}
+		
+		while(!d.isEmpty()) {
+			Tile t = d.drawTile();
+			assertTrue(t + " n'est pas dans la liste des tuiles", 
+						tileList.contains(t));
+		}
 	}
 	
 	@Test
