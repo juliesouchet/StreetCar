@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
@@ -104,6 +105,41 @@ System.out.println("--------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
 		this.game.placeTile(playerName, t, position);
 	}
+	
+	public void doAction(String playerName, Action action) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
+	{
+//		if (action.isMOVE())
+//		{
+//			if (action.startTerminus != null)
+//// TODO: avoir avec travel pour set terminus point
+//			this.setTramPosition( action.tramwayMovement[action.ptrTramwayMovement]); //TODO ptrTramwaymovement ou -1 ?
+//			return;
+//		}
+		if (action.isBUILD_SIMPLE())
+		{
+			this.placeTile(action.tile1, new Point(action.positionTile1.x, action.positionTile1.y));
+			return;
+		}
+		if (action.isTWO_BUILD_SIMPLE())
+		{
+			this.placeTile(action.tile1, new Point(action.positionTile1.x, action.positionTile1.y));
+			this.placeTile(action.tile2, new Point(action.positionTile2.x, action.positionTile2.y));
+			return;
+		}
+//		if (action.isBUILD_DOUBLE())
+//		{
+//			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1, action.positionTile2.x, action.positionTile2.y, action.tile2);
+//			return;
+//		}
+//		if (action.isBUILD_AND_START_TRIP_NEXT_TURN())
+//		{
+//			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
+//			return;
+//		}
+	}
+	
+	
+	
 	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
 System.out.println("--------------------------------");

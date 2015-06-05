@@ -37,6 +37,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 // -----------------------------------------------------
 // Builder
 // -----------------------------------------------------
+	/**
+	 * Creates a new Action for moving the streetcar.
+	 * @param path : the path traveled
+	 * @param pathSize : the length of the path
+	 * @param startTerminus : the starting point of the travel (at the very beginning)
+	 * @return a new Action, of type MOVE
+	 */
 	public static Action newMoveAction(Point[] path, int pathSize, Point startTerminus)
 	{
 		Action res = new Action();
@@ -52,6 +59,13 @@ public class Action implements Serializable, CloneableInterface<Action>
 		return res;
 	}
 
+	/**
+	 * Creates a new Action for placing/switching a single tile on the board
+	 * @param x : the x-coordinate on the board
+	 * @param y : the y-coordinate on the board
+	 * @param t : the tile to place on the board
+	 * @return a new Action, of type BUILD_SIMPLE
+	 */
 	public static Action newBuildSimpleAction (int x, int y, Tile t)
 	{
 		Action res = new Action();
@@ -64,12 +78,26 @@ public class Action implements Serializable, CloneableInterface<Action>
 		return res;
 	}
 	
+	/**
+	 * Creates a new Action for placing/switching a single tile on the board
+	 * @param position : the position on the board
+	 * @param t : the tile to place on the board
+	 * @return a new Action, of type BUILD_SIMPLE
+	 */
 	public static Action newBuildSimpleAction (Point position, Tile t)
 	{
 		return newBuildSimpleAction(position.x, position.y, t);
 	}
 
-	
+	/**
+	 * Creates a new Action for sequentially placing two tiles </br>
+	 * /!\ This is different from newBuildDoubleAction : the tiles are placed one after the other
+	 * @param position1 : the position of the first tile
+	 * @param tile1 : the first tile to place
+	 * @param position2 : the position of the second tile
+	 * @param tile2 : the second tile to place
+	 * @return a new Action, of type TWO_BUILD_SIMPLE
+	 */
 	public static Action newBuildTwoSimpleAction (Point position1, Tile tile1, Point position2, Tile tile2){
 		Action res = new Action();
 
@@ -84,7 +112,17 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		return res;		
 	}
-	    
+	
+	/**
+	 * Creates a new Action for simultaneously switching two tiles </br>
+	 * /!\ This is different from newBuildTwoSimpleAction : the tiles are placed at the same time </br>
+	 * Cf. rules for double switching
+	 * @param position1 : the position of the first tile
+	 * @param tile1 : the first tile to switch
+	 * @param position2 : the position of the second tile
+	 * @param tile2 : the second tile to switch
+	 * @return a new Action, of type BUILD_DOUBLE
+	 */
 	public static Action newBuildDoubleAction (Point position1, Tile tile1, Point position2, Tile tile2){
 		Action res = new Action();
 
@@ -101,17 +139,24 @@ public class Action implements Serializable, CloneableInterface<Action>
 	}
 
 	/**
-	 * Actin de poser une unique tuile et dire qu'on commence notre voyage au prochain tour.
-	 * @param position De la tuile a placer.
-	 * @param t tuile a placer.
-	 * @return Une instance de la classe action.
+	 * Creates a new Action for placing/switching a single tile and ending the turn by starting the maiden travel.
+	 * @param position : the position of the tile on the board
+	 * @param t : the tile to place/switch
+	 * @return a new Action, of type BUILD_AND_START_TRIP_NEXT_TURN
 	 */
-	public static Action newBildAndStartTripNextTurnAction (Point position, Tile t)
+	public static Action newBuildAndStartTripNextTurnAction (Point position, Tile t)
 	{
-		return newBildAndStartTripNextTurnAction(position.x, position.y, t);
+		return newBuildAndStartTripNextTurnAction(position.x, position.y, t);
 	}
 
-	public static Action newBildAndStartTripNextTurnAction (int x, int y, Tile t)
+	/**
+	 * Creates a new Action for placing/switching a single tile and ending the turn by starting the maiden travel.
+	 * @param x : the x-coordinate of the tile on the board
+	 * @param y : the y-coordinate of the tile on the board
+	 * @param t : the tile to place/switch
+	 * @return a new Action, of type BUILD_AND_START_TRIP_NEXT_TURN
+	 */
+	public static Action newBuildAndStartTripNextTurnAction (int x, int y, Tile t)
 	{
 		Action res = new Action();
 

@@ -60,26 +60,29 @@ public class DecisionTable {
 	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
 	 */
 	public int getBestActionIndex(int index){
-		int indexBestActionInTable=DecisionNode.NOT_SIGNIFICANT;
-		int indexBestActionInNode=DecisionNode.NOT_SIGNIFICANT;
-		int indexCourantInTable;
-		int indexCourantInNode;
-		double bestValue = -1.0;
-		double currentValue;
-		DecisionNode decisionNode = this.getDecisionNode(index);
 
-		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
-			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
-				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
-				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
-				if( currentValue>=bestValue){
-					indexBestActionInNode = indexCourantInNode;
-					indexBestActionInTable = decisionNode.getCoupleActionIndex(indexBestActionInNode).getIndex();
-					bestValue = this.getDecisionNode(indexBestActionInTable).getQuality();
-				}
-			}
-		}
-		return indexBestActionInNode;
+		//TODO Je met une valeur de retour bidon car je vais devoir refaire cette fonction pour ne plus stocker toutes les actions mais les ecraser au fur et a mesure.
+		return 0;
+//		int indexBestActionInTable=DecisionNode.NOT_SIGNIFICANT;
+//		int indexBestActionInNode=DecisionNode.NOT_SIGNIFICANT;
+//		int indexCourantInTable;
+//		int indexCourantInNode;
+//		double bestValue = -1.0;
+//		double currentValue;
+//		DecisionNode decisionNode = this.getDecisionNode(index);
+//
+//		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
+//			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
+//				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
+//				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
+//				if( currentValue>=bestValue){
+//					indexBestActionInNode = indexCourantInNode;
+//					indexBestActionInTable = decisionNode.getCoupleActionIndex(indexBestActionInNode).getIndex();
+//					bestValue = this.getDecisionNode(indexBestActionInTable).getQuality();
+//				}
+//			}
+//		}
+//		return indexBestActionInNode;
 	}		
 
 	/**
@@ -183,7 +186,7 @@ public class DecisionTable {
 	 * @param myName nom du player que cette table de décision simule.
 	 * @throws ExceptionUnknownNodeType 
 	 */
-	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
+	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName){
 		this.myName = new String(myName); 		
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
@@ -254,9 +257,9 @@ public class DecisionTable {
 		} else if(wantedDepth>0){
 			//===============================================================================//
 			TraceDebugAutomate.debugDecisionTableTrace("\t======Noeud["+index+"]======.\n");
-
-			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable());
-			
+			//Dans un premier temps je compte le nombre d'actions possibles
+			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable(),false);
+			//J'alloue un tableau en conséquence
 			//===============================================================================//
 			TraceDebugAutomate.debugDecisionTableTrace("numberOfPossiblesActions="+numberOfPossiblesActions+"\n");
 
@@ -270,7 +273,7 @@ public class DecisionTable {
 				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
 				//===============================================================================//
 				TraceDebugAutomate.debugDecisionTableTrace("On fait l'action.\n");
-				currentConfiguration.doAction(this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
+				currentConfiguration.doAction(playerName,this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
 				//===============================================================================//
 				TraceDebugAutomate.debugDecisionTableTrace("Appel récursif\n");
 				this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration);

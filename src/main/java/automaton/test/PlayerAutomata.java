@@ -1,13 +1,24 @@
 package main.java.automaton.test;
 
 import java.awt.Color;
+import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
 import main.java.automaton.DecisionNode;
-import main.java.automaton.ExceptionUnknownNodeType;
+import main.java.automaton.DecisionTable;
+import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
+import main.java.data.Action;
 import main.java.data.Data;
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionGameIsOver;
+import main.java.game.ExceptionNotEnoughTilesInDeck;
+import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionPlayerIsBlocked;
+import main.java.game.ExceptionTooManyActions;
+import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -161,46 +172,49 @@ public class PlayerAutomata implements InterfaceIHM
 	// --------------------------------------------
 	public void refresh(Data data)
 	{
-
+		DecisionTable maTableDeDecision = null;
+		int nbActionsPossibles = 0;
+		Action myAction = null;
+		
 		//=======================================
 		TraceDebugAutomate.debugDecisionTableTrace("Refresh called\n");
 
-		if (!firstRefreshDone){
+		if (!firstRefreshDone || !data.isPlayerTurn(name)){
+			//=======================================
+			TraceDebugAutomate.debugDecisionTableTrace("It's not my turn.\n");
 			firstRefreshDone = true;
 			return;
 		}
-//			else if(!secondRefreshDone){
-//			secondRefreshDone = true;
-//			//=======================================
-//			TraceDebugAutomate.debugDecisionTableTrace("Allocating Strongest\n");
-//			this.edouard = new Strongest(data.getPlayerTurn());
-//			//=======================================
-//			TraceDebugAutomate.debugDecisionTableTrace("Created new strongest\n");
-//		}
+
+			nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), new DecisionNode(1, 0, "root").getPossibleFollowingActionTable(),false);
+
+
+		System.out.println("nbActionPossibles="+nbActionsPossibles);
+		int profondeurExplorable = 150000/nbActionsPossibles;
+		System.out.println("Profondeur explorable="+profondeurExplorable);
+			maTableDeDecision = new DecisionTable(nbActionsPossibles, profondeurExplorable, "joueurA");
 		
-//		Action myAction = edouard.makeChoice(data);
-		//=======================================
-		TraceDebugAutomate.debugDecisionTableTrace("Strongest made a choice \n");
-		
-		
-		DecisionNode monNoeudDedecision = null;
-		try {
-			monNoeudDedecision = new DecisionNode(4000000, 0, "root");
-		} catch (ExceptionUnknownNodeType e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(profondeurExplorable==0){
+			try {
+				edouard = new Dumbest("joueurA");
+				myAction = edouard.makeChoice(data);
+				player.doAction(name, myAction);
+				myAction = edouard.makeChoice(data);
+				player.doAction("joueurA", myAction);
+				player.drawTile(2);
+
+			} catch (RemoteException | ExceptionGameHasNotStarted| ExceptionNotYourTurn | ExceptionForbiddenAction| ExceptionTooManyActions | ExceptionPlayerIsBlocked| ExceptionGameIsOver| ExceptionTwoManyTilesToDraw  e) { e.printStackTrace();} catch (ExceptionNotEnoughTilesInDeck e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+		}else{
+			
 		}
-		if(data==null){
-			System.out.println("data est null");
-		}
-		
-		
-		int nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), monNoeudDedecision.getPossibleFollowingActionTable());
-		System.out.println("nbActionsPossibles="+nbActionsPossibles);
-		//data.doAction(myAction);		
-		
+		System.out.println("pop");
+	
 		this.frame.setGameData(data);
+		System.out.println("game setted");
 	}
 
 	// --------------------------------------------

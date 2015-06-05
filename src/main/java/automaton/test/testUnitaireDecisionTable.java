@@ -8,7 +8,6 @@ import java.awt.Point;
 import main.java.automaton.CoupleActionIndex;
 import main.java.automaton.DecisionNode;
 import main.java.automaton.DecisionTable;
-import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.data.Action;
 import main.java.data.Tile;
 
@@ -37,7 +36,7 @@ public class testUnitaireDecisionTable {
 	 * 	-------------------------------------------------
 	 *
 	 */
-	public DecisionTable tableTest() throws ExceptionUnknownNodeType {
+	public DecisionTable tableTest() {
 		DecisionTable maTableDeDecision = null;
 
 		DecisionNode decisionNode = null;
@@ -103,7 +102,7 @@ public class testUnitaireDecisionTable {
 
 	//
 	@Test
-	public void testConstructorDecisionTable() throws ExceptionUnknownNodeType{
+	public void testConstructorDecisionTable(){
 		DecisionTable maTableDeDecision = null;
 		int sizeTable=10;
 		int nodeTable=5;
@@ -118,7 +117,7 @@ public class testUnitaireDecisionTable {
 	}
 
 	@Test
-	public void testGetBestWorstAction() throws ExceptionUnknownNodeType {
+	public void testGetBestWorstAction() {
 		DecisionTable maTableDeDecision = tableTest();
 
 		assertFalse(maTableDeDecision.getBestActionIndex(0)==1);
@@ -135,7 +134,7 @@ public class testUnitaireDecisionTable {
 	}
 
 	@Test
-	public void testSetAndGetDecisionNode() throws ExceptionUnknownNodeType {
+	public void testSetAndGetDecisionNode() {
 		DecisionTable maTableDeDecision = null;
 
 		DecisionNode decisionNode = null;
@@ -169,7 +168,7 @@ public class testUnitaireDecisionTable {
 	}
 	
 	@Test
-	public void testGetSize() throws ExceptionUnknownNodeType {
+	public void testGetSize() {
 		DecisionTable maTableDeDecision = null;
 		int sizeTable=10;
 		int nodeTable=5;
@@ -178,7 +177,7 @@ public class testUnitaireDecisionTable {
 	}
 
 	@Test
-	public void testSlotIsFree() throws ExceptionUnknownNodeType{
+	public void testSlotIsFree(){
 		DecisionTable maTableDeDecision = tableTest();
 		assertFalse(maTableDeDecision.slotIsFree(0));
 		assertTrue(maTableDeDecision.slotIsFree(maTableDeDecision.getSize()-1));
@@ -187,14 +186,14 @@ public class testUnitaireDecisionTable {
 	
 
 	@Test
-	public void testToString() throws ExceptionUnknownNodeType {
+	public void testToString() {
 		DecisionTable maTableDeDecision = tableTest();
 		assertTrue(maTableDeDecision.toString()!=null);
 	}
 
 
 	@Test
-	public void testFindFreeSlot()throws ExceptionUnknownNodeType {
+	public void testFindFreeSlot() {
 		DecisionTable maTableDeDecision = tableTest();
 		assertTrue(maTableDeDecision.findFreeSlot()==6);
 		maTableDeDecision.setDecisionNode(6, new DecisionNode(4, 3, "leaf"));
