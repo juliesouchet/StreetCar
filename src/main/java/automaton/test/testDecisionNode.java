@@ -60,8 +60,8 @@ public class testDecisionNode {
 
 		//Teste creation d'un couple action index
 		// TODO: etudier si creation d'n nouveau est necessaire ou possiblilité de juste modifier celui deja alloué
-		CoupleActionIndex monCoupleActionIndex1 = new CoupleActionIndex(monAction, 0);
-		CoupleActionIndex monCoupleActionIndex2 = new CoupleActionIndex(monAction, 1);
+		CoupleActionIndex monCoupleActionIndex1 = new CoupleActionIndex(monAction, 0, 9.0);
+		CoupleActionIndex monCoupleActionIndex2 = new CoupleActionIndex(monAction, 1, 10.0);
 
 		
 		monNoeudDeDecision.setCoupleActionIndex(0, monCoupleActionIndex1);
