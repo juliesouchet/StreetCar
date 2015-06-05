@@ -1,3 +1,4 @@
+- implanter la methode du bouton ANNULER CE TOUR
 - fixer le problème de rafraichissement de bottomPlayerPanel après un tour
 - enlever le system de pouvoir drag depuis le terrain vers le terrain
-- recuperer la couleur des adversaire pour afficher le bon avatar
+- 

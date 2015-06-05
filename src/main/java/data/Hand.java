@@ -67,6 +67,14 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 		boolean test = tileList.remove(t);
 		if (!test) throw new RuntimeException("Can't find the given tile: " + t);
 	}
+	public void setHand(Hand hand)
+	{
+		this.tileList.clear();
+		for (Tile t: hand.tileList)
+		{
+			this.tileList.add(t.getClone());
+		}
+	}
 
 //--------------------------------------------
 // Private Methodes:

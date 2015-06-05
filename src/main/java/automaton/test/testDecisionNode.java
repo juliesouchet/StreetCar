@@ -4,7 +4,6 @@ import java.awt.Point;
 
 import main.java.automaton.CoupleActionIndex;
 import main.java.automaton.DecisionNode;
-import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.data.Action;
 import main.java.data.Tile;
 import main.java.util.TraceDebugAutomate;
@@ -34,7 +33,6 @@ public class testDecisionNode {
 		TraceDebugAutomate.debugDecisionNodeTrace("top");
 		long tmps3 = System.nanoTime();
 		for(int i=0;i<nb_de_case;i++){
-			try {
 				long tmps1 = System.nanoTime();
 				monNoeudDeDecision = new DecisionNode(taille_de_case, 0, "leaf&root");
 				TraceDebugAutomate.debugDecisionNodeTrace("toc1");
@@ -45,10 +43,7 @@ public class testDecisionNode {
 				long tmps2 = System.nanoTime();
 				//TraceDebugAutomate.debugDecisionNodeTrace("Temps pour new decisionNode de taille "+taille_de_case+" = "+ (tmps2-tmps1)*Math.pow(10.0, -9)+"s \n");
 				sommeTps+=(tmps2-tmps1);
-			} catch (ExceptionUnknownNodeType e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
 		}
 		long tmps4 = System.nanoTime();
 

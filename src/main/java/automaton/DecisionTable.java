@@ -183,7 +183,7 @@ public class DecisionTable {
 	 * @param myName nom du player que cette table de décision simule.
 	 * @throws ExceptionUnknownNodeType 
 	 */
-	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
+	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName){
 		this.myName = new String(myName); 		
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
@@ -254,9 +254,9 @@ public class DecisionTable {
 		} else if(wantedDepth>0){
 			//===============================================================================//
 			TraceDebugAutomate.debugDecisionTableTrace("\t======Noeud["+index+"]======.\n");
-
-			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable());
-			
+			//Dans un premier temps je compte le nombre d'actions possibles
+			numberOfPossiblesActions = currentConfiguration.getPossibleActions(playerName, this.getDecisionNode(index).getPossibleFollowingActionTable(),false);
+			//J'alloue un tableau en conséquence
 			//===============================================================================//
 			TraceDebugAutomate.debugDecisionTableTrace("numberOfPossiblesActions="+numberOfPossiblesActions+"\n");
 
@@ -270,7 +270,7 @@ public class DecisionTable {
 				this.getDecisionNode(index).getCoupleActionIndex(i).setIndex(aFreeSlot);
 				//===============================================================================//
 				TraceDebugAutomate.debugDecisionTableTrace("On fait l'action.\n");
-				currentConfiguration.doAction(this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
+				currentConfiguration.doAction(playerName,this.getDecisionNode(index).getCoupleActionIndex(i).getAction());
 				//===============================================================================//
 				TraceDebugAutomate.debugDecisionTableTrace("Appel récursif\n");
 				this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration);

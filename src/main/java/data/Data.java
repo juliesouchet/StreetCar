@@ -47,7 +47,7 @@ public class Data implements Serializable
 	public static final int				maxSpeed				= 10;
 	public static final int				maxPossibleAction		= 6000;
 	public static final int				maxNbrTramPath			= 4 ^ maxSpeed;
-	public static final int				maxGameAction			= 150;
+	public static final int				maxGameRound			= 150;
 
 	private static int[]				existingLine;
 	private static String[][][]			existingBuildingInLine;
@@ -67,9 +67,10 @@ public class Data implements Serializable
 	private String[]					playerOrder;
 	private String						host;
 	private String						winner;
-// TODO	private Data[]						history			= new Data[maxGameAction];
+	private Data[]						history			= new Data[Data.maxGameRound];
+public int							ptrHistory		= - 1;
 
-	private Path[]						tmpPathTab		= Tile.initPathTab();// Optimization attribute
+	private Path[]						tmpPathTab		= Tile.initPathTab();				// Optimization attribute
 	private PathFinder					pathFinder		= new PathFinder();
 	private PathFinderMulti				pathFinderMulti	= new PathFinderMulti();
 	private Point[][]					pathMatrix		= initPossibleTramPathMatrix();
@@ -90,7 +91,7 @@ public class Data implements Serializable
 		File f = new File(boardDirectory + boardName);
 		Scanner sc;
 
-		if ((nbrBuildingInLine > maxNbrBuildingInLine) || 
+		if ((nbrBuildingInLine > maxNbrBuildingInLine) ||
 			(nbrBuildingInLine < minNbrBuildingInLine))	throw new RuntimeException("Unknown nbr building in a line");
 
 		this.gameName			= new String(gameName);
@@ -104,7 +105,7 @@ public class Data implements Serializable
 		this.maxPlayerSpeed		= minSpeed;
 		this.winner				= null;
 		this.remainingLine		= new LinkedList<Integer>();
-		for (int j=minLine; j<=maxLine; j++) remainingLine.add(j);
+		for (int j=minLine; j<=maxLine; j++)	this.remainingLine.add(j);
 
 		this.parseStaticGameInformations(nbrBuildingInLine);							// Init the existing buildings, lines (and corresponding colors)
 	}
@@ -126,16 +127,52 @@ public class Data implements Serializable
 		res.gameName				= new String(this.gameName);
 		res.nbrBuildingInLine		= this.nbrBuildingInLine;
 		res.board					= cpT.copyMatrix(this.board);
-		res.deck					= this.deck.getPlayerClone();
+		res.deck					= this.deck.getClone();
 		res.playerInfoList			= getCopyOfPlayerInfoList(playerName);
 		res.round					= this.round;
 		res.winner					= (this.winner == null) ? null : new String(this.winner);
 		res.maxPlayerSpeed			= this.maxPlayerSpeed;
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
-		res.playerOrder				= (this.playerOrder== null)	? null : cpS.copyTab(playerOrder);
+		res.ptrHistory				= this.ptrHistory;
+		for (int i=0; i<=this.ptrHistory; i++) res.history[i] = (this.history[i] == null) ? null : this.history[i].getClone(null);
 
 		return res;
+	}
+	public void setData(Data data)
+	{
+// TODO: ATTENTION: ne surtout pas clonner l'historique (req.history = null; res.ptrHistory ) -1)
+		Copier<String> 		cpS		= new Copier<String>();
+
+		this.gameName				= new String(data.gameName);
+		this.nbrBuildingInLine		= data.nbrBuildingInLine;
+		this.setBoard(data.board);
+		this.deck.setDeck(data.deck);
+		this.playerInfoList			= getCopyOfPlayerInfoList(null);
+		this.round					= data.round;
+		this.maxPlayerSpeed			= data.maxPlayerSpeed;
+		this.playerOrder			= (data.playerOrder == null)? null : cpS.copyTab(data.playerOrder);
+		this.host					= (data.host == null)		? null : new String(data.host);
+		this.winner					= (data.winner == null)		? null : new String(data.winner);
+		for (int i=0; i<=data.ptrHistory; i++)
+		{
+			if (this.history[i] == null)	this.history[i] = data.history[i].getClone(null);
+			else							this.history[i].setData(data.history[i]);
+		}
+		this.ptrHistory				= data.ptrHistory;
+	}
+
+	/**=======================================================
+	 * @return the previous game data.  The 
+	 =========================================================*/
+	public Data getPreviousDataAndRollBack()
+	{
+// TODO a finiiiiiiiiiiiiiiir
+		if (this.ptrHistory <= 0) throw new RuntimeException("No previous data to reach");
+
+		this.ptrHistory --;
+		if (this.history[ptrHistory] == null)	throw new RuntimeException("?????");
+		return this.history[ptrHistory];
 	}
 
 // --------------------------------------------
@@ -243,7 +280,10 @@ public class Data implements Serializable
 			this.playerOrder[i] = str;
 			i ++;
 		}
-		this.skipTurn();
+		this.skipTurn();									// Update the player History
+		this.ptrHistory ++;									// Update the game history
+		if (this.history[ptrHistory] == null)	this.history[ptrHistory] = this.getClone(null);
+		else									this.history[ptrHistory].setData(this);
 	}
 	/**===================================================
 	 * @return Makes the game forward to the next player's turn
@@ -273,20 +313,24 @@ public class Data implements Serializable
 
 		if (!this.board[x][y].isEmpty()) oldT = this.board[x][y];
 		this.board[x][y] = t;
-		hand.remove(t);												// Remove the tile from the player's hand
-		if (oldT != null) hand.add(oldT);							// Change the current tile
+		hand.remove(t);																	// Remove the tile from the player's hand
+		if (oldT != null) hand.add(oldT);												// Change the current tile
 		Point building = this.isBuildingAround(x, y);
-		if (building != null)										// Case put stop next to building
+		if (building != null)															// Case put stop next to building
 		{
 			if (this.isStopNextToBuilding(building) == null)
 				this.board[x][y].setStop(true);
 		}
-		LinkedList<Action> history = pi.getLastActionHistory();
-		history.addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
+		pi.getLastActionHistory().addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
+		this.ptrHistory ++;																// Update the game history
+//mmmm		this.history[ptrHistory].setData(this);
+
+		if (this.history[ptrHistory] == null)	this.history[ptrHistory] = this.getClone(null);
+		else									this.history[ptrHistory].setData(this);
 	}
 	/**===================================================
 	 * @return Places the two given tiles on the board.</br>
-	 * If the board had an non empty tile, the old tile is put in the player's hand.
+	 * If the board had an non empty tile, the old tile is put in the player's hand.</br>
 	 * The tiles are  removed from the player's hand.
 	 =====================================================*/
 	public void	placeTile(String playerName, int x1, int y1, Tile t1, int x2, int y2, Tile t2)
@@ -325,7 +369,8 @@ public class Data implements Serializable
 	public void startMaidenTravel(String playerName)
 	{
 		playerInfoList.get(playerName).startedMaidenTravel = true;
-// TODO: ajouter une action a l'historique
+// TODO: ajouter une action a l'historique du joueur
+// TODO: ajouter une action a l'historique du jeu
 	}
 	/**================================================
 	 * @return The player moves his streetcar
@@ -337,7 +382,8 @@ public class Data implements Serializable
 		pi.tramPosition = newPosition;
 		if (newPosition.equals(pi.endTerminus[0]))	this.winner = new String(playerName);
 		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
-// TODO: ajouter une action a l'historique
+// TODO: ajouter une action a l'historique du joueur
+// TODO: ajouter une action a l'historique du jeu
 	}
 	/**==========================================================================
 	 * @return The player chooses the destination of his maiden travel (the opposite terminus from his starting terminus)
@@ -361,7 +407,7 @@ public class Data implements Serializable
 	 *  @return  the current position of this player's streetcar 
 	 * (or null if he hasn't started yet his maiden travel)
 	 * ============================================================= */
-	public Point	getTramPosition(String playerName)
+	public Point getTramPosition(String playerName)
 	{
 		return new Point(playerInfoList.get(playerName).tramPosition);
 	}
@@ -482,7 +528,6 @@ public class Data implements Serializable
 	/**=======================================================================
 	 * @return true if the player has no possible game, considering his hand, the deck and his travel
 	 ========================================================================= */
-// TODO ne marche pas
 	public boolean isGameBlocked(String playerName)
 	{
 		if ((!isEmptyDeck()) && (this.getHandSize(playerName) > 0))				return false;
@@ -766,6 +811,7 @@ public class Data implements Serializable
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
 		{
 // TODO s'arreter au stop
+System.out.println("iciiiii");
 			if (startTerminus == null)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];	//		Case Can start maiden travel
 			else						startTerminus = null;
 			for (int l = 1; l<=this.maxPlayerSpeed; l++)
@@ -799,6 +845,7 @@ public class Data implements Serializable
 						this.board[x1][y1] = tmpRotation1[r1];
 						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
 						{
+System.out.println("iciiiii, trackCompleted");
 							if(writeActionsInTab){
 								resTab[res].getAction().setSimpleBuildingAndStartTripNextTurnAction(x1, y1, tmpRotation1[r1]);
 								resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
@@ -808,6 +855,7 @@ public class Data implements Serializable
 						else if (this.getHandSize(playerName) == 1)	;									//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
 						else
 						{
+//System.out.println("iciiiii, general");
 							for (int h2 = h1+1; h2<this.getHandSize(playerName); h2++)					//		For each second player's hand tile
 							{
 								for (int x2=1; x2<this.getWidth()-1; x2++)								//		For each board cell
@@ -962,10 +1010,24 @@ public class Data implements Serializable
 		}
 		return res;
 	}
+	private void setBoard(Tile[][] board)
+	{
+		if (this.board.length		!= board.length)		throw new RuntimeException("Diffrent boards");
+		if (this.board[0].length	!= board[0].length)		throw new RuntimeException("Diffrent boards");
+
+		for (int x=0; x<this.getWidth(); x++)
+		{
+			for (int y=0; y<this.getHeight(); y++)
+			{
+				this.board[x][y].copy(board[x][y]);
+			}
+		}
+	}
 	/**=====================================================================
-	 * @return a copy of the playerInfo list where for each player:
-	 * If the player is player who asks: all the informations are return
-	 * else: only the shared information are shown.  If this player has started his maiden travel, his aim is shown too
+	 * @return a copy of the playerInfo list where for each player:</br>
+	 * If the player is playerName: all the informations are return</br>
+	 * else: only the shared information are shown.  If this player has started his maiden travel, his aim is shown too</br>
+	 * If playerName is null, all the informations are returned</br>
 	 ========================================================================*/
 	private HashMap<String, PlayerInfo> getCopyOfPlayerInfoList(String playerName)
 	{
@@ -977,8 +1039,8 @@ public class Data implements Serializable
 		for (String str: this.playerInfoList.keySet())
 		{
 			pi							= this.playerInfoList.get(str);
-			piRes						= new PlayerInfo();										// Shared Information
-			piRes.player				= null;
+			piRes						= new PlayerInfo();													// Shared Information
+			piRes.player				= pi.player;
 			piRes.isHuman				= pi.isHuman;
 			piRes.line					= pi.line;
 			piRes.color					= (pi.color == null) ? null : new Color(pi.color.getRGB());
@@ -990,7 +1052,7 @@ public class Data implements Serializable
 			piRes.endTerminus			= (pi.endTerminus == null) ? null : cpP.copyTab(pi.endTerminus);
 			piRes.previousTramPosition	= (pi.previousTramPosition == null) ? null : new Point(pi.previousTramPosition);
 
-			if ((str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
+			if ((playerName == null) || (str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
 			{
 				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
 				piRes.buildingInLine_position	= (new Copier<Point>()).copyTab(pi.buildingInLine_position);

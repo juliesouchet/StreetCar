@@ -1,8 +1,6 @@
-package main.java.player;
+package test.java.player;
 
 import javax.swing.SwingUtilities;
-
-import test.java.player.Test_IHM;
 
 
 

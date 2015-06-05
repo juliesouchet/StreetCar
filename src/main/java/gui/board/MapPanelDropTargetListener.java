@@ -56,7 +56,6 @@ class MapPanelDropTargetListener implements DropTargetListener {
 			return;
 		}
 
-		dropEvent.acceptDrop(dropEvent.getDropAction());
 		Transferable transferable = dropEvent.getTransferable();
 		DataFlavor dataFlavor = transferable.getTransferDataFlavors()[0];
 		
@@ -80,7 +79,10 @@ class MapPanelDropTargetListener implements DropTargetListener {
 		} catch (ExceptionNotYourTurn e) {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
-			e.printStackTrace();
+			System.out.println("FORBIDDEN ACTION");
+			dropEvent.rejectDrop();
+			return;
+			//e.printStackTrace();
 		} catch (ExceptionTooManyActions e) {
 			e.printStackTrace();
 		} catch (ExceptionPlayerIsBlocked e) {
@@ -90,12 +92,8 @@ class MapPanelDropTargetListener implements DropTargetListener {
 			e.printStackTrace();
 		}
 
-		if (TilePanel.latestDraggedTilePanel != null) { // HACK
-			TilePanel.latestDraggedTilePanel.setTile(null);
-			TilePanel.latestDraggedTilePanel = null;
-		}
-		this.mapPanel.draggedPoint = null; // HACK too
-		this.mapPanel.latestDroppedPosition = p;
+
+		dropEvent.acceptDrop(dropEvent.getDropAction());
 		dropEvent.dropComplete(true);
 	}
 }

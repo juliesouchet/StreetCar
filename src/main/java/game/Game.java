@@ -293,17 +293,28 @@ System.out.println("Game.setLoginInfo: no change to do");
 		if(!data.hasStartedMaidenTravel(playerName))
 		{
 			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction();
-			if(data.hasRemainingAction(playerName)) throw new ExceptionForbiddenAction();
+			if(data.hasRemainingAction(playerName))								throw new ExceptionForbiddenAction();
 		}
 
 		this.engine.addAction(this.data, "validate", playerName);
 	}
+	public void rollBack(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
+	{
+// TODO a decommenter apres les test
+//		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
+//		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
+
+System.out.println("ptrHistory = " + data.ptrHistory);
+		this.data = this.data.getPreviousDataAndRollBack();
+System.out.println("ptrHistory = " + data.ptrHistory);
+		this.engine.addAction(data, "notifyAllPlayers");
+	}
 	/**=============================================================================
-	 * 	Signals the start of this player's maiden travel. 
+	 * 	Signals the start of this player's maiden travel.
 	 *  There must be a path from one terminus to another, passing next to all of
-	 *  this player's buildings. 
+	 *  this player's buildings.
 	 *  @param terminus : the starting point
-	 *  @param playerName 
+	 *  @param playerName
 	 =============================================================================*/
 	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionUncompletedPath
 	{

@@ -49,7 +49,7 @@ public class DeckTest {
 		nb = 10;
 		tileList.put(t, nb);
 		
-		// Tuiles à arbre
+		// Tuiles ï¿½ arbre
 		t = Tile.parseTile("Tile_TFFFZZ040213");
 		nb = 4;
 		tileList.put(t, nb);
@@ -74,9 +74,9 @@ public class DeckTest {
 		nb = 4;
 		tileList.put(t, nb);
 		
-		// Vérification du nb de tuiles initiales pour chaque type
+		// Vï¿½rification du nb de tuiles initiales pour chaque type
 		for(Tile tmp : tileList.keySet()) {
-			assertTrue("La tuile " + tmp.getTileID() + " est mal initialisée",
+			assertTrue("La tuile " + tmp.getTileID() + " est mal initialisï¿½e",
 						tileList.get(tmp)==deck.getNbrRemainingTile(tmp));
 		}
 	}
@@ -97,10 +97,10 @@ public class DeckTest {
 	@Test
 	public void testGetPlayerClone() {
 		Deck deck = new Deck();
-		Deck clone = deck.getPlayerClone();
+		Deck clone = deck.getClone();
 		assertEquals(deck.getNbrRemainingDeckTile(), clone.getNbrRemainingDeckTile());
 		deck.drawTile();
-		assertEquals(deck.getNbrRemainingDeckTile(), deck.getPlayerClone().getNbrRemainingDeckTile());
+		assertEquals(deck.getNbrRemainingDeckTile(), deck.getClone().getNbrRemainingDeckTile());
 	}
 
 	@Test
@@ -117,10 +117,10 @@ public class DeckTest {
 	@Test
 	public void testGetNbrRemainingDeckTile() {
 		Deck deck = new Deck();
-		assertTrue("Pas 101 tuiles au départ",
+		assertTrue("Pas 101 tuiles au dï¿½part",
 					deck.getNbrRemainingDeckTile()==101);
 		deck.drawTile();
-		assertTrue("Retirer une tuile n'a pas diminué le nb de tuiles restantes",
+		assertTrue("Retirer une tuile n'a pas diminuï¿½ le nb de tuiles restantes",
 					deck.getNbrRemainingDeckTile()==100);		
 	}
 
@@ -139,7 +139,7 @@ public class DeckTest {
 		Tile t = d.drawTile();
 		Integer oldNb = tileList.get(t.getTileID()),
 			newNb = d.getNbrRemainingTile(t);
-		assertTrue("Tirer la tuile n'a pas décrémenté le nb de tuiles restantes de ce type",
+		assertTrue("Tirer la tuile n'a pas dï¿½crï¿½mentï¿½ le nb de tuiles restantes de ce type",
 					oldNb ==(newNb+1));
 		tileList.put(t.getTileID(), d.getNbrRemainingTile(t));
 		
@@ -157,7 +157,7 @@ public class DeckTest {
 		
 		while(!d.isEmpty()) {
 			Tile tmp = d.drawTile();
-			assertFalse("On a tiré une tuile qui était censé être épuisée", tmp.equals(t));
+			assertFalse("On a tirï¿½ une tuile qui ï¿½tait censï¿½ ï¿½tre ï¿½puisï¿½e", tmp.equals(t));
 		}
 	}
 
