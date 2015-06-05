@@ -162,16 +162,15 @@ public class Data implements Serializable
 		HistoryCell	hc			= pi.getLastActionHistory();
 		String		playerName	= this.getPlayerTurn();
 		int x, y;
-//TODO traiter la pioche
-//TODO   FINIIIIIIIIIIIIIR
+
 		if (hc != null)																										// Case player has done an action this round
 		{
 			if (hc.action2 != null)																							//		Case undo round second game
 			{
 				if (hc.action2.isBUILD_SIMPLE())
 				{
-					x = hc.action2.positionTile2.x;
-					y = hc.action2.positionTile2.y;
+					x = hc.action2.positionTile1.x;
+					y = hc.action2.positionTile1.y;
 					if (hc.oldTile2 != null)	{this.board[x][y] = hc.oldTile2; pi.hand.remove(hc.oldTile2);}				//			Case: game was a tile improve
 					else						 this.board[x][y] = this.getNewEmptyTile();
 					pi.hand.add(hc.action2.tile1);
@@ -186,7 +185,7 @@ public class Data implements Serializable
 				{
 					x = hc.action1.positionTile1.x;
 					y = hc.action1.positionTile1.y;
-					if (hc.oldTile1 != null)	{this.board[x][y] = hc.oldTile1; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
+					if (!hc.oldTile1.isEmpty())	{this.board[x][y] = hc.oldTile1; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
 					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
 					pi.hand.add(hc.action1.tile1);
 				}
@@ -194,12 +193,12 @@ public class Data implements Serializable
 				{
 					x = hc.action1.positionTile1.x;
 					y = hc.action1.positionTile1.y;
-					if (hc.oldTile1 != null)	{this.board[x][y] = hc.oldTile1;; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
+					if (!hc.oldTile1.isEmpty())	{this.board[x][y] = hc.oldTile1;; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
 					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
 					pi.hand.add(hc.action1.tile1);
 					x = hc.action1.positionTile2.x;
 					y = hc.action1.positionTile2.y;
-					if (hc.oldTile2 != null)	{this.board[x][y] = hc.oldTile2; pi.hand.remove(hc.oldTile2);}				//			Case: game was a tile improve
+					if (!hc.oldTile2.isEmpty())	{this.board[x][y] = hc.oldTile2; pi.hand.remove(hc.oldTile2);}				//			Case: game was a tile improve
 					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
 					pi.hand.add(hc.action1.tile2);
 				}
@@ -219,7 +218,7 @@ public class Data implements Serializable
 			this.round --;
 			this.getPreviousDataAndRollBack();
 		}
-		throw new RuntimeException("Pas fini");
+////TODO		throw new RuntimeException("Pas fini");
 	}
 
 // --------------------------------------------

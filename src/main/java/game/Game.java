@@ -65,6 +65,7 @@ public String getHostName(){return this.data.getHost();}
 			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
 			Naming.rebind(url, this);
 		}
+//TODO ne plus planter mes renvoyer une exception particuliere
 		catch (Exception e) {e.printStackTrace(); System.exit(0);}
 
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
@@ -180,6 +181,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 			this.launchAIPlayer(newPlayerInfo);
 			notifyAll = false;
 		}
+		else notifyAll = true;
 		if (notifyAll) this.engine.addAction(data, "notifyAllPlayers");
 	}
 	/**================================================
