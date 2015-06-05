@@ -118,9 +118,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 	}
 
 	public void cancelGame() {
-		GameController gc = (GameController)this.getFrameController();
-		StreetCar.player = null;
-		gc.showWelcomeMenuPanel();
+		this.getGameController().stopGame();
 	}
 
 	public void changePlayerType(ComboBox comboBox) {

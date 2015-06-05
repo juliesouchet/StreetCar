@@ -166,8 +166,7 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 	}
 	
 	public void cancelGame() {
-		GameController gc = (GameController)this.getFrameController();
-		gc.showWelcomeMenuPanel();
+		this.getGameController().stopGame();
 	}
 	
 	protected void updateJoinGameButton() {
