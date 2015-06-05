@@ -236,7 +236,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 
-		if (gameHasStarted || isHost)	System.exit(0);
+		if (gameHasStarted || isHost)	Thread.currentThread().isInterrupted();
 	}
 
 	/**==============================================
