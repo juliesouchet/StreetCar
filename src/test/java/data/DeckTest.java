@@ -39,10 +39,10 @@ public class DeckTest {
 	@Test
 	public void testGetPlayerClone() {
 		Deck deck = new Deck();
-		Deck clone = deck.getPlayerClone();
+		Deck clone = deck.getClone();
 		assertEquals(deck.getNbrRemainingDeckTile(), clone.getNbrRemainingDeckTile());
 		deck.drawTile();
-		assertEquals(deck.getNbrRemainingDeckTile(), deck.getPlayerClone().getNbrRemainingDeckTile());
+		assertEquals(deck.getNbrRemainingDeckTile(), deck.getClone().getNbrRemainingDeckTile());
 	}
 
 	@Test
@@ -59,10 +59,10 @@ public class DeckTest {
 	@Test
 	public void testGetNbrRemainingDeckTile() {
 		Deck deck = new Deck();
-		assertTrue("Pas 101 tuiles au départ",
+		assertTrue("Pas 101 tuiles au dï¿½part",
 					deck.getNbrRemainingDeckTile()==101);
 		deck.drawTile();
-		assertTrue("Retirer une tuile n'a pas diminué le nb de tuiles restantes",
+		assertTrue("Retirer une tuile n'a pas diminuï¿½ le nb de tuiles restantes",
 					deck.getNbrRemainingDeckTile()==100);		
 	}
 
@@ -90,7 +90,7 @@ public class DeckTest {
 		i = 0;
 		while(i<12 && !t.getTileID().equals(IDList[i])) i++;
 		if(i==12) throw new RuntimeException(t.getTileID()+" pas dans la liste ?");
-		assertTrue("Tirer la tuile n'a pas décrémenté le nb de tuiles restantes de ce type",
+		assertTrue("Tirer la tuile n'a pas dï¿½crï¿½mentï¿½ le nb de tuiles restantes de ce type",
 					nb[i]==(d.getNbrRemainingTile(t)+1));
 		nb[i]--;
 		
@@ -111,7 +111,7 @@ public class DeckTest {
 		
 		while(!d.isEmpty()) {
 			Tile tmp = d.drawTile();
-			assertFalse("On a tiré une tuile qui était censé être épuisée", tmp.equals(t));
+			assertFalse("On a tirï¿½ une tuile qui ï¿½tait censï¿½ ï¿½tre ï¿½puisï¿½e", tmp.equals(t));
 		}
 	}
 
