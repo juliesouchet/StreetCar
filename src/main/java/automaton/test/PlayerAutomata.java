@@ -14,9 +14,11 @@ import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionGameIsOver;
+import main.java.game.ExceptionNotEnoughTilesInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionPlayerIsBlocked;
 import main.java.game.ExceptionTooManyActions;
+import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -170,14 +172,16 @@ public class PlayerAutomata implements InterfaceIHM
 	// --------------------------------------------
 	public void refresh(Data data)
 	{
-		DecisionTable monNoeudDedecision = null;
+		DecisionTable maTableDeDecision = null;
 		int nbActionsPossibles = 0;
 		Action myAction = null;
 		
 		//=======================================
 		TraceDebugAutomate.debugDecisionTableTrace("Refresh called\n");
 
-		if (!firstRefreshDone){
+		if (!firstRefreshDone || !data.isPlayerTurn(name)){
+			//=======================================
+			TraceDebugAutomate.debugDecisionTableTrace("It's not my turn.\n");
 			firstRefreshDone = true;
 			return;
 		}
@@ -188,35 +192,27 @@ public class PlayerAutomata implements InterfaceIHM
 		System.out.println("nbActionPossibles="+nbActionsPossibles);
 		int profondeurExplorable = 150000/nbActionsPossibles;
 		System.out.println("Profondeur explorable="+profondeurExplorable);
-			monNoeudDedecision = new DecisionTable(nbActionsPossibles, profondeurExplorable, "joueurA");
+			maTableDeDecision = new DecisionTable(nbActionsPossibles, profondeurExplorable, "joueurA");
 		
 		if(profondeurExplorable==0){
-
 			try {
 				edouard = new Dumbest("joueurA");
 				myAction = edouard.makeChoice(data);
 				player.doAction(name, myAction);
 				myAction = edouard.makeChoice(data);
 				player.doAction("joueurA", myAction);
+				player.drawTile(2);
 
-				
-				
-				
-			} catch (RemoteException | ExceptionGameHasNotStarted
-					| ExceptionNotYourTurn | ExceptionForbiddenAction
-					| ExceptionTooManyActions | ExceptionPlayerIsBlocked
-					| ExceptionGameIsOver e) {
+			} catch (RemoteException | ExceptionGameHasNotStarted| ExceptionNotYourTurn | ExceptionForbiddenAction| ExceptionTooManyActions | ExceptionPlayerIsBlocked| ExceptionGameIsOver| ExceptionTwoManyTilesToDraw  e) { e.printStackTrace();} catch (ExceptionNotEnoughTilesInDeck e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	
-
+		}else{
+			
 		}
-		
-
 		System.out.println("pop");
-
-		
+	
 		this.frame.setGameData(data);
 		System.out.println("game setted");
 	}

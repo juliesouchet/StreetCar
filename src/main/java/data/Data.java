@@ -17,6 +17,7 @@ import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionHostAlreadyExists;
 import main.java.game.ExceptionUnknownBoardName;
 import main.java.player.PlayerInterface;
+import main.java.util.CloneableInterface;
 import main.java.util.Copier;
 import main.java.util.Direction;
 import main.java.util.Util;
@@ -67,8 +68,6 @@ public class Data implements Serializable
 	private String[]					playerOrder;
 	private String						host;
 	private String						winner;
-	private Data[]						history			= new Data[Data.maxGameRound];
-public int							ptrHistory		= - 1;
 
 	private Path[]						tmpPathTab		= Tile.initPathTab();				// Optimization attribute
 	private PathFinder					pathFinder		= new PathFinder();
@@ -134,8 +133,6 @@ public int							ptrHistory		= - 1;
 		res.maxPlayerSpeed			= this.maxPlayerSpeed;
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
-		res.ptrHistory				= this.ptrHistory;
-		for (int i=0; i<=this.ptrHistory; i++) res.history[i] = (this.history[i] == null) ? null : this.history[i].getClone(null);
 
 		return res;
 	}
@@ -154,12 +151,6 @@ public int							ptrHistory		= - 1;
 		this.playerOrder			= (data.playerOrder == null)? null : cpS.copyTab(data.playerOrder);
 		this.host					= (data.host == null)		? null : new String(data.host);
 		this.winner					= (data.winner == null)		? null : new String(data.winner);
-		for (int i=0; i<=data.ptrHistory; i++)
-		{
-			if (this.history[i] == null)	this.history[i] = data.history[i].getClone(null);
-			else							this.history[i].setData(data.history[i]);
-		}
-		this.ptrHistory				= data.ptrHistory;
 	}
 
 	/**=======================================================
@@ -167,12 +158,7 @@ public int							ptrHistory		= - 1;
 	 =========================================================*/
 	public Data getPreviousDataAndRollBack()
 	{
-// TODO a finiiiiiiiiiiiiiiir
-		if (this.ptrHistory <= 0) throw new RuntimeException("No previous data to reach");
-
-		this.ptrHistory --;
-		if (this.history[ptrHistory] == null)	throw new RuntimeException("?????");
-		return this.history[ptrHistory];
+return null;
 	}
 
 // --------------------------------------------
@@ -281,9 +267,6 @@ public int							ptrHistory		= - 1;
 			i ++;
 		}
 		this.skipTurn();									// Update the player History
-		this.ptrHistory ++;									// Update the game history
-		if (this.history[ptrHistory] == null)	this.history[ptrHistory] = this.getClone(null);
-		else									this.history[ptrHistory].setData(this);
 	}
 	/**===================================================
 	 * @return Makes the game forward to the next player's turn
@@ -302,31 +285,28 @@ public int							ptrHistory		= - 1;
 		this.board[x][y] = t;
 	}
 	/**===================================================
-	 * @return Places the given tile on the board.  If the board had an non empty tile, the old tile is put in the player's hand.
-	 * The tile is removed from the player's hand.
+	 * @return Places the given tile on the board.</br>
+	 * If the board had an non empty tile, the old tile is put in the player's hand.</br>
+	 * The tile is removed from the player's hand.</br>
 	 =====================================================*/
 	public void	placeTile(String playerName, int x, int y, Tile t)
 	{
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
 		Hand		hand	= pi.hand;
 		Tile		oldT	= null;
+		Tile		oldTH	= this.board[x][y];
 
 		if (!this.board[x][y].isEmpty()) oldT = this.board[x][y];
 		this.board[x][y] = t;
-		hand.remove(t);																	// Remove the tile from the player's hand
-		if (oldT != null) hand.add(oldT);												// Change the current tile
+		hand.remove(t);																			// Remove the tile from the player's hand
+		if (oldT != null) hand.add(oldT);														// Change the current tile
 		Point building = this.isBuildingAround(x, y);
-		if (building != null)															// Case put stop next to building
+		if (building != null)																	// Case put stop next to building
 		{
 			if (this.isStopNextToBuilding(building) == null)
 				this.board[x][y].setStop(true);
 		}
-		pi.getLastActionHistory().addLast(Action.newBuildSimpleAction(x, y, t));		// Update player's history
-		this.ptrHistory ++;																// Update the game history
-//mmmm		this.history[ptrHistory].setData(this);
-
-		if (this.history[ptrHistory] == null)	this.history[ptrHistory] = this.getClone(null);
-		else									this.history[ptrHistory].setData(this);
+		pi.getLastActionHistory().addLastAction(Action.newBuildSimpleAction(x, y, t), oldTH, null);	// Update player's history
 	}
 	/**===================================================
 	 * @return Places the two given tiles on the board.</br>
@@ -445,19 +425,10 @@ public int							ptrHistory		= - 1;
 	public boolean hasRemainingAction(String playerName)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
-		LinkedList<Action> lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
+		HistoryCell lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
 
-		if (lastActions.size() == 0)
-		{
-			return true;
-		}
-		else if (lastActions.size() == 1)
-		{
-			Action a = lastActions.getFirst();
-			return (a.isBUILD_SIMPLE());
-		}
-		else if (lastActions.size() == 2) return false;
-		else	throw new RuntimeException("Player history malformed: cell size = " + lastActions.size());
+		if (lastActions.isEmpty())			return true;
+		else								return lastActions.isSimpleAction();
 	}
 	/**======================================================
 	 *  @return true if this player is at the start of his turn (and he hasn't done anything yet)
@@ -465,8 +436,8 @@ public int							ptrHistory		= - 1;
 	public boolean isStartOfTurn(String playerName)
 	{
 		if(!isPlayerTurn(playerName)) return false;
-		LinkedList<Action> lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
-		return lastActions.size() == 0;
+		HistoryCell lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
+		return lastActions.isEmpty();
 	}
 	/**===============================================================
 	 * @return true if the player's track is completed (path between the 2 terminus and through all the buildings)
@@ -1046,7 +1017,7 @@ System.out.println("iciiiii, trackCompleted");
 			piRes.color					= (pi.color == null) ? null : new Color(pi.color.getRGB());
 			piRes.hand					= pi.hand.getClone();
 			piRes.terminus				= (pi.terminus == null) ? null : cpP.copyTab(pi.terminus);
-			piRes.history				= (new Copier<LinkedList<Action>>()).copyList(pi.history);
+			piRes.history				= (new Copier<HistoryCell>()).copyList(pi.history);
 			piRes.startedMaidenTravel	= pi.startedMaidenTravel;
 			piRes.tramPosition			= (pi.tramPosition == null) ? null : new Point(pi.tramPosition);
 			piRes.endTerminus			= (pi.endTerminus == null) ? null : cpP.copyTab(pi.endTerminus);
@@ -1073,21 +1044,21 @@ System.out.println("iciiiii, trackCompleted");
 	private class PlayerInfo implements Serializable
 	{
 		// Attributes
-		private static final long	serialVersionUID = -7495867115345261352L;
-		public PlayerInterface		player;
-		public boolean				isHuman;
-		public Hand					hand;
-		public int					line;											// Real value of the line (belongs to [1, 6])
-		public Color				color;
-		public String[]				buildingInLine_name;
-		public Point[]				buildingInLine_position;
-		public String[][]			remainingBuildingInLineSave;
-		public Point[]				terminus;										// Complete player's terminus list
-		public boolean				startedMaidenTravel		= false;				// Data relative to the travel
-		public Point				tramPosition			= null;
-		public Point[]				endTerminus				= new Point[2];
-		public Point				previousTramPosition	= null;
-		public LinkedList<LinkedList<Action>>	history;							// organized by turns
+		private static final long		serialVersionUID = -7495867115345261352L;
+		public PlayerInterface			player;
+		public boolean					isHuman;
+		public Hand						hand;
+		public int						line;											// Real value of the line (belongs to [1, 6])
+		public Color					color;
+		public String[]					buildingInLine_name;
+		public Point[]					buildingInLine_position;
+		public String[][]				remainingBuildingInLineSave;
+		public Point[]					terminus;										// Complete player's terminus list
+		public boolean					startedMaidenTravel		= false;				// Data relative to the travel
+		public Point					tramPosition			= null;
+		public Point[]					endTerminus				= new Point[2];
+		public Point					previousTramPosition	= null;
+		public LinkedList<HistoryCell>	history;							// organized by turns
 
 		// Builder
 		private PlayerInfo(){}
@@ -1110,13 +1081,13 @@ System.out.println("iciiiii, trackCompleted");
 			remainingBuildingInLine		.remove(i);
 			this.buildingInLine_position= getBuildingPosition(this.buildingInLine_name);				// Init the building line position
 			this.terminus				= getTerminusPosition(this.line);								// Init the terminus position
-			this.history				= new LinkedList<LinkedList<Action>>();
+			this.history				= new LinkedList<HistoryCell>();
 			this.endTerminus[0]			= new Point();
 			this.endTerminus[1]			= new Point();
 		}
 
 		// Getter
-		public LinkedList<Action> getLastActionHistory()
+		public HistoryCell getLastActionHistory()
 		{
 			if (this.history.isEmpty())	return null;
 			else						return this.history.getLast();
@@ -1126,6 +1097,47 @@ System.out.println("iciiiii, trackCompleted");
 			if (this.history.size() <= round)	return false;
 			else								return (!this.getLastActionHistory().isEmpty());
 		}
-		public void newRound()			{this.history.addLast(new LinkedList<Action>());}
+		public void newRound() {this.history.addLast(new HistoryCell());}
+	}
+
+// --------------------------------------------
+// Player Info class:
+// --------------------------------------------
+	private class HistoryCell implements Serializable, CloneableInterface<HistoryCell>
+	{
+		// Attributes
+		private static final long serialVersionUID = 2412756799747914486L;
+		public Action	action1;
+		public Action	action2;
+		public Tile		oldTile1;
+		public Tile		oldTile2;
+
+		// Builder
+		private HistoryCell(){}
+
+		// Local methods
+		public HistoryCell getClone()
+		{
+			HistoryCell res = new HistoryCell();
+			res.action1		= new Action();		if (this.action1 != null) res.action1.copy(this.action1);
+			res.action2		= new Action();		if (this.action2 != null) res.action2.copy(this.action2);
+			res.oldTile1	= new Tile();	res.oldTile1.copy(this.oldTile1);
+			res.oldTile2	= new Tile();	res.oldTile2.copy(this.oldTile2);
+
+			return res;
+		}
+		public boolean isEmpty()		{return (this.action1 == null);}
+		public boolean isSimpleAction()	{return !this.action1.isTwoStepAction();}
+		public void addLastAction(Action a, Tile oldTile1, Tile oldTile2)
+		{
+			if (action1 == null)	this.action1 = a;
+			else
+			{
+				if (this.action1.isTwoStepAction())	throw new RuntimeException();
+				this.action2 = a;
+			}
+			this.oldTile1 = oldTile1;
+			this.oldTile2 = oldTile2;
+		}
 	}
 }

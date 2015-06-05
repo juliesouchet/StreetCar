@@ -301,12 +301,17 @@ System.out.println("Game.setLoginInfo: no change to do");
 	public void rollBack(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
 	{
 // TODO a decommenter apres les test
-//		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
-//		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
+		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
+		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
 
-System.out.println("ptrHistory = " + data.ptrHistory);
+System.out.println("ptrHistory = " + data.getHistoryIndex());
+int i = 0;
+while(data.history[i] != null) i++;
+System.out.println("nbr Non null: " + i);
 		this.data = this.data.getPreviousDataAndRollBack();
-System.out.println("ptrHistory = " + data.ptrHistory);
+System.out.println("ptrHistory = " + data.getHistoryIndex());
+while(data.history[i] != null) i++;
+System.out.println("nbr Non null: " + i);
 		this.engine.addAction(data, "notifyAllPlayers");
 	}
 	/**=============================================================================
