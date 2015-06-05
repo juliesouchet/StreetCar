@@ -4,18 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
 import java.util.LinkedList;
-
-import javax.swing.TransferHandler;
 
 import main.java.data.Data;
 import main.java.data.Tile;
@@ -24,7 +18,7 @@ import main.java.player.PlayerIHM;
 
 
 @SuppressWarnings("serial")
-public class MapPanel extends Panel implements Transferable, MouseListener, MouseMotionListener, ComponentListener {
+public class MapPanel extends Panel implements MouseListener, ComponentListener {
 
 	// Properties
 
@@ -33,20 +27,15 @@ public class MapPanel extends Panel implements Transferable, MouseListener, Mous
     private int mapWidth;
     private int cellWidth;
     public Data data;
-    public Point draggedPoint = null;
-    public Point latestDroppedPosition = null;
-    
     // Constructors
     
 	public MapPanel() {
 		this.setBackground(Color.WHITE);
 		this.addMouseListener(this);
 		this.addComponentListener(this);
-		this.addMouseMotionListener(this);
 
 		MapPanelDropTargetListener dropTarget = new MapPanelDropTargetListener(this);
         this.setDropTarget(new DropTarget(this, dropTarget));
-		this.setTransferHandler(new MapPanelDragTransferHandler());
 	}
 	
 	// Cells positions
@@ -113,27 +102,6 @@ public class MapPanel extends Panel implements Transferable, MouseListener, Mous
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	
-	// MouseMotionListener
-	
-	public void mouseDragged(MouseEvent e) {
-		if (this.draggedPoint != null) return;
-		
-		Point p = this.cellPositionForLocation(e.getPoint());
-		if (p != null && p.equals(this.latestDroppedPosition)) {
-			this.draggedPoint = p;
-			Tile tile = this.data.getBoard()[p.x][p.y];
-			BufferedImage image = TileImage.getRotatedImage(tile);
-			Point offset = new Point(-image.getWidth() / 2, -image.getHeight() / 2);
-			
-			TransferHandler handler = this.getTransferHandler();
-			handler.setDragImage(image);
-			handler.setDragImageOffset(offset);
-			handler.exportAsDrag(this, e, TransferHandler.COPY);
-		}
-	}
-
-	public void mouseMoved(MouseEvent e) {}
-
 	// ComponentListener
 	
 	public void componentResized(ComponentEvent e) {
@@ -164,36 +132,4 @@ public class MapPanel extends Panel implements Transferable, MouseListener, Mous
 		// TODO Auto-generated method stub
 		
 	}
-
-	// Transferable
-	
-	public Object getTransferData(DataFlavor flavor) {
-		if (this.draggedPoint == null) return null;
-		
-		DataFlavor thisflavor = TilePanel.getDragDataFlavor();
-		if (thisflavor != null && flavor.equals(thisflavor)) {
-			Tile tile = this.data.getBoard()[this.draggedPoint.x][this.draggedPoint.y];
-			return tile;
-		} else {
-			return null;
-		}
-	}
-
-	public DataFlavor[] getTransferDataFlavors() {
-		DataFlavor[] flavors = {null};
-		flavors[0] = TilePanel.getDragDataFlavor();
-		return flavors;
-	}
-
-	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		DataFlavor[] flavors = {null};
-		flavors[0] = TilePanel.getDragDataFlavor();
-		for (DataFlavor f : flavors) {
-			if (f.equals(flavor)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 }

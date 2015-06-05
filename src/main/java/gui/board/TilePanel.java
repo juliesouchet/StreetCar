@@ -128,15 +128,12 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 		handler.exportAsDrag(this, e, TransferHandler.COPY);
 		
 		this.isDragging = true;
-		TilePanel.latestDraggedTilePanel = this;
 	}
 
 	public void mouseMoved(MouseEvent e) {}
 	
 
 	// Transferable
-	
-	public static TilePanel latestDraggedTilePanel = null; // HACK ;)
 	
 	public Object getTransferData(DataFlavor flavor) {
 		if (this.tile == null) return null;

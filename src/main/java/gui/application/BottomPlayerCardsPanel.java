@@ -72,6 +72,7 @@ public class BottomPlayerCardsPanel extends Panel{
 				tilePanel.setDraggable(true);
 				tilePanel.setBounds(20 + 60 * i, 80, 50, 50);
 				this.add(tilePanel);
+				this.tilePanels.add(tilePanel);
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -113,9 +114,13 @@ public class BottomPlayerCardsPanel extends Panel{
 		
 		for (int i=0; i<data.getHandSize(playerName); i++) {
 			Tile tile = data.getHandTile(playerName, i);
-			TilePanel tilePanel = new TilePanel(tile);
-			tilePanels.add(i, tilePanel);
+			TilePanel tilePanel = this.tilePanels.get(i);
+			tilePanel.setTile(tile);
 			System.out.println(tile);		
+		}
+		for (int i=data.getHandSize(playerName); i<5; i++) {
+			TilePanel tilePanel = this.tilePanels.get(i);
+			tilePanel.setTile(null);	
 		}
 	}
 	
