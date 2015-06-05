@@ -4,11 +4,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import main.java.data.Data;
+import main.java.game.ExceptionFullParty;
+import main.java.game.ExceptionGameHasAlreadyStarted;
+import main.java.game.ExceptionHostAlreadyExists;
+import main.java.game.ExceptionUnknownBoardName;
+import main.java.game.ExceptionUsedPlayerColor;
+import main.java.game.ExceptionUsedPlayerName;
 import main.java.gui.application.GameController;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Button;
@@ -116,21 +124,45 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 		GameController gc = this.getGameController();
 		try {
 			StreetCar.player = PlayerIHM.launchPlayer(playerName, 
-											   gameName,
-											   "newOrleans",
-											    2,
-											    false,
-											    addressField.getText(),
-											    gc);
+												   gameName,
+												   "newOrleans",
+												    2,
+												    false,
+												    addressField.getText(),
+												    gc);
 
-			Color playerColor = StreetCar.player.getGameData().getRandomUnusedColor();
-			
+			Data data = StreetCar.player.getGameData();
+			Color playerColor = data.getRandomUnusedColor();
 			StreetCar.player.setPlayerColor(playerColor);
 			gc.showClientWaitingRoomPanel();
-		} catch (Exception e)	{
-		     Toolkit.getDefaultToolkit().beep();
-		     System.out.println("NO HOST");
+			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionFullParty e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionHostAlreadyExists e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionUsedPlayerName e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionUsedPlayerColor e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionUnknownBoardName e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExceptionGameHasAlreadyStarted e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
+		
 	}
 	
 	public void cancelGame() {
