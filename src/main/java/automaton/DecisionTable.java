@@ -60,26 +60,29 @@ public class DecisionTable {
 	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
 	 */
 	public int getBestActionIndex(int index){
-		int indexBestActionInTable=DecisionNode.NOT_SIGNIFICANT;
-		int indexBestActionInNode=DecisionNode.NOT_SIGNIFICANT;
-		int indexCourantInTable;
-		int indexCourantInNode;
-		double bestValue = -1.0;
-		double currentValue;
-		DecisionNode decisionNode = this.getDecisionNode(index);
 
-		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
-			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
-				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
-				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
-				if( currentValue>=bestValue){
-					indexBestActionInNode = indexCourantInNode;
-					indexBestActionInTable = decisionNode.getCoupleActionIndex(indexBestActionInNode).getIndex();
-					bestValue = this.getDecisionNode(indexBestActionInTable).getQuality();
-				}
-			}
-		}
-		return indexBestActionInNode;
+		//TODO Je met une valeur de retour bidon car je vais devoir refaire cette fonction pour ne plus stocker toutes les actions mais les ecraser au fur et a mesure.
+		return 0;
+//		int indexBestActionInTable=DecisionNode.NOT_SIGNIFICANT;
+//		int indexBestActionInNode=DecisionNode.NOT_SIGNIFICANT;
+//		int indexCourantInTable;
+//		int indexCourantInNode;
+//		double bestValue = -1.0;
+//		double currentValue;
+//		DecisionNode decisionNode = this.getDecisionNode(index);
+//
+//		for (indexCourantInNode=0;indexCourantInNode<decisionNode.getSizeOfPossiblesActionsTable();indexCourantInNode++){
+//			if (this.getDecisionNode(index).actionIsSignificant(indexCourantInNode)){
+//				indexCourantInTable = decisionNode.getCoupleActionIndex(indexCourantInNode).getIndex();
+//				currentValue = this.getDecisionNode(indexCourantInTable).getQuality();
+//				if( currentValue>=bestValue){
+//					indexBestActionInNode = indexCourantInNode;
+//					indexBestActionInTable = decisionNode.getCoupleActionIndex(indexBestActionInNode).getIndex();
+//					bestValue = this.getDecisionNode(indexBestActionInTable).getQuality();
+//				}
+//			}
+//		}
+//		return indexBestActionInNode;
 	}		
 
 	/**

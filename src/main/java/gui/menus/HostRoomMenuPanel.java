@@ -125,8 +125,6 @@ public class HostRoomMenuPanel extends MenuPanel {
 	}
 
 	public void changePlayerType(ComboBox comboBox) {
-		System.out.println("CHANGE");
-
 		PlayerIHM player = StreetCar.player;
 
 		int index = comboBox.getSelectedIndex();
@@ -138,7 +136,6 @@ public class HostRoomMenuPanel extends MenuPanel {
 		try {
 			index = this.choiceComboBoxes.indexOf(comboBox);
 			player.setLoginInfo(index, info);
-			System.out.println("ON VIENT DE CHANGER UN LOGIN INFO");
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
@@ -147,8 +144,6 @@ public class HostRoomMenuPanel extends MenuPanel {
 			e.printStackTrace();
 		}
 	}
-
-	// Refresh menu
 
 	public void refreshMenu(PlayerIHM player, Data data) {
 		try {

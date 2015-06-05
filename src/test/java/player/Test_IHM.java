@@ -28,10 +28,10 @@ public class Test_IHM implements InterfaceIHM
 		String boardName;
 		int nbrBuildingInLine;
 		String str, name, gameName, ip;
-		boolean create;
+		boolean create = true;
 		PlayerIHM playerIHM = null;
 
-		while (true)
+/*		while (true)
 		{
 			System.out.println("Please enter:");
 			System.out.println("\t- \"J\" to join an existing game");
@@ -41,6 +41,7 @@ public class Test_IHM implements InterfaceIHM
 			if (str.equals("C"))	{create = true;		break;}
 			System.out.println("Unhandeled choice");
 		}
+*/
 if (!create)
 {
 		System.out.print("\n\n");
@@ -74,12 +75,12 @@ nbrBuildingInLine= 3;			/////// Nom par defaut
 		if (create)
 		{
 			str = "";
-			while (!str.equals("start"))
+/*			while (!str.equals("start"))
 			{
 				System.out.print("\n\n\tEnter \"start\" to start the game: ");
 				str = sc.next();
 			}
-
+*/
 			try
 			{
 				playerIHM.hostStartGame();
