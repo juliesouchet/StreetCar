@@ -194,6 +194,22 @@ public class Action implements Serializable, CloneableInterface<Action>
 				(this.action == BUILD_AND_START_TRIP_NEXT_TURN));
 	}
 
+	/**
+	 * @return true if this action makes you place one and only one tile (BUILD_SIMPLE or BUILD_AND_START_TRIP_NEXT_TURN)
+	 */
+	public boolean isSimpleConstructing()
+	{
+		return ((this.action == BUILD_SIMPLE)		||
+				(this.action == BUILD_AND_START_TRIP_NEXT_TURN));
+	}
+	
+	/**
+	 * @return true if this action makes the streetcar move (MOVE)
+	 */
+	public boolean isMoving()
+	{
+		return this.action == MOVE;
+	}
 
 	//Add by Ulysse
 	public boolean isNONE(){
@@ -308,7 +324,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	/**===========================================================
 	 * Set the current Action to the given travel action
 	 =============================================================*/
-	public void setTravelAction(Point startTerminus, Point[] path, int length)
+	public void setMoveAction(Point startTerminus, Point[] path, int length)
 	{
 		this.action					= MOVE;
 		this.positionTile1.x		= -1;
@@ -356,7 +372,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 				TraceDebugData.debugActionEquals("\t ptrTramwayMovement different: return FALSE \n");
 				return false;
 			}
-		if (!this.startTerminus.equals(otherAction.ptrTramwayMovement)){
+		if (!this.startTerminus.equals(otherAction.startTerminus)){
 			TraceDebugData.debugActionEquals("\t startTerminus different: return FALSE \n");
 			return false;
 		}
@@ -379,7 +395,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 			}
 			return true;
 		}
-		if(this.action==BUILD_DOUBLE && otherAction.action==BUILD_DOUBLE){
+		if(this.isBUILD_DOUBLE() && otherAction.isBUILD_DOUBLE()){
 			if(!this.positionTile1.equals(otherAction.positionTile1)){
 				return false;
 			}
@@ -394,6 +410,18 @@ public class Action implements Serializable, CloneableInterface<Action>
 			}
 			return true;
 		}
+		
+		if(this.isBUILD_AND_START_TRIP_NEXT_TURN() && otherAction.isBUILD_AND_START_TRIP_NEXT_TURN()) {
+			if(!this.positionTile1.equals(otherAction.positionTile1)){
+				return false;
+			}
+			if(! this.tile1.equals(otherAction.tile1)){
+				return false;
+			}
+			return true;
+		}
+		
+		if(this.isNONE() && otherAction.isNONE())	return true;
 		return false;
 	}
 	/**

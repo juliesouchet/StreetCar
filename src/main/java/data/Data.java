@@ -821,7 +821,7 @@ System.out.println("iciiiii");
 				{
 					if (this.pathMatrix[i][1].equals(lastTramPosition)) continue;
 					if(writeActionsInTab){
-						resTab[res].getAction().setTravelAction(startTerminus, this.pathMatrix[i], l);
+						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l);
 						resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 					}
 					res ++;
