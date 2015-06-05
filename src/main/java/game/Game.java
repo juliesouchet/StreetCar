@@ -229,14 +229,17 @@ System.out.println("Game.setLoginInfo: no change to do");
 
 		this.loggedPlayerTable[playerIndex] = LoginInfo.getInitialLoggedPlayerTableCell(playerIndex);
 		this.engine.addAction(data, "excludePlayer", data.getRemotePlayer(playerName));
-		this.engine.onQuitGame(this.data, playerName);
+//TODO this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
 		System.out.println(gameMessageHeader + "logout result : player logged out");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 
-		if (gameHasStarted || isHost)	Thread.currentThread().isInterrupted();
+		if (gameHasStarted || isHost)	
+		{
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	/**==============================================
