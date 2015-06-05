@@ -151,9 +151,14 @@ public class HostRoomMenuPanel extends MenuPanel {
 			for (int i=0; i<loginInfos.length; i++) {
 				LoginInfo info = loginInfos[i];
 
-				if(info.isClosed()) closeCell(i);
-				else if(info.isOccupiedCell()) showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName()));
-				else openCell(i);
+				System.out.println(i + "   " + info);
+				
+				if(info.isClosed())
+					closeCell(i);
+				else if(info.isOccupiedCell())
+					showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName()));
+				else
+					openCell(i);
 			}
 
 		} catch (Exception e) {
@@ -169,10 +174,14 @@ public class HostRoomMenuPanel extends MenuPanel {
 			if(info.getAiLevel() == 1) playerName += " - EASY";
 			else if(info.getAiLevel() == 2) playerName += " - MEDIUM";
 			else if(info.getAiLevel() == 3) playerName += " - HARD";
+			choiceComboBoxes.get(cellIndex).setSelectedIndex(info.getAiLevel());
+		} else {
+			choiceComboBoxes.get(cellIndex).setSelectedIndex(0);
 		}
 		nameLabels.get(cellIndex).setText(playerName);
 		choiceComboBoxes.get(cellIndex).setEditable(!info.isHost());
 		avatarImagePanels.get(cellIndex).setColor(playerColor);
+
 	}
 
 	private void openCell(int cellIndex) 
