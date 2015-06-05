@@ -2,7 +2,8 @@ package main.java.game;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.net.MalformedURLException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -60,11 +61,13 @@ public String getHostName(){return this.data.getHost();}
 
 		try																				// Create the player's remote reference
 		{
-			url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
+			url = getRemoteURL(appIP, gameName);
 			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+
+			System.out.println("url" + url);
 			Naming.rebind(url, this);
 		}
-		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
+		catch (Exception e) {e.printStackTrace(); System.exit(0);}
 
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
@@ -92,17 +95,23 @@ public String getHostName(){return this.data.getHost();}
 	 =========================================================================*/
 	public static GameInterface getRemoteGame(String appIP, String gameName) throws RemoteException, NotBoundException
 	{
-		String url = applicationProtocol + "://" + appIP + ":" + applicationPort + "/" + gameName;
-
 ////	System.setSecurityManager(new RMISecurityManager());
 		try
 		{
+			String url = getRemoteURL(appIP, gameName);
 			return (GameInterface) Naming.lookup(url);
 		}
-		catch (MalformedURLException e) {e.printStackTrace(); System.exit(0);}
+		catch (Exception e) {e.printStackTrace(); System.exit(0);}
 		return null;
 	}
 
+	private static String getRemoteURL(String appIP, String gameName) throws UnsupportedEncodingException {
+		String encodedIP = URLEncoder.encode(appIP, "UTF-8");
+		String encodedGameName = URLEncoder.encode(gameName, "UTF-8");
+		System.out.println("encodedGameName" + encodedGameName);
+		return applicationProtocol + "://" + encodedIP + ":" + applicationPort + "/" + encodedGameName;
+	}
+	
 // --------------------------------------------
 // Local methods:
 // --------------------------------------------
