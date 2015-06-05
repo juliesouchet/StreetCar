@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.Hashtable;
 
 import main.java.data.Deck;
 import main.java.data.Tile;
@@ -19,8 +19,66 @@ public class DeckTest {
 	public void testDeck() 
 	{
 		Deck deck = new Deck();
-		assertEquals(101, deck.getNbrRemainingDeckTile());
 		assertNotNull(deck);
+		assertEquals(101, deck.getNbrRemainingDeckTile());
+		
+		Hashtable<Tile, Integer> tileList = new Hashtable<Tile, Integer>();
+		
+		// Tuiles sans arbre
+		Tile t = Tile.parseTile("Tile_FFFFZZ2003");
+		int nb = 20;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_FFFFZZ2113");
+		nb = 21;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_FFFFZZ060123");
+		nb = 6;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_FFFFZZ100102");
+		nb = 10;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_FFFFZZ100103");
+		nb = 10;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_FFFFZZ100203");
+		nb = 10;
+		tileList.put(t, nb);
+		
+		// Tuiles à arbre
+		t = Tile.parseTile("Tile_TFFFZZ040213");
+		nb = 4;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_TFFFZZ02010223");
+		nb = 2;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_TFFFZZ02021203");
+		nb = 2;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_TFFFZZ06031323");
+		nb = 6;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_TFFFZZ06121323");
+		nb = 6;
+		tileList.put(t, nb);
+		
+		t = Tile.parseTile("Tile_TFFFZZ0401122303");
+		nb = 4;
+		tileList.put(t, nb);
+		
+		// Vérification du nb de tuiles initiales pour chaque type
+		for(Tile tmp : tileList.keySet()) {
+			assertTrue("La tuile " + tmp.getTileID() + " est mal initialisée",
+						tileList.get(tmp)==deck.getNbrRemainingTile(tmp));
+		}
 	}
 
 	@Test
@@ -70,39 +128,27 @@ public class DeckTest {
 	public void testDrawTile() {
 		File f			= new File(Deck.stackDirectory);
 		String[] IDList	= f.list();
-		Tile[] tileList = new Tile[12];
-		int i = 0;
+		Hashtable<String, Integer> tileList = new Hashtable<String, Integer>();
+		Deck d = new Deck();
 		for (String str: IDList)
 		{
 			Tile t = Tile.parseTile(str);
-			if (t.isDeckTile()) {
-				tileList[i] = t;
-				i++;
-			}
+			if (t.isDeckTile()) tileList.put(t.getTileID(), d.getNbrRemainingTile(t));
 		}
-		Deck d = new Deck();
-		int[] nb = new int[12];
-		for(int j = 0; j < 12; j++) {
-			nb[j] = d.getNbrRemainingTile(tileList[j]);
-		}
-		// TODO c'est pas normal qu'on deborde : a corriger
+
 		Tile t = d.drawTile();
-		i = 0;
-		while(i<12 && !t.getTileID().equals(IDList[i])) i++;
-		if(i==12) throw new RuntimeException(t.getTileID()+" pas dans la liste ?");
+		Integer oldNb = tileList.get(t.getTileID()),
+			newNb = d.getNbrRemainingTile(t);
 		assertTrue("Tirer la tuile n'a pas décrémenté le nb de tuiles restantes de ce type",
-					nb[i]==(d.getNbrRemainingTile(t)+1));
-		nb[i]--;
+					oldNb ==(newNb+1));
+		tileList.put(t.getTileID(), d.getNbrRemainingTile(t));
 		
 		boolean oneTileEmpty = false;
 		while(!oneTileEmpty) {
 			t = d.drawTile();
-			i = 0;
-			while(i<12 && !t.getTileID().equals(IDList[i])) i++;
-			if(i==12) throw new RuntimeException(t.getTileID()+" pas dans la liste ?");
-			nb[i]--;
-			for(int j = 0; j < 12; j++) {
-				if(nb[j]==0) {
+			tileList.put(t.getTileID(), d.getNbrRemainingTile(t));
+			for(Integer i : tileList.values()) {
+				if (i==0) {
 					oneTileEmpty = true;
 					break;
 				}
@@ -117,7 +163,26 @@ public class DeckTest {
 
 	@Test
 	public void testGetPickProba() {
-		fail("Not yet implemented");
+		File f			= new File(Deck.stackDirectory);
+		String[] IDList	= f.list();
+		Hashtable<String, Integer> tileList = new Hashtable<String, Integer>();
+		Deck d = new Deck();
+		for (String str: IDList)
+		{
+			Tile t = Tile.parseTile(str);
+			if (t.isDeckTile()) tileList.put(t.getTileID(), d.getNbrRemainingTile(t));
+		}
+		int total = d.getNbrRemainingDeckTile();
+		
+		while(!d.isEmpty()) {
+			Tile t = d.drawTile();
+			double probSupposee = ((double)(tileList.get(t.getTileID())-1))/ ((double)(total-1)),
+					probCalculee = d.getPickProba(t);
+			assertTrue("calcul de proba incorrect",
+						 probSupposee == probCalculee);
+			tileList.put(t.getTileID(), d.getNbrRemainingTile(t));
+			total = d.getNbrRemainingDeckTile();
+		}
 	}
 
 }
