@@ -9,10 +9,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.rmi.RemoteException;
 
 import javax.swing.TransferHandler;
 
 import main.java.data.Tile;
+import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
 import main.java.util.Direction;
 
@@ -117,6 +119,12 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 	public void mouseDragged(MouseEvent e) {
 		if (this.tile == null || this.draggable == false || this.isDragging == true) {
 			return;
+		}
+		try {
+			if (!StreetCar.player.getGameData().hasRemainingAction(StreetCar.player.getPlayerName())) {
+				return;
+			}
+		} catch (RemoteException e1) {
 		}
 		
 		BufferedImage image = TileImage.getRotatedImage(this.tile);
