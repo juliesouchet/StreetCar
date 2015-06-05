@@ -269,7 +269,7 @@ public class DecisionNode {
 	 * @param type
 	 * @throws ExceptionUnknownNodeType
 	 */
-	public DecisionNode(int numberMaxOfPossibleActions, int depth, String type) throws ExceptionUnknownNodeType{
+	public DecisionNode(int numberMaxOfPossibleActions, int depth, String type){
 		this.setSizeOfPossiblesActionsTable(numberMaxOfPossibleActions);
 		// On créé le tableau d'actions possible, pour l'instant vide
 		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
@@ -294,7 +294,9 @@ public class DecisionNode {
 			this.setRoot();
 			this.setLeaf();
 		}else{
-			throw new ExceptionUnknownNodeType();
+			for(int i=0;i<10;i++){
+			System.out.println("\n\t\t /!\\Type de noeud inconnu /!\\ \n");
+			}
 		}
 	}
 

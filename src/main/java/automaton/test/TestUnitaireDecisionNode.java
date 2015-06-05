@@ -7,7 +7,6 @@ import java.awt.Point;
 
 import main.java.automaton.CoupleActionIndex;
 import main.java.automaton.DecisionNode;
-import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.data.Action;
 import main.java.data.Tile;
 
@@ -16,7 +15,7 @@ import org.junit.Test;
 public class TestUnitaireDecisionNode {
 
 	@Test
-	public void testConstructeur() throws ExceptionUnknownNodeType{
+	public void testConstructeur() {
 		@SuppressWarnings("unused")
 		DecisionNode monNoeudDeDecision = null;
 		monNoeudDeDecision = new DecisionNode(10, 0, "leaf&root");
@@ -24,7 +23,7 @@ public class TestUnitaireDecisionNode {
 
 
 	@Test
-	public void testIsRoot() throws ExceptionUnknownNodeType {
+	public void testIsRoot()  {
 		DecisionNode monNoeudDeDecision = null;
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
 		assertTrue(monNoeudDeDecision.isRoot());
@@ -39,7 +38,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testSetRoot() throws ExceptionUnknownNodeType {
+	public void testSetRoot()  {
 		DecisionNode monNoeudDeDecision = null;
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
 		monNoeudDeDecision.setRoot();
@@ -55,7 +54,7 @@ public class TestUnitaireDecisionNode {
 
 
 	@Test
-	public void testUnsetRoot() throws ExceptionUnknownNodeType {
+	public void testUnsetRoot()  {
 		DecisionNode monNoeudDeDecision = null;
 
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
@@ -84,7 +83,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testIsLeaf() throws ExceptionUnknownNodeType {
+	public void testIsLeaf()  {
 		DecisionNode monNoeudDeDecision = null;
 		monNoeudDeDecision = new DecisionNode(10, 1, "leaf");
 		assertTrue(monNoeudDeDecision.isLeaf());
@@ -99,7 +98,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testSetLeaf() throws ExceptionUnknownNodeType {
+	public void testSetLeaf()  {
 		DecisionNode monNoeudDeDecision = null;
 		monNoeudDeDecision = new DecisionNode(10, 1, "leaf");
 		monNoeudDeDecision.setLeaf();
@@ -114,7 +113,7 @@ public class TestUnitaireDecisionNode {
 
 
 	@Test
-	public void testUnsetLeaf() throws ExceptionUnknownNodeType {
+	public void testUnsetLeaf()  {
 		DecisionNode monNoeudDeDecision = null;
 
 		monNoeudDeDecision = new DecisionNode(10, 1, "leaf");
@@ -143,7 +142,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testIsInternal() throws ExceptionUnknownNodeType {
+	public void testIsInternal()  {
 		DecisionNode monNoeudDeDecision = null;
 
 		monNoeudDeDecision = new DecisionNode(10, 1, "internalNode");
@@ -164,7 +163,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testSetInternalNode() throws ExceptionUnknownNodeType {
+	public void testSetInternalNode()  {
 		DecisionNode monNoeudDeDecision = null;
 
 		monNoeudDeDecision = new DecisionNode(10, 1, "internalNode");
@@ -191,7 +190,7 @@ public class TestUnitaireDecisionNode {
 
 
 	@Test
-	public void testGetAndSetQuality() throws ExceptionUnknownNodeType {
+	public void testGetAndSetQuality()  {
 		DecisionNode monNoeudDeDecision = null;
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
 		assertTrue(monNoeudDeDecision.getQuality()==-1.0);
@@ -203,7 +202,7 @@ public class TestUnitaireDecisionNode {
 
 
 	@Test
-	public void testGetPossibleFollowingAction() throws ExceptionUnknownNodeType {
+	public void testGetPossibleFollowingAction()  {
 		DecisionNode monNoeudDeDecision = null;
 		CoupleActionIndex maTableCoupleActionIndex[];
 		monNoeudDeDecision = new DecisionNode(10, 1, "root");
@@ -214,7 +213,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testGetSizeOfPossiblesActionsTable() throws ExceptionUnknownNodeType {
+	public void testGetSizeOfPossiblesActionsTable()  {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 1, "root");
@@ -225,7 +224,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testSetSizeOfPossiblesActionsTable() throws ExceptionUnknownNodeType {
+	public void testSetSizeOfPossiblesActionsTable()  {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		int otherSize=8;
@@ -237,7 +236,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void getNumberPossiblesActionsTable() throws ExceptionUnknownNodeType {
+	public void getNumberPossiblesActionsTable()  {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 0, "root");	// A l'initialisation, aucune action n'a été entrée:
@@ -257,7 +256,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testGetandSetCoupleActionIndex() throws ExceptionUnknownNodeType {
+	public void testGetandSetCoupleActionIndex()  {
 		DecisionNode monNoeudDeDecision = null;
 		CoupleActionIndex monCoupleActionIndex = null;
 		int size=10;
@@ -275,7 +274,7 @@ public class TestUnitaireDecisionNode {
 
 
 	@Test
-	public void testGetDepth() throws ExceptionUnknownNodeType {
+	public void testGetDepth()  {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 1, "root");
@@ -287,7 +286,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testSetDepth() throws ExceptionUnknownNodeType {
+	public void testSetDepth()  {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 0, "root");
@@ -300,7 +299,7 @@ public class TestUnitaireDecisionNode {
 		assertTrue(monNoeudDeDecision.getDepth()==0);		}
 
 	@Test
-	public void testCopy() throws ExceptionUnknownNodeType {
+	public void testCopy()  {
 		DecisionNode monNoeudDeDecisionCible = null;
 		DecisionNode monNoeudDeDecisionSource = null;
 		int size=10;
@@ -317,7 +316,7 @@ public class TestUnitaireDecisionNode {
 
 
 	@Test
-	public void testActionIsSignificant() throws ExceptionUnknownNodeType{
+	public void testActionIsSignificant() {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 0, "root");
@@ -327,7 +326,7 @@ public class TestUnitaireDecisionNode {
 	}
 	
 	@Test
-	public void testQualityIsSignificant() throws ExceptionUnknownNodeType{
+	public void testQualityIsSignificant() {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 0, "root");
@@ -337,7 +336,7 @@ public class TestUnitaireDecisionNode {
 	}
 	
 	@Test
-	public void testReset() throws ExceptionUnknownNodeType{
+	public void testReset() {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 0, "root");
@@ -352,7 +351,7 @@ public class TestUnitaireDecisionNode {
 	}
 
 	@Test
-	public void testToString() throws ExceptionUnknownNodeType {
+	public void testToString()  {
 		DecisionNode monNoeudDeDecision = null;
 		int size=10;
 		monNoeudDeDecision = new DecisionNode(size, 0, "root");

@@ -2,7 +2,6 @@ package main.java.automaton.test;
 
 import main.java.automaton.DecisionNode;
 import main.java.automaton.DecisionTable;
-import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.util.TraceDebugAutomate;
 
 public class testDecisionTable {
@@ -11,7 +10,7 @@ public class testDecisionTable {
 	 * @param args
 	 * @throws ExceptionUnknownNodeType 
 	 */
-	public static void main(String[] args) throws ExceptionUnknownNodeType {
+	public static void main(String[] args){
 		DecisionTable maTableDeDecision = null;
 		TraceDebugAutomate.decisionTableTrace=true;
 		DecisionNode monNoeudDeDecision = null;
@@ -21,15 +20,11 @@ public class testDecisionTable {
 			int i =150000/10;
 			int j=10;
 				System.out.println("toc");
-				try {
 					TraceDebugAutomate.debugDecisionTableTrace("try table largeur"+j+" hauteur"+i+"\n");
 					long tmps1 = System.nanoTime();
 					maTableDeDecision= new DecisionTable(j, i, "nomDuJoueur");
 					long tmps2 = System.nanoTime();
-				} catch (ExceptionUnknownNodeType e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
 			//}
 		//}
 //		System.out.println("toc");

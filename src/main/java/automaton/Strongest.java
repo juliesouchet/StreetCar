@@ -27,15 +27,12 @@ public class Strongest extends PlayerAutomaton {
 		//=======================================
 		TraceDebugAutomate.debugDecisionTableTrace("Strongest Start makeChoice \n");
 		
-		try {
+
 			
 			myDecisionTable = new DecisionTable(Data.maxPossibleAction, Data.maxPossibleAction, currentconfig.getPlayerTurn()); //TODO Faire cette allocation dans le constructeur et ce contenter d'un reset ici.
 			//=======================================
 			TraceDebugAutomate.debugDecisionTableTrace("Table allocated\n");
-		} catch (ExceptionUnknownNodeType e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+
 		myDecisionTable.applyMinMax(0, 1, currentconfig);
 		return myDecisionTable.getDecisionNode(0).getCoupleActionIndex(myDecisionTable.getBestActionIndex(0)).getAction();
 

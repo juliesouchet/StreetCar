@@ -8,7 +8,6 @@ import java.util.Scanner;
 import main.java.automaton.DecisionNode;
 import main.java.automaton.DecisionTable;
 import main.java.automaton.Dumbest;
-import main.java.automaton.ExceptionUnknownNodeType;
 import main.java.automaton.PlayerAutomaton;
 import main.java.data.Action;
 import main.java.data.Data;
@@ -183,28 +182,26 @@ public class PlayerAutomata implements InterfaceIHM
 			return;
 		}
 
-		try {
 			nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), new DecisionNode(1, 0, "root").getPossibleFollowingActionTable(),false);
-		} catch (ExceptionUnknownNodeType e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+
 
 		System.out.println("nbActionPossibles="+nbActionsPossibles);
 		int profondeurExplorable = 150000/nbActionsPossibles;
 		System.out.println("Profondeur explorable="+profondeurExplorable);
-		try {
 			monNoeudDedecision = new DecisionTable(nbActionsPossibles, profondeurExplorable, "joueurA");
-		} catch (ExceptionUnknownNodeType e) {
-
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		if(profondeurExplorable==0){
-			edouard = new Dumbest("joueurA");
-			myAction = edouard.makeChoice(data);
+
 			try {
+				edouard = new Dumbest("joueurA");
+				myAction = edouard.makeChoice(data);
+				player.doAction(name, myAction);
+				myAction = edouard.makeChoice(data);
 				player.doAction("joueurA", myAction);
+
+				
+				
+				
 			} catch (RemoteException | ExceptionGameHasNotStarted
 					| ExceptionNotYourTurn | ExceptionForbiddenAction
 					| ExceptionTooManyActions | ExceptionPlayerIsBlocked
@@ -212,27 +209,11 @@ public class PlayerAutomata implements InterfaceIHM
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			myAction = edouard.makeChoice(data);
-			try {
-				player.doAction("joueurA", myAction);
-			} catch (RemoteException | ExceptionGameHasNotStarted
-					| ExceptionNotYourTurn | ExceptionForbiddenAction
-					| ExceptionTooManyActions | ExceptionPlayerIsBlocked
-					| ExceptionGameIsOver e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
+	
 
 		}
 		
-//		try {
-//			player.drawTile(2);
-//		} catch (RemoteException | ExceptionGameHasNotStarted
-//				| ExceptionNotYourTurn | ExceptionNotEnoughTilesInDeck
-//				| ExceptionTwoManyTilesToDraw | ExceptionForbiddenAction e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
 		System.out.println("pop");
 
 		

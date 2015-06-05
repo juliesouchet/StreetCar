@@ -183,7 +183,7 @@ public class DecisionTable {
 	 * @param myName nom du player que cette table de décision simule.
 	 * @throws ExceptionUnknownNodeType 
 	 */
-	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName) throws ExceptionUnknownNodeType{
+	public DecisionTable(int tableSize, int maxCardinalActionPossible, String myName){
 		this.myName = new String(myName); 		
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
