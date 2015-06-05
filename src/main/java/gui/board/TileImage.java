@@ -1,8 +1,10 @@
 package main.java.gui.board;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
@@ -64,9 +66,16 @@ public class TileImage {
 		g2d.drawImage(image, at, null);
 		
 		if (tile.isStop()) {
-			System.out.println("IS STOP !!!!!!!!!!!!!!!!!!!!");
+			int stopWidth = (int) (0.5 * width);
 			g2d.setColor(Color.RED);
-			g2d.fillRect(width/2-5, width/2-5, 10, 10);
+			g2d.fillOval(x + (width-stopWidth)/2, y + (width-stopWidth)/2, stopWidth, stopWidth);
+			
+			g2d.setColor(Color.WHITE);
+	        FontMetrics fm = g2d.getFontMetrics();
+	        Rectangle2D r = fm.getStringBounds("S", g2d);
+	        int textX = (width - (int) r.getWidth()) / 2;
+	        int textY = (width - (int) r.getHeight()) / 2 + fm.getAscent();
+	        g2d.drawString("S", x+textX, y+textY);
 		}
 	}
 	
