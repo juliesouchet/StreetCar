@@ -163,7 +163,7 @@ public class Data implements Serializable
 		String		playerName	= this.getPlayerTurn();
 		int x, y;
 
-		if (hc != null)																										// Case player has done an action this round
+		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))													// Case player has done an action this round
 		{
 			if (hc.action2 != null)																							//		Case undo round second game
 			{

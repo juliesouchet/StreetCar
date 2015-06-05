@@ -33,10 +33,4 @@ public interface GameInterface extends Remote
 	public void		moveTram			(String playerName, Point[] tramMovement, int ptrTramwayMovement)		throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		drawTile			(String playerName, int nbrCards)						throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction;
 	public void		pickTileFromPlayer	(String playerName, String chosenPlayer, Tile car)		throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand;
-	
-	
-	/*
-	public void		undoAttempt			(String playerName)										throws RemoteException;
-	public void		undoTurn			(String playerName)										throws RemoteException;
-	 */
 }

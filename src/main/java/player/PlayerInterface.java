@@ -52,14 +52,4 @@ public interface PlayerInterface extends Remote
 	public void		moveTram			(Point[] tramMovement, int ptrTramwayMovement)			throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted;
 	public void		drawTile			(int nbrCards)								throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInDeck;
 	public void		pickTileFromPlayer	(String chosenPlayer, Tile tile)			throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand;
-/*	public void		distributeLineCard	()											throws RemoteException;
-	public void		distributeRouteCard	()											throws RemoteException;
-	public void		tileHasBeenPlaced	(String playerName, Tile t, Point position)	throws RemoteException;
-	public void		exchangeTile		(String playerName, Tile t, Point p)		throws RemoteException;
-	public void		distributeTile		(Tile t)									throws RemoteException;
-	public void		receiveTileFromPlayer(String chosenPlayer, Tile t)				throws RemoteException;
-	public void		placeStop			(Point p)									throws RemoteException;
-	public void		revealLine			(String playerName)							throws RemoteException;
-	public void		revealRoute			(String playerName)							throws RemoteException;
-*/
 }
