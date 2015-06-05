@@ -13,6 +13,7 @@ import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.Tile;
+import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
@@ -26,7 +27,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
     private int originY;
     private int mapWidth;
     private int cellWidth;
-    public Data data;
     // Constructors
     
 	public MapPanel() {
@@ -41,9 +41,11 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	// Cells positions
 	
 	protected void updateMapGeometry() {
-		if (this.data == null) return;
+        Data data = StreetCar.player.getGameData();
+		if (data == null) return;
+		
 		this.mapWidth = (int) (0.96 * Math.min(this.getWidth(), this.getHeight()));
-		this.cellWidth = this.mapWidth / this.data.getWidth();
+		this.cellWidth = this.mapWidth / data.getWidth();
 	    this.originX = (this.getWidth() - Math.round(this.mapWidth)) / 2;
 	    this.originY = (this.getHeight() - Math.round(this.mapWidth)) / 2;
 	    
@@ -67,7 +69,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        if (this.data == null) {
+        Data data = StreetCar.player.getGameData();
+        if (data == null) {
         	System.out.println("data is null");
         	return;
         }
@@ -75,10 +78,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
         int x = this.originX;
         int y = this.originY;
         Graphics2D g2d = (Graphics2D)g; 
-    	Tile[][] board = this.data.getBoard();
+    	Tile[][] board = data.getBoard();
     	
-		for (int j=0; j < this.data.getHeight(); j++) {
-			for (int i=0; i < this.data.getWidth(); i++) {
+		for (int j=0; j < data.getHeight(); j++) {
+			for (int i=0; i < data.getWidth(); i++) {
 				Tile tile = board[i][j];
 				TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
 				x += this.cellWidth;
@@ -115,12 +118,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	// Refresh game
 
 	public void refreshGame(PlayerIHM player, Data data) {
-		this.data = data;
 		this.updateMapGeometry();
-	}
-
-	public void setData(Data d) {
-		data = d;
 	}
 
 	public void startMaidenVoyage(Point point) {
