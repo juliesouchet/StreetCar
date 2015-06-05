@@ -1,6 +1,7 @@
 package main.java.gui.board;
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -80,6 +81,7 @@ class MapPanelDropTargetListener implements DropTargetListener {
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
 			System.out.println("FORBIDDEN ACTION");
+			Toolkit.getDefaultToolkit().beep();
 			dropEvent.rejectDrop();
 			return;
 			//e.printStackTrace();
@@ -91,7 +93,6 @@ class MapPanelDropTargetListener implements DropTargetListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 
 		dropEvent.acceptDrop(dropEvent.getDropAction());
 		dropEvent.dropComplete(true);

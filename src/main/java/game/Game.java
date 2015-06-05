@@ -228,12 +228,14 @@ System.out.println("Game.setLoginInfo: no change to do");
 		if (playerIndex == -1)						throw new ExceptionForbiddenAction();
 
 		this.loggedPlayerTable[playerIndex] = LoginInfo.getInitialLoggedPlayerTableCell(playerIndex);
+		this.engine.addAction(data, "excludePlayer", data.getRemotePlayer(playerName));
 		this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
 		System.out.println(gameMessageHeader + "logout result : player logged out");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
+
 		if (gameHasStarted || isHost)	System.exit(0);
 	}
 
@@ -299,7 +301,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 		if(!data.hasStartedMaidenTravel(playerName))
 		{
 			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction();
-			if(data.hasRemainingAction(playerName))								throw new ExceptionForbiddenAction();
+			if(data.hasRemainingAction(playerName))							throw new ExceptionForbiddenAction();
 		}
 
 		this.engine.addAction(this.data, "validate", playerName);
@@ -310,16 +312,9 @@ System.out.println("Game.setLoginInfo: no change to do");
 //		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
 //		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
 
-/*System.out.println("ptrHistory = " + data.getHistoryIndex());
-int i = 0;
-while(data.history[i] != null) i++;
-System.out.println("nbr Non null: " + i);
-		this.data = this.data.getPreviousDataAndRollBack();
-/*System.out.println("ptrHistory = " + data.getHistoryIndex());
-while(data.history[i] != null) i++;
-System.out.println("nbr Non null: " + i);
+		this.data.getPreviousDataAndRollBack();
 		this.engine.addAction(data, "notifyAllPlayers");
-*/	}
+	}
 	/**=============================================================================
 	 * 	Signals the start of this player's maiden travel.
 	 *  There must be a path from one terminus to another, passing next to all of

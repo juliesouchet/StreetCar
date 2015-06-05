@@ -17,9 +17,9 @@ import main.java.game.ExceptionForbiddenHostModification;
 import main.java.game.ExceptionNotEnoughPlayers;
 import main.java.gui.application.GameController;
 import main.java.gui.application.StreetCar;
+import main.java.gui.components.AvatarPanel;
 import main.java.gui.components.Button;
 import main.java.gui.components.ComboBox;
-import main.java.gui.components.ImagePanel;
 import main.java.gui.components.Label;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
@@ -31,7 +31,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 
 	private ArrayList<Label> nameLabels = new ArrayList<Label>();
 	private ArrayList<ComboBox> choiceComboBoxes = new ArrayList<ComboBox>();
-	private ArrayList<ImagePanel> avatarImagePanels = new ArrayList<ImagePanel>();
+	private ArrayList<AvatarPanel> avatarImagePanels = new ArrayList<AvatarPanel>();
 
 	// Constructors
 
@@ -62,7 +62,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 		};
 
 		for (int i = 0, y = 140; i < 5; i++, y += 50) {
-			ImagePanel imagePanel = new ImagePanel();
+			AvatarPanel imagePanel = new AvatarPanel();
 			imagePanel.setBounds(160, y, 40, 40);
 			this.add(imagePanel);
 			this.avatarImagePanels.add(imagePanel);
@@ -151,9 +151,14 @@ public class HostRoomMenuPanel extends MenuPanel {
 			for (int i=0; i<loginInfos.length; i++) {
 				LoginInfo info = loginInfos[i];
 
-				if(info.isClosed()) closeCell(i);
-				else if(info.isOccupiedCell()) showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName()));
-				else openCell(i);
+				System.out.println(i + "   " + info);
+				
+				if(info.isClosed())
+					closeCell(i);
+				else if(info.isOccupiedCell())
+					showInfoInCell(i, info, data.getPlayerColor(info.getPlayerName()));
+				else
+					openCell(i);
 			}
 
 		} catch (Exception e) {
@@ -169,10 +174,14 @@ public class HostRoomMenuPanel extends MenuPanel {
 			if(info.getAiLevel() == 1) playerName += " - EASY";
 			else if(info.getAiLevel() == 2) playerName += " - MEDIUM";
 			else if(info.getAiLevel() == 3) playerName += " - HARD";
+			choiceComboBoxes.get(cellIndex).setSelectedIndex(info.getAiLevel());
+		} else {
+			choiceComboBoxes.get(cellIndex).setSelectedIndex(0);
 		}
 		nameLabels.get(cellIndex).setText(playerName);
 		choiceComboBoxes.get(cellIndex).setEditable(!info.isHost());
-		avatarImagePanels.get(cellIndex).setBackground(playerColor);
+		avatarImagePanels.get(cellIndex).setColor(playerColor);
+
 	}
 
 	private void openCell(int cellIndex) 
