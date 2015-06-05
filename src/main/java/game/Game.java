@@ -63,8 +63,6 @@ public String getHostName(){return this.data.getHost();}
 		{
 			url = getRemoteURL(appIP, gameName);
 			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
-
-			System.out.println("url" + url);
 			Naming.rebind(url, this);
 		}
 		catch (Exception e) {e.printStackTrace(); System.exit(0);}
@@ -108,7 +106,6 @@ public String getHostName(){return this.data.getHost();}
 	private static String getRemoteURL(String appIP, String gameName) throws UnsupportedEncodingException {
 		String encodedIP = URLEncoder.encode(appIP, "UTF-8");
 		String encodedGameName = URLEncoder.encode(gameName, "UTF-8");
-		System.out.println("encodedGameName" + encodedGameName);
 		return applicationProtocol + "://" + encodedIP + ":" + applicationPort + "/" + encodedGameName;
 	}
 	
