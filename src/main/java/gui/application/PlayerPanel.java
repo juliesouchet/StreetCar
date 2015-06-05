@@ -28,6 +28,8 @@ public class PlayerPanel extends Panel{
 	int sizeOfCard = 45;
 	int spaceBetween = 10;
 
+	private AvatarPanel avatarPanel = null;
+
 	public PlayerPanel(String nameOfPlayer) {		
 		this.setBackground(Color.WHITE);
 		this.setPreferredSize(new Dimension(285, 175));
@@ -40,7 +42,7 @@ public class PlayerPanel extends Panel{
 	}
 	
 	protected void placePlayerAvatar() {
-		AvatarPanel avatarPanel = new AvatarPanel(Color.BLUE); //TODO: can not use playerColor -> null exception
+		this.avatarPanel = new AvatarPanel();
 		avatarPanel.setBounds(10, 5, 45, 45);
 		this.add(avatarPanel);
 	}
@@ -112,7 +114,8 @@ public class PlayerPanel extends Panel{
 	// Refresh game
 
 	public void refreshGame(PlayerIHM player, Data data) {
-		playerColor = data.getPlayerColor(nameOfPlayer);
+		Color playerColor = data.getPlayerColor(nameOfPlayer);
+		avatarPanel.setColor(playerColor);
 		refreshPlayerHandCards(nameOfPlayer);
 		refreshStationCards(nameOfPlayer);
 	}

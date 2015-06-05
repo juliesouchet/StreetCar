@@ -143,12 +143,13 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkValidateButton(Data data) {
-		numberOfCardPlayed = 5 - data.getHandSize(playerName);
-		if (numberOfCardPlayed == 2) {
-			validateButton.setEnabled(true);
-		} else {
-			validateButton.setEnabled(false);
+		Boolean enabled;
+		try {
+			enabled = !data.hasRemainingAction(this.playerName);
+		} catch (Exception e) {
+			enabled = false;
 		}
+		validateButton.setEnabled(enabled);
 	}
 	
 	protected void checkResetButton(Data data) {
