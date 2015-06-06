@@ -12,10 +12,10 @@ public class testGrandeStruct {
 
 	public static void main(String[] args) {
 	//	DecisionTable maDecisionTable = null;
-		Data[] monTableauDeData = new Data[1000];
-		for(int i=0; i<1000; i++){
+		Data[] monTableauDeData = new Data[1];
+		for(int i=0; i<1; i++){
 			try {
-				monTableauDeData[i]= new Data("jeu", "newOrleans", 2);
+				monTableauDeData[i]= new Data("jeu", "newOrleans5", 2);
 				if(i%1000==0)System.out.println(i);
 			} catch (ExceptionUnknownBoardName | RuntimeException e) {
 				// TODO Auto-generated catch block
@@ -24,18 +24,20 @@ public class testGrandeStruct {
 		}
 		
 		Point[] myTerminus = new Point[4];
-		myTerminus[0]=new Point(0,1);
-		myTerminus[1]=new Point(0,2);
-		myTerminus[2]=new Point(13,1);
-		myTerminus[3]=new Point(13,2);
+		myTerminus[0]=new Point(1,0);
+		myTerminus[1]=new Point(2,0);
+		myTerminus[2]=new Point(3,6);
+		myTerminus[3]=new Point(4,6);
 
 		Point[] myStops = new Point[2];
-		myStops[0] = new Point(3,4);
-		myStops[0] = new Point(6,8);
+		myStops[0] = new Point(1,4);
+		myStops[1] = new Point(5,2);
 
 		
 		AutomatePlusCourtChemin myAutomate = new AutomatePlusCourtChemin(monTableauDeData[0], myTerminus, myStops);
-
+		myAutomate.computeHeuristic();
+		
+		
 		System.out.println(myAutomate);
 		
 		
