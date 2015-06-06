@@ -240,11 +240,12 @@ public class DecisionTable {
 					currentConfiguration.doAction(playerName,currentCoupleActionIndex.getAction());
 					numberOfPossibleActionsInTemporaryConfiguration = currentConfiguration.getPossibleActions(myName, this.getDecisionNode(aFreeSlot).getPossibleFollowingActionTable(), true);
 					//=====================TRACE===================================
-					TraceDebugAutomate.debugDecisionTableTrace("\t numberOfPossibleActionsInTemporaryConfiguration=="+numberOfPossibleActionsInTemporaryConfiguration+"! \n");
+					TraceDebugAutomate.debugDecisionTableTrace("\n\n\t numberOfPossibleActionsInTemporaryConfiguration=="+numberOfPossibleActionsInTemporaryConfiguration+"! \n\n\n");
 					//=====================TRACE===================================
 					this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration, numberOfPossibleActionsInTemporaryConfiguration);
 					currentCoupleActionIndex.setQuality(this.getDecisionNode(aFreeSlot).getQuality());
-					currentConfiguration.getPreviousDataAndRollBack();
+					//currentConfiguration.getPreviousDataAndRollBack(); TODO
+					currentConfiguration = copyDeCOnfigurationCourante.getClone(myName);
 					this.freeSlot(aFreeSlot);
 				}
 				if (playerName.equals(this.getMyName())){

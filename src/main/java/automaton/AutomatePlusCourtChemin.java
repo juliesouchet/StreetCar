@@ -1,7 +1,5 @@
 package main.java.automaton;
 
-import java.awt.Point;
-
 import main.java.data.Action;
 import main.java.data.Data;
 
@@ -12,39 +10,19 @@ import main.java.data.Data;
  *
  */
 public class AutomatePlusCourtChemin extends PlayerAutomaton {
-	int heuristique[][];
-	int largeur, hauteur;
+	int heuristique[][][];
 	
-	public AutomatePlusCourtChemin(Data initialtConfig, Point Destination){
-		this.largeur = initialtConfig.getWidth();
-		this.hauteur = initialtConfig.getHeight();
-		this.heuristique = new int [this.largeur][this.hauteur];
+	
+	public AutomatePlusCourtChemin(int width, int height, int numberOfStop){
+		this.heuristique = new int[numberOfStop][width][height];
 	}
-
-	public void computeHeuristique(Point Destination){
-		for (int i = 0; i < this.largeur; i++){
-			for (int j =0; j < this.hauteur; j++){
-				heuristique[i][j] = Math.abs(Destination.x-i)+Math.abs(Destination.y-j);
-			}
-		}
-	}
-	protected void printHeuristique(){
-		for (int i = 0; i < this.largeur; i++){
-			for (int j =0; j < this.hauteur; j++){
-				System.out.print("+-");
-			}
-			System.out.println("+");
-			for (int j =0; j < this.hauteur; j++){
-				System.out.println("+"+heuristique[i][j]);
-			}
-			System.out.println("+");
-		}
-	}
+	
 	
 	@Override
 	public Action makeChoice(Data currentConfig) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }
