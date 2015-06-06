@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import main.java.automaton.AutomatePlusCourtChemin;
 import main.java.data.Data;
+import main.java.data.Tile;
 import main.java.game.ExceptionUnknownBoardName;
 
 
@@ -40,8 +41,28 @@ public class testGrandeStruct {
 		
 		System.out.println(myAutomate);
 		
-		
-		
+		System.out.println(myAutomate.getBestTerminus());
+		if(myAutomate.myStopsAreSetted()[0]){
+			System.out.println("Stop[0]=setted");
+		}
+		if(myAutomate.myStopsAreSetted()[1]){
+			System.out.println("Stop[1]=setted");
+		}
+		Tile maTile = Tile.parseTile("Tile_FFFFZZ2113");
+		maTile.setStop(true);
+
+		myAutomate.myStops[0]= new Point(2,4);
+		monTableauDeData[0].setTile(2, 4, maTile);
+		if(myAutomate.myStopsAreSetted()[0]){
+			System.out.println("Stop[0]=setted");
+		}
+		if(myAutomate.myStopsAreSetted()[1]){
+			System.out.println("Stop[1]=setted");
+		}
+//		if(myAutomate.myStopsAreSetted()[2]){
+//			System.out.println("Stop[2]=setted");
+//		}
+//		
 //		int compteur = 0;
 //		int nombreActions1 = 0;
 //		int nombreActions = 0;
