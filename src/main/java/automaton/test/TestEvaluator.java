@@ -42,7 +42,7 @@ public class TestEvaluator {
 		} catch (Exception e) {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
-		playerName = game.getHostName();
+		playerName = game.getTestHostName();
 		try {
 			data = game.getData(playerName);
 		} catch (RemoteException e) {

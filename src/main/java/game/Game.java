@@ -15,10 +15,10 @@ import main.java.data.Data;
 import main.java.data.Hand;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
-import main.java.game.Engine.EngineAction;
 import main.java.player.PlayerAI;
 import main.java.player.PlayerInterface;
 import main.java.util.Copier;
+import main.java.util.Util;
 
 /**============================================================
  * Remote Application 
@@ -35,7 +35,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // Attributes:
 // --------------------------------------------
 	public static final String			gameMessageHeader		= "Street Car application: ";
-	public static int					applicationPort			= 5001;
+	public static int					applicationPort			= 5000;
 	public final static String			applicationProtocol		= "rmi";
 	public final static String			AiDefaultName			= "AI Level ";
 
@@ -47,8 +47,9 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
-// TODO a corriger
-public String getHostName(){return this.data.getHost();}
+// TODO to remove after test
+public String	getTestHostName()	{return this.data.getHost();}
+public Data		getTestData()		{return this.data;}
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
@@ -256,9 +257,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 	 * Places a tile from the player's hand on the board.
 	 * The given tile must belong to the player's hand
 	 * The given tile is removed from the player's hand
-	 ===============================================================================
-	 * @throws ExceptionPlayerIsBlocked 
-	 * @throws ExceptionGameIsOver */
+	 ===============================================================================*/
 	public synchronized void placeTile(String playerName, Tile t, Point position)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
@@ -266,8 +265,8 @@ System.out.println("Game.setLoginInfo: no change to do");
 		if (!this.data.isAcceptableTilePlacement(position.x, position.y, t))	throw new ExceptionForbiddenAction();
 		if (!this.data.isInPlayerHand(playerName, t))							throw new ExceptionForbiddenAction();
 		if (!this.data.hasRemainingAction(playerName))							throw new ExceptionTooManyActions();
-		if (data.getWinner() != null)											throw new ExceptionPlayerIsBlocked();
-		if (data.isGameBlocked(playerName))										throw new ExceptionGameIsOver();
+		if (this.data.getWinner() != null)										throw new ExceptionGameIsOver();
+		if (this.data.isGameBlocked(playerName))								throw new ExceptionPlayerIsBlocked();
 		if (data.hasStartedMaidenTravel(playerName))							throw new ExceptionForbiddenAction();
 
 		this.engine.addAction(this.data, "placeTile", playerName, position, t);
@@ -318,66 +317,41 @@ System.out.println("Game.setLoginInfo: no change to do");
 		this.engine.addAction(data, "notifyAllPlayers");
 	}
 	/**=============================================================================
-	 * 	Signals the start of this player's maiden travel.
-	 *  There must be a path from one terminus to another, passing next to all of
-	 *  this player's buildings.
-	 *  @param terminus : the starting point
-	 *  @param playerName
+	 * 	Signals the end of this player's maiden travel.
 	 =============================================================================*/
-	public synchronized void startMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionUncompletedPath
+	public synchronized void stopMaidenTravel (String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		if(!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();
 		if(!this.data.isPlayerTurn(playerName))				throw new ExceptionNotYourTurn();
-		if(!data.isPlayerTerminus(playerName, terminus))	throw new ExceptionForbiddenAction();
-		if(!data.isStartOfTurn(playerName))					throw new ExceptionForbiddenAction();
-		if(data.hasStartedMaidenTravel(playerName))			throw new ExceptionForbiddenAction();
-		if(!data.isTrackCompleted(playerName))				throw new ExceptionUncompletedPath();
+		if(!this.data.hasStartedMaidenTravel(playerName))	throw new ExceptionForbiddenAction();
 
-		this.engine.addAction(this.data, "startMaidenTravel", playerName, terminus, null);
+		this.engine.addAction(this.data, "stopMaidenTravel", playerName);
 	}
 	/**=============================================================================
-	 * Moves the player's streetcar following the tramMovement. 
-	 * It must use a pre-existing track on the board, cannot go backwards, 
-	 * and cannot be longer than the maximum allowed speed.
+	 * @return Moves the player's streetcar following the tramMovement.</br>
+	 * It must use a pre-existing track on the board, cannot go backwards,
+	 * and cannot be longer than the maximum allowed speed.</br>
+	 * @param startTerminus is non null when the player start his maiden travel.  Other wise, this parameter may be null</br>
 	 =============================================================================*/
-	public synchronized void moveTram (String playerName, Point[] tramMovement, int ptrTramwayMovement) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted
+	public synchronized void moveTram (String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed
 	{
-		if (!this.data.isGameStarted())						throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName))			throw new ExceptionNotYourTurn();
+		if (!this.data.isGameStarted())														throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))											throw new ExceptionNotYourTurn();
+		if (!this.data.isStartOfTurn(playerName))											throw new ExceptionForbiddenAction();
 
-		if(!data.hasStartedMaidenTravel(playerName))		throw new ExceptionForbiddenAction();
-		if(!data.isStartOfTurn(playerName))					throw new ExceptionForbiddenAction();
-		if(ptrTramwayMovement >= data.getMaximumSpeed())	throw new ExceptionForbiddenAction();
-		if(ptrTramwayMovement < Data.minSpeed-1)			throw new ExceptionForbiddenAction();
-		if(ptrTramwayMovement >= Data.maxSpeed)				throw new ExceptionForbiddenAction();
-
-		Point currentPosition = data.getTramPosition(playerName);
-		Point nextPosition;
-
-		if(!data.pathExistsBetween(currentPosition, tramMovement[ptrTramwayMovement])) throw new ExceptionForbiddenAction();
-		if(data.getPreviousTramPosition(playerName).equals(tramMovement[0])) throw new ExceptionForbiddenAction();
-
-		Point previousPosition = null;
-		for (int ptr=0; ptr<= ptrTramwayMovement; ptr++)
+		if (!this.data.hasStartedMaidenTravel(playerName))
 		{
-			nextPosition = tramMovement[ptr];
-			if(previousPosition != null)
-			{
-				if(previousPosition.equals(nextPosition)) throw new ExceptionForbiddenAction();
-			}
-			if(!data.getAccessibleNeighborsPositions(currentPosition.x, currentPosition.y).contains(nextPosition))  throw new ExceptionForbiddenAction();
-			if(data.getTile(currentPosition.x, currentPosition.y).isStop())
-			{
-				if(ptr != ptrTramwayMovement) throw new ExceptionForbiddenAction();
-			}
-			previousPosition = currentPosition;
-			currentPosition = nextPosition;
+			if (startTerminus == null)														throw new ExceptionMissingStartTerminus();
+			if (!data.isPlayerTerminus(playerName, startTerminus))							throw new ExceptionWrongPlayerTerminus();
 		}
+		Point[] endTerminus = this.data.getPlayerTerminusPosition(playerName);
+		Point previous = this.data.getPreviousTramPosition(playerName);
+		if (!this.checkTramPath(playerName, tramPath, tramPathSize, endTerminus, previous))	throw new ExceptionWrongTramwayPath();
+		if (tramPathSize > data.getMaximumSpeed())											throw new ExceptionWrongTramwaySpeed();
+		if (tramPathSize < Data.minSpeed)													throw new ExceptionWrongTramwaySpeed();
+		if (tramPathSize > Data.maxSpeed)													throw new ExceptionWrongTramwaySpeed();
 
-		EngineAction ea = engine.new EngineAction(playerName, data, "moveTram");
-		ea.tramMovement = tramMovement;
-
-		this.engine.addAction(ea);
+		this.engine.addAction(data, "moveTram", playerName, tramPath, tramPathSize, startTerminus);
 	}
 
 	/**=============================================================================
@@ -469,5 +443,31 @@ System.out.println("Game.setLoginInfo: no change to do");
 		Thread t = new Thread(newPlayer);
 		this.aiList.put(playerName, t);
 		t.start();
+	}
+	private boolean checkTramPath(String playerName, Point[] tramPath, int tramPathSize, Point[] inputEndTerminus, Point previousTramPosition)
+	{
+		int winner = -1;
+		Point p0 = tramPath[0], p1;
+		Point[] endTerminus;
+
+		if (inputEndTerminus == null)	endTerminus = data.getPlayerTerminusPosition(playerName);
+		else							endTerminus = inputEndTerminus;
+
+		if (Util.manhathanDistance(p0, previousTramPosition) != 1)			return false;
+		if (!data.pathExistsBetween(p0, previousTramPosition))				return false;
+		if (p0.equals(endTerminus[0]))										return (tramPathSize == 1);
+		if (p0.equals(endTerminus[1]))										return (tramPathSize == 1);
+
+		for (int i=1; i<tramPathSize; i++)
+		{
+			p1 = tramPath[i];
+			if (winner != -1)												return false;
+			if (!data.pathExistsBetween(p0, p1))							return false;
+			if (Util.manhathanDistance(tramPath[i-1], tramPath[i]) != 1)	return false;
+			if (p1.equals(endTerminus[0]))	winner = i;
+			if (p1.equals(endTerminus[1]))	winner = i;
+			p0 = p1;
+		}
+		return true;
 	}
 }

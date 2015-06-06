@@ -38,7 +38,7 @@ public class Dumbest extends PlayerAutomaton {
 		
 		do{
 			nbEssais++;
-			if(nbEssais > 1000)	throw new RuntimeException(name + " cannot find a valid move");
+			if(nbEssais > 10000)	throw new RuntimeException(name + " cannot find a valid move");
 			// On choisit un emplacement au hasard
 			i = rand.nextInt(currentconfig.getWidth());
 			j = rand.nextInt(currentconfig.getHeight());

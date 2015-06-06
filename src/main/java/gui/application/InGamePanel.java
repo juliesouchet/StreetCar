@@ -12,10 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 
 import main.java.data.Data;
-import main.java.game.ExceptionForbiddenAction;
-import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionNotYourTurn;
-import main.java.game.ExceptionUncompletedPath;
 import main.java.gui.board.MapPanel;
 import main.java.gui.chat.ChatPanel;
 import main.java.gui.components.Panel;
@@ -195,7 +191,8 @@ public class InGamePanel extends Panel {
 		System.out.println("THE TERMINUS IS UNDEFINED FOR THE MOMENT");
 		PlayerIHM player = StreetCar.player;
 		Point terminus = new Point();
-		try {
+//TODO
+/*		try {
 			player.startMaidenTravel(player.getPlayerName(), terminus);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -209,7 +206,7 @@ public class InGamePanel extends Panel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+*/	}
 	
 	// Refresh game
 	

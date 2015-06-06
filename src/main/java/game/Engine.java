@@ -73,7 +73,6 @@ public class Engine implements Runnable
 		}
 	}
 
-///////public EngineAction (PlayerInterface pi, String playerName, Data data, String function, Point position1, Tile tile1, Point position2, Tile tile2, Point[] tramMovement, Integer ptrTramMovement, Integer nbrCardsToDraw, Color playerColor, Boolean isHost, Boolean isHuman, String chosenPlayer)
 	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function)
 	{
@@ -108,6 +107,10 @@ public class Engine implements Runnable
 	public void addAction(Data data, String function, String playerName, Point position1, Tile tile1, Point position2, Tile tile2)
 	{
 		this.addAction(new EngineAction(null, playerName, data, function, position1, tile1, position2, tile2, null, null, null, null, null, null, null));
+	}
+	public void addAction(Data data, String function, String playerName, Point[] tramPath, int tramPathSize, Point startTerminus)
+	{
+		this.addAction(new EngineAction(null, playerName, data, function, startTerminus, null, null, null, tramPath, tramPathSize, null, null, null, null, null));
 	}
 	/** @return add an event to the engine action queue*/
 	public void addAction(EngineAction ea)
@@ -212,67 +215,24 @@ public class Engine implements Runnable
 
 	}
 	@SuppressWarnings("unused")
-	private synchronized void startMaidenTravel()
-	{
-		Data	data		= this.toExecute.data;
-		String playerName = toExecute.playerName;
-		Point chosenTerminus = toExecute.position1;
-		//PlayerInfo dataPlayer = data.getPlayerInfo(playerName);
-
-		data.startMaidenTravel(playerName);
-		data.setTramPosition(playerName, chosenTerminus);
-
-		Point[] destination = new Point[2];
-		int i = 0;
-		for(Point p : data.getPlayerTerminusPosition(playerName))
-		{
-			if(p.distance(chosenTerminus) > 1)
-			{
-				destination[i] = ((Point) p.clone());
-				i ++;
-			}
-		}
-
-		data.setDestinationTerminus(playerName, destination);
-
-//		for(String name : data.getPlayerOrder())
-//		{
-//			PlayerInterface remotePlayer = data.getPlayer(name);
-//			remotePlayer.playerStartedMaidenJourney(playerName, terminus);
-//			remotePlayer.reveaPlayerlLine(playerName, dataPlayer.line);
-//			//remotePlayer.revealPlayerRoute(playerName, dataPlayer.route); // TODO
-//		}
-	}
-	@SuppressWarnings("unused")
 	private synchronized void moveTram() throws RemoteException
 	{
 		Data	data			= this.toExecute.data;
 		String	playerName		= this.toExecute.playerName;
-		Point[]	tramMovement	= this.toExecute.tramMovement;
-		int		ptrTramMovement	= this.toExecute.ptrTramMovement;
-//TODO		data.setTramPosition(playerName, tramMovement.getLast());
+		Point[]	tramPath		= this.toExecute.tramPath;
+		Point	startTerminus	= this.toExecute.position1;
+		int		tramPathSize	= this.toExecute.tramPathSize;
 
-		Point[] terminus = data.getPlayerTerminusPosition(playerName);
-		Point position = data.getTramPosition(playerName);
-		for (int i=0; i<terminus.length; i++)
-		{
-			if(terminus[i].equals(position))
-			{
-				System.out.println("STOP EVERYTHING!!!!!! \n" + playerName + " has won");
-			}
-		}
+		data.setTramPosition(playerName, tramPath, tramPathSize, startTerminus);
+	}
+	@SuppressWarnings("unused")
+	private synchronized void stopMaidenTravel() throws RemoteException
+	{
+		Data	data		= this.toExecute.data;
+		String	playerName	= this.toExecute.playerName;
+
+		data.stopMaidenTravel(playerName);
 		this.notifyPlayer(playerName);
-		//		for(String name : data.getPlayerOrder())
-		//		{
-		//			PlayerInterface remotePlayer = data.getPlayer(name);
-		//			remotePlayer.playerHasMovedTram(playerName, dest);
-		//
-		//			if(dataPlayer.tramPosition.equals(dataPlayer.endTerminus))
-		//			{
-		//				remotePlayer.announceVictoriousPlayer(playerName);
-		//				// TODO check if stopped by all stop points
-		//			}
-		//		}
 	}
 	@SuppressWarnings("unused")
 	private synchronized void drawTile() throws RemoteException
@@ -328,15 +288,15 @@ public class Engine implements Runnable
 		public Point			position2;
 		public Tile				tile1;
 		public Tile				tile2;
-		public Point[]			tramMovement;
-		public Integer			ptrTramMovement;
+		public Point[]			tramPath;
+		public Integer			tramPathSize;
 		public Integer			nbrCardsToDraw;
 		public String 			chosenPlayer;
 		public Boolean			isHost;
 		public Boolean			isHuman;
 
 		// Builder
-		public EngineAction (PlayerInterface pi, String playerName, Data data, String function, Point position1, Tile tile1, Point position2, Tile tile2, Point[] tramMovement, Integer ptrTramMovement, Integer nbrCardsToDraw, Color playerColor, Boolean isHost, Boolean isHuman, String chosenPlayer)
+		public EngineAction (PlayerInterface pi, String playerName, Data data, String function, Point position1, Tile tile1, Point position2, Tile tile2, Point[] tramPath, Integer tramPathSize, Integer nbrCardsToDraw, Color playerColor, Boolean isHost, Boolean isHuman, String chosenPlayer)
 		{
 			this.player			= pi;
 			this.playerName		= playerName;
@@ -346,8 +306,8 @@ public class Engine implements Runnable
 			this.tile1			= tile1;
 			this.position2		= position2;
 			this.tile2			= tile2;
-			this.tramMovement	= tramMovement;
-			this.ptrTramMovement= ptrTramMovement;
+			this.tramPath		= tramPath;
+			this.tramPathSize	= tramPathSize;
 			this.nbrCardsToDraw	= nbrCardsToDraw;
 			this.playerColor	= playerColor;
 			this.chosenPlayer	= chosenPlayer;

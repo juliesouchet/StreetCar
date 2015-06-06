@@ -128,10 +128,10 @@ public class Data implements Serializable
 		res.deck					= this.deck.getClone();
 		res.playerInfoList			= getCopyOfPlayerInfoList(playerName);
 		res.round					= this.round;
-		res.winner					= (this.winner == null) ? null : new String(this.winner);
 		res.maxPlayerSpeed			= this.maxPlayerSpeed;
 		res.playerOrder				= (this.playerOrder == null)? null : cpS.copyTab(this.playerOrder);
 		res.host					= (this.host == null)		? null : new String(this.host);
+		res.winner					= (this.winner == null) ? null : new String(this.winner);
 
 		return res;
 	}
@@ -200,32 +200,31 @@ public class Data implements Serializable
 	{
 		if (action.isMOVE())
 		{
-			if (action.startTerminus != null)
-// TODO: avoir avec travel pour set terminus point
-			this.setTramPosition(playerName, action.tramwayMovement[action.ptrTramwayMovement]); //TODO ptrTramwaymovement ou -1 ?
+			this.setTramPosition(playerName, action.tramwayMovement, action.ptrTramwayMovement+1, action.startTerminus);
 			return;
 		}
-		if (action.isBUILD_SIMPLE())
+		else if (action.isBUILD_SIMPLE())
 		{
 			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 			return;
 		}
-		if (action.isTWO_BUILD_SIMPLE())
+		else if (action.isTWO_BUILD_SIMPLE())
 		{
 			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 			this.placeTile(playerName, action.positionTile2.x, action.positionTile2.y, action.tile2);
 			return;
 		}
-		if (action.isBUILD_DOUBLE())
+		else if (action.isBUILD_DOUBLE())
 		{
 			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1, action.positionTile2.x, action.positionTile2.y, action.tile2);
 			return;
 		}
-		if (action.isBUILD_AND_START_TRIP_NEXT_TURN())
+		else if (action.isBUILD_AND_START_TRIP_NEXT_TURN())
 		{
 			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 			return;
 		}
+		else throw new RuntimeException("Unknown action type");
 	}
 	
 	
@@ -351,6 +350,8 @@ public class Data implements Serializable
 	 =====================================================*/
 	public void drawTile(String playerName, int nbrCards)
 	{
+		if (nbrCards == 0) return;
+
 		PlayerInfo	pi	= this.playerInfoList.get(playerName);
 		Hand		hand= pi.hand;
 		HistoryCell	hc	= pi.getLastActionHistory();
@@ -375,7 +376,7 @@ public class Data implements Serializable
 				if		(hc.drawnTile2 == null)	{hc.drawnTile2 = t; hc.drawnFromPlayerHand2 = null;}
 				else							throw new RuntimeException("You already have drawn two tiles");
 				return;
-			default: throw new RuntimeException("Too many tiles to draw: " + nbrCards);
+			default: throw new RuntimeException("Wrong number of tiles to draw: " + nbrCards);
 		}
 	}
 	/**===================================================
@@ -394,26 +395,29 @@ public class Data implements Serializable
 		src.add(tile);
 	}
 	/**==================================================
-	 * @return The player declares the start of his maiden travel 
+	 * @return The player declares the end of his maiden travel to find a new path or build a new one
 	 ====================================================*/
-	public void startMaidenTravel(String playerName)
+	public void stopMaidenTravel(String playerName)
 	{
-		playerInfoList.get(playerName).startedMaidenTravel = true;
-// TODO: ajouter une action a l'historique du joueur
-// TODO: ajouter une action a l'historique du jeu
+		playerInfoList.get(playerName).stopMaidenTravel();
 	}
 	/**================================================
-	 * @return The player moves his streetcar
+	 * @return The player moves his streetcar.</br>
+	 * If the parameter startTerminus != null, the player start his maiden travel.</br>
 	 ==================================================*/
-	public void setTramPosition(String playerName, Point newPosition)
+	public void setTramPosition(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus)
 	{
 		PlayerInfo pi = playerInfoList.get(playerName);
 
-		pi.tramPosition = newPosition;
-		if (newPosition.equals(pi.endTerminus[0]))	this.winner = new String(playerName);
-		if (newPosition.equals(pi.endTerminus[1]))	this.winner = new String(playerName);
-// TODO: ajouter une action a l'historique du joueur
-// TODO: ajouter une action a l'historique du jeu
+		if (startTerminus != null) pi.startMaidenTravel(startTerminus);
+
+		pi.previousTramPosition.x	= pi.tramPosition.x;
+		pi.previousTramPosition.y	= pi.tramPosition.y;
+		pi.tramPosition.x			= tramPath[tramPathSize-1].x;
+		pi.tramPosition.y			= tramPath[tramPathSize-1].y;
+		if (pi.tramPosition.equals(pi.endTerminus[0]))	this.winner = playerName;
+		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
+		pi.getLastActionHistory().addLastAction(Action.newMoveAction(tramPath, tramPathSize, startTerminus), null, null);
 	}
 	/**==========================================================================
 	 * @return The player chooses the destination of his maiden travel (the opposite terminus from his starting terminus)
@@ -464,10 +468,10 @@ public class Data implements Serializable
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
 	public boolean				isUsedPlayerName(String playerName)				{return this.playerInfoList.keySet().contains(playerName);}
 	public boolean				hasDoneRoundFirstAction(String playerName)		{return this.playerInfoList.get(playerName).hasDoneFirstRoundAction();}
-	public Point[]				getPlayerTerminusPosition(String playerName)	{return this.playerInfoList.get(playerName).terminus;}
+	public Point[]				getPlayerTerminusPosition(String playerName)	{return (new Copier<Point>()).copyTab(playerInfoList.get(playerName).terminus);}
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return (Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize());}
-	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).startedMaidenTravel;}
+	public boolean				hasStartedMaidenTravel(String playerName)		{return this.playerInfoList.get(playerName).hasStartedMaidenTravel();}
 	public Point				getPreviousTramPosition(String playerName)		{return playerInfoList.get(playerName).previousTramPosition; }
 	/**======================================================
 	 * @return true if this player still has actions to do in his turn
@@ -1022,7 +1026,7 @@ System.out.println("iciiiii, trackCompleted");
 // TODO check avec travel
 throw new RuntimeException("Not implemented yet");
 	}
-//TODO iciiiiiiiiiiiiiiiii
+
 // --------------------------------------------
 // Private methods:
 // --------------------------------------------
@@ -1171,22 +1175,22 @@ throw new RuntimeException("Not implemented yet");
 			piRes.hand					= pi.hand.getClone();
 			piRes.terminus				= (pi.terminus == null) ? null : cpP.copyTab(pi.terminus);
 			piRes.history				= (new Copier<HistoryCell>()).copyList(pi.history);
-			piRes.startedMaidenTravel	= pi.startedMaidenTravel;
-			piRes.tramPosition			= (pi.tramPosition == null) ? null : new Point(pi.tramPosition);
-			piRes.endTerminus			= (pi.endTerminus == null) ? null : cpP.copyTab(pi.endTerminus);
+			piRes.startTerminus			= (pi.startTerminus == null)		? null : new Point(pi.startTerminus);
+			piRes.endTerminus			= (pi.endTerminus == null)			? null : cpP.copyTab(pi.endTerminus);
+			piRes.tramPosition			= (pi.tramPosition == null)			? null : new Point(pi.tramPosition);
 			piRes.previousTramPosition	= (pi.previousTramPosition == null) ? null : new Point(pi.previousTramPosition);
 
-			if ((playerName == null) || (str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
-			{
+// TODO			if ((playerName == null) || (str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
+// TODO			{
 				piRes.buildingInLine_name		= (new Copier<String>()).copyTab (pi.buildingInLine_name);
 				piRes.buildingInLine_position	= (new Copier<Point>()).copyTab(pi.buildingInLine_position);
-			}
-			else
+// TODO			}
+/*			else
 			{
 				piRes.buildingInLine_name		= null;
 				piRes.buildingInLine_position	= null;
 			}
-			res.put(str, piRes);
+*/			res.put(str, piRes);
 		}
 		return res;
 	}
@@ -1207,11 +1211,11 @@ throw new RuntimeException("Not implemented yet");
 		public Point[]					buildingInLine_position;
 		public String[][]				remainingBuildingInLineSave;
 		public Point[]					terminus;										// Complete player's terminus list
-		public boolean					startedMaidenTravel		= false;				// Data relative to the travel
+		public Point					startTerminus			= null;					// Data relative to the travel
+		public Point[]					endTerminus				= null;	
 		public Point					tramPosition			= null;
-		public Point[]					endTerminus				= new Point[2];
 		public Point					previousTramPosition	= null;
-		public LinkedList<HistoryCell>	history;							// organized by turns
+		public LinkedList<HistoryCell>	history;										// organized by turns
 
 		// Builder
 		private PlayerInfo(){}
@@ -1235,8 +1239,12 @@ throw new RuntimeException("Not implemented yet");
 			this.buildingInLine_position= getBuildingPosition(this.buildingInLine_name);				// Init the building line position
 			this.terminus				= getTerminusPosition(this.line);								// Init the terminus position
 			this.history				= new LinkedList<HistoryCell>();
-			this.endTerminus[0]			= new Point();
-			this.endTerminus[1]			= new Point();
+			this.startTerminus			= new Point(-1, -1);
+			this.endTerminus			= new Point[2];
+			this.endTerminus[0]			= new Point(-1, -1);
+			this.endTerminus[1]			= new Point(-1, -1);
+			this.tramPosition			= new Point(-1, -1);
+			this.previousTramPosition	= new Point(-1, -1);
 		}
 
 		// Getter
@@ -1250,8 +1258,41 @@ throw new RuntimeException("Not implemented yet");
 			if (this.history.size() <= round)	return false;
 			else								return (!this.getLastActionHistory().isEmpty());
 		}
+
+		// Setter
 		public void newRound()	{this.history.addLast(new HistoryCell());}
 		public void undoRound() {this.history.removeLast();}
+		public void startMaidenTravel(Point startTerminus)
+		{
+			this.startTerminus.x		= startTerminus.x;
+			this.startTerminus.y		= startTerminus.y;
+			int i = 0;
+			for (Point p: this.terminus)
+			{
+				if (Util.manhathanDistance(startTerminus, p) <= 1) continue;
+				this.endTerminus[i].x = p.x;
+				this.endTerminus[i].y = p.y;
+				i ++;
+			}
+			this.tramPosition.x			= startTerminus.x;
+			this.tramPosition.y			= startTerminus.y;
+			this.previousTramPosition.x	= startTerminus.x;
+			this.previousTramPosition.y	= startTerminus.y-1;
+		}
+		public boolean hasStartedMaidenTravel(){return (this.startTerminus.x != -1);}
+		public void stopMaidenTravel()
+		{
+			this.startTerminus.x		= -1;
+			this.startTerminus.y		= -1;
+			this.endTerminus[0].x		= -1;
+			this.endTerminus[0].y		= -1;
+			this.endTerminus[1].x		= -1;
+			this.endTerminus[1].y		= -1;
+			this.tramPosition.x			= -1;
+			this.tramPosition.y			= -1;
+			this.previousTramPosition.x	= -1;
+			this.previousTramPosition.y	= -1;
+		}
 	}
 
 // --------------------------------------------
