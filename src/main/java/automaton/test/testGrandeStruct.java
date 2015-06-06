@@ -34,9 +34,9 @@ public class testGrandeStruct {
 		myStops[0] = new Point(6,8);
 
 		
-		AutomatePlusCourtChemin myAutomate = new AutomatePlusCourtChemin(monTableauDeData[0], myTerminus, myStops)
+		AutomatePlusCourtChemin myAutomate = new AutomatePlusCourtChemin(monTableauDeData[0], myTerminus, myStops);
 
-		System.out.println(monT);
+		System.out.println(myAutomate);
 		
 		
 		
