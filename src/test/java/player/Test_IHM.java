@@ -125,4 +125,10 @@ nbrBuildingInLine= 3;			/////// Nom par defaut
 			catch(Exception e){}
 		}
 	}
+
+	@Override
+	public void refreshMessages(String playerName, String message) {
+		// TODO Auto-generated method stub
+		
+	}
 }

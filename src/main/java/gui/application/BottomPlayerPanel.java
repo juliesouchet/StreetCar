@@ -153,12 +153,14 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkResetButton(Data data) {
-		numberOfCardPlayed = 5 - data.getHandSize(playerName);
+		/*numberOfCardPlayed = 5 - data.getHandSize(playerName);
 		if (numberOfCardPlayed != 0) {
 			resetButton.setEnabled(true);
 		} else {
 			resetButton.setEnabled(false);
-		}
+		}*/
+		
+		resetButton.setEnabled(!data.isStartOfTurn(playerName));
 	}
 	
 	protected void paintComponent(Graphics g) {

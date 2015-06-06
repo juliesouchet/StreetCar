@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import main.java.data.Data;
+import main.java.data.Hand;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.game.Engine.EngineAction;
@@ -65,7 +66,7 @@ public String getHostName(){return this.data.getHost();}
 			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
 			Naming.rebind(url, this);
 		}
-		catch (Exception e) {e.printStackTrace(); System.exit(0);}
+		catch (Exception e) {e.printStackTrace(); throw new RemoteException();}
 
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
@@ -99,8 +100,7 @@ public String getHostName(){return this.data.getHost();}
 			String url = getRemoteURL(appIP, gameName);
 			return (GameInterface) Naming.lookup(url);
 		}
-		catch (Exception e) {e.printStackTrace(); System.exit(0);}
-		return null;
+		catch (Exception e) {e.printStackTrace(); throw new RemoteException();}
 	}
 
 	private static String getRemoteURL(String appIP, String gameName) throws UnsupportedEncodingException {
@@ -180,6 +180,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 			this.launchAIPlayer(newPlayerInfo);
 			notifyAll = false;
 		}
+		else notifyAll = true;
 		if (notifyAll) this.engine.addAction(data, "notifyAllPlayers");
 	}
 	/**================================================
@@ -295,13 +296,14 @@ System.out.println("Game.setLoginInfo: no change to do");
 	 =============================================================================*/
 	public synchronized void validate(String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
-		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
+		if (!this.data.isGameStarted())								throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))					throw new ExceptionNotYourTurn();
 
 		if(!data.hasStartedMaidenTravel(playerName))
 		{
-			if(data.getHandSize(playerName) < 5 && data.getNbrRemainingDeckTile() > 0) throw new ExceptionForbiddenAction();
-			if(data.hasRemainingAction(playerName))							throw new ExceptionForbiddenAction();
+			if(data.getHandSize(playerName) < Hand.maxHandSize &&
+			   data.getNbrRemainingDeckTile() > 0)					throw new ExceptionForbiddenAction();
+			if(data.hasRemainingAction(playerName))					throw new ExceptionForbiddenAction();
 		}
 
 		this.engine.addAction(this.data, "validate", playerName);

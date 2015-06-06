@@ -30,7 +30,7 @@ public abstract class MenuPanel extends Panel {
 		this.gc = gameController;
     	this.setLayout(null);
     	this.setSize(new Dimension(500, 450));
-    	this.setBackground(Color.white);
+    	this.setBackground(new Color(0x095425));
     	this.setBorder(BorderFactory.createLineBorder(Color.black)); 
 	}
 
