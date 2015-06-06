@@ -314,7 +314,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 //		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
 //		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
 
-		this.data.getPreviousDataAndRollBack();
+		this.data.rollBack();
 		this.engine.addAction(data, "notifyAllPlayers");
 	}
 	/**=============================================================================

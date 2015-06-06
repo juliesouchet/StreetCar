@@ -144,7 +144,7 @@ public class Data implements Serializable
 	 * If the current player has done an action this turn, his action is undone.</b>
 	 * If the player has done no action this turn, the last player's action is undone.</br>
 	 =========================================================*/
-	public void getPreviousDataAndRollBack()
+	public void rollBack()
 	{
 		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc			= pi.getLastActionHistory();
@@ -190,7 +190,7 @@ public class Data implements Serializable
 		{
 			this.playerInfoList.get(playerName).undoRound();
 			this.round --;
-			this.getPreviousDataAndRollBack();																	//		Undo the last player's round
+			this.rollBack();																	//		Undo the last player's round
 		}
 	}
 	/**===================================================================
