@@ -1,5 +1,8 @@
 package main.java.automaton.test;
 
+import java.awt.Point;
+
+import main.java.automaton.AutomatePlusCourtChemin;
 import main.java.data.Data;
 import main.java.game.ExceptionUnknownBoardName;
 
@@ -9,9 +12,8 @@ public class testGrandeStruct {
 
 	public static void main(String[] args) {
 	//	DecisionTable maDecisionTable = null;
-		Data[] monTableauDeData = new Data[100000];
-		
-		for(int i=0; i<100000; i++){
+		Data[] monTableauDeData = new Data[1000];
+		for(int i=0; i<1000; i++){
 			try {
 				monTableauDeData[i]= new Data("jeu", "newOrleans", 2);
 				if(i%1000==0)System.out.println(i);
@@ -20,6 +22,23 @@ public class testGrandeStruct {
 				e.printStackTrace();
 			}
 		}
+		
+		Point[] myTerminus = new Point[4];
+		myTerminus[0]=new Point(0,1);
+		myTerminus[1]=new Point(0,2);
+		myTerminus[2]=new Point(13,1);
+		myTerminus[3]=new Point(13,2);
+
+		Point[] myStops = new Point[2];
+		myStops[0] = new Point(3,4);
+		myStops[0] = new Point(6,8);
+
+		
+		AutomatePlusCourtChemin myAutomate = new AutomatePlusCourtChemin(monTableauDeData[0], myTerminus, myStops)
+
+		System.out.println(monT);
+		
+		
 		
 //		int compteur = 0;
 //		int nombreActions1 = 0;

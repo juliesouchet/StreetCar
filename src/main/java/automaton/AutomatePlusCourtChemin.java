@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.data.Tile;
 
 /**
  * Premiere implementation d'un automate que cherche a poser des rails pour creer le chemin le plus courts de son terminus vers ses points de passage puis vers autre terminus
@@ -12,11 +13,17 @@ import main.java.data.Data;
  *
  */
 public class AutomatePlusCourtChemin extends PlayerAutomaton {
+	private int MAX_LENGTH_OF_PATH;
+	
 	int heuristique[][];
 	int width;
 	int height;
 	Point[] myTerminus;
 	Point[] myStops;
+	
+	Point[] bestPathPoint;
+	Tile[] bestPathTile;
+	int bestPathLength;
 	
 	/**
 	 * Instanciation d'un automate pour calculer le plus court chemin possible (imaginable).
@@ -24,12 +31,21 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	 * @param height Hauteur du terrain.
 	 * @param numberOfStop Nombre de stop.
 	 */
-	public AutomatePlusCourtChemin(int width, int height, int numberOfStop, Point[] terminus, Point[] stops){
-		this.heuristique = new int[width][height];
-		this.width = width;
-		this.height = height;
+	public AutomatePlusCourtChemin(Data currentConfiguration, Point[] terminus, Point[] stops){
+		this.width = currentConfiguration.getWidth();
+		this.height = currentConfiguration.getHeight();
+		this.heuristique = new int[this.width][this.height];
 		this.myTerminus = terminus.clone();
 		this.myStops = stops.clone();
+		
+		this.MAX_LENGTH_OF_PATH = this.width * this.height;
+		this.bestPathPoint = new Point[MAX_LENGTH_OF_PATH];
+		this.bestPathTile = new Tile[MAX_LENGTH_OF_PATH];
+		this.bestPathLength = 0;
+		
+		
+		
+		
 	}
 	/**
 	 * Calcule l'heuristique pour un point donné. (Pour l'instant distance de manhatan, TODO : pondérer avec tuiles existantes.)
