@@ -58,8 +58,11 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	{
 		int rotation = t.getTileDirection().getVal();
 
-		if (this.tileList.size() >= maxHandSize) throw new RuntimeException("Too big hand size");
+		if (this.tileList.size() >= maxHandSize)	throw new RuntimeException("Too big hand size");
+		if (!t.isDeckTile())						throw new RuntimeException("Not a deck tile: " + t);
+
 		for(int i = 0; i < rotation; i++)t.turnLeft();
+		t.setStop(false);
 		tileList.add(t);
 	}
 	public void remove(Tile t)

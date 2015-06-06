@@ -25,8 +25,7 @@ import main.java.util.Util;
 
 
 
-// TODO: quand on annule une action faire this.winner = null;
-// TODO: dire a l'ihm: apres chaque refresh, verifier si getWinner != null et si isGameBlocked
+
 
 
 public class Data implements Serializable
@@ -174,6 +173,7 @@ public class Data implements Serializable
 				else if (hc.action1.isMOVE())
 				{
 					this.undoFirstTravelGameInThisRound(hc, pi);
+					this.winner = null;
 				}
 				else throw new RuntimeException("????");
 				hc.action1				= null;
@@ -933,8 +933,6 @@ System.out.println("iciiiii, trackCompleted");
 						hand = this.playerInfoList.get(hc.drawnFromPlayerHand2).hand;
 						hand.add(hc.drawnTile2);
 					}
-					hc.drawnTile2			= null;
-					hc.drawnFromPlayerHand2 = null;
 				}
 			}
 			pi.hand.add(hc.action2.tile1);
@@ -965,8 +963,6 @@ System.out.println("iciiiii, trackCompleted");
 					hand = this.playerInfoList.get(hc.drawnFromPlayerHand1).hand;
 					hand.add(hc.drawnTile1);
 				}
-				hc.drawnTile1			= null;
-				hc.drawnFromPlayerHand1	= null;
 			}
 		}
 		pi.hand.add(hc.action1.tile1);
@@ -995,8 +991,6 @@ System.out.println("iciiiii, trackCompleted");
 					hand.add(hc.drawnTile1);
 				}
 				this.deck.undrawTile(hc.drawnTile1);
-				hc.drawnTile1			= null;
-				hc.drawnFromPlayerHand1	= null;
 			}
 		}
 		pi.hand.add(hc.action1.tile1);
@@ -1019,8 +1013,6 @@ System.out.println("iciiiii, trackCompleted");
 					hand.add(hc.drawnTile2);
 				}
 				this.deck.undrawTile(hc.drawnTile2);
-				hc.drawnTile2			= null;
-				hc.drawnFromPlayerHand2	= null;
 			}
 		}
 		pi.hand.add(hc.action1.tile2);
@@ -1154,19 +1146,6 @@ throw new RuntimeException("Not implemented yet");
 			}
 		}
 		return res;
-	}
-	private void setBoard(Tile[][] board)
-	{
-		if (this.board.length		!= board.length)		throw new RuntimeException("Diffrent boards");
-		if (this.board[0].length	!= board[0].length)		throw new RuntimeException("Diffrent boards");
-
-		for (int x=0; x<this.getWidth(); x++)
-		{
-			for (int y=0; y<this.getHeight(); y++)
-			{
-				this.board[x][y].copy(board[x][y]);
-			}
-		}
 	}
 	/**=====================================================================
 	 * @return a copy of the playerInfo list where for each player:</br>
