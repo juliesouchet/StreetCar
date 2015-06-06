@@ -45,7 +45,7 @@ public class PlayerAutomata implements InterfaceIHM
 	private boolean firstRefreshDone = false;
 	private boolean secondRefreshDone = false;
 
-	PlayerAutomaton edouard ;
+	PlayerAutomaton myAutomaton ;
 
 	// --------------------------------------------
 	// Builder:
@@ -183,8 +183,10 @@ public class PlayerAutomata implements InterfaceIHM
 			return;
 		}
 
-	edouard = new Strongest(name);
-	myAction = edouard.makeChoice(data);
+	myAutomaton = new Strongest(name);
+	myAction = myAutomaton.makeChoice(data);
+	
+	
 	try {
 		player.doAction(name, myAction);
 	} catch (RemoteException | ExceptionGameHasNotStarted
