@@ -16,7 +16,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	private int MAX_LENGTH_OF_PATH;
 
 	Data currentData;
-	
+
 	int heuristic[][];
 	int width;
 	int height;
@@ -40,7 +40,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	 * @param numberOfStop Nombre de stop.
 	 */
 	public AutomatePlusCourtChemin(Data currentConfiguration, Point[] terminus, Point[] stops){
-		
+
 		this.currentData = currentConfiguration;
 		this.width = currentConfiguration.getWidth();
 		this.height = currentConfiguration.getHeight();
@@ -82,7 +82,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 			}
 		}
 	}
-	
+
 	/**
 	 * Calcule l'heuristique pour un point donné. (Pour l'instant distance de manhatan, TODO : pondérer avec tuiles existantes.)
 	 * @param cible Le point visé.
@@ -116,7 +116,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return Un des terminus de d'heurisitique minimal.
 	 */
@@ -135,15 +135,40 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 	public boolean[] myStopsAreSetted(){
 		boolean[] result = new boolean[this.myStops.length];
+		Tile[][] currentBoard = this.currentData.getBoard();
+
+
+
 		for( int i =0; i < this.myStops.length; i++){
-			if(this.currentData.getBoard()[this.myStops[i].x][this.myStops[i].y].isBuilding()){
-				result[i]=false;
+			if(currentBoard[this.myStops[i].x][this.myStops[i].y].isBuilding()){
+				if (currentBoard[this.myStops[i].x+1][this.myStops[i].y].isStop()){
+					this.myStops[i].x++;
+					result[i]=true;
+					break;
+				}
+				else if (currentBoard[this.myStops[i].x][this.myStops[i].y+1].isStop()){
+					this.myStops[i].y++;
+					result[i]=true;
+					break;
+				}
+				else if (currentBoard[this.myStops[i].x-1][this.myStops[i].y].isStop()){
+					this.myStops[i].x--;
+					result[i]=true;
+					break;
+				}
+				else if (currentBoard[this.myStops[i].x][this.myStops[i].y-1].isStop()){
+					this.myStops[i].y--;
+					result[i]=true;
+					break;
+				}
+				else {
+					result[i]=false; }
 			}
 			if(this.currentData.getBoard()[this.myStops[i].x][this.myStops[i].y].isStop()){
 				result[i]=true;
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -152,7 +177,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	 *=============================================================================*/
 	@Override 
 	public String toString(){
-		
+
 		String blank = " ";
 		String resultat = "Width="+this.width+" Height="+this.height+"\nMy terminus:";
 
@@ -184,7 +209,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		resultat += this.separateur(this.width);
 		return resultat;
 	}
-	
+
 	private String separateur(int size){
 		String result="\n";
 		for (int i=0; i<size; i++){
@@ -193,7 +218,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		result += "+\n";
 		return result;
 	}
-	
+
 	private void printMatrice(int[][] matrice){
 		String resultat = "";
 		String blank = " ";
@@ -218,7 +243,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 		System.out.println(resultat);
 	}
-	
+
 	@Override
 	public Action makeChoice(Data currentConfig) {
 		// TODO Auto-generated method stub

@@ -33,7 +33,9 @@ public class testGrandeStruct {
 		Point[] myStops = new Point[2];
 		myStops[0] = new Point(1,4);
 		myStops[1] = new Point(5,2);
+		monTableauDeData[0].setTile(1, 4, Tile.parseTile("Tile_FTFFAZ01"));
 
+		
 		
 		AutomatePlusCourtChemin myAutomate = new AutomatePlusCourtChemin(monTableauDeData[0], myTerminus, myStops);
 		myAutomate.computeHeuristic();
@@ -45,13 +47,18 @@ public class testGrandeStruct {
 		if(myAutomate.myStopsAreSetted()[0]){
 			System.out.println("Stop[0]=setted");
 		}
+		
+		System.out.println(myAutomate.myStops[0]);
+		System.out.println(myAutomate.myStops[1]);
+		
 		if(myAutomate.myStopsAreSetted()[1]){
 			System.out.println("Stop[1]=setted");
 		}
 		Tile maTile = Tile.parseTile("Tile_FFFFZZ2113");
 		maTile.setStop(true);
+		
 
-		myAutomate.myStops[0]= new Point(2,4);
+		//myAutomate.myStops[0]= new Point(2,4);
 		monTableauDeData[0].setTile(2, 4, maTile);
 		if(myAutomate.myStopsAreSetted()[0]){
 			System.out.println("Stop[0]=setted");
@@ -59,6 +66,9 @@ public class testGrandeStruct {
 		if(myAutomate.myStopsAreSetted()[1]){
 			System.out.println("Stop[1]=setted");
 		}
+		
+		System.out.println(myAutomate.myStops[0]);
+		System.out.println(myAutomate.myStops[1]);
 //		if(myAutomate.myStopsAreSetted()[2]){
 //			System.out.println("Stop[2]=setted");
 //		}
