@@ -136,94 +136,63 @@ public class Data implements Serializable
 
 		return res;
 	}
-	public void setData(Data data)
-	{
-// TODO: ATTENTION: ne surtout pas clonner l'historique (req.history = null; res.ptrHistory ) -1)
-		Copier<String> 		cpS		= new Copier<String>();
-
-		this.gameName				= new String(data.gameName);
-		this.nbrBuildingInLine		= data.nbrBuildingInLine;
-		this.setBoard(data.board);
-		this.deck.setDeck(data.deck);
-		this.playerInfoList			= getCopyOfPlayerInfoList(null);
-		this.round					= data.round;
-		this.maxPlayerSpeed			= data.maxPlayerSpeed;
-		this.playerOrder			= (data.playerOrder == null)? null : cpS.copyTab(data.playerOrder);
-		this.host					= (data.host == null)		? null : new String(data.host);
-		this.winner					= (data.winner == null)		? null : new String(data.winner);
-	}
-
-	/**=======================================================
-	 * @return the previous game data.  The 
-	 =========================================================*/
-	public void getPreviousDataAndRollBack()
-	{
-		PlayerInfo	pi			= this.playerInfoList.get(this.getPlayerTurn());
-		HistoryCell	hc			= pi.getLastActionHistory();
-		String		playerName	= this.getPlayerTurn();
-		int x, y;
-
-		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))													// Case player has done an action this round
-		{
-			if (hc.action2 != null)																							//		Case undo round second game
-			{
-				if (hc.action2.isBUILD_SIMPLE())
-				{
-					x = hc.action2.positionTile1.x;
-					y = hc.action2.positionTile1.y;
-					if (hc.oldTile2 != null)	{this.board[x][y] = hc.oldTile2; pi.hand.remove(hc.oldTile2);}				//			Case: game was a tile improve
-					else						 this.board[x][y] = this.getNewEmptyTile();
-					pi.hand.add(hc.action2.tile1);
-				}
-				else throw new RuntimeException("????");
-				hc.action2	= null;
-				hc.oldTile2	= null;
-			}
-			else																											//		Case undo round first game
-			{
-				if (hc.action1.isBUILD_SIMPLE() || hc.action1.isBUILD_AND_START_TRIP_NEXT_TURN())
-				{
-					x = hc.action1.positionTile1.x;
-					y = hc.action1.positionTile1.y;
-					if (!hc.oldTile1.isEmpty())	{this.board[x][y] = hc.oldTile1; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
-					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
-					pi.hand.add(hc.action1.tile1);
-				}
-				else if (hc.action1.isBUILD_DOUBLE())
-				{
-					x = hc.action1.positionTile1.x;
-					y = hc.action1.positionTile1.y;
-					if (!hc.oldTile1.isEmpty())	{this.board[x][y] = hc.oldTile1;; pi.hand.remove(hc.oldTile1);}				//			Case: game was a tile improve
-					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
-					pi.hand.add(hc.action1.tile1);
-					x = hc.action1.positionTile2.x;
-					y = hc.action1.positionTile2.y;
-					if (!hc.oldTile2.isEmpty())	{this.board[x][y] = hc.oldTile2; pi.hand.remove(hc.oldTile2);}				//			Case: game was a tile improve
-					else						 this.board[x][y] = this.getNewEmptyTile();									//			Case: game was a simple tile put
-					pi.hand.add(hc.action1.tile2);
-				}
-				else if (hc.action1.isMOVE())
-				{
-					// TODO check avec travel
-				}
-				else throw new RuntimeException("????");
-				hc.action1	= null;
-				hc.oldTile1	= null;
-				hc.oldTile2	= null;
-			}
-		}
-		else																													// Case player ha
-		{
-			this.playerInfoList.get(playerName).undoRound();
-			this.round --;
-			this.getPreviousDataAndRollBack();
-		}
-////TODO		throw new RuntimeException("Pas fini");
-	}
 
 // --------------------------------------------
 // Setter:
 // --------------------------------------------
+	/**=======================================================
+	 * @return the previous game data.</b>
+	 * If the current player has done an action this turn, his action is undone.</b>
+	 * If the player has done no action this turn, the last player's action is undone.</br>
+	 =========================================================*/
+	public void getPreviousDataAndRollBack()
+	{
+		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
+		HistoryCell	hc			= pi.getLastActionHistory();
+		String		playerName	= this.getPlayerTurn();
+
+		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))							// Case player has done an action this round
+		{
+			if (hc.action2 != null)																	//		Case undo round second game
+			{
+				this.undoSecondGameInThisRound(hc, pi);
+				hc.action2				= null;
+				hc.oldTile2				= null;
+				hc.drawnTile2			= null;
+				hc.drawnFromPlayerHand2	= null;
+			}
+			else																					//		Case undo round first game
+			{
+				if (hc.action1.isBUILD_SIMPLE() || hc.action1.isBUILD_AND_START_TRIP_NEXT_TURN())	//			Case simple game
+				{
+					this.undoFirstSimpleGameInThisRound(hc, pi);
+				}
+				else if (hc.action1.isBUILD_DOUBLE() || hc.action1.isTWO_BUILD_SIMPLE())			//			Case double game
+				{
+					this.undoFirstDoubleGameInThisRound(hc, pi);
+				}
+				else if (hc.action1.isMOVE())
+				{
+					this.undoFirstTravelGameInThisRound(hc, pi);
+				}
+				else throw new RuntimeException("????");
+				hc.action1				= null;
+				hc.action2				= null;
+				hc.oldTile1				= null;
+				hc.oldTile2				= null;
+				hc.drawnTile1			= null;
+				hc.drawnTile2			= null;
+				hc.drawnFromPlayerHand1	= null;
+				hc.drawnFromPlayerHand2	= null;
+			}
+		}
+		else																									// Case player hah done no action this round
+		{
+			this.playerInfoList.get(playerName).undoRound();
+			this.round --;
+			this.getPreviousDataAndRollBack();																	//		Undo the last player's round
+		}
+	}
 	/**===================================================================
 	 * @return gathers all the possible action setters on this data
 	 =====================================================================*/
@@ -382,13 +351,31 @@ public class Data implements Serializable
 	 =====================================================*/
 	public void drawTile(String playerName, int nbrCards)
 	{
-		Hand hand = this.playerInfoList.get(playerName).hand;
+		PlayerInfo	pi	= this.playerInfoList.get(playerName);
+		Hand		hand= pi.hand;
+		HistoryCell	hc	= pi.getLastActionHistory();
 		Tile t;
 
-		for (int i=0; i<nbrCards; i++)
+		switch(nbrCards)
 		{
-			t = this.deck.drawTile();
-			hand.add(t);
+			case 1:
+				t = this.deck.drawTile();
+				hand.add(t);
+				if		(hc.drawnTile1 == null)	{hc.drawnTile1 = t; hc.drawnFromPlayerHand1 = null;}
+				else if (hc.drawnTile2 == null)	{hc.drawnTile2 = t; hc.drawnFromPlayerHand2 = null;}
+				else							throw new RuntimeException("You already have drawn two tiles");
+				return;
+			case 2:
+				t = this.deck.drawTile();
+				hand.add(t);
+				if		(hc.drawnTile1 == null)	{hc.drawnTile1 = t; hc.drawnFromPlayerHand1 = null;}
+				else							throw new RuntimeException("You already have drawn two tiles");
+				t = this.deck.drawTile();
+				hand.add(t);
+				if		(hc.drawnTile2 == null)	{hc.drawnTile2 = t; hc.drawnFromPlayerHand2 = null;}
+				else							throw new RuntimeException("You already have drawn two tiles");
+				return;
+			default: throw new RuntimeException("Too many tiles to draw: " + nbrCards);
 		}
 	}
 	/**===================================================
@@ -396,9 +383,13 @@ public class Data implements Serializable
 	 =====================================================*/
 	public void pickTileFromPlayer(String playerName, String chosenPlayerName, Tile tile)
 	{
-		Hand src = this.playerInfoList.get(playerName).hand;
-		Hand dst = this.playerInfoList.get(chosenPlayerName).hand;
+		Hand		src = this.playerInfoList.get(playerName).hand;
+		Hand		dst = this.playerInfoList.get(chosenPlayerName).hand;
+		HistoryCell	hc	= this.playerInfoList.get(playerName).getLastActionHistory();
 
+		if		(hc.drawnTile1 == null)	{hc.drawnTile1 = tile; hc.drawnFromPlayerHand1 = chosenPlayerName;}
+		else if (hc.drawnTile2 == null)	{hc.drawnTile2 = tile; hc.drawnFromPlayerHand2 = chosenPlayerName;}
+		else							throw new RuntimeException("You already have drawn two tiles");
 		dst.remove(tile);
 		src.add(tile);
 	}
@@ -555,7 +546,7 @@ public class Data implements Serializable
 	public LinkedList<Color>	getRemainingColors()							{return ((new Copier<Color>()).copyList(this.remainingColors));}
 	public String				getWinner()										{return this.winner;}
 	/**=======================================================================
-	 * @return true if the player has no possible game, considering his hand, the deck and his travel
+	 * @return true if the player has no possible game, considering his hand, the deck and his travel</br>
 	 ========================================================================= */
 	public boolean isGameBlocked(String playerName)
 	{
@@ -913,7 +904,133 @@ System.out.println("iciiiii, trackCompleted");
 
 		return res;
 	}
+// --------------------------------------------
+// Private Roll back methods:
+// --------------------------------------------
+	private void undoSecondGameInThisRound(HistoryCell hc, PlayerInfo pi)
+	{
+		Hand hand;
+		int x, y;
 
+		if (hc.action2.isBUILD_SIMPLE())
+		{
+			x = hc.action2.positionTile1.x;
+			y = hc.action2.positionTile1.y;
+			if (hc.oldTile2 != null)														//			Case: game was a tile improve
+			{
+				this.board[x][y] = hc.oldTile2;
+				pi.hand.remove(hc.oldTile2);
+			}
+			else																			//			Case: game was a simple tile put
+			{
+				this.board[x][y] = Tile.getNewEmptyTile();
+				if (hc.drawnTile2 != null)
+				{
+					pi.hand.remove(hc.drawnTile2);
+					if (hc.drawnFromPlayerHand2 == null)	this.deck.undrawTile(hc.drawnTile2);
+					else
+					{
+						hand = this.playerInfoList.get(hc.drawnFromPlayerHand2).hand;
+						hand.add(hc.drawnTile2);
+					}
+					hc.drawnTile2			= null;
+					hc.drawnFromPlayerHand2 = null;
+				}
+			}
+			pi.hand.add(hc.action2.tile1);
+		}
+		else throw new RuntimeException("????");
+	}
+	private void undoFirstSimpleGameInThisRound(HistoryCell hc, PlayerInfo pi)
+	{
+		Hand hand;
+		int x, y;
+
+		x = hc.action1.positionTile1.x;
+		y = hc.action1.positionTile1.y;
+		if (!hc.oldTile1.isEmpty())														//			Case: game was a tile improve
+		{
+			this.board[x][y] = hc.oldTile1;
+			pi.hand.remove(hc.oldTile1);
+		}
+		else																			//			Case: game was a simple tile put
+		{
+			this.board[x][y] = Tile.getNewEmptyTile();
+			if (hc.drawnTile1 != null)
+			{
+				pi.hand.remove(hc.drawnTile1);
+				if (hc.drawnFromPlayerHand1 == null) this.deck.undrawTile(hc.drawnTile1);
+				else
+				{
+					hand = this.playerInfoList.get(hc.drawnFromPlayerHand1).hand;
+					hand.add(hc.drawnTile1);
+				}
+				hc.drawnTile1			= null;
+				hc.drawnFromPlayerHand1	= null;
+			}
+		}
+		pi.hand.add(hc.action1.tile1);
+	}
+	private void undoFirstDoubleGameInThisRound(HistoryCell hc, PlayerInfo pi)
+	{
+		Hand hand;
+		int x, y;
+
+		x = hc.action1.positionTile1.x;
+		y = hc.action1.positionTile1.y;
+		if (!hc.oldTile1.isEmpty())														//			Case: game was a tile improve
+		{
+			this.board[x][y] = hc.oldTile1;
+			pi.hand.remove(hc.oldTile1);
+		}
+		else
+		{
+			this.board[x][y] = Tile.getNewEmptyTile();									//			Case: game was a simple tile put
+			if (hc.drawnTile1 != null)
+			{
+				if (hc.drawnFromPlayerHand1 == null) pi.hand.remove(hc.drawnTile1);
+				else
+				{
+					hand = this.playerInfoList.get(hc.drawnFromPlayerHand1).hand;
+					hand.add(hc.drawnTile1);
+				}
+				this.deck.undrawTile(hc.drawnTile1);
+				hc.drawnTile1			= null;
+				hc.drawnFromPlayerHand1	= null;
+			}
+		}
+		pi.hand.add(hc.action1.tile1);
+		x = hc.action1.positionTile2.x;
+		y = hc.action1.positionTile2.y;
+		if (!hc.oldTile2.isEmpty())														//			Case: game was a tile improve
+		{
+			this.board[x][y] = hc.oldTile2;
+			pi.hand.remove(hc.oldTile2);
+		}
+		else																			//			Case: game was a simple tile put
+		{
+			this.board[x][y] = Tile.getNewEmptyTile();
+			if (hc.drawnTile2 != null)
+			{
+				if (hc.drawnFromPlayerHand2 == null) pi.hand.remove(hc.drawnTile2);
+				else
+				{
+					hand = this.playerInfoList.get(hc.drawnFromPlayerHand2).hand;
+					hand.add(hc.drawnTile2);
+				}
+				this.deck.undrawTile(hc.drawnTile2);
+				hc.drawnTile2			= null;
+				hc.drawnFromPlayerHand2	= null;
+			}
+		}
+		pi.hand.add(hc.action1.tile2);
+	}
+	private void undoFirstTravelGameInThisRound(HistoryCell hc, PlayerInfo pi)
+	{
+// TODO check avec travel
+throw new RuntimeException("Not implemented yet");
+	}
+//TODO iciiiiiiiiiiiiiiiii
 // --------------------------------------------
 // Private methods:
 // --------------------------------------------
@@ -1094,7 +1211,6 @@ System.out.println("iciiiii, trackCompleted");
 		}
 		return res;
 	}
-	public Tile getNewEmptyTile(){return this.board[0][0].getClone();}
 
 // --------------------------------------------
 // Player Info class:
@@ -1166,10 +1282,14 @@ System.out.println("iciiiii, trackCompleted");
 	{
 		// Attributes
 		private static final long serialVersionUID = 2412756799747914486L;
-		public Action	action1		= null;
-		public Action	action2		= null;
-		public Tile		oldTile1	= null;
-		public Tile		oldTile2	= null;;
+		public Action	action1					= null;
+		public Action	action2					= null;
+		public Tile		oldTile1				= null;
+		public Tile		oldTile2				= null;
+		public Tile		drawnTile1				= null;
+		public Tile		drawnTile2				= null;
+		public String	drawnFromPlayerHand1	= null;
+		public String	drawnFromPlayerHand2	= null;
 
 		// Builder
 		private HistoryCell(){}
@@ -1178,27 +1298,15 @@ System.out.println("iciiiii, trackCompleted");
 		public HistoryCell getClone()
 		{
 			HistoryCell res = new HistoryCell();
-			if (this.action1 != null)
-			{
-				res.action1	= new Action();
-				res.action1.copy(this.action1);
-			}
-			if (this.action2 != null)
-			{
-				res.action2	= new Action();
-				res.action2.copy(this.action2);
-			}
-			if (this.oldTile1 != null)
-			{
-				res.oldTile1 = new Tile();
-				res.oldTile1.copy(this.oldTile1);
-			}
-			if (this.oldTile2 != null)
-			{
-				res.oldTile2 = new Tile();
-				res.oldTile2.copy(this.oldTile2);
-			}
 
+			if (this.action1				!= null)		{res.action1	= new Action();	res.action1		.copy(this.action1);}
+			if (this.action2				!= null)		{res.action2	= new Action();	res.action2		.copy(this.action2);}
+			if (this.oldTile1				!= null)		{res.oldTile1	= new Tile();	res.oldTile1	.copy(this.oldTile1);}
+			if (this.oldTile2				!= null)		{res.oldTile2	= new Tile();	res.oldTile2	.copy(this.oldTile2);}
+			if (this.drawnTile1				!= null)		{res.drawnTile1	= new Tile();	res.drawnTile1	.copy(this.drawnTile1);}
+			if (this.drawnTile2				!= null)		{res.drawnTile2	= new Tile();	res.drawnTile2	.copy(this.drawnTile2);}
+			if (this.drawnFromPlayerHand1	!= null)		{res.drawnFromPlayerHand1	= new String(this.drawnFromPlayerHand1);}
+			if (this.drawnFromPlayerHand2	!= null)		{res.drawnFromPlayerHand2	= new String(this.drawnFromPlayerHand2);}
 			return res;
 		}
 		public boolean isEmpty()		{return (this.action1 == null);}

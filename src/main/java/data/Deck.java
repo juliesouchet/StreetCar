@@ -61,10 +61,9 @@ public class Deck implements Serializable
 	public boolean	isEmpty()					{return (this.getNbrRemainingDeckTile() == 0);}
 	public int		getNbrRemainingDeckTile()	{return (this.stackSize);}
 	/**=====================================================
-	 * @return Pick up an element from the stack using
-	 * a uniformly distributed probability distribution
-	 * The returned element is removed from the stack.
-	 * The stack is kept sorted
+	 * @return Pick up an element from the stack using a uniformly distributed probability distribution.</br>
+	 * The returned element is removed from the stack.</br>
+	 * The stack is kept sorted.</br>
 	 =======================================================*/
 	public Tile drawTile()
 	{
@@ -97,8 +96,25 @@ public class Deck implements Serializable
 		this.stackSize --;
 		return res.getClone();
 	}
+	/**===========================================================
+	 * @return Put back the given tile in the deck</br>
+	 =============================================================*/
+	public void undrawTile(Tile drawnTile)
+	{
+		boolean founded = false;
+
+		for (StackCell sc: this.stack)
+		{
+			if (!sc.t.equals(drawnTile)) continue;
+			if (sc.remaining+1 > drawnTile.getCardinal())	throw new RuntimeException("Too many tiles \"" + drawnTile.getTileID() + "\" in the deck");
+			sc.remaining ++;
+			founded = true;
+		}
+		if (!founded) throw new RuntimeException("Cant found the tile to put back in deck");
+		this.stackSize ++;
+	}
 	/**=====================================================
-	 * @return the number of remaining tiles that match the given tile
+	 * @return the number of remaining tiles that match the given tile</br>
 	 =======================================================*/
 	public int getNbrRemainingTile(Tile t)
 	{
