@@ -1,6 +1,7 @@
 package main.java.util;
 
 import java.awt.Color;
+import java.awt.Point;
 
 
 
@@ -32,5 +33,12 @@ public class Util
 		Object tmp = tab [i];
 		tab[i] = tab[j];
 		tab[j] = tmp;
+	}
+
+	public static int manhathanDistance(Point p0, Point p1)
+	{
+		int a = Math.abs(p0.x - p1.x);
+		int b = Math.abs(p0.y - p1.y);
+		return a + b;
 	}
 }

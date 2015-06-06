@@ -30,7 +30,7 @@ public class TestAIvsAI {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
 		
-		String hostName = game.getHostName();
+		String hostName = game.getTestHostName();
 		
 		try {
 			game.hostStartGame(hostName);

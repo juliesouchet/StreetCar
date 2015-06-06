@@ -43,7 +43,7 @@ public class GameSimulation extends Game {
 	{
 		boolean result = false;
 		
-		String hostName = getHostName();
+		String hostName = getTestHostName();
 		try {
 			this.hostStartGame(hostName);		// Launch game
 		} catch (RemoteException | ExceptionForbiddenAction

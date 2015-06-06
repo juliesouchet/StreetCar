@@ -65,7 +65,7 @@ System.out.println("trackCompleted = " + trackCompleted);
 					destinationTerminus.add(allTermini.get(1));
 				}
 		// TODO setDestinationTerminus se fait dans l'action
-				currentConfig.setDestinationTerminus(name, (Point[])destinationTerminus.toArray());
+//TODO riyane				currentConfig.setDestinationTerminus(name, (Point[])destinationTerminus.toArray());
 				startingPoint = checkpoints.getFirst();
 				
 				if(currentConfig.hasDoneRoundFirstAction(getName())) {

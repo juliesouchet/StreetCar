@@ -1,7 +1,6 @@
 package main.java.automaton.test;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -10,12 +9,6 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Strongest;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.game.ExceptionForbiddenAction;
-import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionGameIsOver;
-import main.java.game.ExceptionNotYourTurn;
-import main.java.game.ExceptionPlayerIsBlocked;
-import main.java.game.ExceptionTooManyActions;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -188,11 +181,8 @@ public class PlayerAutomata implements InterfaceIHM
 	
 	
 	try {
-		player.doAction(name, myAction);
-	} catch (RemoteException | ExceptionGameHasNotStarted
-			| ExceptionNotYourTurn | ExceptionForbiddenAction
-			| ExceptionTooManyActions | ExceptionPlayerIsBlocked
-			| ExceptionGameIsOver e) {
+		player.doAction(myAction);
+	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
