@@ -58,7 +58,7 @@ public class GameSimulation
 	public String simulate()
 	{
 //TODO to remove;
-Data tmpData = this.data.getClone(null);
+//Data tmpData = this.data.getClone(null);
 		String			winner			= this.data.getWinner();
 		String			playerTurn		= this.data.getPlayerTurn();
 		PlayerAutomaton	player			= this.players.get(playerTurn);
@@ -92,8 +92,8 @@ Data tmpData = this.data.getClone(null);
 			player		= this.players.get(playerTurn);
 			winner		= data.getWinner();
 		}
-this.data = tmpData;
-//		for (int i=0; i<nbrDoneActions; i++) this.data.rollBack();
+//this.data = tmpData;
+		for (int i=0; i<nbrDoneActions; i++) this.data.rollBack();
 		return winner;
 	}
 }

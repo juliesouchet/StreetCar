@@ -47,7 +47,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	{
 		String res = "";
 		for (Tile t : tileList) {
-			res += "\n"+t.getTileID();
+			res += "\n"+t.toString();
 		}
 		return res;
 	}
@@ -59,7 +59,8 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	{
 		int rotation = t.getTileDirection().getVal();
 
-		if (this.tileList.size() >= maxHandSize)	throw new RuntimeException("Too big hand size");
+		if (this.tileList.size() >  maxHandSize)	throw new RuntimeException("Corrupted hand: size = " + this.tileList.size());
+		if (this.tileList.size() == maxHandSize)	throw new RuntimeException("Too big hand size: " + this.tileList.size());
 		if (!t.isDeckTile())						throw new RuntimeException("Not a deck tile: " + t);
 
 		for(int i = 0; i < rotation; i++)t.turnLeft();
@@ -69,7 +70,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	public void remove(Tile t)
 	{
 		boolean test = tileList.remove(t);
-		if (!test) throw new RuntimeException("Can't find the given tile: " + t);
+		if (!test) throw new RuntimeException("Can't find the given tile: " + t + "   in the hand:\n" + this.toString());
 	}
 	public void setHand(Hand hand)
 	{
