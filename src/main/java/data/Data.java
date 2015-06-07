@@ -44,7 +44,7 @@ public class Data implements Serializable
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				maxNbrTileToDraw		= 2;
-	public static final int				minSpeed				= 0;
+	public static final int				minSpeed				= 1;
 	public static final int				maxSpeed				= 10;
 	public static final int				maxPossibleAction		= 6000;
 	public static final int				maxNbrTramPath			= 4 ^ maxSpeed;
@@ -355,7 +355,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================*/
 	public void drawTile(String playerName, int nbrCards)
 	{
-System.out.println("Data.drawTile: " + nbrCards);
+//System.out.println("Data.drawTile: " + nbrCards);
 		if (nbrCards == 0) return;
 
 		PlayerInfo	pi	= this.playerInfoList.get(playerName);
