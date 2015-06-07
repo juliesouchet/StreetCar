@@ -4,7 +4,6 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.data.LoginInfo;
 import main.java.game.ExceptionGameHasAlreadyStarted;
 import main.java.game.Game;
-import main.java.util.TraceDebugAutomate;
 
 public class TestAIvsAI {
 	
@@ -33,8 +32,8 @@ public class TestAIvsAI {
 		
 		String hostName = game.getTestHostName();
 		
-		TraceDebugAutomate.dumbestTrace = true;
-		TraceDebugAutomate.travelerTrace = true;
+		//TraceDebugAutomate.dumbestTrace = true;
+		//TraceDebugAutomate.travelerTrace = true;
 		
 		try {
 			game.hostStartGame(hostName);

@@ -23,6 +23,7 @@ import main.java.gui.components.ComboBox;
 import main.java.gui.components.Label;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
+import main.java.util.Debug;
 
 @SuppressWarnings("serial")
 public class HostRoomMenuPanel extends MenuPanel {
@@ -118,6 +119,13 @@ public class HostRoomMenuPanel extends MenuPanel {
 	}
 
 	public void cancelGame() {
+/* TODO was HEAD
+		GameController gc = (GameController)this.getFrameController();
+		try {
+			StreetCar.player.onQuitGame(StreetCar.player.getPlayerName());
+		} catch (RemoteException | ExceptionForbiddenAction e) { e.printStackTrace(); }
+		gc.showWelcomeMenuPanel();
+*/
 		this.getGameController().stopGame();
 	}
 
@@ -142,7 +150,9 @@ public class HostRoomMenuPanel extends MenuPanel {
 		}
 	}
 
+	private static int nbOfTimesCalled = 0;
 	public void refreshMenu(PlayerIHM player, Data data) {
+		Debug.printTrace("REFRESH MENU " + ++nbOfTimesCalled);
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i=0; i<loginInfos.length; i++) {
