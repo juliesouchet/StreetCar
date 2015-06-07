@@ -92,16 +92,16 @@ TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSp
 					checkpoints[x] = buildingsPosition[x-1];
 				}
 				destinationTerminus = new Point[2];
-				i = r.nextInt(2); // Random first terminus
+				//i = r.nextInt(2); // Random first terminus TODO prendre en compte les differentes combinaisons de points de terminus
 				if(r.nextInt(2) == 0) { // Random direction of travel
-					startingPoint = terminusPosition[i];
+					startingPoint = terminusPosition[0]; //i]; TODO
 					destinationTerminus[0] = terminusPosition[2];
 					destinationTerminus[1] = terminusPosition[3];
 				}
 				else {
 					destinationTerminus[0] = terminusPosition[0];
 					destinationTerminus[1] = terminusPosition[1];
-					startingPoint = terminusPosition[i+2];
+					startingPoint = terminusPosition[3]; //i+2]; TODO
 				}
 				checkpoints[0] = startingPoint;
 				

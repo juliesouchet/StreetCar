@@ -516,7 +516,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		Point[]		path	= new Point[size];
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
 		Point p0, p1, building;
-
+// TODO verifie les autres combinaisons de terminus (Julie)
 		path[0] = pi.terminus[0];
 		path[1] = pi.terminus[3];
 
