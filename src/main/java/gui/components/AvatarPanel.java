@@ -36,7 +36,7 @@ public class AvatarPanel extends Panel{
 		} else if (avatarColor.equals(Color.BLACK)) {
 			bufferedImage = Resources.imageNamed("avatar_black");
 		} else {
-			bufferedImage = Resources.imageNamed("avatar_not_found");;
+			bufferedImage = Resources.imageNamed("avatar_not_found");
 		}		
 	}
 	
@@ -54,8 +54,7 @@ public class AvatarPanel extends Panel{
 		super.paintComponent(g);
 		if (bufferedImage != null) {
 			g.drawImage(bufferedImage, 0, 0, this.getWidth(), this.getHeight(), null);
-		}
-		
+		}		
 	}
 	
 	

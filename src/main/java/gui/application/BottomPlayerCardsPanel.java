@@ -11,7 +11,9 @@ import main.java.data.Tile;
 import main.java.gui.board.TilePanel;
 import main.java.gui.components.AvatarPanel;
 import main.java.gui.components.Label;
+import main.java.gui.components.LinePanel;
 import main.java.gui.components.Panel;
+import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
 
 @SuppressWarnings("serial")
@@ -97,15 +99,39 @@ public class BottomPlayerCardsPanel extends Panel{
 			Tile tile = data.getBoard()[p.x][p.y];
 			TilePanel stationPanel = new TilePanel(tile);			
 			stationPanel.setBounds(x+(i*60), 80, 50, 50);
-			stationPanel.setToolTipText("Create your line, it must be connected to these buildings !" );
+			stationPanel.setToolTipText("Crééz votre ligne en passant par ces deux stations !" );
 			this.add(stationPanel);
 		}
 		
 		lineNumber = data.getPlayerLine(playerName);
-		lineNumberLabel = new Label(Integer.toString(lineNumber));
-		lineNumberLabel.setBounds(281, 20, 50, 50);
-		lineNumberLabel.setToolTipText("Your line number. Create a line between your two terminus !");
-		this.add(lineNumberLabel);
+		//lineNumberLabel = new Label(Integer.toString(lineNumber));
+		LinePanel linePanel = null;
+		switch (lineNumber){
+			case 1:
+				linePanel = new LinePanel(Resources.imageNamed("line1"));
+				break;
+			case 2:
+				linePanel = new LinePanel(Resources.imageNamed("line2"));
+				break;
+			case 3:
+				linePanel = new LinePanel(Resources.imageNamed("line3"));
+				break;
+			case 4:
+				linePanel = new LinePanel(Resources.imageNamed("line4"));
+				break;
+			case 5:
+				linePanel = new LinePanel(Resources.imageNamed("line5"));
+				break;
+			case 6:
+				linePanel = new LinePanel(Resources.imageNamed("line6"));
+				break;
+		}
+		linePanel.setBounds(260, 20, 50, 50);
+		linePanel.setToolTipText("Votre numéro de ligne. Crééz votre ligne entre vos deux terminus !");
+		this.add(linePanel);
+		//lineNumberLabel.setBounds(281, 20, 50, 50);
+		//lineNumberLabel.setToolTipText("Your line number. Create a line between your two terminus !");
+		//this.add(lineNumberLabel);
 	}
 	
 	public void refreshPlayerHandCards(String playerName, Data data) { // TODO: not working
@@ -128,7 +154,7 @@ public class BottomPlayerCardsPanel extends Panel{
 		super.paintComponent(g);
         
         // Line number
-		int[] xPoints = {260, 285, 310, 285};
+		/*int[] xPoints = {260, 285, 310, 285};
 		int[] yPoints = {45, 20, 45, 70};
 		switch (lineNumber) {
 		case 1:
@@ -155,7 +181,7 @@ public class BottomPlayerCardsPanel extends Panel{
 		}
 		g.fillPolygon(xPoints, yPoints, 4);
 		g.setColor(Color.BLACK);
-        g.drawPolygon(xPoints, yPoints, 4);
+        g.drawPolygon(xPoints, yPoints, 4);*/
 	}
 	
 	public void refreshGame(PlayerIHM player, Data data) {
