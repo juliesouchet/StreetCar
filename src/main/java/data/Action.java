@@ -31,7 +31,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 	public Tile		tile2									= Tile.specialNonRealTileConstructor(null, -1, null);
 
 	public Point[]	tramwayMovement							= initMovementTab();			// Move Attributes
-	public int		ptrTramwayMovement						= -1;							//		Index of the last non null point
+	public int		tramwayMovementSize						= 0;							//		Index of the last non null point
 	public Point	startTerminus							= null;
 
 // -----------------------------------------------------
@@ -49,7 +49,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		Action res = new Action();
 
 		res.action = MOVE;
-		res.ptrTramwayMovement = pathSize;
+		res.tramwayMovementSize = pathSize;
 		for (int i=0; i<pathSize; i++)
 		{
 			res.tramwayMovement[i].x = path[i].x;
@@ -242,7 +242,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		switch(this.action)
 		{
-			case MOVE:								str += "MOVE : "					+ this.tramwayMovement.toString();	break;
+			case MOVE:								str += "MOVE : "					+ this.tramwayMovement.toString()	+ "    StartTerminus: " + this.startTerminus;	break;
 			case BUILD_SIMPLE:						str += "BUILD_SIMPLE: " 			+ this.positionTile1.toString()		+ this.tile1.toString();	break;
 			case TWO_BUILD_SIMPLE:					str += "TWO_BUILD_SIMPL: "			+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
 			case BUILD_DOUBLE:						str += "BUILD_DOUBLE: " 			+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
@@ -272,8 +272,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.positionTile2.y	= (src.positionTile2 == null) ? null : src.positionTile2.y;
 		this.tile1				. copy(src.tile1);
 		this.tile2				. copy(src.tile2);
-		this.ptrTramwayMovement	= src.ptrTramwayMovement;
-		for (int i=0; i<=src.ptrTramwayMovement; i++)
+		this.tramwayMovementSize= src.tramwayMovementSize;
+		for (int i=0; i<src.tramwayMovementSize; i++)
 		{
 			this.tramwayMovement[i].x = src.tramwayMovement[i].x;
 			this.tramwayMovement[i].y = src.tramwayMovement[i].y;
@@ -293,7 +293,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.positionTile2.x		= x2;
 		this.positionTile2.y		= y2;
 		this.tile2					.copy(t2);
-		this.ptrTramwayMovement		= -1;
+		this.tramwayMovementSize	= 0;
 	}
 	/**===========================================================
 	 * Set the current Action to the given simple building action, and start trip nest turn
@@ -306,7 +306,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.tile1					.copy(t1);
 		this.positionTile2.x		= -1;
 		this.positionTile2.y		= -1;
-		this.ptrTramwayMovement		= -1;
+		this.tramwayMovementSize	= 0;
 	}
 	/**===========================================================
 	 * Set the current Action to the given simple building action
@@ -320,24 +320,24 @@ public class Action implements Serializable, CloneableInterface<Action>
 		this.positionTile2.x		= x2;
 		this.positionTile2.y		= y2;
 		this.tile2					.copy(t2);
-		this.ptrTramwayMovement		= -1;
+		this.tramwayMovementSize	= 0;
 	}
 	/**===========================================================
 	 * Set the current Action to the given travel action
 	 =============================================================*/
-	public void setMoveAction(Point startTerminus, Point[] path, int length)
+	public void setMoveAction(Point startTerminus, Point[] tramwayMovement, int tramwayMovementSize)
 	{
 		this.action					= MOVE;
 		this.positionTile1.x		= -1;
 		this.positionTile1.y		= -1;
 		this.positionTile2.x		= -1;
 		this.positionTile2.y		= -1;
-		this.ptrTramwayMovement		= length-1;
+		this.tramwayMovementSize	= tramwayMovementSize;
 
-		for (int i=0; i<length; i++)
+		for (int i=0; i<tramwayMovementSize; i++)
 		{
-			this.tramwayMovement[i].x = path[i].x;
-			this.tramwayMovement[i].x = path[i].y;
+			this.tramwayMovement[i].x = tramwayMovement[i].x;
+			this.tramwayMovement[i].x = tramwayMovement[i].y;
 		}
 		this.startTerminus			= (startTerminus == null) ? null : new Point(startTerminus);
 	}
@@ -369,7 +369,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 		if(this.isMOVE() && otherAction.isMOVE()){
 			TraceDebugData.debugActionEquals("\t Both isMoving(): CONTINUE \n");
-			if (this.ptrTramwayMovement!=otherAction.ptrTramwayMovement){
+			if (this.tramwayMovementSize!=otherAction.tramwayMovementSize){
 				TraceDebugData.debugActionEquals("\t ptrTramwayMovement different: return FALSE \n");
 				return false;
 			}
@@ -378,7 +378,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 			return false;
 		}
 			TraceDebugData.debugActionEquals("\t ptrTramwayMovement are equals: return CONTINUE \n");
-			for (int i=0; i<= this.ptrTramwayMovement;i++){
+			for (int i=0; i< this.tramwayMovementSize;i++){
 				if(!(this.tramwayMovement[i].equals(otherAction.tramwayMovement[i]))){
 					TraceDebugData.debugActionEquals("\t this.tramwayMovement["+i+"]="+this.tramwayMovement[i]+" != this.tramwayMovement["+i+"]="+otherAction.tramwayMovement[i]+" return FALSE \n");
 					return false;
@@ -440,9 +440,9 @@ public class Action implements Serializable, CloneableInterface<Action>
 		res.positionTile2.y		= this.positionTile2.y;
 		res.tile1				.copy(this.tile1);
 		res.tile2				.copy(this.tile2);
-		res.ptrTramwayMovement	= this.ptrTramwayMovement;
+		res.tramwayMovementSize	= this.tramwayMovementSize;
 		res.startTerminus		= (this.startTerminus == null) ? null : new Point(this.startTerminus);
-		for (int i=0; i<=this.ptrTramwayMovement; i++)
+		for (int i=0; i<this.tramwayMovementSize; i++)
 		{
 			res.tramwayMovement[i].x = this.tramwayMovement[i].x;
 			res.tramwayMovement[i].y = this.tramwayMovement[i].y;

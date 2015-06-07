@@ -5,7 +5,7 @@ import java.util.HashMap;
 import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Strongest;
-import main.java.automaton.Traveler;
+import main.java.automaton.TravelerRiyane;
 import main.java.data.Action;
 import main.java.data.Data;
 
@@ -40,7 +40,7 @@ public class GameSimulationRiyane
 			switch (aiLevel)
 			{
 				case PlayerAutomaton.dumbestLvl:	automaton = new Dumbest(playerName);	break;
-				case PlayerAutomaton.travelerLvl:	automaton = new Traveler(playerName);	break;
+				case PlayerAutomaton.travelerLvl:	automaton = new TravelerRiyane(playerName);	break;
 				case PlayerAutomaton.strongestLvl:	automaton = new Strongest(playerName);	break;
 				default	:throw new RuntimeException("Undefined AI difficulty : " + aiLevel);
 			}
@@ -57,6 +57,8 @@ public class GameSimulationRiyane
 	 ===========================================================================*/
 	public String simulate()
 	{
+//TODO to remove;
+Data tmpData = this.data.getClone(null);
 		String			winner			= this.data.getWinner();
 		String			playerTurn		= this.data.getPlayerTurn();
 		PlayerAutomaton	player			= this.players.get(playerTurn);
@@ -90,7 +92,8 @@ public class GameSimulationRiyane
 			player		= this.players.get(playerTurn);
 			winner		= data.getWinner();
 		}
-		for (int i=0; i<nbrDoneActions; i++) this.data.rollBack();
+this.data = tmpData;
+//		for (int i=0; i<nbrDoneActions; i++) this.data.rollBack();
 		return winner;
 	}
 }

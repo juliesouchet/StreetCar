@@ -331,25 +331,26 @@ System.out.println("Game.setLoginInfo: no change to do");
 	 * @return Moves the player's streetcar following the tramMovement.</br>
 	 * It must use a pre-existing track on the board, cannot go backwards,
 	 * and cannot be longer than the maximum allowed speed.</br>
+	 * @param tramPath must contain the actual tram position, if the travel has already started.  Otherwise, it must contain one of the player's terminus.</br>
 	 * @param startTerminus is non null when the player start his maiden travel.  Other wise, this parameter may be null</br>
 	 =============================================================================*/
 	public synchronized void moveTram (String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed
 	{
-		if (!this.data.isGameStarted())														throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName))											throw new ExceptionNotYourTurn();
-		if (!this.data.isStartOfTurn(playerName))											throw new ExceptionForbiddenAction();
+		if (!this.data.isGameStarted())												throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))									throw new ExceptionNotYourTurn();
+		if (!this.data.isStartOfTurn(playerName))									throw new ExceptionForbiddenAction();
+		if (tramPathSize > data.getMaximumSpeed()+1)								throw new ExceptionWrongTramwaySpeed();
+		if (tramPathSize < Data.minSpeed+1)											throw new ExceptionWrongTramwaySpeed();
+		if (tramPathSize > Data.maxSpeed+1)											throw new ExceptionWrongTramwaySpeed();
 
-		if (!this.data.hasStartedMaidenTravel(playerName))
+		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
+		if (!hasStartedTravel)
 		{
-			if (startTerminus == null)														throw new ExceptionMissingStartTerminus();
-			if (!data.isPlayerTerminus(playerName, startTerminus))							throw new ExceptionWrongPlayerTerminus();
+			if (startTerminus == null)												throw new ExceptionMissingStartTerminus();
+			if (!startTerminus.equals(tramPath[0]))									throw new ExceptionWrongTramwayPath();
+			if (!data.isPlayerTerminus(playerName, startTerminus))					throw new ExceptionWrongPlayerTerminus();
 		}
-		Point[] endTerminus = this.data.getPlayerTerminusPosition(playerName);
-		Point previous = this.data.getPreviousTramPosition(playerName);
-		if (!this.checkTramPath(playerName, tramPath, tramPathSize, endTerminus, previous))	throw new ExceptionWrongTramwayPath();
-		if (tramPathSize > data.getMaximumSpeed())											throw new ExceptionWrongTramwaySpeed();
-		if (tramPathSize < Data.minSpeed)													throw new ExceptionWrongTramwaySpeed();
-		if (tramPathSize > Data.maxSpeed)													throw new ExceptionWrongTramwaySpeed();
+		if (!this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus))	throw new ExceptionWrongTramwayPath();
 
 		this.engine.addAction(data, "moveTram", playerName, tramPath, tramPathSize, startTerminus);
 	}
@@ -444,30 +445,41 @@ System.out.println("Game.setLoginInfo: no change to do");
 		this.aiList.put(playerName, t);
 		t.start();
 	}
-	private boolean checkTramPath(String playerName, Point[] tramPath, int tramPathSize, Point[] inputEndTerminus, Point previousTramPosition)
+	private boolean checkTramPath(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus)
 	{
-		int winner = -1;
-		Point p0 = tramPath[0], p1;
-		Point[] endTerminus;
-
-		if (inputEndTerminus == null)	endTerminus = data.getPlayerTerminusPosition(playerName);
-		else							endTerminus = inputEndTerminus;
-
-		if (Util.manhathanDistance(p0, previousTramPosition) != 1)			return false;
-		if (!data.pathExistsBetween(p0, previousTramPosition))				return false;
-		if (p0.equals(endTerminus[0]))										return (tramPathSize == 1);
-		if (p0.equals(endTerminus[1]))										return (tramPathSize == 1);
-
-		for (int i=1; i<tramPathSize; i++)
+		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
+		if (hasStartedTravel)
 		{
-			p1 = tramPath[i];
-			if (winner != -1)												return false;
-			if (!data.pathExistsBetween(p0, p1))							return false;
-			if (Util.manhathanDistance(tramPath[i-1], tramPath[i]) != 1)	return false;
-			if (p1.equals(endTerminus[0]))	winner = i;
-			if (p1.equals(endTerminus[1]))	winner = i;
-			p0 = p1;
+			int winner = -1;
+			Point tramPosition = this.data.getTramPosition(playerName);
+			Point p0, p1;
+			Point[] endTerminus =  this.data.getPlayerTerminusPosition(playerName);
+
+			if (!tramPath[0].equals(tramPosition))				return false;
+//TODO verifier l'arret au stop
+			p0 = this.data.getPreviousTramPosition(playerName);
+			for (int i=0; i<tramPathSize; i++)
+			{
+				p1 = tramPath[i];
+				if (winner != -1)								return false;
+				if (!data.pathExistsBetween(p0, p1))			return false;
+				if (Util.manhathanDistance(p0, p1) != 1)		return false;
+				if (p1.equals(endTerminus[0]))	winner = i;
+				if (p1.equals(endTerminus[1]))	winner = i;
+				p0 = p1;
+			}
+			return true;
 		}
-		return true;
+		else
+		{
+			Point[]	terminus = data.getPlayerTerminusPosition(playerName);
+			int i;
+			for (i=0; i<4; i++) if (startTerminus.equals(terminus[i])) break;
+			if (i == 4) return false;
+			this.data.startMaidenTravel(playerName, startTerminus);
+			boolean res = this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
+			this.data.stopMaidenTravel(playerName);
+			return res;
+		}
 	}
 }

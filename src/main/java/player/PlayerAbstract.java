@@ -125,7 +125,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tui
 	{
 		if (action.isMOVE())
 		{
-			this.moveTram(action.tramwayMovement, action.ptrTramwayMovement+1, action.startTerminus);
+			this.moveTram(action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
 			return;
 		}
 		if (action.isBUILD_SIMPLE())

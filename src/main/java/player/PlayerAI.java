@@ -90,7 +90,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 					else if (a.isBUILD_DOUBLE())											super.replaceTwoTiles(a.tile1, a.tile2, a.positionTile1, a.positionTile2);
 					else if (a.isMOVE())
 					{
-						super.moveTram(a.tramwayMovement, a.ptrTramwayMovement+1, a.startTerminus);
+						super.moveTram(a.tramwayMovement, a.tramwayMovementSize, a.startTerminus);
 					}
 					else throw new RuntimeException("??????");
 

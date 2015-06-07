@@ -268,7 +268,7 @@ public class TestUnitaireAction {
 			chemin[i] = new Point(i+1,i+1);
 		}
 		monActionB = Action.newMoveAction(chemin,10,debut);
-		monActionB.ptrTramwayMovement=3;
+		monActionB.tramwayMovementSize=3;
 		monActionA.copy(monActionB);
 		assertTrue(monActionA.equals(monActionB));
 

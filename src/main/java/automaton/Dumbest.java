@@ -38,7 +38,7 @@ public class Dumbest extends PlayerAutomaton {
 		
 		do{
 			nbEssais++;
-			if(nbEssais > 10000)	throw new RuntimeException(name + " cannot find a valid move");
+			if(nbEssais > 10000)	return scanAllPossibleChoices(currentconfig);
 			// On choisit un emplacement au hasard
 			i = rand.nextInt(currentconfig.getWidth());
 			j = rand.nextInt(currentconfig.getHeight());
@@ -57,4 +57,32 @@ public class Dumbest extends PlayerAutomaton {
 		return choix;
 	}
 
+	
+	
+	
+	
+	private Action scanAllPossibleChoices(Data currentConfig)
+	{
+		Tile tile;
+		Tile[] rotations = new Tile[4];
+		for(int j = 0; j < 4; j++)	rotations[j] = new Tile();
+
+		for (int i=0; i<currentConfig.getHandSize(this.name); i++)
+		{
+			tile = currentConfig.getHandTile(this.name, i);
+			int nbrRotations = tile.getUniqueRotationList(rotations);
+			for (int r=0; r<nbrRotations; r++)
+			{
+				for (int x=1; x<currentConfig.getWidth()-1; x++)
+				{
+					for (int y=1; y<currentConfig.getHeight()-1; y++)
+					{
+						if (currentConfig.isAcceptableTilePlacement(x, y, rotations[r]))	return Action.newBuildSimpleAction(x, y, tile);
+					}
+				}
+			}
+		}
+
+		throw new RuntimeException(name + " cannot find a valid move");
+	}
 }
