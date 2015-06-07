@@ -6,8 +6,6 @@ import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.BorderFactory;
-
 import main.java.data.Data;
 import main.java.gui.application.GameController;
 import main.java.gui.components.Panel;
@@ -30,8 +28,8 @@ public abstract class MenuPanel extends Panel {
 		this.gc = gameController;
     	this.setLayout(null);
     	this.setSize(new Dimension(500, 450));
-    	this.setBackground(Color.white);
-    	this.setBorder(BorderFactory.createLineBorder(Color.black)); 
+    	this.setBackground(new Color(0xFFEDDE));
+    	//this.setBorder(BorderFactory.createLineBorder(Color.black)); 
 	}
 
 	// Getters

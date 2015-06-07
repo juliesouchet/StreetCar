@@ -42,24 +42,24 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 	// Setup
 	
 	public void setupPanel() {
-		this.setMenuTitle("New Game", null);
+		this.setMenuTitle("Nouvelle partie", null);
     	this.setSize(new Dimension(500, 350));
 	}
 	
 	private void setupTextFields() {
-		Label titleLabel = new Label("Profile", null);
+		Label titleLabel = new Label("Profil", null);
 		titleLabel.setBounds(90, 20, 300, 100);
 	    this.add(titleLabel);
 	    
-	    Label playerNameLabel = new Label("Player Name", null);
+	    Label playerNameLabel = new Label("Nom du joueur", null);
 	    playerNameLabel.setBounds(120, 100, 100, 40);
 	    this.add(playerNameLabel);	
 	    
-	    Label gameNameLabel = new Label("Game Name", null);
+	    Label gameNameLabel = new Label("Nom de la partie", null);
 	    gameNameLabel.setBounds(120, 150, 100, 40);
 	    this.add(gameNameLabel);	
 	    
-	    Label adressLabel = new Label("IP adress", null);
+	    Label adressLabel = new Label("Adresse IP", null);
 	    adressLabel.setBounds(120, 200, 100, 40);
 	    this.add(adressLabel);
 		
@@ -130,8 +130,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 	}
 	
 	public void cancelGame() {
-		GameController gc = this.getGameController();
-		gc.showWelcomeMenuPanel();
+		this.getGameController().stopGame();
 	}
 
 	protected void updateCreateGameButton() {

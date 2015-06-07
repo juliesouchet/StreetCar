@@ -44,7 +44,7 @@ public class BottomPlayerPanel extends Panel {
 	protected void setupBottomPanel() {
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(0, 150));
-		this.setBackground(Color.WHITE);
+		//this.setBackground(Color.WHITE);
 	}
 	
 	protected void setupBottomPlayerCardsPanel() {		
@@ -56,11 +56,11 @@ public class BottomPlayerPanel extends Panel {
 		this.buttonsPanel = new Panel();
 		this.buttonsPanel.setLayout(null);
 		this.buttonsPanel.setBackground(Color.WHITE);
-		this.buttonsPanel.setPreferredSize(new Dimension(150, 150));
+		this.buttonsPanel.setPreferredSize(new Dimension(175, 150));
 
-		beginTripButton = new Button("Begin trip", null);
-		validateButton = new Button("Validate", null);
-		resetButton = new Button("Reset this turn", null);
+		beginTripButton = new Button("Commencer le voyage", null);
+		validateButton = new Button("Valider", null);
+		resetButton = new Button("Annuler le dernier coup", null);
 		
 		beginTripButton.setEnabled(false);
 		//validateButton.setEnabled(false);
@@ -71,9 +71,9 @@ public class BottomPlayerPanel extends Panel {
 		resetButton.addAction(this, "reset");
 		
 		
-		beginTripButton.setBounds(0, 10, 140, 35);
-		validateButton.setBounds(0, 50, 140, 35);
-		resetButton.setBounds(0, 90, 140, 35);
+		beginTripButton.setBounds(0, 15, 165, 35);
+		validateButton.setBounds(0, 55, 165, 35);
+		resetButton.setBounds(0, 95, 165, 35);
 
 		buttonsPanel.add(beginTripButton);
 		buttonsPanel.add(validateButton);
@@ -112,20 +112,15 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	public void reset() {
-		// TODO: go back to initial state of the beginning of the turn
 		try {
 			player.rollBack();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExceptionNotYourTurn e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExceptionNoPreviousGameToReach e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -153,12 +148,14 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkResetButton(Data data) {
-		numberOfCardPlayed = 5 - data.getHandSize(playerName);
+		/*numberOfCardPlayed = 5 - data.getHandSize(playerName);
 		if (numberOfCardPlayed != 0) {
 			resetButton.setEnabled(true);
 		} else {
 			resetButton.setEnabled(false);
-		}
+		}*/
+		
+		resetButton.setEnabled(!data.isStartOfTurn(playerName));
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -187,6 +184,13 @@ public class BottomPlayerPanel extends Panel {
 			checkValidateButton(data);
 			checkResetButton(data);
 			//System.out.println("NUMBER OF CARD PLAYED : " + numberOfCardPlayed);
+			if (data.isPlayerTurn(playerName)) {				
+				cardsPanel.setBackground(new Color(0xC9ECEE));
+				buttonsPanel.setBackground(new Color(0xC9ECEE));
+			} else {
+				cardsPanel.setBackground(Color.WHITE);
+				buttonsPanel.setBackground(Color.WHITE);
+			}
 			cardsPanel.refreshGame(player, data);
 		} catch (RemoteException e) {
 			e.printStackTrace();

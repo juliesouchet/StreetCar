@@ -14,7 +14,7 @@ public class Button extends JButton {
 	public Button(String title) {
 		super(title);
 		this.setUI(new StyledButtonUI());
-		this.setBackground(new Color(0x2dce98));
+		this.setBackground(new Color(0x56C664));
 	}
 	
 	public Button(String title, String comment) {

@@ -1,3 +1,15 @@
-- fixer le problème de rafraichissement de bottomPlayerPanel après un tour
-- enlever le system de pouvoir drag depuis le terrain vers le terrain
-- recuperer la couleur des adversaire pour afficher le bon avatar
+
+afficher le nombre de cartes restantes (en haut?)
+afficher le numéro de tour (en haut?)
+
+afficher l'erreur lorsqu'on peut pas rejoindre (nom deja pris, ip incorrect, nom jeu incorrect)
+afficher le joueur en train de jouer (changer couleur background)
+afficher message lorsque jeu deja ouvert (non fait, en parler avec riyane)
+
+règles
+
+chat (voir avec riyane)
+
+riyane:
+fixer le bug de lorsqu'on passe de "fermé" à "joueur" la premiere fois
+finir le bouton "rollback"

@@ -38,8 +38,8 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public static final int			nbrCardinalChar					= 2;
 	public static final int			maxNbrPathInTile				= 5;
 
-	public static final String nonRealTileID = "SPECIAL_UNREAL0000";
-	
+	public static final String		EmptyTileId						= "Tile_FFFFZZ99";
+
 	private String					tileID;
 	private boolean					isTree;
 	private boolean					isBuilding;
@@ -76,7 +76,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	public static Tile specialNonRealTileConstructor(Path[] pathList, int ptrPathTab, Tile tile) throws RuntimeException{
 		return new Tile(pathList, ptrPathTab, tile);
 	}
-	
 	/**
 	 * Voir signature de specialNonRealTileConstructorTile 
 	 */
@@ -115,8 +114,23 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	/**
 	 * Constructeur générique
 	 */
-	Tile(){}
+	public Tile(){}
 	
+	public static Tile getNewEmptyTile()
+	{
+		Tile res = new Tile();
+
+		res.tileID				= Tile.EmptyTileId;
+		res.isTree				= false;
+		res.isBuilding			= false;
+		res.isStop				= false;
+		res.isTerminus			= false;
+		res.buildingDescription	= null;
+		res.terminusDescription	= -1;
+		res.cardinal			= 99;
+		res.tileDirection		= Direction.WEST;
+		return res;
+	}
 	/**
 	 * Clone la tuile (Deep clone: toutes les attributs sont clones)
 	 * @return

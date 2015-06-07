@@ -60,8 +60,26 @@ public class TileImage {
 		at.scale((double)width / (double)image.getWidth(),
 				 (double)width / (double)image.getHeight());
 		at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
-		
 		g2d.drawImage(image, at, null);
+		
+		if (tile.isStop()) {
+			int stopWidth = (int) (0.5 * width);
+			BufferedImage bufferedImage;
+			bufferedImage = Resources.imageNamed("stop");
+			if (bufferedImage != null) {
+				g2d.drawImage(bufferedImage, x + (width-stopWidth)/2, y + (width-stopWidth)/2, stopWidth, stopWidth, null);
+			}
+			/*g2d.setColor(Color.RED);
+			g2d.fillOval(x + (width-stopWidth)/2, y + (width-stopWidth)/2, stopWidth, stopWidth);
+			
+			g2d.setColor(Color.WHITE);
+	        FontMetrics fm = g2d.getFontMetrics();
+	        Rectangle2D r = fm.getStringBounds("S", g2d);
+	        int textX = (width - (int) r.getWidth()) / 2;
+	        int textY = (width - (int) r.getHeight()) / 2 + fm.getAscent();
+	        g2d.drawString("S", x+textX, y+textY);*/
+			
+		}
 	}
 	
 }

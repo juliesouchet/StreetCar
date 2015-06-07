@@ -28,7 +28,7 @@ public class MovingMapPanel extends Panel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		g.setColor(new Color(25, 201, 29));
+		g.setColor(new Color(125, 219, 137));
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
 		if (bufferedImage != null) {
@@ -36,5 +36,10 @@ public class MovingMapPanel extends Panel {
 			int y = (this.getHeight() - bufferedImage.getHeight()) / 2;
 			g.drawImage(bufferedImage, x, y, null);
 		}
+		
+
+		//g.setColor(new Color(0.0f, 0.0f, 0.0f, 0.3f));
+		//g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		
 	}
 }

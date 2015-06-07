@@ -1,24 +1,14 @@
 package main.java.automaton.test;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.Scanner;
 
-import main.java.automaton.DecisionNode;
 import main.java.automaton.DecisionTable;
-import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
+import main.java.automaton.Strongest;
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.game.ExceptionForbiddenAction;
-import main.java.game.ExceptionGameHasNotStarted;
-import main.java.game.ExceptionGameIsOver;
-import main.java.game.ExceptionNotEnoughTilesInDeck;
-import main.java.game.ExceptionNotYourTurn;
-import main.java.game.ExceptionPlayerIsBlocked;
-import main.java.game.ExceptionTooManyActions;
-import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -48,7 +38,7 @@ public class PlayerAutomata implements InterfaceIHM
 	private boolean firstRefreshDone = false;
 	private boolean secondRefreshDone = false;
 
-	PlayerAutomaton edouard ;
+	PlayerAutomaton myAutomaton ;
 
 	// --------------------------------------------
 	// Builder:
@@ -186,35 +176,20 @@ public class PlayerAutomata implements InterfaceIHM
 			return;
 		}
 
-			nbActionsPossibles = data.getPossibleActions(data.getPlayerTurn(), new DecisionNode(1, 0, "root").getPossibleFollowingActionTable(),false);
-
-
-		System.out.println("nbActionPossibles="+nbActionsPossibles);
-		int profondeurExplorable = 150000/nbActionsPossibles;
-		System.out.println("Profondeur explorable="+profondeurExplorable);
-			maTableDeDecision = new DecisionTable(nbActionsPossibles, profondeurExplorable, "joueurA");
-		
-		if(profondeurExplorable==0){
-			try {
-				edouard = new Dumbest("joueurA");
-				myAction = edouard.makeChoice(data);
-				player.doAction(name, myAction);
-				myAction = edouard.makeChoice(data);
-				player.doAction("joueurA", myAction);
-				player.drawTile(2);
-
-			} catch (RemoteException | ExceptionGameHasNotStarted| ExceptionNotYourTurn | ExceptionForbiddenAction| ExceptionTooManyActions | ExceptionPlayerIsBlocked| ExceptionGameIsOver| ExceptionTwoManyTilesToDraw  e) { e.printStackTrace();} catch (ExceptionNotEnoughTilesInDeck e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	myAutomaton = new Strongest(name);
+	myAction = myAutomaton.makeChoice(data);
 	
-		}else{
-			
-		}
-		System.out.println("pop");
 	
-		this.frame.setGameData(data);
-		System.out.println("game setted");
+	try {
+		player.doAction(myAction);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	this.frame.setGameData(data);
+	
+	
 	}
 
 	// --------------------------------------------
@@ -238,5 +213,11 @@ public class PlayerAutomata implements InterfaceIHM
 	public void excludePlayer() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void refreshMessages(String playerName, String message) {
+		// TODO Auto-generated method stub
+		
 	}
 }

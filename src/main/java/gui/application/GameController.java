@@ -4,10 +4,12 @@ package main.java.gui.application;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.rmi.RemoteException;
 
 import javax.swing.JMenuBar;
 
 import main.java.data.Data;
+import main.java.game.ExceptionForbiddenAction;
 import main.java.gui.board.MovingMapPanel;
 import main.java.gui.components.FrameController;
 import main.java.gui.components.Menu;
@@ -45,20 +47,23 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		this.frame.setContentPane(new MovingMapPanel());
 		this.frame.getContentPane().setLayout(null); 
 		this.frame.addComponentListener(this);
-		this.frame.setSize(1250, 830);
+		this.frame.setSize(1300, 830);
 	}
 
 	private void setupMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 
 		Menu menu = new Menu("Game", null);
+		MenuItem item = new MenuItem("Stop game", null);
+		item.addAction(this, "stopGame", KeyEvent.VK_L);
+		menu.add(item);
 		menuBar.add(menu);
 
 		menu = new Menu("Edit", null);
 		menuBar.add(menu);
 
 		menu = new Menu("Window", null);
-		MenuItem item = new MenuItem("Toogle Fullscreen", null);
+		item = new MenuItem("quit", null);
 		item.addAction(this, "toggleFullScreen", KeyEvent.VK_F);
 		menu.add(item);
 		menuBar.add(menu);
@@ -188,7 +193,14 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void componentShown(ComponentEvent e) {}
 
 	public void stopGame() {
-		StreetCar.player = null;
+		try {
+			StreetCar.player.onQuitGame(StreetCar.player.getPlayerName());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			e.printStackTrace();
+		}
+		this.showWelcomeMenuPanel();
 	}
 
 	public void refresh(Data data) {
@@ -213,5 +225,8 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void excludePlayer() {
 
 	}
-
+	
+	public void refreshMessages(String playerName, String message) {
+		
+	}
 }

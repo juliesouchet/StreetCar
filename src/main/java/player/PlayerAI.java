@@ -49,9 +49,9 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		super(playerName, app, ihm);
 		switch (iaLevel)
 		{
-			case PlayerAutomaton.dumbestLvl	:this.automaton	= new Dumbest(playerName);	break;
-			case PlayerAutomaton.travelerLvl	:this.automaton = new Traveler(playerName);	break;
-			case PlayerAutomaton.strongestLvl	:this.automaton = new Strongest(playerName);	break;
+			case PlayerAutomaton.dumbestLvl:	this.automaton = new Dumbest(playerName);	break;
+			case PlayerAutomaton.travelerLvl:	this.automaton = new Traveler(playerName);	break;
+			case PlayerAutomaton.strongestLvl:	this.automaton = new Strongest(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
@@ -90,8 +90,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 					else if (a.isBUILD_DOUBLE())											super.replaceTwoTiles(a.tile1, a.tile2, a.positionTile1, a.positionTile2);
 					else if (a.isMOVE())
 					{
-						if (a.startTerminus != null)	super.startMaidenTravel(playerName, a.startTerminus);
-						super.moveTram(a.tramwayMovement, a.ptrTramwayMovement);
+						super.moveTram(a.tramwayMovement, a.tramwayMovementSize, a.startTerminus);
 					}
 					else throw new RuntimeException("??????");
 
