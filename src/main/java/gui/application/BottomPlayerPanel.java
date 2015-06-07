@@ -44,7 +44,7 @@ public class BottomPlayerPanel extends Panel {
 	protected void setupBottomPanel() {
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension(0, 150));
-		this.setBackground(Color.WHITE);
+		//this.setBackground(Color.WHITE);
 	}
 	
 	protected void setupBottomPlayerCardsPanel() {		
@@ -71,9 +71,9 @@ public class BottomPlayerPanel extends Panel {
 		resetButton.addAction(this, "reset");
 		
 		
-		beginTripButton.setBounds(0, 10, 165, 35);
-		validateButton.setBounds(0, 50, 165, 35);
-		resetButton.setBounds(0, 90, 165, 35);
+		beginTripButton.setBounds(0, 15, 165, 35);
+		validateButton.setBounds(0, 55, 165, 35);
+		resetButton.setBounds(0, 95, 165, 35);
 
 		buttonsPanel.add(beginTripButton);
 		buttonsPanel.add(validateButton);
@@ -184,6 +184,13 @@ public class BottomPlayerPanel extends Panel {
 			checkValidateButton(data);
 			checkResetButton(data);
 			//System.out.println("NUMBER OF CARD PLAYED : " + numberOfCardPlayed);
+			if (data.isPlayerTurn(playerName)) {				
+				cardsPanel.setBackground(new Color(0xC9ECEE));
+				buttonsPanel.setBackground(new Color(0xC9ECEE));
+			} else {
+				cardsPanel.setBackground(Color.WHITE);
+				buttonsPanel.setBackground(Color.WHITE);
+			}
 			cardsPanel.refreshGame(player, data);
 		} catch (RemoteException e) {
 			e.printStackTrace();
