@@ -44,7 +44,7 @@ public class Data implements Serializable
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				maxNbrTileToDraw		= 2;
-	public static final int				minSpeed				= 0;
+	public static final int				minSpeed				= 1;
 	public static final int				maxSpeed				= 10;
 	public static final int				maxPossibleAction		= 6000;
 	public static final int				maxNbrTramPath			= 4 ^ maxSpeed;
@@ -150,8 +150,8 @@ public class Data implements Serializable
 		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc			= pi.getLastActionHistory();
 		String		playerName	= this.getPlayerTurn();
-System.out.println("Action 1: " + hc.action1);
-System.out.println("Action 2: " + hc.action2);
+//System.out.println("Action 1: " + hc.action1);
+//System.out.println("Action 2: " + hc.action2);
 		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))							// Case player has done an action this round
 		{
 			if (hc.action2 != null)																	//		Case undo round second game
@@ -202,7 +202,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+//System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -355,7 +355,7 @@ System.out.println("Data.doAction player: " + playerName + ",   Action: " + acti
 	 =====================================================*/
 	public void drawTile(String playerName, int nbrCards)
 	{
-System.out.println("Data.drawTile: " + nbrCards);
+//System.out.println("Data.drawTile: " + nbrCards);
 		if (nbrCards == 0) return;
 
 		PlayerInfo	pi	= this.playerInfoList.get(playerName);

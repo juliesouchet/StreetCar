@@ -4,6 +4,7 @@ import main.java.automaton.PlayerAutomaton;
 import main.java.data.LoginInfo;
 import main.java.game.ExceptionGameHasAlreadyStarted;
 import main.java.game.Game;
+import main.java.util.TraceDebugAutomate;
 
 public class TestAIvsAI {
 	
@@ -14,9 +15,9 @@ public class TestAIvsAI {
 		LoginInfo[] initialLoginTable = 
 				// LoginInfo(isClosed, playerName, isHost, isHuman, iaLevel)
 				{
-				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.travelerLvl),
+				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
-				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)
 				};
@@ -31,6 +32,9 @@ public class TestAIvsAI {
 		}
 		
 		String hostName = game.getTestHostName();
+		
+		TraceDebugAutomate.dumbestTrace = true;
+		TraceDebugAutomate.travelerTrace = true;
 		
 		try {
 			game.hostStartGame(hostName);

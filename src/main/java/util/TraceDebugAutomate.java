@@ -5,6 +5,7 @@ public class TraceDebugAutomate {
 	// Properties
 
 	public static boolean dumbestTrace = false;
+	public static boolean travelerTrace = false;
 	public static boolean decisionNodeTrace = false;
 	public static boolean decisionTableTrace = false;
 
@@ -15,6 +16,12 @@ public class TraceDebugAutomate {
 	public static void debugDumbest(String str) {
 		if (TraceDebugAutomate.dumbestTrace) {
 			System.out.print(str);
+		}
+	}
+	
+	public static void debugTraveler(String str) {
+		if (TraceDebugAutomate.travelerTrace) {
+			System.out.print("travelerTrace:" + str);
 		}
 	}
 
