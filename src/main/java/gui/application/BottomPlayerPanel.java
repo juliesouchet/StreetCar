@@ -112,20 +112,15 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	public void reset() {
-		// TODO: go back to initial state of the beginning of the turn
 		try {
 			player.rollBack();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExceptionForbiddenAction e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExceptionNotYourTurn e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExceptionNoPreviousGameToReach e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
