@@ -1,15 +1,7 @@
 
-afficher le nombre de cartes restantes (en haut?)
-afficher le numéro de tour (en haut?)
-
-afficher l'erreur lorsqu'on peut pas rejoindre (nom deja pris, ip incorrect, nom jeu incorrect)
-afficher le joueur en train de jouer (changer couleur background)
-afficher message lorsque jeu deja ouvert (non fait, en parler avec riyane)
-
-règles
-
-chat (voir avec riyane)
-
-riyane:
-fixer le bug de lorsqu'on passe de "fermé" à "joueur" la premiere fois
-finir le bouton "rollback"
+Bouton cancel après un new game
+Bouton cancel après un join game
+ExceptionForbiddenAction lancée après une amélioration et une pose de tuile (dans les deux sens)
+ExceptionTwoManyTilesToDraw lancée quand on améliore deux tuiles
+ExceptionUsedPlayerName lancée de temps en temps lorsqu'on rajoute des IA
+Ordre des joueurs non fonctionnel lorsuqu'un joueur rejoint une partie

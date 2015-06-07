@@ -118,5 +118,10 @@ public class PlayerPanel extends Panel{
 		avatarPanel.setColor(playerColor);
 		refreshPlayerHandCards(nameOfPlayer);
 		refreshStationCards(nameOfPlayer);
+		if (data.isPlayerTurn(nameOfPlayer)) {
+			this.setBackground(new Color(0xC9ECEE));
+		} else {
+			this.setBackground(new Color(0xFFEDDE));
+		}
 	}
 }

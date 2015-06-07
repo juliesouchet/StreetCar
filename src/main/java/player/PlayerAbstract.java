@@ -176,16 +176,26 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 	}
 	public synchronized void moveTram(Point[] tramPath, int tramPathSize, Point startTerminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed
 	{
+System.out.println("--------------------------------");
+System.out.print("Round: " + data.getRound() + "\t " + playerName +": Move: ");
+for(int i = 0; i < tramPathSize; i++) {
+	System.out.print("("+tramPath[i].x+","+tramPath[i].y+"), ");
+}
+System.out.println("\t StartTerminus = (" + startTerminus.x + "," + startTerminus.y + ")");
 		game.moveTram(playerName, tramPath, tramPathSize, startTerminus);
 	}
 
 	public synchronized void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand 
 	{
+System.out.println("--------------------------------");
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Prend " + tile + " a " + chosenPlayer);
 		game.pickTileFromPlayer(chosenPlayer, chosenPlayer, tile);
 	}
 
 	public synchronized void replaceTwoTiles(Tile t1, Tile t2, Point p1, Point p2)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
+System.out.println("--------------------------------");
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Echange " + t1 + "("+p1.x+","+p1.y+") et " + t2 + " en ("+p2.x+","+p2.y+")");
 		game.replaceTwoTiles(playerName, t1, t2, p1, p2);
 	}
 

@@ -27,7 +27,6 @@ public class InGamePanel extends Panel {
 	Panel chatPanel;
 	Panel centerMapPanel;
 	Panel playersSidebarPanel;
-	Panel deckAndTurnPanel;
 	BottomPlayerPanel bottomPlayerPanel;
 	TitlePanel titlePanel;
 	MapPanel mapPanel;
@@ -40,7 +39,7 @@ public class InGamePanel extends Panel {
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
-    	
+    	//this.setBackground(new Color(0xFFEDDE));
     	this.setupGameMapPanel();
     	this.setupChatPanel();
     	this.setupPlayersPanel();
@@ -51,29 +50,26 @@ public class InGamePanel extends Panel {
 		centerMapPanel.setLayout(new BorderLayout());
 		this.add(centerMapPanel, BorderLayout.CENTER);
 		
-		//deckAndTurnPanel = new Panel();
-		//centerMapPanel.add(deckAndTurnPanel, BorderLayout.NORTH);
+		/*this.deckAndRoundPanel = new Panel();
+		this.deckAndRoundPanel.setLayout(null);
+		this.deckAndRoundPanel.setPreferredSize(new Dimension(100, 0));
+		centerMapPanel.add(this.deckAndRoundPanel, BorderLayout.EAST);*/
 		
-		Panel bigMapPanel = new Panel();
-		bigMapPanel.setLayout(new BorderLayout());	
-		centerMapPanel.add(bigMapPanel, BorderLayout.CENTER);
-		
-		Panel eastTestPanel = new Panel();
+		/*Panel eastTestPanel = new Panel();
 		Panel westTestPanel = new Panel();
 		eastTestPanel.setPreferredSize(new Dimension(18, 0));
 		westTestPanel.setPreferredSize(new Dimension(18, 0));
 		eastTestPanel.setBackground(Color.WHITE);
 		westTestPanel.setBackground(Color.WHITE);
 		bigMapPanel.add(eastTestPanel, BorderLayout.EAST);
-		bigMapPanel.add(westTestPanel, BorderLayout.WEST);
+		bigMapPanel.add(westTestPanel, BorderLayout.WEST);*/
 		
 		this.mapPanel = new MapPanel();
-		bigMapPanel.add(this.mapPanel, BorderLayout.CENTER);
-		
-		mapPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+		centerMapPanel.add(this.mapPanel, BorderLayout.CENTER);
 		
 		bottomPlayerPanel = new BottomPlayerPanel();
-		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);
+		centerMapPanel.add(bottomPlayerPanel, BorderLayout.SOUTH);		
+		bottomPlayerPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
 	}
 	
 	private void setupChatPanel() {
@@ -106,7 +102,7 @@ public class InGamePanel extends Panel {
     	this.playersSidebarPanel = new Panel();
     	this.playersSidebarPanel.setLayout(null);
     	this.playersSidebarPanel.setPreferredSize(new Dimension(330, (nbPlayers-1)*185+30));
-    	this.playersSidebarPanel.setBackground(Color.WHITE);
+    	this.playersSidebarPanel.setBackground(new Color(0xFFEDDE));
     	this.playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
     	
 		titlePanel = new TitlePanel("Adversaries");
@@ -211,7 +207,6 @@ public class InGamePanel extends Panel {
 	// Refresh game
 	
 	public void refreshGame(PlayerIHM player, Data data) {
-		// TODO valz comment : was commented
 		System.out.println("REFRESH GAME");
 		this.mapPanel.refreshGame(player, data);
 		for (PlayerPanel playerPanel : this.playerPanels) {
