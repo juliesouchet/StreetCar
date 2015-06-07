@@ -57,6 +57,7 @@ public class TravelerRiyane extends PlayerAutomaton
 
 			Point[]	endTerminus		= currentConfig.getPlayerEndTerminus(playerName);
 			Point	tramPosition	= currentConfig.getTramPosition(playerName);
+//TODO passer par les arrets
 			LinkedList<Point> completePath = this.pathFinder.getPath(currentConfig, tramPosition, endTerminus[0]);
 			if (completePath == null)	throw new RuntimeException("The traveler is blocked");
 			pathSize = Math.min(pathSize, completePath.size());

@@ -1,59 +1,99 @@
 package main.java.game;
 
-import java.rmi.RemoteException;
+import java.util.HashMap;
 
+import main.java.automaton.Dumbest;
+import main.java.automaton.PlayerAutomaton;
+import main.java.automaton.Strongest;
+import main.java.automaton.TravelerRiyane;
+import main.java.data.Action;
 import main.java.data.Data;
 
-public class GameSimulation extends Game {
 
-	/*==========================
-	 *		Attributes
-	 ==========================*/
-	private static final long serialVersionUID = 1962846841593663477L;
-	/*==========================
-	 *		Builders
-	 ==========================*/
-	public GameSimulation(String gameName, String appIP, String boardName, int nbrBuildingInLine)
-	throws RemoteException, ExceptionUnknownBoardName, RuntimeException
+
+
+
+
+public class GameSimulation
+{
+// --------------------------------------------
+// Attributes:
+// --------------------------------------------
+	private Data								data;
+	private HashMap<String, PlayerAutomaton>	players;
+
+// --------------------------------------------
+// Builder:
+// --------------------------------------------
+	/**======================================================================
+	 * @return Create a game simulator tha begins at the given round of data.</br>
+	 =======================================================================*/
+	public GameSimulation(Data data, int aiLevel)
 	{
-		super(gameName, appIP, boardName, nbrBuildingInLine);
-	}
+		PlayerAutomaton automaton;
 
-	/**
-	 * @param data : the data of the current game
-	 * @param boardName : the name of the file where the board is stored
-	 * @param aiLvl : the level of the AI that take the players' places
-	 * @return A game, that is a copy of the current state of the game, used for simulations.
-	 * @throws RemoteException
-	 * @throws ExceptionUnknownBoardName
-	 * @throws RuntimeException
-	 */
-	static public GameSimulation newGameSimulation(Data data, int aiLvl)
-	throws RemoteException, ExceptionUnknownBoardName, RuntimeException
-	{	
-		Game.applicationPort = 5555;
-		GameSimulation game = new GameSimulation("Simulation", "localhost", "src/main/resources/boards/newOrleans", data.nbrBuildingInLine());
-		game.data = data;
-		return game;
-	}
+		this.data		= data;
+		this.players	= new HashMap<String, PlayerAutomaton>();
 
-
-	/**	Result of the simulation : has this player won ? */
-	public boolean isWinner(String playerName)
-	{
-		boolean result = false;
-		
-		String hostName = getTestHostName();
-		try {
-			this.hostStartGame(hostName);		// Launch game
-		} catch (RemoteException | ExceptionForbiddenAction
-				| ExceptionNotEnoughPlayers e) {
-			e.printStackTrace();
+		for (String playerName: data.getPlayerNameList())
+		{
+			switch (aiLevel)
+			{
+				case PlayerAutomaton.dumbestLvl:	automaton = new Dumbest(playerName);	break;
+				case PlayerAutomaton.travelerLvl:	automaton = new TravelerRiyane(playerName);	break;
+				case PlayerAutomaton.strongestLvl:	automaton = new Strongest(playerName);	break;
+				default	:throw new RuntimeException("Undefined AI difficulty : " + aiLevel);
+			}
+			this.players.put(playerName, automaton);
 		}
-		
-		// TODO récupérer le résultat de la partie
-		return result;
 	}
-	
 
+// --------------------------------------------
+// LocalMethode:
+// --------------------------------------------
+	/**=========================================================================
+	 * @return Start the simulation from the given round od data.</br>
+	 * The function returns the name of the winner, or null if the game is blocked.</br>
+	 ===========================================================================*/
+	public String simulate()
+	{
+//TODO to remove;
+//Data tmpData = this.data.getClone(null);
+		String			winner			= this.data.getWinner();
+		String			playerTurn		= this.data.getPlayerTurn();
+		PlayerAutomaton	player			= this.players.get(playerTurn);
+		int				nbrDoneActions	= 0;
+		int				nbrEmptyActions	= 0;
+		int				nbrPlayers		= this.players.size();
+		Action action;
+		int nbrCards;
+
+		while ((winner == null) && (nbrEmptyActions < nbrPlayers))
+		{
+			if (data.isGameBlocked(playerTurn))
+			{
+				data.skipTurn();
+				playerTurn	= this.data.getPlayerTurn();
+				player		= this.players.get(playerTurn);
+				nbrEmptyActions ++;
+				continue;
+			}
+			nbrEmptyActions = 0;
+			action = player.makeChoice(this.data);
+			this.data.doAction(playerTurn, action);
+			if (!data.hasRemainingAction(playerTurn))
+			{
+				nbrCards = data.getPlayerRemainingTilesToDraw(playerTurn);
+				if (nbrCards<=data.getNbrRemainingDeckTile()) data.drawTile(playerTurn, nbrCards);
+				data.skipTurn();
+			}
+			nbrDoneActions	++;
+			playerTurn	= this.data.getPlayerTurn();
+			player		= this.players.get(playerTurn);
+			winner		= data.getWinner();
+		}
+//this.data = tmpData;
+		for (int i=0; i<nbrDoneActions; i++) this.data.rollBack();
+		return winner;
+	}
 }

@@ -150,8 +150,8 @@ public class Data implements Serializable
 		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc			= pi.getLastActionHistory();
 		String		playerName	= this.getPlayerTurn();
-//System.out.println("Action 1: " + hc.action1);
-//System.out.println("Action 2: " + hc.action2);
+System.out.println("Action 1: " + hc.action1);
+System.out.println("Action 2: " + hc.action2);
 		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))							// Case player has done an action this round
 		{
 			if (hc.action2 != null)																	//		Case undo round second game
@@ -191,7 +191,7 @@ if (!hc.action2.isBUILD_SIMPLE()) throw new RuntimeException("ffffff");
 		}
 		else																						// Case player hah done no action this round
 		{
-			if (this.round == 0) throw new RuntimeException("Round == 0");
+if (this.round == 0) throw new RuntimeException("Round == 0");
 			this.playerInfoList.get(playerName).undoRound();
 			this.round --;
 			this.rollBack();																		//		Undo the last player's round
@@ -202,7 +202,7 @@ if (!hc.action2.isBUILD_SIMPLE()) throw new RuntimeException("ffffff");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-//System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -355,6 +355,7 @@ if (!hc.action2.isBUILD_SIMPLE()) throw new RuntimeException("ffffff");
 	 =====================================================*/
 	public void drawTile(String playerName, int nbrCards)
 	{
+System.out.println("Data.drawTile: " + nbrCards);
 		if (nbrCards == 0) return;
 
 		PlayerInfo	pi	= this.playerInfoList.get(playerName);
@@ -957,12 +958,14 @@ Distinguer clairement 2 cas:
 	{
 		Hand hand;
 		int x, y;
-throw new RuntimeException("En maintenance...");
-/*		if (!hc.action2.isBUILD_SIMPLE())throw new RuntimeException("????");
+
+		if (!hc.action2.isBUILD_SIMPLE())throw new RuntimeException("????");
 
 		x = hc.action2.positionTile1.x;
 		y = hc.action2.positionTile1.y;
 
+System.out.println("drawnTil1: " + hc.drawnTile1);
+System.out.println("drawnTil2: " + hc.drawnTile2);
 		if ((hc.oldTile2 != null) && (!hc.oldTile2.isEmpty()))							//			Case: game was a tile improve
 		{
 			this.board[x][y] = hc.oldTile2;
@@ -970,11 +973,12 @@ throw new RuntimeException("En maintenance...");
 		}
 		else																			//			Case: game was a simple tile put
 		{
-//TODO System.out.println("else");
+System.out.println("else");
 			this.board[x][y] = Tile.getNewEmptyTile();
 			if (hc.drawnTile2 != null)
 			{
-//TODO System.out.println("iciiiii");
+
+System.out.println("iciiiii");
 				pi.hand.remove(hc.drawnTile2);
 				if (hc.drawnFromPlayerHand2 == null)	this.deck.undrawTile(hc.drawnTile2);
 				else
@@ -985,7 +989,7 @@ throw new RuntimeException("En maintenance...");
 			}
 		}
 		pi.hand.add(hc.action2.tile1);
-*/	}
+	}
 	private void undoFirstSimpleGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
 		Hand hand;
