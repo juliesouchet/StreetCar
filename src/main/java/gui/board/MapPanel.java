@@ -9,6 +9,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 
 import main.java.data.Data;
@@ -19,7 +20,7 @@ import main.java.player.PlayerIHM;
 
 
 @SuppressWarnings("serial")
-public class MapPanel extends Panel implements MouseListener, ComponentListener {
+public class MapPanel extends Panel implements MouseListener, ComponentListener, MouseMotionListener {
 
 	// Properties
 
@@ -27,11 +28,17 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
     private int originY;
     private int mapWidth;
     private int cellWidth;
+    
+    private Point trainPosition = new Point(3, 4);
+    private LinkedList<Point> trainMove = new LinkedList<Point>();
+    private LinkedList<Point> tempMove = new LinkedList<Point>();
+    
     // Constructors
     
 	public MapPanel() {
 		this.setBackground(Color.WHITE);
 		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		this.addComponentListener(this);
 
 		MapPanelDropTargetListener dropTarget = new MapPanelDropTargetListener(this);
@@ -90,9 +97,30 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 			y += this.cellWidth;
 		}
 		
-		// TODO: add black border
-		//g2d.setColor(Color.BLACK);
-		//g2d.drawRect(this.originX, this.originY, this.mapWidth, this.mapWidth);
+		//for (String playerName : data.getPlayerNameList()) {
+		//	System.out.println(playerName);
+		//}
+
+		if (this.trainPosition != null) {
+			x = this.originX + this.cellWidth * this.trainPosition.x;
+			y = this.originY + this.cellWidth * this.trainPosition.y;
+			g2d.setColor(Color.BLUE);
+			g2d.fillRect(x, y, cellWidth, cellWidth);
+		}
+		
+		for (Point p : this.trainMove) {
+			x = this.originX + this.cellWidth * p.x;
+			y = this.originY + this.cellWidth * p.y;
+			g2d.setColor(Color.YELLOW);
+			g2d.fillRect(x, y, cellWidth, cellWidth);
+		}
+		
+		for (Point p : this.tempMove) {
+			x = this.originX + this.cellWidth * p.x;
+			y = this.originY + this.cellWidth * p.y;
+			g2d.setColor(Color.PINK);
+			g2d.fillRect(x, y, cellWidth, cellWidth);
+		}
     }
 	
 	// Mouse Listener
@@ -100,7 +128,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	public void mouseClicked(MouseEvent e) {
 		Point p = this.cellPositionForLocation(e.getPoint());
 		if (p != null) {
-			System.out.println(p);
+			this.trainMove.addAll(this.tempMove);
+			this.tempMove.clear();
+			this.repaint();
 		}
 	}
 
@@ -109,6 +139,55 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 	
+	// MouseMotionListener
+	
+	public void mouseMoved(MouseEvent e) {
+		Point p = this.cellPositionForLocation(e.getPoint());
+		this.tempMove.clear();
+		this.repaint();
+		
+		if (p == null) {
+			return;
+		}
+		
+		
+		Tile[][] board = StreetCar.player.getGameData().getBoard();
+		Point lastPoint;
+		if (this.trainMove.isEmpty()) {
+			lastPoint = this.trainPosition;
+		} else {
+			lastPoint = this.trainMove.getLast();
+		}
+		
+		int nbMaxCount = 15;
+		int c = nbMaxCount - this.trainMove.size();
+		if (lastPoint.y == p.y) {
+			for (int k = lastPoint.x+1; k <= p.x; k++) {
+				if (board[k][p.y].isBuilding() || c < this.tempMove.size())
+					break;
+				this.tempMove.add(new Point(k, p.y));
+			}
+			for (int k = lastPoint.x-1; k >= p.x; k--) {
+				if (board[k][p.y].isBuilding() || c < this.tempMove.size())
+					break;
+				this.tempMove.add(new Point(k, p.y));
+			}
+		} else if (lastPoint.x == p.x)  {
+			for (int k = lastPoint.y+1; k <= p.y; k++) {
+				if (board[p.x][k].isBuilding() || c < this.tempMove.size())
+					break;
+				this.tempMove.add(new Point(p.x, k));
+			}
+			for (int k = lastPoint.y-1; k >= p.y; k--) {
+				if (board[p.x][k].isBuilding() || c < this.tempMove.size())
+					break;
+				this.tempMove.add(new Point(p.x, k));
+			}
+		}
+	}
+	
+	public void mouseDragged(MouseEvent e) {}
+		
 	// ComponentListener
 	
 	public void componentResized(ComponentEvent e) {
@@ -123,6 +202,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener 
 
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.updateMapGeometry();
+		this.tempMove.clear();
+		this.trainMove.clear();
 	}
 
 	public void startMaidenVoyage(Point point) {

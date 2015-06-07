@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 
 import javax.swing.TransferHandler;
 
+import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
@@ -86,6 +87,10 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 	}
 	
 	// MouseListener
+
+	public void mousePressed(MouseEvent e) {
+		this.isDragging = false;
+	}
 	
 	public void mouseReleased(MouseEvent e) {
 		if (this.isDragging) {
@@ -111,17 +116,18 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 	
 	public void mouseClicked(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
-	public void mousePressed(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
 
 	// MouseMotionListener
 	
 	public void mouseDragged(MouseEvent e) {
-		if (this.tile == null || this.draggable == false || this.isDragging == true) {
+		if (this.tile == null || this.draggable == false) {
 			return;
 		}
 		try {
-			if (!StreetCar.player.getGameData().hasRemainingAction(StreetCar.player.getPlayerName())) {
+			String playerName = StreetCar.player.getPlayerName();
+			Data data = StreetCar.player.getGameData(); 
+			if (!data.hasRemainingAction(playerName)) {
 				return;
 			}
 		} catch (RemoteException e1) {
