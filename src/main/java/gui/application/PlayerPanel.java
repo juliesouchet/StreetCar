@@ -121,7 +121,7 @@ public class PlayerPanel extends Panel{
 		if (data.isPlayerTurn(nameOfPlayer)) {
 			this.setBackground(new Color(0xC9ECEE));
 		} else {
-			this.setBackground(Color.WHITE);
+			this.setBackground(new Color(0xFFEDDE));
 		}
 	}
 }

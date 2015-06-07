@@ -188,8 +188,8 @@ public class BottomPlayerPanel extends Panel {
 				cardsPanel.setBackground(new Color(0xC9ECEE));
 				buttonsPanel.setBackground(new Color(0xC9ECEE));
 			} else {
-				cardsPanel.setBackground(Color.WHITE);
-				buttonsPanel.setBackground(Color.WHITE);
+				cardsPanel.setBackground(new Color(0xFFEDDE));
+				buttonsPanel.setBackground(new Color(0xFFEDDE));
 			}
 			cardsPanel.refreshGame(player, data);
 		} catch (RemoteException e) {
