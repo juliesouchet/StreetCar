@@ -34,7 +34,7 @@ public class RulesMenuPanel extends MenuPanel {
 	
 	private void setupPanel() {
     	this.setSize(new Dimension(700, 500));
-    	this.setMenuTitle("Rules", null);
+    	this.setMenuTitle("Règles", null);
 	}
 	
 	private void setupImagePanel() {
@@ -44,17 +44,17 @@ public class RulesMenuPanel extends MenuPanel {
 	}
 	
 	private void setupButtons() {
-		this.previousImageButton = new Button("Previous", null);
+		this.previousImageButton = new Button("Précédent", null);
 		this.previousImageButton.addAction(this, "previousImage");
 		this.previousImageButton.setBounds(50, 430, 100, 40);
     	this.add(this.previousImageButton);
     	
-    	this.nextImageButton = new Button("Next", null);
+    	this.nextImageButton = new Button("Suivant", null);
     	this.nextImageButton.addAction(this, "nextImage");
     	this.nextImageButton.setBounds(550, 430, 100, 40);
     	this.add(this.nextImageButton);
     	
-		Button cancelButton = new Button("Back to main menu", null);
+		Button cancelButton = new Button("Retour au menu principal", null);
 		cancelButton.addAction(this, "leaveGame");
 		cancelButton.setBounds(225, 430, 250, 40);
     	this.add(cancelButton);

@@ -54,11 +54,11 @@ public class HostRoomMenuPanel extends MenuPanel {
 	private void setupPlayersFields() {
 		String defaultName = Resources.localizedString("Name", null);
 		String[] adversaryChoices = {
-				Resources.localizedString("Player", null),
-				Resources.localizedString("Computer (easy)", null),
-				Resources.localizedString("Computer (medium)", null),
-				Resources.localizedString("Computer (hard)", null),		  	  
-				Resources.localizedString("Closed", null)
+				Resources.localizedString("Joueur", null),
+				Resources.localizedString("Ordinateur (facile)", null),
+				Resources.localizedString("Ordinateur (moyen)", null),
+				Resources.localizedString("Ordinateur (difficile)", null),		  	  
+				Resources.localizedString("Fermé", null)
 		};
 
 		for (int i = 0, y = 140; i < 5; i++, y += 50) {
@@ -168,9 +168,9 @@ public class HostRoomMenuPanel extends MenuPanel {
 		String playerName = info.getPlayerName();
 		if(!info.isHuman())
 		{
-			if(info.getAiLevel() == 1) playerName += " - EASY";
-			else if(info.getAiLevel() == 2) playerName += " - MEDIUM";
-			else if(info.getAiLevel() == 3) playerName += " - HARD";
+			if(info.getAiLevel() == 1) playerName += " - FACILE";
+			else if(info.getAiLevel() == 2) playerName += " - MOYEN";
+			else if(info.getAiLevel() == 3) playerName += " - DIFFICILE";
 			choiceComboBoxes.get(cellIndex).setSelectedIndex(info.getAiLevel());
 		} else {
 			choiceComboBoxes.get(cellIndex).setSelectedIndex(0);
@@ -183,14 +183,14 @@ public class HostRoomMenuPanel extends MenuPanel {
 
 	private void openCell(int cellIndex) 
 	{
-		nameLabels.get(cellIndex).setText(" Waiting for connection", null);
+		nameLabels.get(cellIndex).setText(" En attente de connexion", null);
 		choiceComboBoxes.get(cellIndex).setSelectedIndex(0);
 		avatarImagePanels.get(cellIndex).setBackground(Color.gray);
 	}
 
 	private void closeCell(int cellIndex) 
 	{
-		nameLabels.get(cellIndex).setText(" Connection closed", null);
+		nameLabels.get(cellIndex).setText(" Connexion fermée", null);
 		choiceComboBoxes.get(cellIndex).setSelectedIndex(4);
 		avatarImagePanels.get(cellIndex).setBackground(Color.gray);
 	}
