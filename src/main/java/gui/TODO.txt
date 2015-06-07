@@ -4,3 +4,4 @@ Bouton cancel après un join game
 ExceptionForbiddenAction lancée après une amélioration et une pose de tuile (dans les deux sens)
 ExceptionTwoManyTilesToDraw lancée quand on améliore deux tuiles
 ExceptionUsedPlayerName lancée de temps en temps lorsqu'on rajoute des IA
+Ordre des joueurs non fonctionnel lorsuqu'un joueur rejoint une partie
