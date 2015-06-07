@@ -101,6 +101,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		//	System.out.println(playerName);
 		//}
 
+		/* Keep in comments for the moment 
+		   this code should be integrated to the engine and then use custom drawings
 		if (this.trainPosition != null) {
 			x = this.originX + this.cellWidth * this.trainPosition.x;
 			y = this.originY + this.cellWidth * this.trainPosition.y;
@@ -120,7 +122,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			y = this.originY + this.cellWidth * p.y;
 			g2d.setColor(Color.PINK);
 			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}
+		}*/
     }
 	
 	// Mouse Listener
@@ -149,7 +151,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		if (p == null) {
 			return;
 		}
-		
 		
 		Tile[][] board = StreetCar.player.getGameData().getBoard();
 		Point lastPoint;
