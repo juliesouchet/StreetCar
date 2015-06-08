@@ -909,7 +909,7 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
 		{
-// TODO s'arreter au stop, initialiser le currentTramPosition si isTrackCompleted
+// TODO s'arreter au stop, initialiser currentTramPosition et startTerminus si isTrackCompleted
 			if (startTerminus == null)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];	//		Case Can start maiden travel
 			else						startTerminus = null;
 			this.startMaidenTravel(playerName, startTerminus);
