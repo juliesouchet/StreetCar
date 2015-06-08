@@ -282,6 +282,15 @@ public class Action implements Serializable, CloneableInterface<Action>
 
 	}
 	/**===========================================================
+	 * Set the current Action to the given simple building action
+	 =============================================================*/
+	public void setSimpleBuilding(int x, int y, Tile tile) {
+		this.action			= BUILD_SIMPLE;
+		this.tile1			.copy(tile);
+		this.positionTile1.x	= x;
+		this.positionTile1.y	= y;
+	}
+	/**===========================================================
 	 * Set the current Action to the given two simple building actions
 	 =============================================================*/
 	public void setTwoSimpleBuildingAction(int x1, int y1, Tile t1, int x2, int y2, Tile t2)
@@ -464,4 +473,5 @@ public class Action implements Serializable, CloneableInterface<Action>
 		for (int i=0; i<maxTramwayMove; i++) res[i] = new Point();
 		return res;
 	}
+
 }

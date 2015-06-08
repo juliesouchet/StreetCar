@@ -70,7 +70,7 @@ public class Hand implements Serializable, CloneableInterface<Hand>
 	public void remove(Tile t)
 	{
 		boolean test = tileList.remove(t);
-		if (!test) throw new RuntimeException("Can't find the given tile: " + t + "   in the hand:\n" + this.toString());
+		if (!test) throw new RuntimeException("\nCan't find the given tile: " + t + "   in the hand:\n" + this.toString());
 	}
 	public void setHand(Hand hand)
 	{

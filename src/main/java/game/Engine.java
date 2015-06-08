@@ -210,7 +210,7 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void validate() throws RemoteException
 	{
-System.out.println("Validate (engine)");
+//System.out.println("Validate (engine)");
 		this.toExecute.data.skipTurn();
 		this.notifyAllPlayers();
 

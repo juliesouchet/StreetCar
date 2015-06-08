@@ -147,7 +147,7 @@ public class DecisionTable {
 	}
 
 	/* ===============================================================================================================
-	 * 			CONSTRUCTORS
+	 * 			CONSTRUCTEURS
 	 * =============================================================================================================== */
 
 	/**
@@ -198,11 +198,6 @@ public class DecisionTable {
 	}
 
 
-	/*
-	 * TODO finir implementation:
-	 * demander a julie fonctionnement Evaluator.evaluateSituationQuality (gameNumber? difficulty?)
-	 * TODO passer methode en argument ? (a priori non...)
-	 */
 	/**
 	 * Implémentation de l'algorithme minimax: la table de décision est calculée
 	 * @param index
@@ -216,49 +211,73 @@ public class DecisionTable {
 	 */
 	public void applyMinMax(int index, int wantedDepth, Data currentConfiguration, int numberOfpossibleActions ){
 		double evaluatedQuality = DecisionNode.NOT_SIGNIFICANT;
-		String playerName = currentConfiguration.getPlayerTurn();
+		String playerName = currentConfiguration.getPlayerTurn(), newPlayerName;
+		TraceDebugAutomate.debugDecisionTableTrace("APPEL MINIMAX "+playerName +"\t"
+				+ "Noeud "+ ((playerName.equals(this.getMyName()))?"max":"min") +" , "
+						+ "profondeur restante " + wantedDepth + "\n");
 		int aFreeSlot = 0;
 		int numberOfPossibleActionsInTemporaryConfiguration;
-		Data copyDeConfigurationCourante = currentConfiguration.getClone(playerName); //TODO a enlever ça sera fait par le rollback
+		Data copyDeConfigurationCourante = currentConfiguration.getClone(null); //TODO a enlever ça sera fait par le rollback
 		DecisionNode currentNode = this.getDecisionNode(index);
 		CoupleActionIndex currentCoupleActionIndex = null;
-		Action a;
-		// Cas d'une feuille on estime la qualité avec la fonction de Julie
+		Action currentAction;
+		// Cas d'une feuille on estime la qualité avec la fonction d'évaluation
 		if(wantedDepth==0){
 			//===============================================================================//
 			TraceDebugAutomate.debugDecisionTableTrace("\t======Feuille["+index+"]======.\n");
-			//evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty)
-			evaluatedQuality = 50.0;
-
+			/*int gamesNumber = 50; TODO enlever les commentaires une fois débugué
+			int difficulty = PlayerAutomaton.travelerLvl;
+			evaluatedQuality = Evaluator.evaluateSituationQuality(currentConfiguration.getPlayerTurn(), gamesNumber, currentConfiguration, difficulty);
+			*/evaluatedQuality = 50.0;
+			TraceDebugAutomate.debugDecisionTableTrace("\t\tQualité = "+evaluatedQuality+"\n");
+			TraceDebugAutomate.debugDecisionTableTrace("\t======================.\n");
 			currentNode.setQuality(evaluatedQuality);
 			currentNode.setLeaf();
 
-			// Cas d'une recurrence	
-		} else if(wantedDepth>0){ 
+		// Cas d'une recurrence	
+		} else if(wantedDepth>0){
+				TraceDebugAutomate.debugDecisionTableTrace("\t"+playerName + " has already played : " + currentConfiguration.hasDoneRoundFirstAction(playerName)+"\n");
+				TraceDebugAutomate.debugDecisionTableTrace("\t"+playerName + " can play again : " + currentConfiguration.hasRemainingAction(playerName)+"\n");
+					
 				for (int i=0;i< numberOfpossibleActions; i++){
-					TraceDebugAutomate.debugDecisionTableTrace(" Can play again : " + currentConfiguration.hasRemainingAction(myName)+"\n");
+					// Récupération de l'action à tester et application
 					currentCoupleActionIndex= currentNode.getCoupleActionIndex(i);
 					aFreeSlot = this.findFreeSlot();
 					currentCoupleActionIndex.setIndex(aFreeSlot);
-					a = currentCoupleActionIndex.getAction();
-					currentConfiguration.doAction(playerName,a);
-					numberOfPossibleActionsInTemporaryConfiguration = currentConfiguration.getPossibleActions(myName, this.getDecisionNode(aFreeSlot).getPossibleFollowingActionTable(), true);
-					//=====================TRACE===================================
-					TraceDebugAutomate.debugDecisionTableTrace("\n\n\t numberOfPossibleActionsInTemporaryConfiguration=="+numberOfPossibleActionsInTemporaryConfiguration+"! \n\n\n");
-					//=====================TRACE===================================
+					currentAction = currentCoupleActionIndex.getAction();
+					//TraceDebugAutomate.debugDecisionTableTrace(" Action : " + currentAction + "\n");					
+					currentConfiguration.doAction(playerName,currentAction);
+					
+					// Changement de joueur ?
+					if(currentConfiguration.hasRemainingAction(playerName))	newPlayerName = playerName;
+					else {
+						currentConfiguration.skipTurn();
+						newPlayerName = currentConfiguration.getPlayerTurn();
+						TraceDebugAutomate.debugDecisionTableTrace("Changement de joueur : " + playerName + " -> " + newPlayerName + "\n");
+					}
+					
+					// Création des fils
+					numberOfPossibleActionsInTemporaryConfiguration = currentConfiguration.getPossibleActions(newPlayerName, this.getDecisionNode(aFreeSlot).getPossibleFollowingActionTable(), true);
+					TraceDebugAutomate.debugDecisionTableTrace("\n\n\t numberOfPossibleActionsInTemporaryConfiguration = "+numberOfPossibleActionsInTemporaryConfiguration+" \n\n\n");
+					
+					// Appel récursif
 					this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration, numberOfPossibleActionsInTemporaryConfiguration);
+					
+					// Récupération des résultats, et suite du calcul
 					currentCoupleActionIndex.setQuality(this.getDecisionNode(aFreeSlot).getQuality());
-					//currentConfiguration.getPreviousDataAndRollBack(); TODO
-					currentConfiguration = copyDeConfigurationCourante.getClone(myName);
 					this.freeSlot(aFreeSlot);
+					//currentConfiguration.getPreviousDataAndRollBack(); TODO
+					currentConfiguration = copyDeConfigurationCourante.getClone(null);
 				}
+				
 				if (playerName.equals(this.getMyName())){
-					currentNode.setNodeQualityToBestChoice();
+					currentNode.setNodeQualityToBestChoice(); // noeud max
 				}else{
-					currentNode.setNodeQualityToWorstChoice();
+					currentNode.setNodeQualityToWorstChoice(); // noeud min
 				}
 
 		}
+		TraceDebugAutomate.debugDecisionTableTrace("FIN MINIMAX " + playerName + "\n");
 	}
 
 
