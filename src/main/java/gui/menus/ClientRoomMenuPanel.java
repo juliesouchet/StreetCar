@@ -78,6 +78,7 @@ public class ClientRoomMenuPanel extends MenuPanel {
 	
 	public void cancelGame() {
 		this.getGameController().stopGame();
+		this.getGameController().showWelcomeMenuPanel();
 	}
 	
 	// Refresh menu

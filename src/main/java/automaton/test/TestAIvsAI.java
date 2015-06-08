@@ -16,7 +16,7 @@ public class TestAIvsAI {
 				{
 				new LoginInfo(false,	null,	true,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
-				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
+				new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 				new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)
 				};
@@ -25,7 +25,7 @@ public class TestAIvsAI {
 		}
 		
 		try {
-			game = new Game("TestEvaluator", "localhost", "newOrleans", 2);
+			game = new Game("TestEvaluator", "localhost", "quasi_full", 2);
 		} catch (Exception e) {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
