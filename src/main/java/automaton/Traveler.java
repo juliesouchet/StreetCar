@@ -93,9 +93,14 @@ TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSp
 			
 			// Go forward the maximum allowed number of squares
 			ListIterator<Point> iterator = itinerary.listIterator();
-			Point [] streetcarMovement = new Point[currentConfig.getMaximumSpeed()+1];
+			int pathSize = 0;
+			while(iterator.hasNext()
+				&& !currentConfig.getTile(iterator.next()).isStop()
+				&& pathSize < currentConfig.getMaximumSpeed()+1) pathSize++;
+			Point [] streetcarMovement = new Point[pathSize];
 			i = 0;
-			while(iterator.hasNext() && i < currentConfig.getMaximumSpeed()+1) {
+			iterator = itinerary.listIterator();
+			while(iterator.hasNext() && i < pathSize) {
 				streetcarMovement[i] = iterator.next();
 				i++;
 			}
