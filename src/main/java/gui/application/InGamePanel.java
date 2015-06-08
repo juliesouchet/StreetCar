@@ -113,9 +113,7 @@ public class InGamePanel extends Panel {
     	
 		titlePanel = new TitlePanel("Adversaires");
 		titlePanel.setBounds(0, 0, 329, 30);
-		playersSidebarPanel.add(titlePanel);  	
-    	
-    	System.out.println("NUMBER OF PLAYERS: " + nbPlayers);
+		playersSidebarPanel.add(titlePanel);
     	
     	// catch the index of bottom player
     	int bottomPlayerIndex = 0;
@@ -126,16 +124,9 @@ public class InGamePanel extends Panel {
 			}
     	}
     	
-    	
-    	System.out.println("PLAYERS ORDER: ");
-    	for (int i=0; i<nbPlayers; i++) {
-    		System.out.println(i+1 + ". " + playersTab[i]);
-    	}
-    	
     	int y = 40;
     	int j = 0;
     	for (int i = bottomPlayerIndex+1; i < nbPlayers; i++) {
-    		System.out.println("* indice i = " + i);
     		PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
        		playerPanels.add (playerPanel);
        		if (i<nbPlayers-1) { //last bar not displayed
@@ -147,7 +138,6 @@ public class InGamePanel extends Panel {
    		}
     	
    		for (int i = 0; i < bottomPlayerIndex; i++) {
-    		System.out.println("- indice i = " + i);
    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
   	     	playerPanels.add (playerPanel);
         	if (i<nbPlayers-1) { //last bar not displayed
@@ -171,7 +161,6 @@ public class InGamePanel extends Panel {
 	// Actions
 	
 	public void beginTrip() {
-		System.out.println("THE TERMINUS IS UNDEFINED FOR THE MOMENT");
 		PlayerIHM player = StreetCar.player;
 		Point terminus = new Point();
 //TODO
@@ -194,7 +183,6 @@ public class InGamePanel extends Panel {
 	// Refresh game
 	
 	public void refreshGame(PlayerIHM player, Data data) {
-		System.out.println("REFRESH GAME");
 		this.mapPanel.refreshGame(player, data);
 		for (PlayerPanel playerPanel : this.playerPanels) {
 			playerPanel.refreshGame(player, data);

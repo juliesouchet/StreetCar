@@ -151,8 +151,6 @@ public class HostRoomMenuPanel extends MenuPanel {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i=0; i<loginInfos.length; i++) {
 				LoginInfo info = loginInfos[i];
-
-				System.out.println(i + "   " + info);
 				
 				if(info.isClosed())
 					closeCell(i);

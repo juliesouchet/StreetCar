@@ -135,14 +135,10 @@ public class BottomPlayerCardsPanel extends Panel{
 	}
 	
 	public void refreshPlayerHandCards(String playerName, Data data) { 
-		//System.out.println("REFRESH PLAYER HAND CARDS CALLED");
-		System.out.println("NUMBER OF CARDS OF THE HAND : " + data.getHandSize(playerName));	
-		
 		for (int i=0; i<data.getHandSize(playerName); i++) {
 			Tile tile = data.getHandTile(playerName, i);
 			TilePanel tilePanel = this.tilePanels.get(i);
 			tilePanel.setTile(tile);
-			System.out.println(tile);		
 		}
 		for (int i=data.getHandSize(playerName); i<5; i++) {
 			TilePanel tilePanel = this.tilePanels.get(i);

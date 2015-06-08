@@ -158,7 +158,6 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void showClientWaitingRoomPanel() {
 		MenuPanel newPanel = new ClientRoomMenuPanel(this);
 		this.setMenuPanel(newPanel);
-		System.out.println("TEST");
 	}
 
 	// Show / hide frame

@@ -137,17 +137,12 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		}
 		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName))
 		{
-			System.out.println(playerName + " HAS STARTED FUCKING TRAVLELE");
 			Point p = StreetCar.player.getGameData().getTramPosition(playerName);
 
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
 			g2d.setColor(playerColor);
 			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}
-		else
-		{
-			System.out.println(playerName + " HAS NOT STARTED HIS FUCKING TRAVLELE");
 		}
 
 		Color c = new Color(1f,0f,0f,.5f);
@@ -178,11 +173,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	{
 		// TODO check here if trip can be done
 		Point[] points = new Point[trainMove.size()];
-		System.out.println("I WANT TO MOVE TRAM : ");
 		for(int i = 0; i < trainMove.size(); i++) 
 		{
 			points[i] = trainMove.get(i);
-			System.out.println("[" + points[i].x + " " + points[i].y + "]");
 		}
 		try {
 			StreetCar.player.moveTram(points, trainMove.size(), trainMove.getFirst());

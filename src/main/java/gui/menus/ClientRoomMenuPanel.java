@@ -105,7 +105,6 @@ public class ClientRoomMenuPanel extends MenuPanel {
 				choiceComboBox.setEditable(!info.isHost());
 				avatarImagePanel.setColor(data.getPlayerColor(playerName));
 				
-				System.out.println(i + " " + info);
 				if (info.isClosed()) {
 					nameLabel.setText("Connection closed", null);
 					choiceComboBox.setSelectedIndex(4);

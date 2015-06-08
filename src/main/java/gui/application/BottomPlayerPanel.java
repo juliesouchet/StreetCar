@@ -86,7 +86,6 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	public void validate() {
-		System.out.println("validate");
 		try {
 			//StreetCar.player.drawTile(2);
 			StreetCar.player.drawTile(StreetCar.player.getGameData().getPlayerRemainingTilesToDraw(playerName));
@@ -132,13 +131,11 @@ public class BottomPlayerPanel extends Panel {
 	
 	// TODO delete this?
 	public void beginTrip() {
-		System.out.println("REQUESTING TO BEGIN TRIP");
 		if(canBeginTrip)
 		{
 			Point p = player.getGameData().getPlayerTerminusPosition(playerName)[0];
 			
 		}
-		else System.out.println("CANT BEGIN TRIP");
 	}
 	
 	protected void checkIfCanBeginTrip() {
