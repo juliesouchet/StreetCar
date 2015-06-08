@@ -119,14 +119,8 @@ public class HostRoomMenuPanel extends MenuPanel {
 	}
 
 	public void cancelGame() {
-/* TODO was HEAD
-		GameController gc = (GameController)this.getFrameController();
-		try {
-			StreetCar.player.onQuitGame(StreetCar.player.getPlayerName());
-		} catch (RemoteException | ExceptionForbiddenAction e) { e.printStackTrace(); }
-		gc.showWelcomeMenuPanel();
-*/
 		this.getGameController().stopGame();
+		this.getGameController().showWelcomeMenuPanel();
 	}
 
 	public void changePlayerType(ComboBox comboBox) {
