@@ -151,15 +151,16 @@ public class Data implements Serializable
 		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc			= pi.getLastActionHistory();
 		String		playerName	= this.getPlayerTurn();
-/*************************** TODO
+/*
 System.out.println("Action 1: " + hc.action1);
 System.out.println("Action 2: " + hc.action2);
 System.out.println("Drawn 1: " + hc.drawnTile1);
 System.out.println("Drawn 2: " + hc.drawnTile2);
 System.out.println("oldTile 1: " + hc.oldTile1);
 System.out.println("oldTile 2: " + hc.oldTile2);
+System.out.println("Hand: " + pi.hand);
 System.out.println("\n----------------------------------------\n");
-*******************************/
+*/
 		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))							// Case player has done an action this round
 		{
 			if (hc.action2 != null)																	//		Case undo round second game
@@ -210,7 +211,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-//TODO   System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+//System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -362,7 +363,8 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		Hand		hand= pi.hand;
 		HistoryCell	hc	= pi.getLastActionHistory();
 		Tile t;
-
+System.out.println("Hand before: " + pi.hand);
+System.out.println("-------------\n");
 		switch(nbrCards)
 		{
 			case 1:
@@ -371,7 +373,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 				if		(hc.drawnTile1 == null)	{hc.drawnTile1 = t; hc.drawnFromPlayerHand1 = null;}
 				else if (hc.drawnTile2 == null)	{hc.drawnTile2 = t; hc.drawnFromPlayerHand2 = null;}
 				else							throw new RuntimeException("You already have drawn two tiles");
-				return;
+				break;
 			case 2:
 				t = this.deck.drawTile();
 				hand.add(t);
@@ -381,9 +383,11 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 				hand.add(t);
 				if		(hc.drawnTile2 == null)	{hc.drawnTile2 = t; hc.drawnFromPlayerHand2 = null;}
 				else							throw new RuntimeException("You already have drawn two tiles");
-				return;
+				break;
 			default: throw new RuntimeException("Wrong number of tiles to draw: " + nbrCards);
 		}
+System.out.println("Hand after: " + pi.hand);
+System.out.println("-------------\n");
 	}
 	/**===================================================
 	 * @return Draw a tile from a player's hand.  This tile is put in the player's hand
@@ -958,6 +962,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		Hand hand;
 		if (hc.drawnTile2 != null)
 		{
+System.out.println("Undo last draw 2");
 			pi.hand.remove(hc.drawnTile2);
 			if (hc.drawnFromPlayerHand2 == null)	this.deck.undrawTile(hc.drawnTile2);
 			else
@@ -970,6 +975,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		}
 		else if (hc.drawnTile1 != null)
 		{
+System.out.println("Undo last draw 1");
 			pi.hand.remove(hc.drawnTile1);
 			if (hc.drawnFromPlayerHand1 == null)	this.deck.undrawTile(hc.drawnTile1);
 			else
@@ -984,6 +990,8 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	}
 	private void undoSecondGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
+System.out.println("Undo second game");
+
 		if (!hc.action2.isBUILD_SIMPLE())throw new RuntimeException("????");
 
 		int x = hc.action2.positionTile1.x;
@@ -1003,6 +1011,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	}
 	private void undoFirstSimpleGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
+System.out.println("Undo first game");
 		int x, y;
 
 		x = hc.action1.positionTile1.x;
@@ -1021,6 +1030,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	}
 	private void undoFirstDoubleGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
+System.out.println("Undo first double game");
 		int x, y;
 
 		x = hc.action1.positionTile2.x;
@@ -1321,6 +1331,11 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 			this.tramPosition.y			= startTerminus.y;
 			this.previousTramPosition.x	= startTerminus.x;
 			this.previousTramPosition.y	= startTerminus.y-1;
+			if (!isWithinnBoard(this.previousTramPosition.x, this.previousTramPosition.y))
+			{
+				this.previousTramPosition.x	= startTerminus.x-1;
+				this.previousTramPosition.y	= startTerminus.y;
+			}
 		}
 		public boolean hasStartedMaidenTravel(){return (this.startTerminus.x != -1);}
 		public void stopMaidenTravel()
