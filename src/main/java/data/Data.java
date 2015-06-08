@@ -940,17 +940,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 					for (int y1=1; y1<this.getHeight()-1; y1++)
 					{
 						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;		//		Case player may start maiden travel next turn
-						/*
-						if(hasDoneRoundFirstAction(playerName)) {										//		Case simple action
-							if(writeActionsInTab) // TODO a verifier
-							{
-								resTab[res].getAction().setSimpleBuilding(x1, y1, tmpRotation1[r1]);
-								resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
-							}
-							res ++;
-							continue;
-						}
-						*/
+
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
 						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
@@ -982,6 +972,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 												resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											}
 											res ++;
+											
 											// TODO s'arranger pour que le tableau soit plus grand
 											if(writeActionsInTab && res >= resTab.length) { 
 												this.board[x1][y1] = oldT1;
@@ -1353,6 +1344,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		public void undoRound() {this.history.removeLast();}
 		public void startMaidenTravel(Point startTerminus)
 		{
+System.out.println("Data.l 1340: startTerminus + " + startTerminus);
 			this.startTerminus.x		= startTerminus.x;
 			this.startTerminus.y		= startTerminus.y;
 			int i = 0;

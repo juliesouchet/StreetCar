@@ -349,6 +349,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 			if (startTerminus == null)												throw new ExceptionMissingStartTerminus();
 			if (!startTerminus.equals(tramPath[0]))									throw new ExceptionWrongTramwayPath();
 			if (!data.isPlayerTerminus(playerName, startTerminus))					throw new ExceptionWrongPlayerTerminus();
+			if (!data.isTrackCompleted(playerName))									throw new ExceptionForbiddenAction();
 System.out.println(playerName + " starts his travel from " + startTerminus + " (game.moveTram)");
 		}
 		if (!this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus))	throw new ExceptionWrongTramwayPath();

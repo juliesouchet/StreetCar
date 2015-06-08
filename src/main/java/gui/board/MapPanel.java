@@ -41,7 +41,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
     
     private Point trainPosition = new Point(3, 4);
     private LinkedList<Point> trainMove = new LinkedList<Point>();
-    private LinkedList<Point> tempMove = new LinkedList<Point>();
+    private LinkedList<Point> tempThingForRiyane = new LinkedList<Point>();
     
     // Constructors
     
@@ -94,7 +94,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
         
         int x = this.originX;
         int y = this.originY;
-        Graphics2D g2d = (Graphics2D)g; 
+        Graphics2D g2d = (Graphics2D)g;
     	Tile[][] board = data.getBoard();
     	
     	// Grid
@@ -109,6 +109,13 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			x = this.originX;
 			y += this.cellWidth;
 		}
+		
+		Color playerColor = null;
+		String playerName = null;
+		try {
+			playerColor = StreetCar.player.getPlayerColor();
+			playerName = StreetCar.player.getPlayerName();
+		} catch (RemoteException e1) { }
 		
 		// Deck and its number of cards
 		g2d.setColor(Color.BLACK);
@@ -125,11 +132,33 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		{
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
-			try {
-				g2d.setColor(StreetCar.player.getPlayerColor());
-			} catch (RemoteException e) { e.printStackTrace(); }
+			g2d.setColor(playerColor);
 			g2d.fillRect(x, y, cellWidth, cellWidth);
 		}
+		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName))
+		{
+			System.out.println(playerName + " HAS STARTED FUCKING TRAVLELE");
+			Point p = StreetCar.player.getGameData().getTramPosition(playerName);
+
+			x = this.originX + this.cellWidth * p.x;
+			y = this.originY + this.cellWidth * p.y;
+			g2d.setColor(playerColor);
+			g2d.fillRect(x, y, cellWidth, cellWidth);
+		}
+		else
+		{
+			System.out.println(playerName + " HAS NOT STARTED HIS FUCKING TRAVLELE");
+		}
+
+		Color c = new Color(1f,0f,0f,.5f);
+		g2d.setColor(c);
+		for(Point p : tempThingForRiyane)
+		{
+			x = this.originX + this.cellWidth * p.x;
+			y = this.originY + this.cellWidth * p.y;
+			g2d.fillRect(x, y, cellWidth, cellWidth);
+		}
+		tempThingForRiyane.clear();
     }
 	
 	// Mouse Listener
@@ -201,6 +230,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		if(trainMove.size() > 1 && p.equals(trainMove.get(trainMove.size() - 2)))
 		{
 			trainMove.removeLast();
+			repaint();
 		}
 		else
 		{
@@ -224,8 +254,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.updateMapGeometry();
-		this.tempMove.clear();
-		this.trainMove.clear();
 	}
 
 	public void startMaidenVoyage(Point point) {
