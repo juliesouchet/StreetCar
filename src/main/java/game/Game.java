@@ -452,23 +452,28 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
 		if (hasStartedTravel)
 		{
-			int winner = -1;
+			int winner	= -1;
+			int stop	= -1;
 			Point tramPosition = this.data.getTramPosition(playerName);
-			Point p0, p1;
+			Point p0, p1, p2;
 			Point[] endTerminus =  this.data.getPlayerTerminusPosition(playerName);
 
 			if (!tramPath[0].equals(tramPosition))				return false;
-//TODO verifier l'arret au stop
+
 			p0 = this.data.getPreviousTramPosition(playerName);
-			for (int i=0; i<tramPathSize; i++)
+			p1 = tramPosition;
+			for (int i=1; i<tramPathSize; i++)
 			{
-				p1 = tramPath[i];
+				p2 = tramPath[i];
 				if (winner != -1)								return false;
-				if (!data.pathExistsBetween(p0, p1))			return false; // TODO p-1
-				if (Util.manhathanDistance(p0, p1) != 1)		return false;
-				if (p1.equals(endTerminus[0]))	winner = i;
-				if (p1.equals(endTerminus[1]))	winner = i;
+				if (stop	!= -1)								return false;
+				if (!data.pathExistsBetween(p0, p1, p2))		return false;
+				if (Util.manhathanDistance(p1, p2) != 1)		return false;
+				if (p2.equals(endTerminus[0]))		winner = i;
+				if (p2.equals(endTerminus[1]))		winner = i;
+				if (this.data.getTile(p2).isStop())	stop = i;
 				p0 = p1;
+				p1 = p2;
 			}
 			return true;
 		}

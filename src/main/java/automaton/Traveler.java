@@ -157,6 +157,14 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 			destination = data.isStopNextToBuilding(destination);
 			if(destination == null)
 				 throw new RuntimeException("This building " + destination + " has no stop");
+			
+			
+			
+			
+			
+//TODO Riyane: 
+// Cette fonction prend mnt en parametre le point par lequel tu viens
+// Fais bien attention a l'ordre de tes parametres
 			path1 = data.getShortestPath(origin, destination);
 			if(path1==null)
 				throw new RuntimeException("The traveler "+name+" is blocked");

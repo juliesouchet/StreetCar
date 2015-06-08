@@ -22,7 +22,7 @@ public class PathFinder implements Serializable
 	 * Uses the A* algorithm.
 	 * The source and destination point are returned in the solution.
 	 ==============================================================*/
-	public  LinkedList<Point> getPath(Data data, Point pSrc, Point pDst)
+	public  LinkedList<Point> getPath(Data data, Point previousInitial, Point pSrc, Point pDst)
 	{
 		int w = data.getWidth();
 		int h = data.getHeight();
@@ -38,6 +38,7 @@ public class PathFinder implements Serializable
 		LinkedList<Point> neighbor;
 		Knot y;
 		int pz;
+		Point pOld, p;
 
 		for (int i=0; i<w; i++)											// Initialisation
 		{
@@ -49,21 +50,24 @@ public class PathFinder implements Serializable
 		}
 		pq.add(new Knot(pSrc, 0, heuristic(pSrc, pDst)));
 		weight[pSrc.x][pSrc.y] = 0;
-//TODO		previous[pSrc.x][pSrc.y] = previousInitial;
-///TODO verifier avec le precedent
+		previous[pSrc.x][pSrc.y] = previousInitial;
+
 		while (!pq.isEmpty())
 		{
-			y =  pq.remove();
-			if (y.getElem().equals(pDst))	return reversePath(previous, pSrc, pDst);
-			neighbor = data.getAccessibleNeighborsPositions(y.p.x, y.p.y);
-			for (Point z: neighbor)
+			y		=  pq.remove();
+			p		= y.getElem();
+			pOld	= previous[p.x][p.y];
+			if (p.equals(pDst))	return reversePath(previous, pSrc, pDst);
+			neighbor = data.getAccessibleNeighborsPositions(p.x, p.y);
+			for (Point pNext: neighbor)
 			{
+				if ((pOld != null) && (!isSimplePath(data, pOld, p, pNext)))	continue;
 				pz = y.getDistPrev()+1;
-				if ((weight[z.x][z.y] == null) || (pz < weight[z.x][z.y]))
+				if ((weight[pNext.x][pNext.y] == null) || (pz < weight[pNext.x][pNext.y]))
 				{
-					weight[z.x][z.y] = pz;
-					pq.add(new Knot(z, pz, heuristic(z, pDst)));
-					previous[z.x][z.y] = new Point(y.getElem().x, y.getElem().y);
+					weight[pNext.x][pNext.y] = pz;
+					pq.add(new Knot(pNext, pz, heuristic(pNext, pDst)));
+					previous[pNext.x][pNext.y] = new Point(y.getElem().x, y.getElem().y);
 				}
 			}
 		}
@@ -98,6 +102,29 @@ public class PathFinder implements Serializable
 		}
 		return res;
 	}
+	private boolean isSimplePath(Data data, Point pOld, Point p, Point pNext)
+	{
+return true;
+/*******
+		Tile tOld	= data.getTile(pOld);
+		Tile t		= data.getTile(p);
+		Tile tNext	= data.getTile(pNext);
+
+		for (Direction dir0: Direction.DIRECTION_LIST)
+		{
+			if (!tOld.isPathTo(dir0))							continue;
+			if (!dir0.getNeighbour(pOld.x, pOld.y).equals(p))	continue;
+			for (Direction dir1: Direction.DIRECTION_LIST)
+			{
+				if (!t.isPathTo(dir1))							continue;
+				if (!dir1.getNeighbour(p.x, p.y).equals(pNext))	continue;
+				if (!t.isPath(dir0.turnHalf(), dir1))			continue;
+				if (!tNext.isPathTo(dir1.turnHalf()))			continue;
+				else											return true;
+			}
+		}
+		return false;
+*/	}
 
 // -----------------------------------------
 // Private classes
