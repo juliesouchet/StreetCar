@@ -7,7 +7,6 @@ import java.util.Random;
 
 import main.java.data.Action;
 import main.java.data.Data;
-import main.java.data.Tile;
 import main.java.util.TraceDebugAutomate;
 
 /**
@@ -17,8 +16,8 @@ import main.java.util.TraceDebugAutomate;
 public class Traveler extends PlayerAutomaton {
 	/** Table that contains the objectives of the player : starting terminus and buildings to visit */
 	Point[] checkpoints;
-	/** Index of the first checkpoint to complete */
-	int remainingCheckpoints;
+	/** Index of the first checkpoint left to complete */
+	int startCheckpoints;
 	/** Table that contains the destination (both points of the ending terminus) */
 	Point[]	destinationTerminus;
 	
@@ -31,7 +30,7 @@ public class Traveler extends PlayerAutomaton {
 	@Override
 	public Action makeChoice(Data currentConfig) {
 		Action res = null;
-		int i, j, k, nbEssais = 0;
+		int i;
 		Point startingPoint = null;
 		boolean trackCompleted = currentConfig.isTrackCompleted(getName());
 
@@ -41,31 +40,7 @@ TraceDebugAutomate.debugTraveler(" trackCompleted = " + trackCompleted +"\n");
 		 *	Building
 		 =============*/
 		if(!trackCompleted || (currentConfig.hasDoneRoundFirstAction(name))) {
-			int handSize = currentConfig.getHandSize(name);
-			Random rand = new Random();
-			Tile t;
-			
-			if(handSize == 0) {
-				TraceDebugAutomate.debugTraveler(" Empty hand\n");
-				return null;
-			}
-			
-			do {
-				nbEssais++;
-				if(nbEssais > 10000)	throw new RuntimeException(name + " cannot find a valid move");
-				// On choisit un emplacement au hasard
-				i = rand.nextInt(currentConfig.getWidth());
-				j = rand.nextInt(currentConfig.getHeight());
-				
-				// On choisit une tuile parmi les 5 de notre main
-				k = rand.nextInt(handSize);
-				t = currentConfig.getHandTile(name, k);
-				//On la fait tourner
-				for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
-					t.turnLeft();
-				}
-			} while(!currentConfig.isAcceptableTilePlacement(i, j, t));
-			res = Action.newBuildSimpleAction(i, j, t);
+			res = new Dumbest(name).makeChoice(currentConfig);
 		}
 		
 		
@@ -76,6 +51,7 @@ TraceDebugAutomate.debugTraveler(" trackCompleted = " + trackCompleted +"\n");
 			// TODO déplacer ça dans initializeTravel une fois le debug fini
 			Point[] terminusPosition = currentConfig.getPlayerTerminusPosition(getName()),
 					buildingsPosition = currentConfig.getPlayerAimBuildings(getName());
+			
 String termPosString = terminusPosition[0]+","+terminusPosition[1]+","+terminusPosition[2]+","+terminusPosition[3],
 		buildPosString = buildingsPosition[0].toString();
 for(int x = 1; x<currentConfig.nbrBuildingInLine(); x++) {buildPosString+=","+buildingsPosition[x];}
@@ -84,6 +60,7 @@ TraceDebugAutomate.debugTraveler(" PlayerTerminus : "+termPosString +"\n");
 TraceDebugAutomate.debugTraveler(" NbrBuildings : "+currentConfig.nbrBuildingInLine()+"\n");
 TraceDebugAutomate.debugTraveler(" PlayerBuildings : "+buildPosString +"\n");
 TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSpeed() +"\n");
+
 			if(!currentConfig.hasStartedMaidenTravel(getName())) {
 				startingPoint = initializeTravel(currentConfig,	terminusPosition, buildingsPosition);
 			}
@@ -96,7 +73,7 @@ TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSp
 			int pathSize = 0;
 			while(iterator.hasNext()
 				&& !currentConfig.getTile(iterator.next()).isStop()
-				&& pathSize < currentConfig.getMaximumSpeed()+1) pathSize++;
+				&& pathSize < currentConfig.getMaximumSpeed()+1)	pathSize++;
 			Point [] streetcarMovement = new Point[pathSize];
 			i = 0;
 			iterator = itinerary.listIterator();
@@ -106,15 +83,15 @@ TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSp
 			}
 			// Updates the checkpoints : removes those passed by
 			do {
-				Point p = checkpoints[remainingCheckpoints];
+				Point p = checkpoints[startCheckpoints];
 				i = 0;
 				while(i<streetcarMovement.length && streetcarMovement[i] != p)
 					i++;
 				if(i<streetcarMovement.length)
-					remainingCheckpoints++;
+					startCheckpoints++;
 			} while (i<streetcarMovement.length);
 			// Updates the new starting point
-			checkpoints[remainingCheckpoints] = streetcarMovement[streetcarMovement.length-1];
+			checkpoints[startCheckpoints] = streetcarMovement[streetcarMovement.length-1];
 			res = Action.newMoveAction(streetcarMovement, streetcarMovement.length, startingPoint);
 		}
 		
@@ -127,7 +104,7 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 		Point startingPoint;
 		// Initializes the itinerary with randomly chosen extremities
 		Random r = new Random();
-		remainingCheckpoints = 0;
+		startCheckpoints = 0;
 		checkpoints = new Point[currentConfig.nbrBuildingInLine()+1];
 		for(int x = 1; x < currentConfig.nbrBuildingInLine()+1; x++) {
 			checkpoints[x] = buildingsPosition[x-1];
@@ -159,25 +136,26 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 	 */
 	public LinkedList<Point> getShortestItinerary(Data data)
 	{
-		if(remainingCheckpoints >= data.nbrBuildingInLine()+1)
+		if(startCheckpoints >= data.nbrBuildingInLine()+1)
 			 throw new RuntimeException("Traveler " + name + " is already at his destination");
 		
 		LinkedList<Point> result = new LinkedList<Point>(), path1, path2;
 		Point origin, destination = null;
-		int i = remainingCheckpoints;
+		int i = startCheckpoints;
 		 
-		destination = checkpoints[remainingCheckpoints];
-		 while(i < data.nbrBuildingInLine()) {
-			 origin = destination;
-			 destination = checkpoints[i+1];
-			 destination = data.isStopNextToBuilding(destination);
-			 if(destination == null)
+		destination = checkpoints[startCheckpoints];
+		while(i < data.nbrBuildingInLine()) {
+			origin = destination;
+			destination = checkpoints[i+1];
+			destination = data.isStopNextToBuilding(destination);
+			if(destination == null)
 				 throw new RuntimeException("This building " + destination + " has no stop");
-			 path1 = data.getShortestPath(origin, destination);
-			 if(path1==null)
-				 throw new RuntimeException("No path from " + origin + " to " + destination);
-			 result.addAll(path1);
-			 i++;
+			path1 = data.getShortestPath(origin, destination);
+			if(path1==null)
+				throw new RuntimeException("The traveler "+name+" is blocked");
+			//	 Action stopMaidenTravel TODO
+		 	result.addAll(path1);
+			i++;
 		 }
 		 // We check both points of the destination terminus, and keep the closest one
 		 path1 = data.getShortestPath(destination, destinationTerminus[0]);
@@ -190,7 +168,9 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 			 if(path1.size() < path2.size())	result.addAll(path1);
 			 else								result.addAll(path2);
 		 }
-		 //else Action stopMaidenTravel TODO
+		 else 
+			throw new RuntimeException("The traveler "+name+" is blocked");
+			 //Action stopMaidenTravel TODO
 		
 		return result;
 	}
