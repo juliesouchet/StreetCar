@@ -20,7 +20,7 @@ public class PathFinderMulti implements Serializable
 	
 	
 	/**========================================================
-	 * @return the number of diffrent paths that:</br>
+	 * @return the number of different paths that:</br>
 	 * 		- Have the given length</br>
 	 * 		- Start from the given point</br>
 	 * Each path p is returned into the input parameter pathMatrix[p]

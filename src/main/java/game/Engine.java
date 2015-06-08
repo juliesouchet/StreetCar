@@ -106,7 +106,7 @@ public class Engine implements Runnable
 	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function, String playerName, Point position1, Tile tile1, Point position2, Tile tile2)
 	{
-		this.addAction(new EngineAction(null, playerName, data, function, position1, tile1, position2, tile2, null, null, null, null, null, null, null));
+		this.addAction(new EngineAction(null, playerName, data, function, position1, tile1, position2, tile2, null, null, null,  null, null, null, null));
 	}
 	public void addAction(Data data, String function, String playerName, Point[] tramPath, int tramPathSize, Point startTerminus)
 	{
@@ -210,7 +210,7 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void validate() throws RemoteException
 	{
-//System.out.println("Validate (engine)");
+System.out.println("Validate (engine)");
 		this.toExecute.data.skipTurn();
 		this.notifyAllPlayers();
 
@@ -218,13 +218,15 @@ public class Engine implements Runnable
 	@SuppressWarnings("unused")
 	private synchronized void moveTram() throws RemoteException
 	{
-		Data	data			= this.toExecute.data;
-		String	playerName		= this.toExecute.playerName;
-		Point[]	tramPath		= this.toExecute.tramPath;
-		Point	startTerminus	= this.toExecute.position1;
-		int		tramPathSize	= this.toExecute.tramPathSize;
+		Data		data			= this.toExecute.data;
+		String		playerName		= this.toExecute.playerName;
+		Point[]		tramPath		= this.toExecute.tramPath;
+		Point		startTerminus	= this.toExecute.position1;
+		int			tramPathSize	= this.toExecute.tramPathSize;
+
 System.out.println("MoveTram " + playerName + " from " + tramPath[0] + " to " + tramPath[tramPathSize-1] + " (engine.moveTram)");
 		data.setTramPosition(playerName, tramPath, tramPathSize, startTerminus);
+		this.notifyPlayer(playerName);
 	}
 	@SuppressWarnings("unused")
 	private synchronized void stopMaidenTravel() throws RemoteException
@@ -314,10 +316,6 @@ System.out.println("MoveTram " + playerName + " from " + tramPath[0] + " to " + 
 			this.chosenPlayer	= chosenPlayer;
 			this.isHost			= isHost;
 			this.isHuman		= isHuman;
-		}
-		public EngineAction(String playerName, Data data, String Function)
-		{
-			this(null, playerName, data, Function, null, null, null, null, null, null, -1, null, false, null, null);
 		}
 	}
 }
