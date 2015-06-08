@@ -466,6 +466,7 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 				if (winner != -1)								return false;
 				if (!data.pathExistsBetween(p0, p1))			return false; // TODO p-1
 				if (Util.manhathanDistance(p0, p1) != 1)		return false;
+				if (!data.getAccessibleNeighborsPositions(p0.x, p0.y).contains(p1)) return false; // TODO pareil mais verifier aussi 3 par 3 (riyane en train de le faire)
 				if (p1.equals(endTerminus[0]))	winner = i;
 				if (p1.equals(endTerminus[1]))	winner = i;
 				p0 = p1;
