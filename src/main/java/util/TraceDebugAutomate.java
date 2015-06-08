@@ -33,7 +33,7 @@ public class TraceDebugAutomate {
 
 	public static void debugDecisionTableTrace(String str) {
 		if (TraceDebugAutomate.decisionTableTrace) {
-			System.out.print("decisionTableTrace : " + str);
+			System.out.println("decisionTableTrace : " + str);
 		}
 	}
 

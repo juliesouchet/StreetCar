@@ -40,7 +40,7 @@ public class Data implements Serializable
 	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
 	public static final int				maxNbrPlayer			= 5;
 	public static final int				minLine					= 1;
-	public static final int				maxLine					= 6;
+	public static final int				maxLine					= 2; //6;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				maxNbrTileToDraw		= 2;
@@ -212,7 +212,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+//System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -909,7 +909,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
 		{
-// TODO s'arreter au stop
+// TODO s'arreter au stop, initialiser le currentTramPosition si isTrackCompleted
 			if (startTerminus == null)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];	//		Case Can start maiden travel
 			else						startTerminus = null;
 			this.startMaidenTravel(playerName, startTerminus);
@@ -942,6 +942,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 					for (int y1=1; y1<this.getHeight()-1; y1++)
 					{
 						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;		//		Case player may start maiden travel next turn
+
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
 						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
@@ -973,6 +974,12 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 												resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											}
 											res ++;
+											
+											// TODO s'arranger pour que le tableau soit plus grand
+											if(writeActionsInTab && res >= resTab.length) { 
+												this.board[x1][y1] = oldT1;
+												return res;
+											}
 										}
 									}
 								}
@@ -1385,6 +1392,7 @@ System.out.println("Data.l 1340: startTerminus + " + startTerminus);
 			}
 			throw new RuntimeException("???");
 		}
+
 	}
 
 // --------------------------------------------
