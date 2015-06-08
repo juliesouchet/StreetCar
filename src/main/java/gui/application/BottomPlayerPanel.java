@@ -57,7 +57,7 @@ public class BottomPlayerPanel extends Panel {
 		this.buttonsPanel = new Panel();
 		this.buttonsPanel.setLayout(null);
 		this.buttonsPanel.setBackground(Color.WHITE);
-		this.buttonsPanel.setPreferredSize(new Dimension(175, 150));
+		this.buttonsPanel.setPreferredSize(new Dimension(205, 150));
 
 		beginTripButton = new Button("Commencer le voyage", null);
 		validateButton = new Button("Valider", null);
@@ -72,9 +72,9 @@ public class BottomPlayerPanel extends Panel {
 		resetButton.addAction(this, "reset");
 		
 		
-		beginTripButton.setBounds(0, 15, 165, 35);
-		validateButton.setBounds(0, 55, 165, 35);
-		resetButton.setBounds(0, 95, 165, 35);
+		beginTripButton.setBounds(0, 15, 200, 35);
+		validateButton.setBounds(0, 55, 200, 35);
+		resetButton.setBounds(0, 95, 200, 35);
 
 		buttonsPanel.add(beginTripButton);
 		buttonsPanel.add(validateButton);
@@ -139,14 +139,11 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkBeginTripButton() {
-		/* TODO
 		if (!canBeginTrip) {
 			beginTripButton.setEnabled(false);
 		} else {
 			beginTripButton.setEnabled(true);
 		}
-		*/
-		beginTripButton.setEnabled(true);
 	}
 	
 	protected void checkValidateButton(Data data) {

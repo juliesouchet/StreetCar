@@ -1,8 +1,12 @@
 
 package main.java.gui.application;
 
+<<<<<<< HEAD
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+=======
+import java.awt.Dimension;
+>>>>>>> origin/master
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -51,6 +55,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		this.frame.getContentPane().setLayout(null); 
 		this.frame.addComponentListener(this);
 		this.frame.setSize(1300, 830);
+        this.frame.setMinimumSize(new Dimension(1300, 830));
 	}
 
 	private void setupMenuBar() {
