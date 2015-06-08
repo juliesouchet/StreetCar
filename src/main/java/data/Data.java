@@ -40,7 +40,7 @@ public class Data implements Serializable
 	public static final int				minNbrPlayer			= 1; //TODO modifie par ulysse pour permettre tests basiques des automates. remettre a 2
 	public static final int				maxNbrPlayer			= 5;
 	public static final int				minLine					= 1;
-	public static final int				maxLine					= 2; //6;
+	public static final int				maxLine					= 6;
 	public static final int				minNbrBuildingInLine	= 2;
 	public static final int				maxNbrBuildingInLine	= 3;
 	public static final int				maxNbrTileToDraw		= 2;
@@ -1346,7 +1346,6 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		public void undoRound() {this.history.removeLast();}
 		public void startMaidenTravel(Point startTerminus)
 		{
-System.out.println("Data.l 1340: startTerminus + " + startTerminus);
 			this.startTerminus.x		= startTerminus.x;
 			this.startTerminus.y		= startTerminus.y;
 			int i = 0;
@@ -1381,7 +1380,8 @@ System.out.println("Data.l 1340: startTerminus + " + startTerminus);
 		private void initPreviousTramPosition()
 		{
 			Point neighbor;
-			int dirList = board[startTerminus.x][startTerminus.x].getAccessibleDirections();
+			int dirList = board[startTerminus.x][startTerminus.y].getAccessibleDirections();
+
 			for (Direction dir: Direction.DIRECTION_LIST)
 			{
 				if (!dir.isDirectionInList(dirList)) continue;
@@ -1392,7 +1392,6 @@ System.out.println("Data.l 1340: startTerminus + " + startTerminus);
 			}
 			throw new RuntimeException("???");
 		}
-
 	}
 
 // --------------------------------------------
