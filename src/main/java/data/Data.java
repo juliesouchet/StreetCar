@@ -1337,6 +1337,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		public void undoRound() {this.history.removeLast();}
 		public void startMaidenTravel(Point startTerminus)
 		{
+System.out.println("Data.l 1340: startTerminus + " + startTerminus);
 			this.startTerminus.x		= startTerminus.x;
 			this.startTerminus.y		= startTerminus.y;
 			int i = 0;
@@ -1382,7 +1383,6 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 			}
 			throw new RuntimeException("???");
 		}
-
 	}
 
 // --------------------------------------------
