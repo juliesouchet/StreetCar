@@ -401,7 +401,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		src.add(tile);
 	}
 	/**==================================================
-	 * @return The player declares the START of his maiden travel to find a new path or build a new one
+	 * @return The player declares the START of his maiden travel
 	 ====================================================*/
 	public void startMaidenTravel(String playerName, Point startTerminus)
 	{

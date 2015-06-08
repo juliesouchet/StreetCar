@@ -31,7 +31,6 @@ public class Traveler extends PlayerAutomaton {
 	@Override
 	public Action makeChoice(Data currentConfig) {
 		Action res = null;
-		Random r = new Random();
 		int i, j, k, nbEssais = 0;
 		Point startingPoint = null;
 		boolean trackCompleted = currentConfig.isTrackCompleted(getName());
@@ -41,7 +40,7 @@ TraceDebugAutomate.debugTraveler(" trackCompleted = " + trackCompleted +"\n");
 		/*============
 		 *	Building
 		 =============*/
-		if(!trackCompleted) {
+		if(!trackCompleted || (currentConfig.hasDoneRoundFirstAction(name))) {
 			int handSize = currentConfig.getHandSize(name);
 			Random rand = new Random();
 			Tile t;
@@ -74,6 +73,7 @@ TraceDebugAutomate.debugTraveler(" trackCompleted = " + trackCompleted +"\n");
 		 *	Traveling	
 		 ===============*/
 		else {
+			// TODO déplacer ça dans initializeTravel une fois le debug fini
 			Point[] terminusPosition = currentConfig.getPlayerTerminusPosition(getName()),
 					buildingsPosition = currentConfig.getPlayerAimBuildings(getName());
 String termPosString = terminusPosition[0]+","+terminusPosition[1]+","+terminusPosition[2]+","+terminusPosition[3],
@@ -85,27 +85,7 @@ TraceDebugAutomate.debugTraveler(" NbrBuildings : "+currentConfig.nbrBuildingInL
 TraceDebugAutomate.debugTraveler(" PlayerBuildings : "+buildPosString +"\n");
 TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSpeed() +"\n");
 			if(!currentConfig.hasStartedMaidenTravel(getName())) {
-				// Initializes the itinerary with randomly chosen extremities
-				remainingCheckpoints = 0;
-				checkpoints = new Point[currentConfig.nbrBuildingInLine()+1];
-				for(int x = 1; x < currentConfig.nbrBuildingInLine()+1; x++) {
-					checkpoints[x] = buildingsPosition[x-1];
-				}
-				destinationTerminus = new Point[2];
-				//i = r.nextInt(2); // Random first terminus TODO prendre en compte les differentes combinaisons de points de terminus
-				if(r.nextInt(2) == 0) { // Random direction of travel
-					startingPoint = terminusPosition[0]; //i]; TODO
-					destinationTerminus[0] = terminusPosition[2];
-					destinationTerminus[1] = terminusPosition[3];
-				}
-				else {
-					destinationTerminus[0] = terminusPosition[0];
-					destinationTerminus[1] = terminusPosition[1];
-					startingPoint = terminusPosition[3]; //i+2]; TODO
-				}
-				checkpoints[0] = startingPoint;
-				
-				// TODO if the automaton has already played once this turn => start_trip_next_turn
+				startingPoint = initializeTravel(currentConfig,	terminusPosition, buildingsPosition);
 			}
 			
 			// Calculates the shortest itinerary
@@ -135,6 +115,32 @@ TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSp
 		
 TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 		return res;
+	}
+
+	
+	private Point initializeTravel(Data currentConfig, Point[] terminusPosition, Point[] buildingsPosition) {
+		Point startingPoint;
+		// Initializes the itinerary with randomly chosen extremities
+		Random r = new Random();
+		remainingCheckpoints = 0;
+		checkpoints = new Point[currentConfig.nbrBuildingInLine()+1];
+		for(int x = 1; x < currentConfig.nbrBuildingInLine()+1; x++) {
+			checkpoints[x] = buildingsPosition[x-1];
+		}
+		destinationTerminus = new Point[2];
+		//i = r.nextInt(2); // Random first terminus TODO prendre en compte les differentes combinaisons de points de terminus
+		if(r.nextInt(2) == 0) { // Random direction of travel
+			startingPoint = terminusPosition[0]; //i]; TODO
+			destinationTerminus[0] = terminusPosition[2];
+			destinationTerminus[1] = terminusPosition[3];
+		}
+		else {
+			destinationTerminus[0] = terminusPosition[0];
+			destinationTerminus[1] = terminusPosition[1];
+			startingPoint = terminusPosition[3]; //i+2]; TODO
+		}
+		checkpoints[0] = startingPoint;
+		return startingPoint;
 	}
 
 	
@@ -171,18 +177,15 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 		 // We check both points of the destination terminus, and keep the closest one
 		 path1 = data.getShortestPath(destination, destinationTerminus[0]);
 		 path2 = data.getShortestPath(destination, destinationTerminus[1]);
-		 if(path1==null) {
-			 if(path2==null)
-				 throw new RuntimeException("No path from " + destination + " to end terminus " + destinationTerminus[0] + ", " + destinationTerminus[1]);
-			 else
-				 result.addAll(path2);
+		 if(path1==null ^ path2==null) {
+			 if(path1==null)	result.addAll(path2);
+			 else				result.addAll(path1);
 		 }
-		 else {
-			 if(path2==null || path1.size()<path2.size())
-				 result.addAll(path1);
-			 else
-				 result.addAll(path2);
+		 else if(path1!=null && path2!=null) {
+			 if(path1.size() < path2.size())	result.addAll(path1);
+			 else								result.addAll(path2);
 		 }
+		 //else Action stopMaidenTravel TODO
 		
 		return result;
 	}

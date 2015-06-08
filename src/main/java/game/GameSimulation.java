@@ -5,7 +5,7 @@ import java.util.HashMap;
 import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Strongest;
-import main.java.automaton.TravelerRiyane;
+import main.java.automaton.Traveler;
 import main.java.data.Action;
 import main.java.data.Data;
 
@@ -40,7 +40,7 @@ public class GameSimulation
 			switch (aiLevel)
 			{
 				case PlayerAutomaton.dumbestLvl:	automaton = new Dumbest(playerName);	break;
-				case PlayerAutomaton.travelerLvl:	automaton = new TravelerRiyane(playerName);	break;
+				case PlayerAutomaton.travelerLvl:	automaton = new Traveler(playerName);	break;
 				case PlayerAutomaton.strongestLvl:	automaton = new Strongest(playerName);	break;
 				default	:throw new RuntimeException("Undefined AI difficulty : " + aiLevel);
 			}
@@ -52,7 +52,7 @@ public class GameSimulation
 // LocalMethode:
 // --------------------------------------------
 	/**=========================================================================
-	 * @return Start the simulation from the given round od data.</br>
+	 * @return Start the simulation from the given round of data.</br>
 	 * The function returns the name of the winner, or null if the game is blocked.</br>
 	 ===========================================================================*/
 	public String simulate()

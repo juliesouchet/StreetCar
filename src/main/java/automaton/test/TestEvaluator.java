@@ -42,7 +42,7 @@ public class TestEvaluator
 	public static final int		aiLevel				= 2;
 
 // --------------------------------------------
-// Local methodes:
+// Local methods:
 // --------------------------------------------
 	public static void main(String[] args) throws RemoteException, ExceptionFullParty, ExceptionHostAlreadyExists, NotBoundException, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionUnknownBoardName, ExceptionGameHasAlreadyStarted, ExceptionForbiddenAction, ExceptionNotEnoughPlayers, InterruptedException
 	{
@@ -63,7 +63,6 @@ public class TestEvaluator
 	
 	
 	
-// DSL, mais c la seule solution que g
 private static void waitGameStart(PlayerIHM player) throws InterruptedException
 {
 	Object o = new Object();
