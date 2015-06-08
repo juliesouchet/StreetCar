@@ -139,14 +139,11 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkBeginTripButton() {
-		/* TODO
 		if (!canBeginTrip) {
 			beginTripButton.setEnabled(false);
 		} else {
 			beginTripButton.setEnabled(true);
 		}
-		*/
-		beginTripButton.setEnabled(true);
 	}
 	
 	protected void checkValidateButton(Data data) {
