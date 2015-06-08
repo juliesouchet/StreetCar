@@ -463,7 +463,7 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 			{
 				p1 = tramPath[i];
 				if (winner != -1)								return false;
-				if (!data.pathExistsBetween(p0, p1))			return false;
+				if (!data.pathExistsBetween(p0, p1))			return false; // TODO p-1
 				if (Util.manhathanDistance(p0, p1) != 1)		return false;
 				if (p1.equals(endTerminus[0]))	winner = i;
 				if (p1.equals(endTerminus[1]))	winner = i;
@@ -473,6 +473,7 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 		}
 		else
 		{
+System.out.println("Start maiden travel " + playerName + " (game.checkTramPath)");
 			Point[]	terminus = data.getPlayerTerminusPosition(playerName);
 			int i;
 			for (i=0; i<4; i++) if (startTerminus.equals(terminus[i])) break;
