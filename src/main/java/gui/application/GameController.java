@@ -1,12 +1,9 @@
 
 package main.java.gui.application;
 
-<<<<<<< HEAD
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-=======
-import java.awt.Dimension;
->>>>>>> origin/master
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
