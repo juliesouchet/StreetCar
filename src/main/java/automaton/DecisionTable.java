@@ -1,5 +1,6 @@
 package main.java.automaton;
 
+import main.java.data.Action;
 import main.java.data.Data;
 import main.java.util.TraceDebugAutomate;
 
@@ -164,7 +165,7 @@ public class DecisionTable {
 		this.NodeTable = new DecisionNode[tableSize];
 		this.freeSlots = new boolean[tableSize];
 		this.setSize(tableSize);
-		
+
 		this.initDecisionNode(0, new DecisionNode(maxCardinalActionPossible, 0, "root"));
 		this.freeSlots[0]=true;
 		for(int i=1;i<this.getSize();i++){
@@ -218,9 +219,10 @@ public class DecisionTable {
 		String playerName = currentConfiguration.getPlayerTurn();
 		int aFreeSlot = 0;
 		int numberOfPossibleActionsInTemporaryConfiguration;
-		Data copyDeCOnfigurationCourante = currentConfiguration.getClone(playerName); //TODO a enlever ça sera fait par le rollback
+		Data copyDeConfigurationCourante = currentConfiguration.getClone(playerName); //TODO a enlever ça sera fait par le rollback
 		DecisionNode currentNode = this.getDecisionNode(index);
 		CoupleActionIndex currentCoupleActionIndex = null;
+		Action a;
 		// Cas d'une feuille on estime la qualité avec la fonction de Julie
 		if(wantedDepth==0){
 			//===============================================================================//
@@ -234,10 +236,12 @@ public class DecisionTable {
 			// Cas d'une recurrence	
 		} else if(wantedDepth>0){ 
 				for (int i=0;i< numberOfpossibleActions; i++){
+					TraceDebugAutomate.debugDecisionTableTrace(" Can play again : " + currentConfiguration.hasRemainingAction(myName)+"\n");
 					currentCoupleActionIndex= currentNode.getCoupleActionIndex(i);
 					aFreeSlot = this.findFreeSlot();
 					currentCoupleActionIndex.setIndex(aFreeSlot);
-					currentConfiguration.doAction(playerName,currentCoupleActionIndex.getAction());
+					a = currentCoupleActionIndex.getAction();
+					currentConfiguration.doAction(playerName,a);
 					numberOfPossibleActionsInTemporaryConfiguration = currentConfiguration.getPossibleActions(myName, this.getDecisionNode(aFreeSlot).getPossibleFollowingActionTable(), true);
 					//=====================TRACE===================================
 					TraceDebugAutomate.debugDecisionTableTrace("\n\n\t numberOfPossibleActionsInTemporaryConfiguration=="+numberOfPossibleActionsInTemporaryConfiguration+"! \n\n\n");
@@ -245,7 +249,7 @@ public class DecisionTable {
 					this.applyMinMax(aFreeSlot,wantedDepth-1, currentConfiguration, numberOfPossibleActionsInTemporaryConfiguration);
 					currentCoupleActionIndex.setQuality(this.getDecisionNode(aFreeSlot).getQuality());
 					//currentConfiguration.getPreviousDataAndRollBack(); TODO
-					currentConfiguration = copyDeCOnfigurationCourante.getClone(myName);
+					currentConfiguration = copyDeConfigurationCourante.getClone(myName);
 					this.freeSlot(aFreeSlot);
 				}
 				if (playerName.equals(this.getMyName())){

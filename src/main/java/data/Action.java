@@ -244,7 +244,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 		{
 			case MOVE:								str += "MOVE : "					+ this.tramwayMovement.toString()	+ "    StartTerminus: " + this.startTerminus;	break;
 			case BUILD_SIMPLE:						str += "BUILD_SIMPLE: " 			+ this.positionTile1.toString()		+ this.tile1.toString();	break;
-			case TWO_BUILD_SIMPLE:					str += "TWO_BUILD_SIMPL: "			+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
+			case TWO_BUILD_SIMPLE:					str += "TWO_BUILD_SIMPLE: "			+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
 			case BUILD_DOUBLE:						str += "BUILD_DOUBLE: " 			+ this.positionTile1.toString()		+ this.tile1.toString()	+ this.positionTile2.toString() + this.tile2.toString();	break;
 			case BUILD_AND_START_TRIP_NEXT_TURN:	str += "BUILD_START_TRIP_NEXT_TURN";break;
 			default:								str += "Other action: " + this.action;

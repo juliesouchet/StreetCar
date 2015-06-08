@@ -211,7 +211,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-//System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -877,7 +877,7 @@ System.out.println("-------------\n");
 		Point lastTramPosition		= this.playerInfoList.get(playerName).previousTramPosition;
 		Point currentTramPosition	= this.playerInfoList.get(playerName).tramPosition;
 		Point startTerminus			= this.getPlayerTerminusPosition(playerName)[0];
-		Tile t, oldT1;
+		Tile t, oldT1, t1, t2;
 
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
 		{
@@ -939,7 +939,9 @@ System.out.println("-------------\n");
 											if (!this.isAcceptableTilePlacement(x2, y2, tmpRotation2[r2])) continue;
 											if(writeActionsInTab)
 											{
-												resTab[res].getAction().setTwoSimpleBuildingAction(x1, y1, tmpRotation1[r1], x2, y2, tmpRotation2[r2]);
+												t1 = tmpRotation1[r1];
+												t2 = tmpRotation2[r2];
+												resTab[res].getAction().setTwoSimpleBuildingAction(x1, y1, t1, x2, y2, t2);
 												resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											}
 											res ++;
