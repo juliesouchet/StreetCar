@@ -111,7 +111,7 @@ public class InGamePanel extends Panel {
     	this.playersSidebarPanel.setBackground(new Color(0xFFEDDE));
     	this.playersSidebarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
     	
-		titlePanel = new TitlePanel("Adversaries");
+		titlePanel = new TitlePanel("Adversaires");
 		titlePanel.setBounds(0, 0, 329, 30);
 		playersSidebarPanel.add(titlePanel);  	
     	

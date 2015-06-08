@@ -85,13 +85,13 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 	}
 	
 	private void setupButtons() {
-		createGameButton = new Button("Create game", null);
+		createGameButton = new Button("Créer une partie", null);
 		createGameButton.addAction(this, "createGame");
 		createGameButton.setBounds(new Rectangle(270, 280, 150, 40));
 		createGameButton.setEnabled(false);
     	this.add(createGameButton);
     	
-		Button cancelButton = new Button("Cancel", null);
+		Button cancelButton = new Button("Annuler", null);
 		cancelButton.addAction(this, "cancelGame");
 		cancelButton.setBounds(new Rectangle(80, 280, 150, 40));
     	this.add(cancelButton);

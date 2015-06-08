@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.rmi.RemoteException;
 
+import javax.swing.border.LineBorder;
+
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
@@ -15,6 +17,7 @@ import main.java.game.ExceptionNotEnoughTilesInDeck;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.gui.components.Button;
+import main.java.gui.components.Label;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
@@ -29,9 +32,10 @@ public class BottomPlayerPanel extends Panel {
 	String playerName;
 	int numberOfCardPlayed;
 	PlayerIHM player;
+	Label canBeginText;
 
 	Button validateButton;
-	Button beginTripButton;
+	//Button beginTripButton;
 	Button resetButton;
 	
 	// Constructors
@@ -59,26 +63,25 @@ public class BottomPlayerPanel extends Panel {
 		this.buttonsPanel.setBackground(Color.WHITE);
 		this.buttonsPanel.setPreferredSize(new Dimension(205, 150));
 
-		beginTripButton = new Button("Commencer le voyage", null);
 		validateButton = new Button("Valider", null);
 		resetButton = new Button("Annuler le dernier coup", null);
 		
-		beginTripButton.setEnabled(false);
-		//validateButton.setEnabled(false);
 		resetButton.setEnabled(false);
 		
-		beginTripButton.addAction(this, "beginTrip");
 		validateButton.addAction(this, "validate");
 		resetButton.addAction(this, "reset");
 		
 		
-		beginTripButton.setBounds(0, 15, 200, 35);
+		//beginTripButton.setBounds(0, 15, 200, 35);
 		validateButton.setBounds(0, 55, 200, 35);
 		resetButton.setBounds(0, 95, 200, 35);
 
-		buttonsPanel.add(beginTripButton);
 		buttonsPanel.add(validateButton);
 		buttonsPanel.add(resetButton);
+		// TODO display canBeginText
+		canBeginText = new Label("Vous ne pouvez pas commencer votre voyage");
+		canBeginText.setBorder(new LineBorder(Color.BLACK));
+		buttonsPanel.add(canBeginText);
 		this.add(buttonsPanel, BorderLayout.EAST);	
 	}
 	
@@ -138,12 +141,10 @@ public class BottomPlayerPanel extends Panel {
 		else System.out.println("CANT BEGIN TRIP");
 	}
 	
-	protected void checkBeginTripButton() {
-		if (!canBeginTrip) {
-			beginTripButton.setEnabled(false);
-		} else {
-			beginTripButton.setEnabled(true);
-		}
+	protected void checkIfCanBeginTrip() {
+		if (canBeginTrip) {
+			canBeginText.setText("Vous pouvez commencer votre voyage !");
+		} 
 	}
 	
 	protected void checkValidateButton(Data data) {
@@ -168,17 +169,7 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void paintComponent(Graphics g) {
-		/*super.paintComponent(g);
-		g.drawRect(20, 20, 50, 50); //avatar
-		
-		g.drawRect(20, 80, 50, 50); //card1
-		g.drawRect(80, 80, 50, 50); //card2
-		g.drawRect(140, 80, 50, 50); //card3
-		g.drawRect(200, 80, 50, 50); //card4
-		g.drawRect(260, 80, 50, 50); //card5		
-
-		g.drawRect(350, 80, 50, 50); //station1
-		g.drawRect(410, 80, 50, 50); //station2*/
+		super.paintComponent(g);
 	}
 	
 	public void refreshGame(PlayerIHM player, Data data) {
@@ -187,8 +178,7 @@ public class BottomPlayerPanel extends Panel {
 		try {
 			playerName = player.getPlayerName();
 			canBeginTrip = data.isTrackCompleted(playerName);
-			checkBeginTripButton();
-			System.out.println("BEGIN TRIP BUTTON : " + canBeginTrip);
+			checkIfCanBeginTrip();
 			checkValidateButton(data);
 			checkResetButton(data);
 			if (data.isPlayerTurn(playerName)) {				
