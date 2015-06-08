@@ -23,29 +23,29 @@ public class WelcomeMenuPanel extends MenuPanel {
 	}
 	
 	private void setupButtons() {
-		Button newGameButton = new Button("New Game");
+		Button newGameButton = new Button("Nouvelle partie");
 		newGameButton.addAction(this, "newGameAction");
-    	newGameButton.setBounds(new Rectangle(150, 70, 200, 50));
+    	newGameButton.setBounds(new Rectangle(150, 90, 200, 50));
     	this.add(newGameButton);
     	
-    	Button joinGameButton = new Button("Join Game", null);
+    	Button joinGameButton = new Button("Rejoindre une partie", null);
     	joinGameButton.addAction(this, "joinGameAction");
-    	joinGameButton.setBounds(new Rectangle(150, 140, 200, 50));
+    	joinGameButton.setBounds(new Rectangle(150, 176, 200, 50));
     	this.add(joinGameButton);
     	
-    	Button settingsButton = new Button("Settings", null);
+    	/*Button settingsButton = new Button("Settings", null);
     	settingsButton.addAction(this, "settingsAction");
     	settingsButton.setBounds(new Rectangle(150, 210, 200, 50));
-    	this.add(settingsButton);
+    	this.add(settingsButton);*/
     	
-    	Button gameRulesButton = new Button("Rules", null);
+    	Button gameRulesButton = new Button("Règles", null);
     	gameRulesButton.addAction(this, "gameRulesAction");
-    	gameRulesButton.setBounds(new Rectangle(150, 280, 200, 50));
+    	gameRulesButton.setBounds(new Rectangle(150, 260, 200, 50));
     	this.add(gameRulesButton);
     	
-    	Button quitButton = new Button("Quit", null);  
+    	Button quitButton = new Button("Quitter", null);  
     	quitButton.addAction(this, "quitAction");
-    	quitButton.setBounds(new Rectangle(150, 350, 200, 50));
+    	quitButton.setBounds(new Rectangle(150, 345, 200, 50));
     	this.add(quitButton);    	
 	}
 

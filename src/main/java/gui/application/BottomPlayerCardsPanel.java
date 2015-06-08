@@ -93,7 +93,7 @@ public class BottomPlayerCardsPanel extends Panel{
 		}
 		Point[] stationsPositions = data.getPlayerAimBuildings(playerName);
 		
-		int x = 350;
+		int x = 325;
 		for (int i=0; i<stationsPositions.length; i++) {
 			Point p = stationsPositions[i];
 			Tile tile = data.getBoard()[p.x][p.y];
@@ -134,8 +134,8 @@ public class BottomPlayerCardsPanel extends Panel{
 		//this.add(lineNumberLabel);
 	}
 	
-	public void refreshPlayerHandCards(String playerName, Data data) { // TODO: not working
-		System.out.println("REFRESH PLAYER HAND CARDS CALLED");
+	public void refreshPlayerHandCards(String playerName, Data data) { 
+		//System.out.println("REFRESH PLAYER HAND CARDS CALLED");
 		System.out.println("NUMBER OF CARDS OF THE HAND : " + data.getHandSize(playerName));	
 		
 		for (int i=0; i<data.getHandSize(playerName); i++) {

@@ -45,9 +45,9 @@ public class HostRoomMenuPanel extends MenuPanel {
 
 	private void setupPanel() {
 		this.setSize(new Dimension(700, 500));
-		this.setMenuTitle("New Game", null);
+		this.setMenuTitle("Nouvelle partie", null);
 
-		Label titleLabel = new Label("Waiting room", null);
+		Label titleLabel = new Label("Salle d'attente", null);
 		titleLabel.setBounds(120, 20, 300, 100);
 		this.add(titleLabel);
 	}
@@ -69,13 +69,13 @@ public class HostRoomMenuPanel extends MenuPanel {
 			this.avatarImagePanels.add(imagePanel);
 
 			Label nameLabel = new Label(" " + defaultName);
-			nameLabel.setBounds(210, y, 150, 40);
+			nameLabel.setBounds(210, y, 190, 40);
 			nameLabel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 			this.add(nameLabel);
 			this.nameLabels.add(nameLabel);
 
 			ComboBox comboBox = new ComboBox(adversaryChoices);
-			comboBox.setBounds(370, y, 150, 40);
+			comboBox.setBounds(410, y, 150, 40);
 			comboBox.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 			this.add(comboBox);
 			this.choiceComboBoxes.add(comboBox);
@@ -93,12 +93,12 @@ public class HostRoomMenuPanel extends MenuPanel {
 	}
 
 	private void setupButtons() {
-		Button playGameButton = new Button("Play", null);
+		Button playGameButton = new Button("Jouer", null);
 		playGameButton.addAction(this, "playGame");
 		playGameButton.setBounds(new Rectangle(370, 430, 150, 40));
 		this.add(playGameButton);
 
-		Button cancelButton = new Button("Cancel", null);
+		Button cancelButton = new Button("Annuler", null);
 		cancelButton.addAction(this, "cancelGame");
 		cancelButton.setBounds(new Rectangle(180, 430, 150, 40));
 		this.add(cancelButton);

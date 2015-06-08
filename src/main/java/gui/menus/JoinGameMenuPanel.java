@@ -50,23 +50,23 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 	
 	private void setupPanel() {
     	this.setSize(new Dimension(500, 350));
-    	this.setMenuTitle("Join Game", null);
+    	this.setMenuTitle("Rejoindre une partie", null);
 	}	
 	
 	private void setupTextFields() {
-		Label titleLabel = new Label("Profile", null);
+		Label titleLabel = new Label("Profil", null);
 		titleLabel.setBounds(90, 20, 300, 100);
 	    this.add(titleLabel);
 	    
-	    Label playerNameLabel = new Label("Player name", null);
+	    Label playerNameLabel = new Label("Nom du joueur", null);
 	    playerNameLabel.setBounds(120, 100, 100, 40);
 	    this.add(playerNameLabel);	
 
-	    Label gameNameLabel = new Label("Game name", null);
+	    Label gameNameLabel = new Label("Nom de la partie", null);
 	    gameNameLabel.setBounds(120, 150, 100, 40);
 	    this.add(gameNameLabel);
 	    
-	    Label adressLabel = new Label("IP adress", null);
+	    Label adressLabel = new Label("Adresse IP", null);
 	    adressLabel.setBounds(120, 200, 100, 40);
 	    this.add(adressLabel);
 		
@@ -94,12 +94,12 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 	}
 	
 	private void setupButtons() {
-		joinGameButton = new Button("Join game", null);
+		joinGameButton = new Button("Rejoindre la partie", null);
 		joinGameButton.addAction(this, "joinGame");
 		joinGameButton.setBounds(270, 280, 150, 40);
     	this.add(joinGameButton);
     	
-		Button cancelButton = new Button("Cancel", null);
+		Button cancelButton = new Button("Annuler", null);
 		cancelButton.addAction(this, "cancelGame");
 		cancelButton.setBounds(80, 280, 150, 40);
     	this.add(cancelButton);
