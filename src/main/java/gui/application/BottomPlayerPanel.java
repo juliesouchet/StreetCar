@@ -199,6 +199,7 @@ public class BottomPlayerPanel extends Panel {
 				buttonsPanel.setBackground(new Color(0xFFEDDE));
 			}
 			cardsPanel.refreshGame(player, data);
+			beginTripButton.setEnabled(data.isTrackCompleted(playerName));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}		
