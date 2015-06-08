@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import main.java.util.Direction;
+
 
 
 
@@ -14,16 +16,17 @@ public class PathFinder implements Serializable
 {
 	private static final long serialVersionUID = -6422634525567983202L;
 
-	
-	
-	
+
+
 	/**============================================================
-	 * @return the shortest path between pSrc and pDst in the guiven board. If no path exists, null is returned.
+	 * @return the shortest path between pSrc and pDst in the given board, starting from each of of accessible directions.</br>
+	 * If no path exists, null is returned.
 	 * Uses the A* algorithm.
 	 * The source and destination point are returned in the solution.
 	 ==============================================================*/
 	public  LinkedList<Point> getPath(Data data, Point pSrc, Point pDst)
 	{
+		LinkedList<Point> res;
 		int w = data.getWidth();
 		int h = data.getHeight();
 		if ((pSrc.x < 0) || (pSrc.x >= w) ||
@@ -32,12 +35,36 @@ public class PathFinder implements Serializable
 			(pDst.y < 0) || (pDst.y >= h))	throw new RuntimeException("Destination point out of the ground: "		+ pSrc);
 		if (pSrc.equals(pDst))				throw new RuntimeException("pSrc == pDst == " + pSrc);
 
+		if (data.getTile(pSrc).isEmpty()) return null;
+
+		for (Direction initialDir: Direction.DIRECTION_LIST)
+		{
+			res = this.getPath(data, pSrc, pDst, initialDir);
+			if (res != null) return null;
+		}
+		return null;
+	}
+	/**============================================================
+	 * @return the shortest path between pSrc and pDst in the given board, starting from the given direction.</br>
+	 * If no path exists, null is returned.</br>
+	 * Uses the A* algorithm.</br>
+	 * The source and destination point are returned in the solution.</br>
+	 ==============================================================*/
+	public LinkedList<Point> getPath(Data data, Point pSrc, Point pDst, Direction initialDir)
+	{
+		int w			= data.getWidth();
+		int h			= data.getHeight();
+		Tile t			= data.getTile(pSrc);
+		int tileBords	= t.getAccessibleDirections();
+		if (!initialDir.isDirectionInList(tileBords)) return null;
+
 		Integer[][]		weight		= new Integer[w][h];
 		Point[][]		previous	= new Point	 [w][h];
 		PriorityQueue	pq			= new PriorityQueue();
 		LinkedList<Point> neighbor;
 		Knot y;
 		int pz;
+		Direction dirNeighbor0;
 
 		for (int i=0; i<w; i++)											// Initialisation
 		{
@@ -47,29 +74,34 @@ public class PathFinder implements Serializable
 				previous[i][j] = null;
 			}
 		}
-		pq.add(new Knot(pSrc, 0, heuristic(pSrc, pDst)));
+		pq.add(new Knot(pSrc, initialDir, 0, heuristic(pSrc, pDst)));
 		weight[pSrc.x][pSrc.y] = 0;
 
 		while (!pq.isEmpty())
 		{
 			y =  pq.remove();
 			if (y.getElem().equals(pDst))	return reversePath(previous, pSrc, pDst);
-			neighbor = data.getAccessibleNeighborsPositions(y.p.x, y.p.y);
+			neighbor = data.getAccessibleNeighborsPositions(y.p.x, y.p.y, y.getDirection());
 			for (Point z: neighbor)
 			{
-				pz = y.getDistPrev()+1;
+				pz	= y.getDistPrev()+1;
+				t	= data.getTile(z);
 				if ((weight[z.x][z.y] == null) || (pz < weight[z.x][z.y]))
 				{
-					weight[z.x][z.y] = pz;
-					pq.add(new Knot(z, pz, heuristic(z, pDst)));
-					previous[z.x][z.y] = new Point(y.getElem().x, y.getElem().y);
+					dirNeighbor0 = y.getDirection().turnHalf();
+					for (Direction dirNeighbor1: Direction.DIRECTION_LIST)
+					{
+						if (dirNeighbor1.equals(dirNeighbor0))		continue;
+						if (!t.isPath(dirNeighbor0, dirNeighbor1))	continue;
+						weight[z.x][z.y] = pz;
+						pq.add(new Knot(z, dirNeighbor1, pz, heuristic(z, pDst)));
+						previous[z.x][z.y] = new Point(y.getElem().x, y.getElem().y);
+					}
 				}
 			}
 		}
 		return null;
-//		return reversePath(previous, pSrc, pDst);
 	}
-
 // -----------------------------------------
 // Private Methods
 // -----------------------------------------
@@ -104,22 +136,25 @@ public class PathFinder implements Serializable
 	private static class Knot
 	{
 		// Attributes
-		private Point	p;
-		private int		distPrev;
-		private int		distNext;
+		private Point		p;
+		private Direction	dir;
+		private int			distPrev;
+		private int			distNext;
 
 		// Builder
-		public Knot(Point p, int distPrev, int distNext)
+		public Knot(Point p, Direction dir, int distPrev, int distNext)
 		{
 			this.p			= p;
+			this.dir		= dir;
 			this.distPrev	= distPrev;
 			this.distNext	= distNext;
 		}
 
 		// Local methods
-		public Point	getElem()		{return p;}
-		public int		getPrio()		{return (distPrev + distNext);}
-		public int		getDistPrev()	{return (distPrev);}
+		public Point		getElem()		{return p;}
+		public Direction	getDirection()	{return this.dir;}
+		public int			getPrio()		{return (distPrev + distNext);}
+		public int			getDistPrev()	{return (distPrev);}
 	}
 	private static class PriorityQueue
 	{

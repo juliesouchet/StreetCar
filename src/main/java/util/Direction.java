@@ -34,7 +34,16 @@ public enum Direction implements Serializable
 	public int		getVal()							{return this.dir;}
 	public int		addDirectionToList	(int dirList)	{return  (dirList | (1 << this.dir));}
 	public boolean	isDirectionInList	(int dirList)	{return ((dirList & (1 << this.dir)) != 0);}
-
+/*****
+	public static Direction	getFirstDirectionInList(int dirList)
+	{
+		if (WEST.isDirectionInList(dirList))	return WEST;
+		if (NORTH.isDirectionInList(dirList))	return NORTH;
+		if (EAST.isDirectionInList(dirList))	return EAST;
+		if (SOUTH.isDirectionInList(dirList))	return SOUTH;
+		else throw new RuntimeException("No known direction in this list: " + dirList);
+	}
+*********/
 // --------------------------------------------
 // Local Methods:
 // --------------------------------------------
@@ -82,7 +91,17 @@ public enum Direction implements Serializable
 			default	: throw new RuntimeException("Unknown direction: " + this);
 		}
 	}
+	public static Direction getNeighborDirection(Point src, Point dst)
+	{
+		int dx = dst.x - src.x;
+		int dy = dst.y - src.y;
 
+		if ((dx == 0)	&& (dy == 1))	return NORTH;
+		if ((dx == 0)	&& (dy == -1))	return SOUTH;
+		if ((dx == 1)	&& (dy == 0))	return WEST;
+		if ((dx == -1)	&& (dy == 0))	return EAST;
+		else throw new RuntimeException("Not neighbor points");
+	}
 	public static Direction parse(int d)
 	{
 		switch(d)
@@ -119,4 +138,5 @@ public enum Direction implements Serializable
 	public final boolean equals(Direction d) {
 		return this.dir == d.dir;
 	}
+
 }

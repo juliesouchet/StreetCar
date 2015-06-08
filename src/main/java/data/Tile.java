@@ -481,6 +481,18 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		return false;
 	}
 
+	/**===================================================
+	 * @return Check wether the given path exists in the current tile.</br>
+	 =====================================================*/
+	public boolean isPath(Direction dir0, Direction dir1)
+	{
+		for (int i=0; i<=this.ptrPathTab; i++)
+		{
+			if (this.pathTab[i].equals(dir0, dir1))	return true;
+		}
+		return false;
+	}
+
 	/**==================================================
 	 * @return
 	 *  The list of accessibles directions, represented by an int:</br>
@@ -499,6 +511,27 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		}
 		return res;
 	}
+	/**==================================================
+	 * @return
+	 * The list of accessibles directions from the given direction.</br>
+	 * The result is represented by an int:</br>
+	 * For i in [0 , 3] if the digit i of the returned value equals 1, then the i th direction is accessible.</br>
+	 * The result may be parsed by Direction.isInList(Direction, res)</br>
+	 ====================================================*/
+	public int getAccessibleDirections(Direction initialDir)
+	{
+		int res = 0;
+//TODO check if the input is a direction in this tile
+		for (int i=0; i<=this.ptrPathTab; i++)
+		{
+			Path p = this.pathTab[i];
+			if (!p.contains(initialDir)) continue;
+			res = p.end0.addDirectionToList(res);
+			res = p.end1.addDirectionToList(res);
+		}
+		return res;
+	}
+
 	/**=================================================
 	 *	Test if the calling tile can be replaced by the tile given as argument.
 	 * @return 
@@ -667,13 +700,16 @@ if ((res <= 0) || (res > 4)) throw new RuntimeException("??????");
 		}
 
 		// Setter
-		public void turnLeft()							{end0 = end0.turnLeft();	end1 = end1.turnLeft();}
-		public void turnRight()							{end0 = end0.turnRight();	end1 = end1.turnRight();}
-		public void turnHalf()							{end0 = end0.turnHalf();	end1 = end1.turnHalf();}
-		public void setPath(Path p)						{end0 = p.end0;				end1 = p.end1;}
-		public void setPath(Direction d0, Direction d1)	{end0 = d0;					end1 = d1;}
-		public String	toString()						{return "(" + end0 + ", " + end1 + ')';}
-		public boolean	equals(Path p)					{return ((end0.equals(p.end0)) && (end1.equals(p.end1)))
-															|| ((end0.equals(p.end1)) && (end1.equals(p.end0)));}
+		public void		turnLeft()									{end0 = end0.turnLeft();	end1 = end1.turnLeft();}
+		public void		turnRight()									{end0 = end0.turnRight();	end1 = end1.turnRight();}
+		public void		turnHalf()									{end0 = end0.turnHalf();	end1 = end1.turnHalf();}
+		public void		setPath(Path p)								{end0 = p.end0;				end1 = p.end1;}
+		public void		setPath(Direction d0, Direction d1)			{end0 = d0;					end1 = d1;}
+		public String	toString()									{return "(" + end0 + ", " + end1 + ')';}
+		public boolean	contains(Direction dir)						{return (this.end0.equals(dir) || this.end1.equals(dir));}
+		public boolean	equals(Path p)								{return ((end0.equals(p.end0)) && (end1.equals(p.end1)))
+																		|| ((end0.equals(p.end1)) && (end1.equals(p.end0)));}
+		public boolean equals(Direction dir0, Direction dir1)		{return ((end0.equals(dir0)) && (end1.equals(dir1)))
+																		|| ((end0.equals(dir1)) && (end1.equals(dir0)));}
 	}
 }

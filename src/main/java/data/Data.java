@@ -151,7 +151,7 @@ public class Data implements Serializable
 		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc			= pi.getLastActionHistory();
 		String		playerName	= this.getPlayerTurn();
-/****
+
 System.out.println("Action 1: " + hc.action1);
 System.out.println("Action 2: " + hc.action2);
 System.out.println("Drawn 1: " + hc.drawnTile1);
@@ -160,7 +160,7 @@ System.out.println("oldTile 1: " + hc.oldTile1);
 System.out.println("oldTile 2: " + hc.oldTile2);
 System.out.println("Hand: " + pi.hand);
 System.out.println("\n----------------------------------------\n");
-*******/
+
 		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))							// Case player has done an action this round
 		{
 			if (hc.action2 != null)																	//		Case undo round second game
@@ -211,7 +211,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-/////System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -425,12 +425,12 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 
 		if (!pi.hasStartedMaidenTravel()) pi.startMaidenTravel(startTerminus);
 
-		pi.previousTramPosition.x	= pi.tramPosition.x;
-		pi.previousTramPosition.y	= pi.tramPosition.y;
-		pi.tramPosition.x			= tramPath[tramPathSize-1].x;
-		pi.tramPosition.y			= tramPath[tramPathSize-1].y;
-		
-		System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
+		pi.previousTramPosition.x			= pi.tramPosition.x;
+		pi.previousTramPosition.y			= pi.tramPosition.y;
+		pi.tramPosition.x					= tramPath[tramPathSize-1].x;
+		pi.tramPosition.y					= tramPath[tramPathSize-1].y;
+
+System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
 		
 		if (pi.tramPosition.equals(pi.endTerminus[0]))	this.winner = playerName;
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
@@ -580,22 +580,19 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	{
 		PlayerInfo pi = this.playerInfoList.get(playerName);
 		LinkedList<Point> tramNeighbor;
-		Point p0;
 
-		
 		if (hasStartedMaidenTravel(playerName))															// Case has started maiden travel
 		{
-			tramNeighbor = this.getAccessibleNeighborsPositions(pi.tramPosition.x, pi.tramPosition.y);
-
-			switch (tramNeighbor.size())
+			for (Direction dir: Direction.DIRECTION_LIST)
 			{
-				case 0: throw new RuntimeException("???");
-				case 1:
-					p0 = tramNeighbor.get(0);
-					if (p0.equals(pi.previousTramPosition)) return true;
-					else throw new RuntimeException("???");
-				default: return false;
+				tramNeighbor = this.getAccessibleNeighborsPositions(pi.tramPosition.x, pi.tramPosition.y, dir);
+				for (Point neighbor: tramNeighbor)
+				{
+					if (neighbor.equals(pi.previousTramPosition)) continue;
+					return false;
+				}
 			}
+			return true;
 		}
 		else																								// Case is building
 		{
@@ -693,14 +690,14 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		return res;
 	}
 	/**============================================================
-	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell
+	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell and from the given (x,y) direction.</br>
 	 ==============================================================*/
-	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
+	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y, Direction initialDir)
 	{
 		LinkedList<Point>		res = new LinkedList<Point>();
-		int	ad	= board[x][y].getAccessibleDirections();				// List of the reachable directions
+		int	ad	= board[x][y].getAccessibleDirections(initialDir);				// List of the reachable directions from the given direction
 
-		for (Direction d: Direction.DIRECTION_LIST)						// For each accesible position
+		for (Direction d: Direction.DIRECTION_LIST)								// For each accesible position
 		{
 			if (!d.isDirectionInList(ad)) continue;
 			Point next = d.getNeighbour(x, y);
@@ -783,7 +780,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 * @return the list of the neighbors connected to the current tile
 	 * ((x,y) has a path to the neighbor and the neighbor has a path to (x,y))
 	 =================================================================*/
-	public LinkedList<Point> getConnectedNeighborPositions(int x, int y)
+/*	public LinkedList<Point> getConnectedNeighborPositions(int x, int y)
 	{
 		LinkedList<Point> neighbor	= this.getAccessibleNeighborsPositions(x, y);
 		LinkedList<Point> res		= new LinkedList<Point>();
@@ -798,6 +795,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 
 		return res;
 	}
+*/
 	/**============================================
 	 * @return Create the board from a file
 	 ==============================================*/
@@ -862,7 +860,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab, boolean writeActionsInTab)
 	{
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
-		Tile[] tmpRotation1		= new Tile[4];											// Init optimization parameters
+		Tile[] tmpRotation1		= new Tile[4];															// Init optimization parameters
 		Tile[] tmpRotation2		= new Tile[4];
 		for (int i=0; i<4; i++)
 		{
@@ -871,9 +869,9 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		}
 
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
-		Point lastTramPosition		= this.playerInfoList.get(playerName).previousTramPosition;
-		Point currentTramPosition	= this.playerInfoList.get(playerName).tramPosition;
-		Point startTerminus			= this.getPlayerTerminusPosition(playerName)[0];
+		Point		lastTramPosition			= this.playerInfoList.get(playerName).previousTramPosition;
+		Point		currentTramPosition			= this.playerInfoList.get(playerName).tramPosition;
+		Point		startTerminus				= this.getPlayerTerminusPosition(playerName)[0];
 		Tile t, oldT1;
 
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
@@ -1062,15 +1060,15 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	}
 	private void undoFirstTravelGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-// TODO check avec travel
-		pi.tramPosition.x	= pi.previousTramPosition.x;
-		pi.tramPosition.y	= pi.previousTramPosition.y;
+		pi.tramPosition.x			= pi.previousTramPosition.x;
+		pi.tramPosition.y			= pi.previousTramPosition.y;
 		if (hc.action1.startTerminus != null) this.stopMaidenTravel(this.getPlayerTurn());
 		else
 		{
-			HistoryCell hcPrevious = pi.getBeforeLastActionHistory();
-			pi.previousTramPosition.x	= hcPrevious.action1.tramwayMovement[0].x;
-			pi.previousTramPosition.y	= hcPrevious.action1.tramwayMovement[0].y;
+			pi.previousTramPosition.x			= hc.previousTramPosition.x;
+			pi.previousTramPosition.y			= hc.previousTramPosition.y;
+			hc.previousTramPosition.x			= -1;
+			hc.previousTramPosition.y			= -1;
 		}
 	}
 
@@ -1213,19 +1211,19 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 
 		for (String str: this.playerInfoList.keySet())
 		{
-			pi							= this.playerInfoList.get(str);
-			piRes						= new PlayerInfo();													// Shared Information
-			piRes.player				= pi.player;
-			piRes.isHuman				= pi.isHuman;
-			piRes.line					= pi.line;
-			piRes.color					= (pi.color == null) ? null : new Color(pi.color.getRGB());
-			piRes.hand					= pi.hand.getClone();
-			piRes.terminus				= (pi.terminus == null) ? null : cpP.copyTab(pi.terminus);
-			piRes.history				= (new Copier<HistoryCell>()).copyList(pi.history);
-			piRes.startTerminus			= (pi.startTerminus == null)		? null : new Point(pi.startTerminus);
-			piRes.endTerminus			= (pi.endTerminus == null)			? null : cpP.copyTab(pi.endTerminus);
-			piRes.tramPosition			= (pi.tramPosition == null)			? null : new Point(pi.tramPosition);
-			piRes.previousTramPosition	= (pi.previousTramPosition == null) ? null : new Point(pi.previousTramPosition);
+			pi									= this.playerInfoList.get(str);
+			piRes								= new PlayerInfo();													// Shared Information
+			piRes.player						= pi.player;
+			piRes.isHuman						= pi.isHuman;
+			piRes.line							= pi.line;
+			piRes.color							= (pi.color == null) ? null : new Color(pi.color.getRGB());
+			piRes.hand							= pi.hand.getClone();
+			piRes.terminus						= (pi.terminus == null) ? null : cpP.copyTab(pi.terminus);
+			piRes.history						= (new Copier<HistoryCell>()).copyList(pi.history);
+			piRes.startTerminus					= (pi.startTerminus == null)		? null : new Point(pi.startTerminus);
+			piRes.endTerminus					= (pi.endTerminus == null)			? null : cpP.copyTab(pi.endTerminus);
+			piRes.tramPosition					= (pi.tramPosition == null)			? null : new Point(pi.tramPosition);
+			piRes.previousTramPosition			= (pi.previousTramPosition == null) ? null : new Point(pi.previousTramPosition);
 
 // TODO			if ((playerName == null) || (str.equals(playerName)) || (this.hasStartedMaidenTravel(str)))		// Private Informations
 // TODO			{
@@ -1258,10 +1256,10 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		public Point[]					buildingInLine_position;
 		public String[][]				remainingBuildingInLineSave;
 		public Point[]					terminus;										// Complete player's terminus list
-		public Point					startTerminus			= null;					// Data relative to the travel
-		public Point[]					endTerminus				= null;	
-		public Point					tramPosition			= null;
-		public Point					previousTramPosition	= null;
+		public Point					startTerminus					= null;			// Data relative to the travel
+		public Point[]					endTerminus						= null;
+		public Point					tramPosition					= null;
+		public Point					previousTramPosition			= null;
 		public LinkedList<HistoryCell>	history;										// organized by turns
 
 		// Builder
@@ -1300,17 +1298,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 			if (this.history.isEmpty())	return null;
 			else						return this.history.getLast();
 		}
-		public HistoryCell getBeforeLastActionHistory()
-		{
-			if (this.history.size() < 2)return null;
-			else						return this.history.get(this.history.size()-2);
-		}
-/*		public boolean hasDoneFirstRoundAction()
-		{
-			if (this.history.size() <= round)	return false;
-			else								return (!this.getLastActionHistory().isEmpty());
-		}
-*/
+
 		// Setter
 		public void newRound()	{this.history.addLast(new HistoryCell());}
 		public void undoRound() {this.history.removeLast();}
@@ -1328,45 +1316,58 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 			}
 			this.tramPosition.x			= startTerminus.x;
 			this.tramPosition.y			= startTerminus.y;
-			this.previousTramPosition.x	= startTerminus.x;
-			this.previousTramPosition.y	= startTerminus.y-1;
-			if (!isWithinnBoard(this.previousTramPosition.x, this.previousTramPosition.y))
-			{
-				this.previousTramPosition.x	= startTerminus.x-1;
-				this.previousTramPosition.y	= startTerminus.y;
-			}
+
+			this.initPreviousTramPosition();
 		}
-		public boolean hasStartedMaidenTravel(){return (this.startTerminus.x != -1);}
+		public boolean hasStartedMaidenTravel(){return (!this.startTerminus.equals(new Point(-1, -1)));}
 		public void stopMaidenTravel()
 		{
-			this.startTerminus.x		= -1;
-			this.startTerminus.y		= -1;
-			this.endTerminus[0].x		= -1;
-			this.endTerminus[0].y		= -1;
-			this.endTerminus[1].x		= -1;
-			this.endTerminus[1].y		= -1;
-			this.tramPosition.x			= -1;
-			this.tramPosition.y			= -1;
-			this.previousTramPosition.x	= -1;
-			this.previousTramPosition.y	= -1;
+			this.startTerminus.x				= -1;
+			this.startTerminus.y				= -1;
+			this.endTerminus[0].x				= -1;
+			this.endTerminus[0].y				= -1;
+			this.endTerminus[1].x				= -1;
+			this.endTerminus[1].y				= -1;
+			this.tramPosition.x					= -1;
+			this.tramPosition.y					= -1;
+			this.previousTramPosition.x			= -1;
+			this.previousTramPosition.y			= -1;
 		}
+
+		// private local methods
+		private void initPreviousTramPosition()
+		{
+			Point neighbor;
+			int dirList = board[startTerminus.x][startTerminus.x].getAccessibleDirections();
+			for (Direction dir: Direction.DIRECTION_LIST)
+			{
+				if (!dir.isDirectionInList(dirList)) continue;
+				neighbor = dir.getNeighbour(startTerminus.x, startTerminus.y);
+				if (!board[neighbor.x][neighbor.y].isTerminus()) continue;
+				this.previousTramPosition = neighbor;
+				return;
+			}
+			throw new RuntimeException("???");
+		}
+
 	}
 
 // --------------------------------------------
-// Player Info class:
+// History cell class:
 // --------------------------------------------
 	private class HistoryCell implements Serializable, CloneableInterface<HistoryCell>
 	{
 		// Attributes
 		private static final long serialVersionUID = 2412756799747914486L;
-		public Action	action1					= null;
-		public Action	action2					= null;
-		public Tile		oldTile1				= null;
-		public Tile		oldTile2				= null;
-		public Tile		drawnTile1				= null;
-		public Tile		drawnTile2				= null;
-		public String	drawnFromPlayerHand1	= null;
-		public String	drawnFromPlayerHand2	= null;
+		public Action	action1							= null;
+		public Action	action2							= null;
+		public Tile		oldTile1						= null;
+		public Tile		oldTile2						= null;
+		public Tile		drawnTile1						= null;
+		public Tile		drawnTile2						= null;
+		public String	drawnFromPlayerHand1			= null;
+		public String	drawnFromPlayerHand2			= null;
+		public Point	previousTramPosition			= null;
 
 		// Builder
 		private HistoryCell(){}
@@ -1384,6 +1385,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 			if (this.drawnTile2				!= null)		{res.drawnTile2	= new Tile();	res.drawnTile2	.copy(this.drawnTile2);}
 			if (this.drawnFromPlayerHand1	!= null)		{res.drawnFromPlayerHand1	= new String(this.drawnFromPlayerHand1);}
 			if (this.drawnFromPlayerHand2	!= null)		{res.drawnFromPlayerHand2	= new String(this.drawnFromPlayerHand2);}
+			if (this.previousTramPosition	!= null)		{res.previousTramPosition	= new Point(this.previousTramPosition);}
 			return res;
 		}
 		public boolean isEmpty()		{return (this.action1 == null);}

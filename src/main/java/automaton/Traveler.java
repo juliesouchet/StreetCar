@@ -13,6 +13,13 @@ import main.java.util.TraceDebugAutomate;
  * Acts like the Dumbest one while building, but checks if its objectives are completed. 
  * Then it puts its streetcar in one of its terminus and travels to the other at maximum speed.
  */
+
+
+
+
+
+// TODO garder en mémoire la direction de déplacement du tram
+
 public class Traveler extends PlayerAutomaton {
 	/** Table that contains the objectives of the player : starting terminus and buildings to visit */
 	Point[] checkpoints;
