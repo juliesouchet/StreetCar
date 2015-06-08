@@ -111,7 +111,8 @@ public class Data implements Serializable
 	}
 	private Data(){}
 	/**==============================================================
-	 *  Returns a deep copy of the current data, as seen by the player (the hidden informations are not given)
+	 *  Returns a deep copy of the current data, as seen by the player (the hidden informations are not given)</br>
+	 *  If playerName = null, shows everything
 	 ================================================================ */
 	public Data getClone(String playerName)
 	{
@@ -211,7 +212,8 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-/////System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+//System.out.println("Hand : " + playerInfoList.get(playerName).hand);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -234,6 +236,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 		}
 		else throw new RuntimeException("Unknown action type");
+//System.out.println("After hand : " + playerInfoList.get(playerName).hand);
 	}
 
 	/**================================================
@@ -309,8 +312,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		String playerName = this.getPlayerTurn();
 		this.playerInfoList.get(playerName).newRound();
 	}
-////////////////TODO
-// TODO toremove
+
 	public void setTile(int x, int y, Tile t)
 	{
 		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
@@ -484,7 +486,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex).getClone();}
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
 	public boolean				isUsedPlayerName(String playerName)				{return this.playerInfoList.keySet().contains(playerName);}
-	public boolean				hasDoneRoundFirstAction(String playerName)		{return !this.playerInfoList.get(playerName).getLastActionHistory().isEmpty();}
+	public boolean				hasDoneRoundFirstAction(String playerName)		{return ((this.playerInfoList.get(playerName).getLastActionHistory() != null) && (!this.playerInfoList.get(playerName).getLastActionHistory().isEmpty()));}  // TODO a corriger
 	public Point[]				getPlayerTerminusPosition(String playerName)	{return (new Copier<Point>()).copyTab(playerInfoList.get(playerName).terminus);}
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return Math.min(Data.maxNbrTileToDraw,(Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize()));}
@@ -505,7 +507,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
 		HistoryCell lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
 
-		return lastActions.hasRemainingAction();
+		return lastActions == null || lastActions.hasRemainingAction();
 	}
 	/**======================================================
 	 *  @return true if this player is at the start of his turn (and he hasn't done anything yet)
@@ -855,13 +857,13 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		return this.remainingColors.get(i);
 	}
 	/**=============================================================
-	 * @return the number of different actions that may be realized at this step of the game.</br>
-	 * This actions are added to the input tab.</br>
-	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized
+	 * The actions are added to the input tab.</br>
+	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized</br>
+	 * @return the number of different actions that may be realized at this step of the game.
 	 ===============================================================*/
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab, boolean writeActionsInTab)
 	{
-		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
+		//if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName); TODO nécessaire ?
 		Tile[] tmpRotation1		= new Tile[4];											// Init optimization parameters
 		Tile[] tmpRotation2		= new Tile[4];
 		for (int i=0; i<4; i++)
@@ -897,7 +899,8 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 			}
 			return res;
 		}
-																										// Case is building
+												
+		// Case is building
 		for (int h1 = 0; h1<this.getHandSize(playerName); h1++)											//		For each player's hand tile
 		{
 			t				= this.getHandTile(playerName, h1);
@@ -909,6 +912,16 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 					for (int y1=1; y1<this.getHeight()-1; y1++)
 					{
 						if (!this.isAcceptableTilePlacement(x1, y1, tmpRotation1[r1]))	continue;		//		Case player may start maiden travel next turn
+						
+						if(hasDoneRoundFirstAction(playerName)) {										//		Case simple action
+							if(writeActionsInTab) // TODO a verifier
+							{
+								resTab[res].getAction().setSimpleBuilding(x1, y1, tmpRotation1[r1]);
+								resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
+							}
+							res ++;
+						}
+						
 						oldT1 = this.board[x1][y1];
 						this.board[x1][y1] = tmpRotation1[r1];
 						if (this.isTrackCompleted(playerName))			//TODO************ulysse non************** Peut etre evite en ajoutant un coup inutile
@@ -920,7 +933,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 							}
 							res ++;
 						}
-						else if (this.getHandSize(playerName) == 1)	;									//		Case no second hand tile (!!!!!! Ne pas retirer le ';'  )
+						else if (this.getHandSize(playerName) == 1)	;									//		Case no second hand tile (!!!!!! Don't remove the ';'  )
 						else
 						{
 							for (int h2 = h1+1; h2<this.getHandSize(playerName); h2++)					//		For each second player's hand tile
@@ -940,6 +953,11 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 												resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											}
 											res ++;
+											// TODO s'arranger pour que le tablea soit plus grand
+											if(writeActionsInTab && res >= resTab.length) { 
+												this.board[x1][y1] = oldT1;
+												return res;
+											}
 										}
 									}
 								}
