@@ -105,26 +105,35 @@ public class PathFinder implements Serializable
 	private boolean isSimplePath(Data data, Point pOld, Point p, Point pNext)
 	{
 return true;
-/*******
+/************
 		Tile tOld	= data.getTile(pOld);
 		Tile t		= data.getTile(p);
 		Tile tNext	= data.getTile(pNext);
+System.out.println("pOld : " + pOld + ",    tOld = " + t);
+System.out.println("p    : " + p	+ ",    t    = " + t);
+System.out.println("pNext: " + pNext+ ",    tNext= " + t);
+System.out.println("\n--------------------------------------------\n");
+
+
+
 
 		for (Direction dir0: Direction.DIRECTION_LIST)
 		{
 			if (!tOld.isPathTo(dir0))							continue;
-			if (!dir0.getNeighbour(pOld.x, pOld.y).equals(p))	continue;
+			if (!p.equals(dir0.getNeighbour(pOld.x, pOld.y)))	continue;
 			for (Direction dir1: Direction.DIRECTION_LIST)
 			{
+if (!t.isPathTo(dir0.turnHalf()))throw new RuntimeException();
 				if (!t.isPathTo(dir1))							continue;
-				if (!dir1.getNeighbour(p.x, p.y).equals(pNext))	continue;
+				if (!pNext.equals(dir1.getNeighbour(p.x, p.y)))	continue;
 				if (!t.isPath(dir0.turnHalf(), dir1))			continue;
 				if (!tNext.isPathTo(dir1.turnHalf()))			continue;
 				else											return true;
 			}
 		}
 		return false;
-*/	}
+**************/
+	}
 
 // -----------------------------------------
 // Private classes

@@ -543,7 +543,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 			if (this.getShortestPath(null, p0, p1) == null)	{System.out.println("Track uncomplete");return false;}
 			p0 = p1;
 		}
-System.out.println("*********************Track uncomplete");
+System.out.println("*********************Track complete");
 		return true;
 	}
 
