@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.rmi.RemoteException;
 
 import main.java.data.Data;
@@ -84,7 +85,8 @@ public class BottomPlayerPanel extends Panel {
 	public void validate() {
 		System.out.println("validate");
 		try {
-			StreetCar.player.drawTile(2);
+			//StreetCar.player.drawTile(2);
+			StreetCar.player.drawTile(StreetCar.player.getGameData().getPlayerRemainingTilesToDraw(playerName));
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e1) {
@@ -125,16 +127,26 @@ public class BottomPlayerPanel extends Panel {
 		}
 	}
 	
+	// TODO delete this?
 	public void beginTrip() {
-		// TODO
+		System.out.println("REQUESTING TO BEGIN TRIP");
+		if(canBeginTrip)
+		{
+			Point p = player.getGameData().getPlayerTerminusPosition(playerName)[0];
+			
+		}
+		else System.out.println("CANT BEGIN TRIP");
 	}
 	
 	protected void checkBeginTripButton() {
+		/* TODO
 		if (!canBeginTrip) {
 			beginTripButton.setEnabled(false);
 		} else {
 			beginTripButton.setEnabled(true);
 		}
+		*/
+		beginTripButton.setEnabled(true);
 	}
 	
 	protected void checkValidateButton(Data data) {
@@ -177,13 +189,11 @@ public class BottomPlayerPanel extends Panel {
 		player = StreetCar.player;
 		try {
 			playerName = player.getPlayerName();
-			//System.out.println("BOTTOM PLAYER NAME : " + playerName);
 			canBeginTrip = data.isTrackCompleted(playerName);
 			checkBeginTripButton();
 			System.out.println("BEGIN TRIP BUTTON : " + canBeginTrip);
 			checkValidateButton(data);
 			checkResetButton(data);
-			//System.out.println("NUMBER OF CARD PLAYED : " + numberOfCardPlayed);
 			if (data.isPlayerTurn(playerName)) {				
 				cardsPanel.setBackground(new Color(0xC9ECEE));
 				buttonsPanel.setBackground(new Color(0xC9ECEE));
