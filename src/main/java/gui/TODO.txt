@@ -1,7 +1,8 @@
 
-Bouton cancel après un new game
-Bouton cancel après un join game
-ExceptionForbiddenAction lancée après une amélioration et une pose de tuile (dans les deux sens)
 ExceptionTwoManyTilesToDraw lancée quand on améliore deux tuiles
+Bouton cancel dans le host menu panel non fonctionnel
+
+
+
 ExceptionUsedPlayerName lancée de temps en temps lorsqu'on rajoute des IA
-Ordre des joueurs non fonctionnel lorsuqu'un joueur rejoint une partie
+ExceptionForbiddenAction lancée après une amélioration et une pose de tuile (dans les deux sens)
