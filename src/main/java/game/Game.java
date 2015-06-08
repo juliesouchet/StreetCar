@@ -42,6 +42,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	protected Data						data;
 	protected LoginInfo[]				loggedPlayerTable;
 	protected Engine					engine;
+	protected EngineChat				engineChat;
 	protected HashMap<String, Thread>	aiList;
 
 // --------------------------------------------
@@ -72,6 +73,7 @@ public Data		getTestData()		{return this.data;}
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
 		this.engine				= new Engine();
+		this.engineChat			= new EngineChat();
 		this.aiList				= new HashMap<String, Thread>();
 
 		System.out.println("\n===========================================================");
@@ -385,6 +387,11 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 
 		this.engine.addAction(data, "pickTileFromPlayer", playerName, chosenPlayerName, tile);
 	}
+	public synchronized void sendChatMessage(String playerName, String message)	throws RemoteException
+	{
+		this.engineChat.addAction(this.data, playerName, message);
+	}
+
 
 // --------------------------------------------
 // Private methods:
@@ -452,24 +459,35 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
 		if (hasStartedTravel)
 		{
-			int winner = -1;
+			int winner	= -1;
+			int stop	= -1;
 			Point tramPosition = this.data.getTramPosition(playerName);
-			Point p0, p1;
+			Point p0, p1, p2;
 			Point[] endTerminus =  this.data.getPlayerTerminusPosition(playerName);
 
 			if (!tramPath[0].equals(tramPosition))				return false;
-//TODO verifier l'arret au stop
+
 			p0 = this.data.getPreviousTramPosition(playerName);
-			for (int i=0; i<tramPathSize; i++)
+			p1 = tramPosition;
+			for (int i=1; i<tramPathSize; i++)
 			{
-				p1 = tramPath[i];
+				p2 = tramPath[i];
 				if (winner != -1)								return false;
+/*<<<<<<< HEAD
 				if (!data.pathExistsBetween(p0, p1))			return false; // TODO p-1
 				if (Util.manhathanDistance(p0, p1) != 1)		return false;
 				if (!data.getAccessibleNeighborsPositions(p0.x, p0.y).contains(p1)) return false; // TODO pareil mais verifier aussi 3 par 3 (riyane en train de le faire)
 				if (p1.equals(endTerminus[0]))	winner = i;
 				if (p1.equals(endTerminus[1]))	winner = i;
+=======*/
+				if (stop	!= -1)								return false;
+				if (!data.pathExistsBetween(p0, p1, p2))		return false;
+				if (Util.manhathanDistance(p1, p2) != 1)		return false;
+				if (p2.equals(endTerminus[0]))		winner = i;
+				if (p2.equals(endTerminus[1]))		winner = i;
+				if (this.data.getTile(p2).isStop())	stop = i;
 				p0 = p1;
+				p1 = p2;
 			}
 			return true;
 		}

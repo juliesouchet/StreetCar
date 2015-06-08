@@ -540,7 +540,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		for (int i=1; i<path.length; i++)
 		{
 			p1 = path[i];
-			if (this.getShortestPath(p0, p1) == null)	return false;
+			if (this.getShortestPath(null, p0, p1) == null)	return false;
 			p0 = p1;
 		}
 		return true;
@@ -558,8 +558,8 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
-	public LinkedList<Point>	getShortestPath(Point p0, Point p1)				{return this.pathFinder.getPath(this, p0, p1);}
-	public boolean				pathExistsBetween(Point p1, Point p2)			{return getShortestPath(p1, p2) != null;}
+public LinkedList<Point>	getShortestPath(Point pOld, Point p, Point pNext){return this.pathFinder.getPath(this, pOld, p, pNext);}
+public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return getShortestPath(pOld, p, pNext) != null;}
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
 	public int					getRound()										{return this.round;}
@@ -909,7 +909,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
 		{
-// TODO s'arreter au stop, initialiser le currentTramPosition si isTrackCompleted
+// TODO s'arreter au stop, initialiser currentTramPosition et startTerminus si isTrackCompleted
 			if (startTerminus == null)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];	//		Case Can start maiden travel
 			else						startTerminus = null;
 			this.startMaidenTravel(playerName, startTerminus);

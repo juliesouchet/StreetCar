@@ -79,9 +79,8 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 
 		if (data.hasRemainingAction(playerName))					// choix d'action
 		{
-			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName) )
+			if(!data.isGameBlocked(playerName) )
 			{
-//System.out.println("PlayerAI " + playerName +" makeChoice");
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
 				if (a == null) {System.out.println("AI has no actions left"); return;}
 				try
@@ -97,15 +96,15 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 
 				}
 				catch (Exception e) {e.printStackTrace(); return;}
+				return;
 			}
 			else System.out.println(playerName + " BLOCKED");
-			return;
+// Pas de return: doit pouvoir piocher
 		}
 
 		int nbrCards = data.getPlayerRemainingTilesToDraw(playerName);
 		if (nbrCards > 0 && data.getNbrRemainingDeckTile() > 0)		// pioche
 		{
-//System.out.println("PlayerAI " + playerName +" drawTile");
 			try
 			{
 				if (!data.isEnougthTileInDeck(nbrCards))
@@ -119,7 +118,6 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		}
 		else														// fin de tour
 		{
-//System.out.println("PlayerAI " + playerName +" validate");
 				try			{super.validate();}
 				catch (Exception e) {e.printStackTrace(); return;}
 		}

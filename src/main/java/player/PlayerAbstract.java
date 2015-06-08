@@ -181,7 +181,7 @@ System.out.print("Round: " + data.getRound() + "\t " + playerName +": Move: ");
 for(int i = 0; i < tramPathSize; i++) {
 	System.out.print("("+tramPath[i].x+","+tramPath[i].y+"), ");
 }
-System.out.println("\t StartTerminus = (" + startTerminus.x + "," + startTerminus.y + ")");
+System.out.println("\t StartTerminus = " + startTerminus);
 
 		game.moveTram(playerName, tramPath, tramPathSize, startTerminus);
 	}
@@ -203,5 +203,18 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Echange 
 	public synchronized void stopMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		game.stopMaidenTravel(playerName);
+	}
+	
+	
+	
+	
+	
+	public synchronized void sendChatMessage(String message) throws RemoteException
+	{
+		this.game.sendChatMessage(playerName, message);
+	}
+	public synchronized void newChatMessage	(String playerName, String message) throws RemoteException
+	{
+		if (this.ihm != null) this.ihm.refreshMessages(playerName, message);
 	}
 }

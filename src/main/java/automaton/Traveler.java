@@ -18,7 +18,6 @@ import main.java.util.TraceDebugAutomate;
 
 
 
-// TODO garder en mémoire la direction de déplacement du tram
 
 public class Traveler extends PlayerAutomaton {
 	/** Table that contains the objectives of the player : starting terminus and buildings to visit */
@@ -27,11 +26,16 @@ public class Traveler extends PlayerAutomaton {
 	int startCheckpoints;
 	/** Table that contains the destination (both points of the ending terminus) */
 	Point[]	destinationTerminus;
+	/** Point before last of the latest streetcar movement */
+	Point previous;
+	/** Automaton responsible of building the tracks */
+	PlayerAutomaton slave; 
 	
 	public Traveler(String name) {
 		super();
 		if(name == null) this.name = "Traveler";
 		else this.name = name;
+		this.slave = new Dumbest(name);
 	}
 	
 	@Override
@@ -47,7 +51,7 @@ TraceDebugAutomate.debugTraveler(" trackCompleted = " + trackCompleted +"\n");
 		 *	Building
 		 =============*/
 		if(!trackCompleted || (currentConfig.hasDoneRoundFirstAction(name))) {
-			res = new Dumbest(name).makeChoice(currentConfig);
+			res = slave.makeChoice(currentConfig);
 		}
 		
 		
@@ -120,15 +124,16 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 		//i = r.nextInt(2); // Random first terminus TODO prendre en compte les differentes combinaisons de points de terminus
 		if(r.nextInt(2) == 0) { // Random direction of travel
 			startingPoint = terminusPosition[0]; //i]; TODO
-			destinationTerminus[0] = terminusPosition[2];
-			destinationTerminus[1] = terminusPosition[3];
 		}
 		else {
-			destinationTerminus[0] = terminusPosition[0];
-			destinationTerminus[1] = terminusPosition[1];
 			startingPoint = terminusPosition[3]; //i+2]; TODO
 		}
 		checkpoints[0] = startingPoint;
+		
+		currentConfig.startMaidenTravel(name, startingPoint);
+		destinationTerminus = currentConfig.getPlayerEndTerminus(name);
+		previous = currentConfig.getPreviousTramPosition(name);
+		currentConfig.stopMaidenTravel(name);
 		return startingPoint;
 	}
 
@@ -157,16 +162,21 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 			destination = data.isStopNextToBuilding(destination);
 			if(destination == null)
 				 throw new RuntimeException("This building " + destination + " has no stop");
-			path1 = data.getShortestPath(origin, destination);
+			
+//TODO Riyane: 
+// Cette fonction prend mnt en parametre le point par lequel tu viens
+// Fais bien attention a l'ordre de tes parametres
+			path1 = data.getShortestPath(previous, origin, destination);
 			if(path1==null)
 				throw new RuntimeException("The traveler "+name+" is blocked");
 			//	 Action stopMaidenTravel TODO
 		 	result.addAll(path1);
+		 	previous = path1.get(path1.size()-2); // point before last
 			i++;
 		 }
 		 // We check both points of the destination terminus, and keep the closest one
-		 path1 = data.getShortestPath(destination, destinationTerminus[0]);
-		 path2 = data.getShortestPath(destination, destinationTerminus[1]);
+		 path1 = data.getShortestPath(previous, destination, destinationTerminus[0]);
+		 path2 = data.getShortestPath(previous, destination, destinationTerminus[1]);
 		 if(path1==null ^ path2==null) {
 			 if(path1==null)	result.addAll(path2);
 			 else				result.addAll(path1);

@@ -38,7 +38,7 @@ public class TestEvaluator
 	public static final String	boardDirectory		= "src/main/resources/boards/";
 	public static final String	boardName			= "newOrleans";
 	public static final int		nbrBuildingInLine	= 3;
-	public static final int		nbrGamesSimulated	= 100;
+	public static final int		nbrGamesSimulated	= 10000;
 	public static final int		aiLevel				= PlayerAutomaton.travelerLvl;
 
 // --------------------------------------------
@@ -68,7 +68,7 @@ private static void waitGameStart(PlayerIHM player) throws InterruptedException
 	Object o = new Object();
 	synchronized (o)
 	{
-		while ((player.getGameData() == null) || (!player.getGameData().isGameStarted())) o.wait(2000);
+		while ((player.getGameData() == null) || (!player.getGameData().isGameStarted())) o.wait(500);
 	}
 }
 }
