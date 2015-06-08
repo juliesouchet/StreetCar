@@ -42,6 +42,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	protected Data						data;
 	protected LoginInfo[]				loggedPlayerTable;
 	protected Engine					engine;
+	protected EngineChat				engineChat;
 	protected HashMap<String, Thread>	aiList;
 
 // --------------------------------------------
@@ -72,6 +73,7 @@ public Data		getTestData()		{return this.data;}
 		this.data				= new Data(gameName, boardName, nbrBuildingInLine);		// Init application
 		this.loggedPlayerTable	= LoginInfo.getInitialLoggedPlayerTable();
 		this.engine				= new Engine();
+		this.engineChat			= new EngineChat();
 		this.aiList				= new HashMap<String, Thread>();
 
 		System.out.println("\n===========================================================");
@@ -385,6 +387,11 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 
 		this.engine.addAction(data, "pickTileFromPlayer", playerName, chosenPlayerName, tile);
 	}
+	public synchronized void sendChatMessage(String playerName, String message)	throws RemoteException
+	{
+		this.engineChat.addAction(this.data, playerName, message);
+	}
+
 
 // --------------------------------------------
 // Private methods:

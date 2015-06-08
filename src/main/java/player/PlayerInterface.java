@@ -57,4 +57,8 @@ public interface PlayerInterface extends Remote
 	public void		stopMaidenTravel	(String playerName, Point terminus)			throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, RemoteException;
 	public void		drawTile			(int nbrCards)								throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInDeck;
 	public void		pickTileFromPlayer	(String chosenPlayer, Tile tile)			throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand;
+
+
+	public void		sendChatMessage		(String message)							throws RemoteException;
+	public void		newChatMessage		(String playerName, String message)			throws RemoteException;
 }

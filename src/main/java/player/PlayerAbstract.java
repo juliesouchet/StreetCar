@@ -204,4 +204,17 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Echange 
 	{
 		game.stopMaidenTravel(playerName);
 	}
+	
+	
+	
+	
+	
+	public synchronized void sendChatMessage(String message) throws RemoteException
+	{
+		this.game.sendChatMessage(playerName, message);
+	}
+	public synchronized void newChatMessage	(String playerName, String message) throws RemoteException
+	{
+		if (this.ihm != null) this.ihm.refreshMessages(playerName, message);
+	}
 }
