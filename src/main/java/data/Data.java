@@ -432,6 +432,9 @@ System.out.println("-------------\n");
 		pi.previousTramPosition.y	= pi.tramPosition.y;
 		pi.tramPosition.x			= tramPath[tramPathSize-1].x;
 		pi.tramPosition.y			= tramPath[tramPathSize-1].y;
+		
+		System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
+		
 		if (pi.tramPosition.equals(pi.endTerminus[0]))	this.winner = playerName;
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
 		this.maxPlayerSpeed = tramPathSize;
@@ -574,7 +577,7 @@ System.out.println("-------------\n");
 	public LinkedList<Color>	getRemainingColors()							{return ((new Copier<Color>()).copyList(this.remainingColors));}
 	public String				getWinner()										{return this.winner;}
 	/**=======================================================================
-	 * @return true if the player has no possible game, considering his hand, the deck and his travel</br>
+	 * @return true if the player has no possible move, considering his hand, the deck and his travel</br>
 	 ========================================================================= */
 	public boolean isGameBlocked(String playerName)
 	{
