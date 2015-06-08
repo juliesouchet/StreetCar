@@ -1,6 +1,5 @@
 	package main.java.gui.menus;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -130,10 +129,6 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 												    false,
 												    addressField.getText(),
 												    gc);
-
-			Data data = StreetCar.player.getGameData();
-			Color playerColor = data.getRandomUnusedColor();
-			StreetCar.player.setPlayerColor(playerColor);
 			gc.showClientWaitingRoomPanel();
 			
 		} catch (RemoteException e) {
