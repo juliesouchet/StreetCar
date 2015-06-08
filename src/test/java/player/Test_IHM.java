@@ -31,7 +31,7 @@ public class Test_IHM implements InterfaceIHM
 		boolean create = true;
 		PlayerIHM playerIHM = null;
 
-/*		while (true)
+		while (true)
 		{
 			System.out.println("Please enter:");
 			System.out.println("\t- \"J\" to join an existing game");
@@ -41,7 +41,8 @@ public class Test_IHM implements InterfaceIHM
 			if (str.equals("C"))	{create = true;		break;}
 			System.out.println("Unhandeled choice");
 		}
-*/
+
+
 if (!create)
 {
 		System.out.print("\n\n");

@@ -1,6 +1,6 @@
 #
-#Mon Jun 08 08:46:28 CEST 2015
+#Mon Jun 08 08:42:02 CEST 2015
 Language=en
-PlayerName=julie
+PlayerName=riyane
 UseFullScreen=false
-GameName=test
+GameName=jeux
