@@ -22,7 +22,7 @@ public class PathFinder implements Serializable
 	 * Uses the A* algorithm.
 	 * The source and destination point are returned in the solution.
 	 ==============================================================*/
-	public  LinkedList<Point> getPath(Data data, Point pSrc, Point pDst)
+	public  LinkedList<Point> getPath(Data data, Point pSrc, Point pDst, Point previousInitial)
 	{
 		int w = data.getWidth();
 		int h = data.getHeight();
@@ -49,7 +49,8 @@ public class PathFinder implements Serializable
 		}
 		pq.add(new Knot(pSrc, 0, heuristic(pSrc, pDst)));
 		weight[pSrc.x][pSrc.y] = 0;
-
+		previous[pSrc.x][pSrc.y] = previousInitial;
+verifier avec le precedent
 		while (!pq.isEmpty())
 		{
 			y =  pq.remove();

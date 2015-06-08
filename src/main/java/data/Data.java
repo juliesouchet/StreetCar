@@ -912,6 +912,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 // TODO s'arreter au stop
 			if (startTerminus == null)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];	//		Case Can start maiden travel
 			else						startTerminus = null;
+			this.startMaidenTravel(playerName, startTerminus);
 			for (int l = 1; l<=this.maxPlayerSpeed; l++)
 			{
 				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, currentTramPosition, l, this.pathMatrix);
@@ -926,6 +927,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 					res ++;
 				}
 			}
+			this.stopMaidenTravel(playerName);
 			return res;
 		}
 																										// Case is building
