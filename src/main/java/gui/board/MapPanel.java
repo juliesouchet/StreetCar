@@ -10,6 +10,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 
@@ -24,6 +25,7 @@ import main.java.game.ExceptionWrongTramwayPath;
 import main.java.game.ExceptionWrongTramwaySpeed;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
+import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
 
 
@@ -58,10 +60,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	protected void updateMapGeometry() {
         Data data = StreetCar.player.getGameData();
 		if (data == null) return;
-		
-		this.mapWidth = (int) (0.96 * Math.min(this.getWidth(), this.getHeight()));
+		int sideBarWidth = 50;
+		this.mapWidth = (int) (Math.min((0.96 * this.getWidth()) - sideBarWidth, 0.96 * this.getHeight()));
 		this.cellWidth = Math.round((float)this.mapWidth / (float)data.getWidth());
-	    this.originX = (int)Math.round((float)(this.getWidth() - this.mapWidth) / 2.0);
+	    this.originX = (int)Math.round((float)(this.getWidth() - this.mapWidth - sideBarWidth) / 2.0);
 	    this.originY = (int)Math.round((float)(this.getHeight() - this.mapWidth) / 2.0);
 	    
 		this.repaint();
@@ -92,9 +94,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
         
         int x = this.originX;
         int y = this.originY;
-        Graphics2D g2d = (Graphics2D)g; 
+        Graphics2D g2d = (Graphics2D)g;
     	Tile[][] board = data.getBoard();
     	
+    	// Grid
 		for (int j=0; j < data.getHeight(); j++) {
 			for (int i=0; i < data.getWidth(); i++) {
 				Tile tile = board[i][j];
@@ -113,6 +116,18 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			playerColor = StreetCar.player.getPlayerColor();
 			playerName = StreetCar.player.getPlayerName();
 		} catch (RemoteException e1) { }
+		
+		// Deck and its number of cards
+		g2d.setColor(Color.BLACK);
+		int deckX, deckY;
+		deckX = originX + cellWidth*14 + 25;
+		deckY = originY + cellWidth*7;
+		BufferedImage bufferedImage = Resources.imageNamed(new String("deck_card"));	
+		g2d.drawImage(bufferedImage, deckX-10, deckY-cellWidth/2, 50, 50, null);
+		String NumberCardsInDeck = new String("" + data.getNbrRemainingDeckTile());
+		g2d.drawString(NumberCardsInDeck, deckX+4, deckY-cellWidth/2+30);
+		
+		// Train movement
 		for(Point p : trainMove)
 		{
 			x = this.originX + this.cellWidth * p.x;
