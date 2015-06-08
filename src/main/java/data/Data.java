@@ -152,7 +152,7 @@ public class Data implements Serializable
 		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc			= pi.getLastActionHistory();
 		String		playerName	= this.getPlayerTurn();
-
+/*
 System.out.println("Action 1: " + hc.action1);
 System.out.println("Action 2: " + hc.action2);
 System.out.println("Drawn 1: " + hc.drawnTile1);
@@ -161,7 +161,7 @@ System.out.println("oldTile 1: " + hc.oldTile1);
 System.out.println("oldTile 2: " + hc.oldTile2);
 System.out.println("Hand: " + pi.hand);
 System.out.println("\n----------------------------------------\n");
-
+*/
 		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))							// Case player has done an action this round
 		{
 			if (hc.action2 != null)																	//		Case undo round second game
@@ -584,6 +584,22 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 
 		if (hasStartedMaidenTravel(playerName))															// Case has started maiden travel
 		{
+			tramNeighbor = this.getAccessibleNeighborsPositions(pi.tramPosition.x, pi.tramPosition.y);
+
+			Point p0;
+			switch (tramNeighbor.size())
+			{
+				case 0: throw new RuntimeException("???");
+				case 1:
+					p0 = tramNeighbor.get(0);
+					if (p0.equals(pi.previousTramPosition)) return true;
+					else throw new RuntimeException("???");
+				default: return false;
+			}
+		}
+/***********************
+		if (hasStartedMaidenTravel(playerName))															// Case has started maiden travel
+		{
 			for (Direction dir: Direction.DIRECTION_LIST)
 			{
 				tramNeighbor = this.getAccessibleNeighborsPositions(pi.tramPosition.x, pi.tramPosition.y, dir);
@@ -595,6 +611,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 			}
 			return true;
 		}
+********************/
 		else																								// Case is building
 		{
 			if ((isEmptyDeck()) && (this.getHandSize(playerName) == 0)) return true;
@@ -693,7 +710,20 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 	/**============================================================
 	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell and from the given (x,y) direction.</br>
 	 ==============================================================*/
-	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y, Direction initialDir)
+	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
+	{
+		LinkedList<Point>		res = new LinkedList<Point>();
+		int	ad	= board[x][y].getAccessibleDirections();				// List of the reachable directions
+
+		for (Direction d: Direction.DIRECTION_LIST)						// For each accesible position
+		{
+			if (!d.isDirectionInList(ad)) continue;
+			Point next = d.getNeighbour(x, y);
+			if (isWithinnBoard(next.x, next.y))	res.add(next);
+		}
+		return res;
+	}
+/******	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y, Direction initialDir)
 	{
 		LinkedList<Point>		res = new LinkedList<Point>();
 		int	ad	= board[x][y].getAccessibleDirections(initialDir);				// List of the reachable directions from the given direction
@@ -706,6 +736,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		}
 		return res;
 	}
+************/
 	/**============================================================
 	 * @return the list of the neighbor tiles that can be acceded from the (x,y) cell
 	 ==============================================================*/
