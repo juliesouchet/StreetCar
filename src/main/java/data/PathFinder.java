@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import main.java.util.Direction;
+
 
 
 
@@ -104,8 +106,6 @@ public class PathFinder implements Serializable
 	}
 	private boolean isSimplePath(Data data, Point pOld, Point p, Point pNext)
 	{
-return true;
-/************
 		Tile tOld	= data.getTile(pOld);
 		Tile t		= data.getTile(p);
 		Tile tNext	= data.getTile(pNext);
@@ -132,7 +132,6 @@ if (!t.isPathTo(dir0.turnHalf()))throw new RuntimeException();
 			}
 		}
 		return false;
-**************/
 	}
 
 // -----------------------------------------

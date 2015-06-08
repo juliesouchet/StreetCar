@@ -29,12 +29,13 @@ public class Traveler extends PlayerAutomaton {
 	/** Point before last of the latest streetcar movement */
 	Point previous;
 	/** Automaton responsible of building the tracks */
-	PlayerAutomaton slave = new Dumbest(name); 
+	PlayerAutomaton slave; 
 	
 	public Traveler(String name) {
 		super();
 		if(name == null) this.name = "Traveler";
 		else this.name = name;
+		this.slave = new Dumbest(name);
 	}
 	
 	@Override
