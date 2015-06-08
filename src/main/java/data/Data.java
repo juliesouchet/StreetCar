@@ -540,10 +540,9 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		for (int i=1; i<path.length; i++)
 		{
 			p1 = path[i];
-			if (this.getShortestPath(null, p0, p1) == null)	{System.out.println("Track uncomplete");return false;}
+			if (this.getShortestPath(null, p0, p1) == null)	return false;
 			p0 = p1;
 		}
-System.out.println("*********************Track complete");
 		return true;
 	}
 

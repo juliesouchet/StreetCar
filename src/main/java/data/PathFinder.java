@@ -109,11 +109,12 @@ public class PathFinder implements Serializable
 		Tile tOld	= data.getTile(pOld);
 		Tile t		= data.getTile(p);
 		Tile tNext	= data.getTile(pNext);
+/*
 System.out.println("pOld : " + pOld + ",    tOld = " + t);
 System.out.println("p    : " + p	+ ",    t    = " + t);
 System.out.println("pNext: " + pNext+ ",    tNext= " + t);
 System.out.println("\n--------------------------------------------\n");
-
+*/
 
 
 
@@ -123,7 +124,7 @@ System.out.println("\n--------------------------------------------\n");
 			if (!p.equals(dir0.getNeighbour(pOld.x, pOld.y)))	continue;
 			for (Direction dir1: Direction.DIRECTION_LIST)
 			{
-if (!t.isPathTo(dir0.turnHalf()))throw new RuntimeException();
+				if (!t.isPathTo(dir0.turnHalf()))				continue;
 				if (!t.isPathTo(dir1))							continue;
 				if (!pNext.equals(dir1.getNeighbour(p.x, p.y)))	continue;
 				if (!t.isPath(dir0.turnHalf(), dir1))			continue;
