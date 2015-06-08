@@ -3,6 +3,7 @@ package main.java.gui.board;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseEvent;
@@ -75,10 +76,12 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		if (this.tile == null) {
-			// add image when no tile
-		} else {
+		if (this.tile != null) {
 			Graphics2D g2d = (Graphics2D)g;
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 			int min = Math.min(this.getWidth(), this.getHeight());
 			int x = (this.getWidth() - min) / 2;
 			int y = (this.getHeight() - min) / 2;

@@ -15,25 +15,25 @@ public class TraceDebugAutomate {
 
 	public static void debugDumbest(String str) {
 		if (TraceDebugAutomate.dumbestTrace) {
-			System.out.print(str);
+			System.out.print("dumbestTrace : " + str);
 		}
 	}
 	
 	public static void debugTraveler(String str) {
 		if (TraceDebugAutomate.travelerTrace) {
-			System.out.print("travelerTrace:" + str);
+			System.out.print("travelerTrace : " + str);
 		}
 	}
 
 	public static void debugDecisionNodeTrace(String str) {
 		if (TraceDebugAutomate.decisionNodeTrace) {
-			System.out.print("decisionNode Trace:" + str);
+			System.out.print("decisionNode Trace : " + str);
 		}
 	}
 
 	public static void debugDecisionTableTrace(String str) {
 		if (TraceDebugAutomate.decisionTableTrace) {
-			System.out.print("decisionTableTrace:" + str);
+			System.out.print("decisionTableTrace : " + str);
 		}
 	}
 

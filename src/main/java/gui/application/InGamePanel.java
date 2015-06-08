@@ -98,6 +98,12 @@ public class InGamePanel extends Panel {
 		Data data = StreetCar.player.getGameData();
 		this.playersTab = data.getPlayerOrder();
 		int nbPlayers = data.getNbrPlayer();
+		String playerName = null;
+		try {
+			playerName = StreetCar.player.getPlayerName();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
     	this.playersSidebarPanel = new Panel();
     	this.playersSidebarPanel.setLayout(null);
@@ -111,66 +117,47 @@ public class InGamePanel extends Panel {
     	
     	System.out.println("NUMBER OF PLAYERS: " + nbPlayers);
     	
-    	// catch the number of bottom player
+    	// catch the index of bottom player
     	int bottomPlayerIndex = 0;
     	for (int i=0; i<nbPlayers; i++) {
-    		try {
-				if (playersTab[i].equals(StreetCar.player.getPlayerName())) {
-					bottomPlayerIndex = i;
-					break;
-				}
-			} catch (RemoteException e) {
-				e.printStackTrace();
+    		if (playersTab[i].equals(playerName)) {
+				bottomPlayerIndex = i;
+				break;
 			}
     	}
+    	
+    	
     	System.out.println("PLAYERS ORDER: ");
     	for (int i=0; i<nbPlayers; i++) {
     		System.out.println(i+1 + ". " + playersTab[i]);
     	}
     	
     	int y = 40;
-    	if (bottomPlayerIndex == nbPlayers-1) {  //if bottom player is the last  		
-    		for (int i=0; i<nbPlayers-1; i++) {
-    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
-        		playerPanels.add(playerPanel);
-        		if (i<nbPlayers-1) { //last bar not displayed
-        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-        		}
-        		playerPanel.setBounds(15, y+(185*i), 285, 175);
-        		playersSidebarPanel.add(playerPanel);
-    		}
-    	} else if (bottomPlayerIndex == 0) { // if bottom player is the first
-    		for (int i=0; i<nbPlayers-1; i++) {
-    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i+1]);
-        		playerPanels.add(playerPanel);
-        		if (i<nbPlayers-1) { //last bar not displayed
-        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-        		}
-        		playerPanel.setBounds(15, y+(185*i), 285, 175);
-        		playersSidebarPanel.add(playerPanel);
-    		}
-    	} else {
-    		for (int i=0; i<nbPlayers-bottomPlayerIndex-1; i++) {
-    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i+bottomPlayerIndex+1]);
-        		playerPanels.add (playerPanel);
-        		if (i<nbPlayers-1) { //last bar not displayed
-        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-        		}
-        		playerPanel.setBounds(15, y+(185*i), 285, 175);
-        		playersSidebarPanel.add(playerPanel);
-    		}
-    		
-    		for (int i=nbPlayers-bottomPlayerIndex-1; i<nbPlayers-1; i++) {
-    			PlayerPanel playerPanel = new PlayerPanel(playersTab[i-2]);
-        		playerPanels.add (playerPanel);
-        		if (i<nbPlayers-1) { //last bar not displayed
-        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-        		}
-        		playerPanel.setBounds(15, y+(185*i), 285, 175);
-        		playersSidebarPanel.add(playerPanel);
-    		}
-    	}
+    	int j = 0;
+    	for (int i = bottomPlayerIndex+1; i < nbPlayers; i++) {
+    		System.out.println("* indice i = " + i);
+    		PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
+       		playerPanels.add (playerPanel);
+       		if (i<nbPlayers-1) { //last bar not displayed
+       			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+      		}
+       		playerPanel.setBounds(15, y+(185*j), 285, 175);
+       		playersSidebarPanel.add(playerPanel);
+       		j++;
+   		}
     	
+   		for (int i = 0; i < bottomPlayerIndex; i++) {
+    		System.out.println("- indice i = " + i);
+   			PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
+  	     	playerPanels.add (playerPanel);
+        	if (i<nbPlayers-1) { //last bar not displayed
+        		playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+        	}
+        	playerPanel.setBounds(15, y+(185*j), 285, 175);
+        	playersSidebarPanel.add(playerPanel);
+        	j++;
+    	}
+        	
     	JScrollPane scrollPane = new JScrollPane(playersSidebarPanel);
     	scrollPane.setHorizontalScrollBar(null);
     	scrollPane.getVerticalScrollBar().setUnitIncrement(16);

@@ -10,12 +10,22 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 import main.java.data.Data;
 import main.java.data.Tile;
+import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionGameHasNotStarted;
+import main.java.game.ExceptionMissingStartTerminus;
+import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionWrongPlayerTerminus;
+import main.java.game.ExceptionWrongTramwayPath;
+import main.java.game.ExceptionWrongTramwaySpeed;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
+import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
 
 
@@ -50,10 +60,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	protected void updateMapGeometry() {
         Data data = StreetCar.player.getGameData();
 		if (data == null) return;
-		
-		this.mapWidth = (int) (0.96 * Math.min(this.getWidth(), this.getHeight()));
+		int sideBarWidth = 50;
+		this.mapWidth = (int) (Math.min((0.96 * this.getWidth()) - sideBarWidth, 0.96 * this.getHeight()));
 		this.cellWidth = Math.round((float)this.mapWidth / (float)data.getWidth());
-	    this.originX = (int)Math.round((float)(this.getWidth() - this.mapWidth) / 2.0);
+	    this.originX = (int)Math.round((float)(this.getWidth() - this.mapWidth - sideBarWidth) / 2.0);
 	    this.originY = (int)Math.round((float)(this.getHeight() - this.mapWidth) / 2.0);
 	    
 		this.repaint();
@@ -84,110 +94,134 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
         
         int x = this.originX;
         int y = this.originY;
-        Graphics2D g2d = (Graphics2D)g; 
+        Graphics2D g2d = (Graphics2D)g;
     	Tile[][] board = data.getBoard();
     	
+    	// Grid
 		for (int j=0; j < data.getHeight(); j++) {
 			for (int i=0; i < data.getWidth(); i++) {
 				Tile tile = board[i][j];
 				TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
+				g2d.setColor(Color.GRAY);
+				g2d.drawRect(x, y, cellWidth, cellWidth);
 				x += this.cellWidth;
 			}
 			x = this.originX;
 			y += this.cellWidth;
 		}
 		
-		//for (String playerName : data.getPlayerNameList()) {
-		//	System.out.println(playerName);
-		//}
+		// Deck and its number of cards
+		g2d.setColor(Color.BLACK);
+		int deckX, deckY;
+		deckX = originX + cellWidth*14 + 25;
+		deckY = originY + cellWidth*7;
+		BufferedImage bufferedImage = Resources.imageNamed(new String("deck_card"));	
+		g2d.drawImage(bufferedImage, deckX-10, deckY-cellWidth/2, 50, 50, null);
+		String NumberCardsInDeck = new String("" + data.getNbrRemainingDeckTile());
+		g2d.drawString(NumberCardsInDeck, deckX+4, deckY-cellWidth/2+30);
+		
 
-		/* Keep in comments for the moment 
-		   this code should be integrated to the engine and then use custom drawings
-		if (this.trainPosition != null) {
-			x = this.originX + this.cellWidth * this.trainPosition.x;
-			y = this.originY + this.cellWidth * this.trainPosition.y;
-			g2d.setColor(Color.BLUE);
-			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}
+        /*for (int i=0; i<data.getNbrPlayer(); i++) {
+        	Point p = new Point();
+        	if (data.getTramPosition(data.getPlayerOrder()[i]) != null) {
+            	p.x = data.getTramPosition(data.getPlayerOrder()[i]).x;
+            	p.y = data.getTramPosition(data.getPlayerOrder()[i]).y;
+        		System.out.println(p.x);
+        		System.out.println(p.y);        		
+        		g2d.fillRect(p.x, p.y, cellWidth, cellWidth);
+        	}
+        }*/
 		
-		for (Point p : this.trainMove) {
+		// Train movement
+		for(Point p : trainMove)
+		{
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
-			g2d.setColor(Color.YELLOW);
-			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}
-		
-		for (Point p : this.tempMove) {
-			x = this.originX + this.cellWidth * p.x;
-			y = this.originY + this.cellWidth * p.y;
-			g2d.setColor(Color.PINK);
-			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}*/
+			try {
+				g2d.setColor(StreetCar.player.getPlayerColor());
+			} catch (RemoteException e) { 
+				e.printStackTrace(); 
+			}
+		}		
     }
 	
 	// Mouse Listener
 	
-	public void mouseClicked(MouseEvent e) {
-		Point p = this.cellPositionForLocation(e.getPoint());
-		if (p != null) {
-			this.trainMove.addAll(this.tempMove);
-			this.tempMove.clear();
-			this.repaint();
-		}
-	}
+	public void mouseClicked(MouseEvent e) {}
 
-	public void mousePressed(MouseEvent e) {}
-	public void mouseReleased(MouseEvent e) {}   
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) 
+	{
+		// TODO check here if trip can be done
+		Point p = this.cellPositionForLocation(e.getPoint());
+		trainMove.clear();
+		trainMove.add(p);
+		repaint();
+	}
+	
+	public void mouseReleased(MouseEvent e) 
+	{
+		// TODO check here if trip can be done
+		Point[] points = new Point[trainMove.size()];
+		System.out.println("I WANT TO MOVE TRAM : ");
+		for(int i = 0; i < trainMove.size(); i++) 
+		{
+			points[i] = trainMove.get(i);
+			System.out.println("[" + points[i].x + " " + points[i].y + "]");
+		}
+		try {
+			StreetCar.player.moveTram(points, trainMove.size(), trainMove.getFirst());
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionNotYourTurn e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionForbiddenAction e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionGameHasNotStarted e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionMissingStartTerminus e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionWrongPlayerTerminus e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionWrongTramwayPath e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionWrongTramwaySpeed e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		trainMove.clear();
+		repaint();
+	}
+	
+	public void mouseEntered(MouseEvent e) { }
+
+	public void mouseExited(MouseEvent e) { }
 	
 	// MouseMotionListener
+	public void mouseMoved(MouseEvent e) { }
 	
-	public void mouseMoved(MouseEvent e) {
-		Point p = this.cellPositionForLocation(e.getPoint());
-		this.tempMove.clear();
-		this.repaint();
-		
-		if (p == null) {
-			return;
+	public void mouseDragged(MouseEvent e) 
+	{
+		// TODO check here if tram can move
+		Point p = cellPositionForLocation(e.getPoint());
+		if(p == null) return;
+		if(trainMove.size() > 1 && p.equals(trainMove.get(trainMove.size() - 2)))
+		{
+			trainMove.removeLast();
 		}
-		
-		Tile[][] board = StreetCar.player.getGameData().getBoard();
-		Point lastPoint;
-		if (this.trainMove.isEmpty()) {
-			lastPoint = this.trainPosition;
-		} else {
-			lastPoint = this.trainMove.getLast();
-		}
-		
-		int nbMaxCount = 15;
-		int c = nbMaxCount - this.trainMove.size();
-		if (lastPoint.y == p.y) {
-			for (int k = lastPoint.x+1; k <= p.x; k++) {
-				if (board[k][p.y].isBuilding() || c < this.tempMove.size())
-					break;
-				this.tempMove.add(new Point(k, p.y));
-			}
-			for (int k = lastPoint.x-1; k >= p.x; k--) {
-				if (board[k][p.y].isBuilding() || c < this.tempMove.size())
-					break;
-				this.tempMove.add(new Point(k, p.y));
-			}
-		} else if (lastPoint.x == p.x)  {
-			for (int k = lastPoint.y+1; k <= p.y; k++) {
-				if (board[p.x][k].isBuilding() || c < this.tempMove.size())
-					break;
-				this.tempMove.add(new Point(p.x, k));
-			}
-			for (int k = lastPoint.y-1; k >= p.y; k--) {
-				if (board[p.x][k].isBuilding() || c < this.tempMove.size())
-					break;
-				this.tempMove.add(new Point(p.x, k));
-			}
+		else
+		{
+			if(p.equals(trainMove.getLast())) return;
+			trainMove.add(p);
+			repaint();
 		}
 	}
-	
-	public void mouseDragged(MouseEvent e) {}
 		
 	// ComponentListener
 	
@@ -208,8 +242,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	}
 
 	public void startMaidenVoyage(Point point) {
-		// TODO Auto-generated method stub
-		
+		trainPosition = point;
 	}
 
 	public void moveTram(LinkedList<Point> tramPath) {

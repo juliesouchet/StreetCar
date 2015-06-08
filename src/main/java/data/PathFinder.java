@@ -50,7 +50,7 @@ public class PathFinder implements Serializable
 	 * Uses the A* algorithm.</br>
 	 * The source and destination point are returned in the solution.</br>
 	 ==============================================================*/
-	public LinkedList<Point> getPath(Data data, Point pSrc, Point pDst, Direction initialDir)
+	private LinkedList<Point> getPath(Data data, Point pSrc, Point pDst, Direction initialDir)
 	{
 		int w			= data.getWidth();
 		int h			= data.getHeight();

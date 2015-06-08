@@ -19,35 +19,35 @@ public class DecisionNode {
 	 * 			ATTRIBUTS
 	 * =============================================================================================================== */
 
-	/* 
+	/** 
 	 * La qualité de cette configuration 
 	 * déterminée par min-max, plus tard alpha beta si on  le temps pour les noeuds internes
 	 * déterminée par evaluateChoiceQuality pour les feuilles
 	 */
 	private double configurationQuality;
 
-	/* 
+	/** 
 	 * L'ensemble des actions possibles et des cases du tableau de decision correspondant
 	 */
 	private CoupleActionIndex[] possiblesActions;		
 
-	/*
+	/**
 	 * nombre d'actions possibles
 	 */
 	private int cardinalPossiblesActions;
 
-	/*
+	/**
 	 * La profondeur du noeud courant (vis a vis de l'appel d'origine)  	
 	 */
 	private int depth;
 
-	/*
+	/**
 	 * Vrai si le noeud est une feuille:
 	 * cad on est arrivé a la profondeur d'exploration voulu
 	 */
 	private boolean isLeaf;
 
-	/*
+	/**
 	 * Vrai si le noeud est le noeud d'origine de l'appel a l'algo
 	 */
 	private boolean isRoot;
@@ -315,13 +315,13 @@ public class DecisionNode {
 	 */
 	public DecisionNode(int numberMaxOfPossibleActions, int depth, String type){
 		this.setSizeOfPossiblesActionsTable(numberMaxOfPossibleActions);
-		// On créé le tableau d'actions possible, pour l'instant vide
+		// On crée le tableau d'actions possibles, pour l'instant vide
 		this.possiblesActions = new CoupleActionIndex[numberMaxOfPossibleActions];
-		// On rempli la table avec des actions (du coup non significatives)
+		// On remplit la table avec des actions (du coup non significatives)
 		for(int i=0; i<numberMaxOfPossibleActions;i++){
 			this.possiblesActions[i]=new CoupleActionIndex(Action.newBuildSimpleAction(new Point(0,0), Tile.parseTile("Tile_FFFFZZ060123")), CoupleActionIndex.NOT_SIGNIFICANT, 0.0);
 		}
-		//A la creation on fixe la qualité a NOT_SIGNIFICANT tant qu'une valeur significative n'a pas été calculé
+		//A la création on fixe la qualité à NOT_SIGNIFICANT tant qu'une valeur significative n'a pas été calculée
 		this.setQuality(NOT_SIGNIFICANT);
 		this.setDepth(depth);
 		if(type.equals("root")){
@@ -384,7 +384,7 @@ public class DecisionNode {
 	@Override
 	public boolean equals (Object o){
 		DecisionNode otherNode = null;
-		if(o==null){
+		if(o==null || !(o instanceof DecisionNode)){
 			return false;
 		}
 		else {

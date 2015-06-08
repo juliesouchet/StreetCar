@@ -27,7 +27,7 @@ public class Strongest extends PlayerAutomaton {
 		Action myAction = null, tempAction1 = null, tempAction2 = null;
 
 		//=====================TRACE===================================
-		TraceDebugAutomate.debugDecisionTableTrace("Strongest Start makeChoice \n");
+		TraceDebugAutomate.debugDecisionTableTrace(" Strongest Start makeChoice \n");
 
 		nbActionsPossibles = currentConfig.getPossibleActions(currentConfig.getPlayerTurn(), new DecisionNode(1, 0, "root").getPossibleFollowingActionTable(),false);
 
@@ -37,26 +37,26 @@ public class Strongest extends PlayerAutomaton {
 			return null;
 		}else{
 			//=====================TRACE===================================
-			TraceDebugAutomate.debugDecisionTableTrace("\t NbActions possible=="+nbActionsPossibles+"! \n");
+			TraceDebugAutomate.debugDecisionTableTrace("\tNbActions possible = "+nbActionsPossibles+" \n");
 
-			profondeurExplorable = 150000/nbActionsPossibles;
+			profondeurExplorable = Math.min(150000/nbActionsPossibles, 2); // TODO enlever le min, garder le 150...
 
 			//=====================TRACE===================================
-			TraceDebugAutomate.debugDecisionTableTrace("\t profondeurExplorablee=="+profondeurExplorable+"! \n");
+			TraceDebugAutomate.debugDecisionTableTrace("\tprofondeurExplorable = "+profondeurExplorable+" \n");
 
 			if (profondeurExplorable==0){
-				PlayerAutomaton edouard = new Dumbest("joueurA");
+				PlayerAutomaton edouard = new Dumbest(name);
 				tempAction1 = edouard.makeChoice(currentConfig);
 				tempAction2 = edouard.makeChoice(currentConfig);
 				myAction = Action.newBuildDoubleAction(tempAction1.positionTile1, tempAction1.tile1,tempAction2.positionTile1, tempAction2.tile1);
 				myAction = edouard.makeChoice(currentConfig);
 			}else{
-				myDecisionTable = new DecisionTable(nbActionsPossibles, profondeurExplorable, this.name);
+				myDecisionTable = new DecisionTable(profondeurExplorable, nbActionsPossibles, this.name);
 				currentConfig.getPossibleActions(name, myDecisionTable.getDecisionNode(0).getPossibleFollowingActionTable(), true);
 				myDecisionTable.applyMinMax(0, profondeurExplorable, currentConfig, nbActionsPossibles);
+				myDecisionTable.freeSlot(0);
 				myAction = myDecisionTable.getDecisionNode(0).getCoupleActionIndex(myDecisionTable.getBestActionIndex(0)).getAction();
 			}
-
 
 
 			return myAction;

@@ -1,5 +1,9 @@
 #
+<<<<<<< HEAD
 #Mon Jun 08 17:21:38 CEST 2015
+=======
+#Mon Jun 08 15:04:19 CEST 2015
+>>>>>>> d62c38fddd3b4c52d51f58eb21075a93f0c9bc59
 Language=en
 PlayerName=riyane
 UseFullScreen=false

@@ -111,7 +111,8 @@ public class Data implements Serializable
 	}
 	private Data(){}
 	/**==============================================================
-	 *  Returns a deep copy of the current data, as seen by the player (the hidden informations are not given)
+	 *  Returns a deep copy of the current data, as seen by the player (the hidden informations are not given)</br>
+	 *  If playerName = null, shows everything
 	 ================================================================ */
 	public Data getClone(String playerName)
 	{
@@ -234,6 +235,7 @@ System.out.println("Data.doAction player: " + playerName + ",   Action: " + acti
 			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 		}
 		else throw new RuntimeException("Unknown action type");
+//System.out.println("After hand : " + playerInfoList.get(playerName).hand);
 	}
 
 	/**================================================
@@ -309,8 +311,7 @@ System.out.println("Data.doAction player: " + playerName + ",   Action: " + acti
 		String playerName = this.getPlayerTurn();
 		this.playerInfoList.get(playerName).newRound();
 	}
-////////////////TODO
-// TODO toremove
+
 	public void setTile(int x, int y, Tile t)
 	{
 		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
@@ -484,7 +485,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex).getClone();}
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
 	public boolean				isUsedPlayerName(String playerName)				{return this.playerInfoList.keySet().contains(playerName);}
-	public boolean				hasDoneRoundFirstAction(String playerName)		{return !this.playerInfoList.get(playerName).getLastActionHistory().isEmpty();}
+	public boolean				hasDoneRoundFirstAction(String playerName)		{return ((this.playerInfoList.get(playerName).getLastActionHistory() != null) && (!this.playerInfoList.get(playerName).getLastActionHistory().isEmpty()));}  // TODO a corriger
 	public Point[]				getPlayerTerminusPosition(String playerName)	{return (new Copier<Point>()).copyTab(playerInfoList.get(playerName).terminus);}
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return Math.min(Data.maxNbrTileToDraw,(Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize()));}
@@ -505,7 +506,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not player's turn: " + playerName);
 		HistoryCell lastActions = this.playerInfoList.get(playerName).getLastActionHistory();
 
-		return lastActions.hasRemainingAction();
+		return lastActions == null || lastActions.hasRemainingAction();
 	}
 	/**======================================================
 	 *  @return true if this player is at the start of his turn (and he hasn't done anything yet)
@@ -853,14 +854,15 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		return this.remainingColors.get(i);
 	}
 	/**=============================================================
-	 * @return the number of different actions that may be realized at this step of the game.</br>
-	 * This actions are added to the input tab.</br>
-	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized
+	 * The actions are added to the input tab.</br>
+	 * The input tab size must be maxPossibleAction (or  higher).  Each one of its cells must have been initialized</br>
+	 * @return the number of different actions that may be realized at this step of the game.
 	 ===============================================================*/
 	public int getPossibleActions(String playerName, CoupleActionIndex[] resTab, boolean writeActionsInTab)
 	{
-		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
-		Tile[] tmpRotation1		= new Tile[4];															// Init optimization parameters
+//TODO		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
+
+		Tile[] tmpRotation1		= new Tile[4];											// Init optimization parameters
 		Tile[] tmpRotation2		= new Tile[4];
 		for (int i=0; i<4; i++)
 		{
@@ -869,9 +871,9 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		}
 
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
-		Point		lastTramPosition			= this.playerInfoList.get(playerName).previousTramPosition;
-		Point		currentTramPosition			= this.playerInfoList.get(playerName).tramPosition;
-		Point		startTerminus				= this.getPlayerTerminusPosition(playerName)[0];
+		Point lastTramPosition		= this.playerInfoList.get(playerName).previousTramPosition;
+		Point currentTramPosition	= this.playerInfoList.get(playerName).tramPosition;
+		Point startTerminus			= this.getPlayerTerminusPosition(playerName)[0];
 		Tile t, oldT1;
 
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram

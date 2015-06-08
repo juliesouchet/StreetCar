@@ -44,9 +44,9 @@ import main.java.rubbish.InterfaceIHM;
 
 public abstract class PlayerAbstract extends UnicastRemoteObject implements PlayerInterface
 {
-// --------------------------------------------
+// ----------------------------------------------------------------------------
 // Attributs:
-// --------------------------------------------
+// ----------------------------------------------------------------------------
 	private static final long serialVersionUID = -8965945491565879485L;
 
 	protected GameInterface	game;
@@ -54,9 +54,9 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	protected String		playerName;
 	protected Data			data;
 
-// --------------------------------------------
+// ----------------------------------------------------------------------------
 // Builder:
-// --------------------------------------------
+// ----------------------------------------------------------------------------
 	public PlayerAbstract() throws RemoteException
 	{
 		super();
@@ -76,10 +76,10 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 		System.out.println("===========================================================\n");
 	}
 
-// --------------------------------------------
+// ----------------------------------------------------------------------------
 // Public methodes: my be called by the remote object
 // Must implement "throws RemoteException"
-// --------------------------------------------
+// ----------------------------------------------------------------------------
 	public synchronized LoginInfo[]	getLoginInfo() throws RemoteException
 	{
 		return this.game.getLoginInfo(playerName);
@@ -116,7 +116,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	}
 	public synchronized void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
-System.out.println("--------------------------------");
+System.out.println("----------------------------------------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
 		this.game.placeTile(playerName, t, position);
 	}
@@ -160,13 +160,13 @@ throw new RuntimeException("Not implemented yet");
 	
 	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
-System.out.println("--------------------------------");
+System.out.println("----------------------------------------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pioche: " + nbrCards + " | Reste " +(data.getNbrRemainingDeckTile()-nbrCards));
 		this.game.drawTile(playerName, nbrCards);
 	}
 	public synchronized void validate() throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
-System.out.println("--------------------------------");
+System.out.println("----------------------------------------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate");
 		this.game.validate(playerName);
 	}
@@ -176,7 +176,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 	}
 	public synchronized void moveTram(Point[] tramPath, int tramPathSize, Point startTerminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed
 	{
-System.out.println("--------------------------------");
+System.out.println("----------------------------------------------------------------");
 System.out.print("Round: " + data.getRound() + "\t " + playerName +": Move: ");
 for(int i = 0; i < tramPathSize; i++) {
 	System.out.print("("+tramPath[i].x+","+tramPath[i].y+"), ");
@@ -188,14 +188,14 @@ System.out.println("\t StartTerminus = (" + startTerminus.x + "," + startTerminu
 
 	public synchronized void pickTileFromPlayer(String chosenPlayer, Tile tile) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand 
 	{
-System.out.println("--------------------------------");
+System.out.println("----------------------------------------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Prend " + tile + " a " + chosenPlayer);
 		game.pickTileFromPlayer(chosenPlayer, chosenPlayer, tile);
 	}
 
 	public synchronized void replaceTwoTiles(Tile t1, Tile t2, Point p1, Point p2)throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
 	{
-System.out.println("--------------------------------");
+System.out.println("----------------------------------------------------------------");
 System.out.println("Round: " + data.getRound() + "\t " + playerName +": Echange " + t1 + "("+p1.x+","+p1.y+") et " + t2 + " en ("+p2.x+","+p2.y+")");
 		game.replaceTwoTiles(playerName, t1, t2, p1, p2);
 	}
