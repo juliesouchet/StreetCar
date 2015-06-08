@@ -130,7 +130,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 	}
 	
 	public void cancelGame() {
-		this.getGameController().stopGame();
+		this.getGameController().showWelcomeMenuPanel();
 	}
 
 	protected void updateCreateGameButton() {

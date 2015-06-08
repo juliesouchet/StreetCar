@@ -166,7 +166,7 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 	}
 	
 	public void cancelGame() {
-		this.getGameController().stopGame();
+		this.getGameController().showWelcomeMenuPanel();
 	}
 	
 	protected void updateJoinGameButton() {
