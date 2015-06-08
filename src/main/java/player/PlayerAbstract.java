@@ -182,6 +182,7 @@ for(int i = 0; i < tramPathSize; i++) {
 	System.out.print("("+tramPath[i].x+","+tramPath[i].y+"), ");
 }
 System.out.println("\t StartTerminus = (" + startTerminus.x + "," + startTerminus.y + ")");
+
 		game.moveTram(playerName, tramPath, tramPathSize, startTerminus);
 	}
 

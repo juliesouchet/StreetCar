@@ -27,7 +27,6 @@ public class LinePanel extends Panel{
 	}
 	
 	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
 		if (bufferedImage != null) {
 			g.drawImage(bufferedImage, 0, 0, this.getWidth(), this.getHeight(), null);
 		}

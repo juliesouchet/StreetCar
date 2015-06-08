@@ -200,7 +200,6 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
 		}
-		this.showWelcomeMenuPanel();
 	}
 
 	public void refresh(Data data) {
