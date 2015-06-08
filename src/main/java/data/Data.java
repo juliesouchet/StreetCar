@@ -151,7 +151,7 @@ public class Data implements Serializable
 		PlayerInfo pi			= this.playerInfoList.get(this.getPlayerTurn());
 		HistoryCell	hc			= pi.getLastActionHistory();
 		String		playerName	= this.getPlayerTurn();
-
+/****
 System.out.println("Action 1: " + hc.action1);
 System.out.println("Action 2: " + hc.action2);
 System.out.println("Drawn 1: " + hc.drawnTile1);
@@ -160,7 +160,7 @@ System.out.println("oldTile 1: " + hc.oldTile1);
 System.out.println("oldTile 2: " + hc.oldTile2);
 System.out.println("Hand: " + pi.hand);
 System.out.println("\n----------------------------------------\n");
-
+*******/
 		if ((hc != null) && ((hc.action1 != null) || (hc.action2 != null)))							// Case player has done an action this round
 		{
 			if (hc.action2 != null)																	//		Case undo round second game
@@ -211,7 +211,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
+/////System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -363,8 +363,7 @@ System.out.println("Data.doAction player: " + playerName + ",   Action: " + acti
 		Hand		hand= pi.hand;
 		HistoryCell	hc	= pi.getLastActionHistory();
 		Tile t;
-System.out.println("Hand before: " + pi.hand);
-System.out.println("-------------\n");
+
 		switch(nbrCards)
 		{
 			case 1:
@@ -386,8 +385,6 @@ System.out.println("-------------\n");
 				break;
 			default: throw new RuntimeException("Wrong number of tiles to draw: " + nbrCards);
 		}
-System.out.println("Hand after: " + pi.hand);
-System.out.println("-------------\n");
 	}
 	/**===================================================
 	 * @return Draw a tile from a player's hand.  This tile is put in the player's hand
@@ -588,7 +585,6 @@ System.out.println("-------------\n");
 		
 		if (hasStartedMaidenTravel(playerName))															// Case has started maiden travel
 		{
-System.out.println("isTravel");
 			tramNeighbor = this.getAccessibleNeighborsPositions(pi.tramPosition.x, pi.tramPosition.y);
 
 			switch (tramNeighbor.size())
@@ -603,7 +599,6 @@ System.out.println("isTravel");
 		}
 		else																								// Case is building
 		{
-System.out.println("not Travel");
 			if ((isEmptyDeck()) && (this.getHandSize(playerName) == 0)) return true;
 
 			Tile[] rotations = new Tile[4];
@@ -967,7 +962,6 @@ System.out.println("not Travel");
 		Hand hand;
 		if (hc.drawnTile2 != null)
 		{
-System.out.println("Undo last draw 2");
 			pi.hand.remove(hc.drawnTile2);
 			if (hc.drawnFromPlayerHand2 == null)	this.deck.undrawTile(hc.drawnTile2);
 			else
@@ -980,7 +974,6 @@ System.out.println("Undo last draw 2");
 		}
 		else if (hc.drawnTile1 != null)
 		{
-System.out.println("Undo last draw 1");
 			pi.hand.remove(hc.drawnTile1);
 			if (hc.drawnFromPlayerHand1 == null)	this.deck.undrawTile(hc.drawnTile1);
 			else
@@ -995,7 +988,6 @@ System.out.println("Undo last draw 1");
 	}
 	private void undoSecondGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-System.out.println("Undo second game");
 
 		if (!hc.action2.isBUILD_SIMPLE())throw new RuntimeException("????");
 
@@ -1017,20 +1009,17 @@ System.out.println("Undo second game");
 	}
 	private void undoFirstSimpleGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-System.out.println("Undo first game");
 		int x, y;
 
 		x = hc.action1.positionTile1.x;
 		y = hc.action1.positionTile1.y;
 		if (!hc.oldTile1.isEmpty())														//			Case: game was a tile improve
 		{
-System.out.println("improve");
 			this.board[x][y] = hc.oldTile1;
 			pi.hand.remove(hc.oldTile1);
 		}
 		else																			//			Case: game was a simple tile put
 		{
-System.out.println("else");
 			this.board[x][y] = Tile.getNewEmptyTile();
 			this.undoLastDraw(hc, pi);
 		}
@@ -1039,7 +1028,6 @@ System.out.println("else");
 	}
 	private void undoFirstDoubleGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-System.out.println("Undo first double game");
 		int x, y;
 
 		x = hc.action1.positionTile2.x;
