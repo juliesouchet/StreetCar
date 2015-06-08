@@ -94,14 +94,16 @@ public class ClientRoomMenuPanel extends MenuPanel {
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i = 0; i < 5; i++) {
+				LoginInfo info = loginInfos[i];
 				Label nameLabel = this.nameLabels.get(i);
 				ComboBox choiceComboBox = this.choiceComboBoxes.get(i);
 				AvatarPanel avatarImagePanel = this.avatarImagePanels.get(i);
+				String playerName = info.getPlayerName();
+				if (playerName == null) continue;
 				
-				LoginInfo info = loginInfos[i];
-				nameLabel.setText(info.getPlayerName());
+				nameLabel.setText(playerName);
 				choiceComboBox.setEditable(!info.isHost());
-				avatarImagePanel.setColor(data.getPlayerColor(info.getPlayerName()));
+				avatarImagePanel.setColor(data.getPlayerColor(playerName));
 				
 				System.out.println(i + " " + info);
 				if (info.isClosed()) {

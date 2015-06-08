@@ -1,6 +1,7 @@
 
 package main.java.gui.application;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,7 @@ import javax.swing.Timer;
 
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
+import main.java.game.ExceptionUsedPlayerColor;
 import main.java.gui.board.MovingMapPanel;
 import main.java.gui.components.FrameController;
 import main.java.gui.components.Menu;
@@ -214,6 +216,20 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		{
 			// TODO declare victor
 		}
+
+		// When a player joins the game, it hasn't got a color
+		// We don't know if this behavior is expected ?
+		try {
+			if (StreetCar.player.getPlayerColor() == null) {
+				Color playerColor = data.getRandomUnusedColor();
+				StreetCar.player.setPlayerColor(playerColor);
+			}
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		} catch (ExceptionUsedPlayerColor e1) {
+			e1.printStackTrace();
+		}
+		
 		// TODO if(data.isBlocked ou isGameBlocked)
 		if (this.menuPanel != null) {
 			this.menuPanel.refreshMenu(StreetCar.player, data);
