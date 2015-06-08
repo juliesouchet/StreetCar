@@ -1,8 +1,5 @@
 
-Bouton cancel après un new game
-Bouton cancel après un join game
 ExceptionTwoManyTilesToDraw lancée quand on améliore deux tuiles
-Ordre des joueurs non fonctionnel lorsuqu'un joueur rejoint une partie
 Bouton cancel dans le host menu panel non fonctionnel
 
 
