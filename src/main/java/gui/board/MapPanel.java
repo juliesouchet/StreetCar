@@ -94,7 +94,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
         
         int x = this.originX;
         int y = this.originY;
-        Graphics2D g2d = (Graphics2D)g; 
+        Graphics2D g2d = (Graphics2D)g;
     	Tile[][] board = data.getBoard();
     	
     	// Grid
@@ -120,6 +120,18 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		String NumberCardsInDeck = new String("" + data.getNbrRemainingDeckTile());
 		g2d.drawString(NumberCardsInDeck, deckX+4, deckY-cellWidth/2+30);
 		
+
+        /*for (int i=0; i<data.getNbrPlayer(); i++) {
+        	Point p = new Point();
+        	if (data.getTramPosition(data.getPlayerOrder()[i]) != null) {
+            	p.x = data.getTramPosition(data.getPlayerOrder()[i]).x;
+            	p.y = data.getTramPosition(data.getPlayerOrder()[i]).y;
+        		System.out.println(p.x);
+        		System.out.println(p.y);        		
+        		g2d.fillRect(p.x, p.y, cellWidth, cellWidth);
+        	}
+        }*/
+		
 		// Train movement
 		for(Point p : trainMove)
 		{
@@ -127,9 +139,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			y = this.originY + this.cellWidth * p.y;
 			try {
 				g2d.setColor(StreetCar.player.getPlayerColor());
-			} catch (RemoteException e) { e.printStackTrace(); }
-			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}
+			} catch (RemoteException e) { 
+				e.printStackTrace(); 
+			}
+		}		
     }
 	
 	// Mouse Listener
