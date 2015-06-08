@@ -1,6 +1,6 @@
 package main.java.gui.chat;
 
-import java.awt.image.BufferedImage;
+import java.awt.Color;
 import java.util.ArrayList;
 
 
@@ -32,14 +32,14 @@ public class Chat {
 	
 	public void addMessage(ChatMessage message) {
 		this.messages.add(message);
-		
+
 		for (ChatListener l : this.listeners) {
 			l.chatMessageDidAdd(this, message);
 		}
 	}
 	
-	public void addMessage(BufferedImage avatar, String sender, String text) {
-		ChatMessage message = new ChatMessage(avatar, sender, text);
+	public void addMessage(Color senderColor, String text) {
+		ChatMessage message = new ChatMessage(senderColor, text);
 		this.addMessage(message);
 	}
 	
