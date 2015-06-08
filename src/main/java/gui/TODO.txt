@@ -6,9 +6,7 @@ faire disparaitre l'avatar quand on passe d'un joueur a une connec fermée
 
 
 louis
-faire les regles
-traduire en francais
-enlever le bouton settings
+afficher si on peut commencer le chemin
 faire dessins tram
-enlever le bouton demarrer le voyage pour afficher un texte
 changer la couleur de ses stations
+faire les bordures
