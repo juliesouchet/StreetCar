@@ -33,30 +33,30 @@ public class RulesMenuPanel extends MenuPanel {
 	}
 	
 	private void setupPanel() {
-    	this.setSize(new Dimension(700, 500));
+    	this.setSize(new Dimension(800, 600));
     	this.setMenuTitle("Règles", null);
 	}
 	
 	private void setupImagePanel() {
 		this.imagePanel = new ImagePanel();
-		this.imagePanel.setBounds(80, 60, 540, 340);
+		this.imagePanel.setBounds(80, 60, 640, 460);
 		this.add(this.imagePanel);
 	}
 	
 	private void setupButtons() {
 		this.previousImageButton = new Button("Précédent", null);
 		this.previousImageButton.addAction(this, "previousImage");
-		this.previousImageButton.setBounds(50, 430, 100, 40);
+		this.previousImageButton.setBounds(50, 540, 100, 40);
     	this.add(this.previousImageButton);
     	
     	this.nextImageButton = new Button("Suivant", null);
     	this.nextImageButton.addAction(this, "nextImage");
-    	this.nextImageButton.setBounds(550, 430, 100, 40);
+    	this.nextImageButton.setBounds(640, 540, 100, 40);
     	this.add(this.nextImageButton);
     	
 		Button cancelButton = new Button("Retour au menu principal", null);
 		cancelButton.addAction(this, "leaveGame");
-		cancelButton.setBounds(225, 430, 250, 40);
+		cancelButton.setBounds(270, 540, 250, 40);
     	this.add(cancelButton);
 	}
 	
@@ -70,7 +70,8 @@ public class RulesMenuPanel extends MenuPanel {
 				break;
 			}
 		}
-		this.imagePanel.setImage(this.ruleImages.get(0));
+		currentImageIndex = -1;
+		this.setCurrentImageIndex(0);
 	}
 	
 	// Setters / getter
@@ -96,9 +97,11 @@ public class RulesMenuPanel extends MenuPanel {
 
 		this.currentImageIndex = index;
 		this.imagePanel.setImage(this.getCurrentImage());
-	}
+		this.previousImageButton.setEnabled(index > 0);
+		this.nextImageButton.setEnabled(index+1 < getImagesCount());
+	} 
 	
-	// Actions
+	// Actions 
 	
 	public void previousImage() {
 		this.setCurrentImageIndex(this.currentImageIndex-1);
@@ -114,5 +117,5 @@ public class RulesMenuPanel extends MenuPanel {
 	}
 
 	@Override
-	public void refreshMenu(PlayerIHM player, Data data) { }
+	public void refreshMenu(PlayerIHM player, Data data) {}
 }

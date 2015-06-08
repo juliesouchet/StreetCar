@@ -81,7 +81,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 		{
 			if(data.getHandSize(playerName)>0 || data.hasStartedMaidenTravel(playerName) )
 			{
-//System.out.println("PlayerAI " + playerName +" makeChoice");
+System.out.println("PlayerAI " + playerName +" makeChoice");
 				Action a = this.automaton.makeChoice(data.getClone(playerName));
 				if (a == null) {System.out.println("AI has no actions left"); return;}
 				try

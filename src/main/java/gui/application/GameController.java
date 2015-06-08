@@ -1,12 +1,16 @@
 
 package main.java.gui.application;
 
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 
 import javax.swing.JMenuBar;
+import javax.swing.Timer;
 
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
@@ -48,6 +52,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		this.frame.getContentPane().setLayout(null); 
 		this.frame.addComponentListener(this);
 		this.frame.setSize(1300, 830);
+        this.frame.setMinimumSize(new Dimension(1300, 830));
 	}
 
 	private void setupMenuBar() {
@@ -151,6 +156,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void showClientWaitingRoomPanel() {
 		MenuPanel newPanel = new ClientRoomMenuPanel(this);
 		this.setMenuPanel(newPanel);
+		System.out.println("TEST");
 	}
 
 	// Show / hide frame
@@ -200,10 +206,9 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		} catch (ExceptionForbiddenAction e) {
 			e.printStackTrace();
 		}
-		this.showWelcomeMenuPanel();
 	}
 
-	public void refresh(Data data) {
+	public void refresh(final Data data) {
 		String winner = data.getWinner();
 		if(winner != null)
 		{
@@ -215,8 +220,17 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		}
 		if (data.isGameStarted() && !(this.getFrameContentPane() instanceof InGamePanel)) {
 			this.showInGamePanel();
-		}
-		if (this.getFrameContentPane() instanceof InGamePanel) {
+			ActionListener taskPerformer = new ActionListener() {
+        		public void actionPerformed(ActionEvent e) {
+        			InGamePanel panel = (InGamePanel)getFrameContentPane();
+        			panel.refreshGame(StreetCar.player, data);
+        		}
+        	};
+        	Timer timer = new Timer(100, taskPerformer);
+        	timer.setRepeats(false);
+        	timer.start();
+        	
+		} else if (this.getFrameContentPane() instanceof InGamePanel) {
 			InGamePanel panel = (InGamePanel)this.getFrameContentPane();
 			panel.refreshGame(StreetCar.player, data);
 		}
