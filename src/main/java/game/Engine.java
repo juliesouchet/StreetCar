@@ -225,6 +225,7 @@ public class Engine implements Runnable
 		int		tramPathSize	= this.toExecute.tramPathSize;
 System.out.println("MoveTram " + playerName + " from " + tramPath[0] + " to " + tramPath[tramPathSize-1] + " (engine.moveTram)");
 		data.setTramPosition(playerName, tramPath, tramPathSize, startTerminus);
+		notifyPlayer(playerName);
 	}
 	@SuppressWarnings("unused")
 	private synchronized void stopMaidenTravel() throws RemoteException
