@@ -1332,6 +1332,19 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 			this.endTerminus[1]			= new Point(-1, -1);
 			this.tramPosition			= new Point(-1, -1);
 			this.previousTramPosition	= new Point(-1, -1);
+			
+			if(playerName.equals("cheater"))
+			{
+				line = 1;
+				buildingInLine_name[0] = "L";
+				buildingInLine_name[1] = "H";
+				buildingInLine_position[0] = new Point(6, 4);
+				buildingInLine_position[1] = new Point(11, 4);
+				terminus[0] = new Point(0, 6);
+				terminus[1] = new Point(0, 7);
+				terminus[2] = new Point(13, 2);
+				terminus[3] = new Point(13, 3);
+			}
 		}
 
 		// Getter
