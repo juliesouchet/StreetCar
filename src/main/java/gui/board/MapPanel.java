@@ -49,7 +49,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private int mapWidth;
 	private int cellWidth;
 
-	private Point trainPosition = new Point(3, 4);
 	private LinkedList<Point> tramMove = new LinkedList<Point>();
 
 	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
@@ -173,7 +172,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 				trainBufferedImage = Resources.imageNamed("tram_blue");
 			} else if (color.equals(Color.GREEN)) {
 				trainBufferedImage = Resources.imageNamed("tram_green");
-			} else if (color.equals(Color.ORANGE)) {
+			} else if (color.equals(Color.YELLOW)) {
 				trainBufferedImage = Resources.imageNamed("tram_orange");
 			} else if (color.equals(Color.RED)) {
 				trainBufferedImage = Resources.imageNamed("tram_red");
@@ -336,6 +335,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
 		g2d.setColor(color);
+		if (color.equals(Color.YELLOW)) {
+			color = Color.ORANGE;
+		}
 		int[] diamondTabX = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
 		int[] diamondTabY = {cellWidth/2, cellWidth/4, cellWidth/2, cellWidth/4*3};
 		g2d.fillPolygon(diamondTabX, diamondTabY, 4);
