@@ -218,7 +218,6 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-//System.out.println("Data.doAction player: " + playerName + ",   Action: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -241,7 +240,6 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 			this.placeTile(playerName, action.positionTile1.x, action.positionTile1.y, action.tile1);
 		}
 		else throw new RuntimeException("Unknown action type");
-//System.out.println("After hand : " + playerInfoList.get(playerName).hand);
 	}
 
 	/**================================================
@@ -456,8 +454,6 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		pi.tramPosition.x					= tramPath[tramPathSize-1].x;
 		pi.tramPosition.y					= tramPath[tramPathSize-1].y;
 
-System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
-
 		if (pi.tramPosition.equals(pi.endTerminus[0]))	this.winner = playerName;
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
 		this.maxPlayerSpeed = tramPathSize;
@@ -595,7 +591,6 @@ for (int i=0; i<nbrPath; i++)
 			{
 				p1		= arretPath.get(i);
 				tmpRes	= this.getShortestPath(pp, p0, p1);
-//System.out.println("\n**********************\nTrack betweew " + p0 + "   and " + p1 + "\n" + tmpRes);
 				if (tmpRes == null) break;
 				if(i>1)		tmpRes.removeFirst();
 				res.addAll(tmpRes);
@@ -619,9 +614,9 @@ for (int i=0; i<nbrPath; i++)
 	public int					getWidth()										{return this.board.length;}
 	public int					getHeight()										{return this.board[0].length;}
 	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
-public LinkedList<Point>	getShortestPath(Point pOld, Point p, Point pNext){return this.pathFinder.getPath(this, pOld, p, pNext);}
-public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return getShortestPath(pOld, p, pNext) != null;}
-public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){return this.pathFinder.isSimplePath(this, pOld, p, pNext);}
+	public LinkedList<Point>	getShortestPath(Point pOld, Point p, Point pNext){return this.pathFinder.getPath(this, pOld, p, pNext);}
+	public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return getShortestPath(pOld, p, pNext) != null;}
+//public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){return this.pathFinder.isSimplePath(this, pOld, p, pNext);}
 
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
@@ -990,7 +985,7 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 				{
 					try					{this.checkTramPath(playerName, this.pathMatrix[i], l, null);}
 					catch (Exception e)	{continue;}
-					if (this.pathMatrix[i][1].equals(previousTramPosition)) continue;// TODO a enlever
+// Deja check par path finder					if (this.pathMatrix[i][1].equals(previousTramPosition)) continue;
 					if(writeActionsInTab)
 					{
 						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l);
@@ -1046,9 +1041,9 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 												resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 											}
 											res ++;
-											
+
 											// TODO s'arranger pour que le tableau soit plus grand
-											if(writeActionsInTab && res >= resTab.length) { 
+											if(writeActionsInTab && res >= resTab.length){
 												this.board[x1][y1] = oldT1;
 												return res;
 											}

@@ -136,11 +136,15 @@ public class Engine implements Runnable
 
 		if ((data.isGameStarted()) || (data.isHost(playerName)))
 		{
+System.out.println("iciiii ---1");
 			for (String name: data.getPlayerNameList()) data.getRemotePlayer(name).excludePlayer();
-			this.engineThread.interrupt();
+System.out.println("iciiii 0000");
+//			this.engineThread.interrupt();
+System.out.println("iciiii 1111");
 		}
 		else
 		{
+System.out.println("iciiii else");
 			data.removePlayer(playerName);
 			for (String name: data.getPlayerNameList())
 			{

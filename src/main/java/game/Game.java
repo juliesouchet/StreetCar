@@ -49,7 +49,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // TODO to remove after test
 public String	getTestHostName()	{return this.data.getHost();}
-public Data		getTestData()		{return this.data;}
+//public Data		getTestData()		{return this.data;}
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
@@ -148,11 +148,7 @@ public Data		getTestData()		{return this.data;}
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
-		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))
-		{
-System.out.println("Game.setLoginInfo: no change to do");
-			return;
-		}
+		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))	return;
 
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
@@ -239,6 +235,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 
+System.out.println("OnQuit");
 		if (gameHasStarted || isHost)	System.exit(0);
 	}
 
@@ -311,8 +308,8 @@ System.out.println("Game.setLoginInfo: no change to do");
 	public void rollBack(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
 	{
 // TODO a decommenter apres les test
-//		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
-//		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
+		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
+		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
 
 		this.data.rollBack();
 		this.engine.addAction(data, "notifyAllPlayers");
