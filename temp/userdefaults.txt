@@ -1,6 +1,6 @@
 #
-#Tue Jun 09 12:59:58 CEST 2015
 Language=en
-PlayerName=nomnom
+PlayerName=cheater
 UseFullScreen=false
 GameName=jeux
+=\=\=\=\=\=\=

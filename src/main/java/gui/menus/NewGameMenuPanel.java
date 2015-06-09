@@ -116,8 +116,9 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 		try {
 			
 			StreetCar.player = PlayerIHM.launchPlayer(playerName,
-					                           gameName, 
-					                           "cheater_board",
+					                           gameName,
+					                           //"cheater_board",
+					                           "newOrleans",
 					                           2,
 					                           true,
 					                           IP.getIpAdressFromInet(),
