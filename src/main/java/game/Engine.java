@@ -23,6 +23,7 @@ public class Engine implements Runnable
 	private Object						engineLock;
 	private LinkedList<EngineAction>	actionList;
 	private EngineAction				toExecute;
+	private boolean						engineStop;
 
 // --------------------------------------------
 // Builder:
@@ -44,7 +45,7 @@ public class Engine implements Runnable
 		Class<? extends Engine> thisClass;
 		Method method;
 
-		while(true)
+		while(!engineStop)
 		{
 			synchronized (this.engineLock)													// Wait for a new action
 			{
@@ -132,34 +133,6 @@ public class Engine implements Runnable
 	}
 
 // --------------------------------------------
-// Public methods:
-// This functions are executed by the caller's thread
-// --------------------------------------------
-/*
-	public void onQuitGame(Data data, String playerName) throws RemoteException
-	{
-		PlayerInterface pi;
-
-		if ((data.isGameStarted()) || (data.isHost(playerName)))
-		{
-			for (String name: data.getPlayerNameList())
-			{
-				if (!name.equals(playerName))data.getRemotePlayer(name).excludePlayer();
-			}
-			this.engineThread.interrupt();
-		}
-		else
-		{
-			data.removePlayer(playerName);
-			for (String name: data.getPlayerNameList())
-			{
-				pi = data.getRemotePlayer(name);
-				if (!name.equals(playerName))	pi.gameHasChanged(data.getClone(name));
-			}
-		}
-	}
-*/
-// --------------------------------------------
 // Private methods:
 // Declare all the private methods as synchronized
 // --------------------------------------------
@@ -195,7 +168,7 @@ public class Engine implements Runnable
 		if ((data.isGameStarted()) || (data.isHost(playerName)))
 		{
 			for (String name: data.getPlayerNameList()) data.getRemotePlayer(name).excludePlayer();
-			this.engineThread.interrupt();
+			this.engineStop = true;
 		}
 		else
 		{
@@ -206,7 +179,6 @@ public class Engine implements Runnable
 				if (!name.equals(playerName))	pi.gameHasChanged(data.getClone(name));
 			}
 		}
-
 	}
 	@SuppressWarnings("unused")
 	private synchronized void hostStartGame() throws RemoteException

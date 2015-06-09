@@ -38,12 +38,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public final static String			applicationProtocol		= "rmi";
 	public final static String			AiDefaultName			= "AI Level ";
 
+	protected String					url						= null;
 	protected Data						data;
 	protected LoginInfo[]				loggedPlayerTable;
 	protected Engine					engine;
 	protected EngineChat				engineChat;
 	protected HashMap<String, Thread>	aiList;
-	protected Boolean					gameLock = false;
+	protected boolean					stopGame				= false;
+	protected Object					gameLock	= new Object();
 
 // --------------------------------------------
 // Builder:
@@ -60,13 +62,15 @@ public String	getTestHostName()	{return this.data.getHost();}
 	public Game(String gameName, String appIP, String boardName, int nbrBuildingInLine) throws RemoteException, ExceptionUnknownBoardName, RuntimeException
 	{
 		super();
-		String url = null;
 
 		try																				// Create the player's remote reference
 		{
-			url = getRemoteURL(appIP, gameName);
-			java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
-			Naming.rebind(url, this);
+			String url = getRemoteURL(appIP, gameName);
+			if ((this.url == null) || (!url.equals(this.url)))
+			{
+				java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
+				Naming.bind(url, this);
+			}
 		}
 		catch (Exception e) {e.printStackTrace(); throw new RemoteException();}
 
@@ -117,14 +121,16 @@ public String	getTestHostName()	{return this.data.getHost();}
 // --------------------------------------------
 	public void run()
 	{
-		while(this.gameLock == false)
+		while(this.stopGame == false)
 		{
 			synchronized(this.gameLock)
 			{
 				try					{this.gameLock.wait();}
 				catch (Exception e)	{e.printStackTrace();}
 			}
-	System.out.println("test: " + this.gameLock);
+//			try					{Naming.unbind(this.url);}
+//			catch (Exception e)	{e.printStackTrace();}
+System.out.println("test: " + stopGame);
 		}
 	}
 
@@ -248,10 +254,10 @@ public String	getTestHostName()	{return this.data.getHost();}
 System.out.println("OnQuit");
 		if (gameHasStarted || isHost)
 		{
-//System.exit(0);
-			this.gameLock = true;
+//TODO System.exit(0);
 			synchronized(this.gameLock)
 			{
+				this.stopGame = true;
 				try					{this.gameLock.notifyAll();}
 				catch(Exception e)	{e.printStackTrace(); return;}
 			}
