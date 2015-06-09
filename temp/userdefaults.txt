@@ -1,7 +1,7 @@
 #
-#Tue Jun 09 14:32:50 CEST 2015
+#Tue Jun 09 15:12:55 CEST 2015
 Language=en
 PlayerName=Humain
 UseFullScreen=false
-=\=\=\=\=\=\=
 GameName=jeux
+=\=\=\=\=\=\=

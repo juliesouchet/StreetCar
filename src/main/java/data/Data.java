@@ -572,6 +572,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 				tmpRes	= this.getShortestPath(pp, p0, p1);
 //System.out.println("\n**********************\nTrack betweew " + p0 + "   and " + p1 + "\n" + tmpRes);
 				if (tmpRes == null) break;
+				if(i>1)		tmpRes.removeFirst();
 				res.addAll(tmpRes);
 				p0 = p1;
 				pp = tmpRes.get(tmpRes.size()-2);
@@ -1387,18 +1388,6 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 			this.previousTramPosition	= new Point(-1, -1);
 
 			if(playerName.equals("cheater"))
-			{
-				line = 1;
-				buildingInLine_name[0] = "L";
-				buildingInLine_name[1] = "H";
-				buildingInLine_position[0] = new Point(6, 4);
-				buildingInLine_position[1] = new Point(11, 4);
-				terminus[0] = new Point(0, 6);
-				terminus[1] = new Point(0, 7);
-				terminus[2] = new Point(13, 2);
-				terminus[3] = new Point(13, 3);
-			}
-			if(playerName.equals("AI Level 2")) //TODO à enlever
 			{
 				line = 1;
 				buildingInLine_name[0] = "L";
