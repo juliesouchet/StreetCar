@@ -8,10 +8,13 @@ import main.java.gui.util.Resources;
 public class Label extends JLabel {
 
 	// Constructors
+	public Label() {
+		super();
+	}
 	
 	public Label(String text) {
-		super(text);
-		
+		this();
+		this.setText(text);
 	}
 	
 	public Label(String text, String comment) {
@@ -19,7 +22,7 @@ public class Label extends JLabel {
 	}
 	
 	// Setters
-	
+
 	public void setText(String text, String comment) {
 		this.setText(Resources.localizedString(text, comment));
 	}
