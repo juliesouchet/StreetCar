@@ -52,6 +52,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
 
 	private LinkedList<Point> chosenPath = new LinkedList<Point>();
+	String playerToHighlight;
 
 	// Constructors
 
@@ -167,6 +168,11 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			g2d.drawImage(img, imgX, imgY, cellWidth, cellWidth, null);
 		}
 		
+		
+		if(playerToHighlight != null)
+		{
+			// TODO
+		}
 	}
 
 	private void highlightBuildings(Data data, Graphics2D g2d, String playerName) {
@@ -178,6 +184,18 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			y = this.originY + this.cellWidth * building.y;
 			g2d.drawImage(createHighlight(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
 		}
+	}
+	
+	public void highlightPreviousAction(String playerName)
+	{
+		playerToHighlight = playerName;
+		repaint();
+	}
+	
+	public void unHighlightPreviousAction()
+	{
+		playerToHighlight = null;
+		repaint();
 	}
 
 	private void drawTram(Data data, Graphics2D g2d, String name) {
