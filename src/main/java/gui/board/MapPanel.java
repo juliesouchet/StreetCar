@@ -212,8 +212,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 
 	public void mousePressed(MouseEvent e) 
-	{	
-		//if(!canMoveTram()) return; TODO check if can move tram
+	{
+		if(!canMoveTram()) return;
 
 		Point p = this.cellPositionForLocation(e.getPoint());
 		trainMove.clear();
@@ -228,13 +228,13 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		catch (RemoteException e1) { }
 
 		if(player.getGameData().hasStartedMaidenTravel(playerName)) return true;
-		//player.getGameData().
+		if(player.getGameData().isTrackCompleted(playerName)) return true;
 		return false;
 	}
 
 	public void mouseReleased(MouseEvent e) 
 	{
-		// TODO check here if trip can be done
+		if(!canMoveTram()) return;
 		Point[] points = new Point[trainMove.size()];
 		for(int i = 0; i < trainMove.size(); i++) 
 		{
@@ -294,7 +294,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	public void mouseDragged(MouseEvent e) 
 	{
-		// TODO check here if tram can move
+		if(!canMoveTram()) return;
 		Point p = cellPositionForLocation(e.getPoint());
 		if(p == null) return;
 		if(trainMove.size() > 1 && p.equals(trainMove.get(trainMove.size() - 2)))
