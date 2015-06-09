@@ -119,13 +119,7 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 	{
 		this.game.hostStartGame(playerName);
 	}
-	public synchronized void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
-	{
-System.out.println("----------------------------------------------------------------");
-System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
-		this.game.placeTile(playerName, t, position);
-	}
-
+	
 	public synchronized void doAction(Action action) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver, ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionTrtamwayDoesNotStop
 	{
 		if (action.isMOVE())
@@ -162,6 +156,22 @@ throw new RuntimeException("Not implemented yet");
 	}
 	
 	
+	public synchronized void placeTile (Tile t, Point position) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
+	{
+		Tile oldT = game.getData(playerName).getTile(position);
+		if(oldT.isEmpty()) {
+System.out.println("----------------------------------------------------------------");
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
+		}
+		else {
+System.out.println("----------------------------------------------------------------");
+System.out.println("Round: " + data.getRound() + "\t " + playerName +": Echange tuile "+ t.toString()+" a la position: ("+position.x+","+position.y+")");
+System.out.println("\t\t\t\t avec "+ oldT.toString());
+		}
+		
+		this.game.placeTile(playerName, t, position);
+	}
+
 	
 	public synchronized void drawTile (int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{

@@ -5,4 +5,3 @@ PlayerName=cheater
 UseFullScreen=false
 GameName=jeux
 =\=\=\=\=\=\=
-<<<<<<<=HEAD
