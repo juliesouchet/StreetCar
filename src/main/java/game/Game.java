@@ -441,7 +441,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 		while(true)
 		{
 			if (nameAdd.equals(""))	str = playerName;
-			else					str = "_" + nameAdd;
+			else					str = playerName + "_" + nameAdd;
 			if (this.data.isUsedPlayerName(str)) nameAdd += rnd.nextInt(10);
 			else break;
 		}

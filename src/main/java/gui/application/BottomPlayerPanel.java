@@ -145,13 +145,20 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkIfCanBeginTrip() {
-		if (canBeginTrip) {
+		if (!canBeginTrip) {
+			return;
+		}
+		
+		Data data = StreetCar.player.getGameData();
+		if (data.getTramPosition(playerName) == null) {
 			canBeginText = new Label("Vous pouvez commencer votre voyage !");
 			canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
 			canBeginText.setBorder(new LineBorder(Color.BLACK));
 			canBeginText.setBounds(0, 15, 200, 35);
 			buttonsPanel.add(canBeginText);
-		} 
+		} else {
+			canBeginText = new Label("Vitesse max = " + data.getMaximumSpeed());
+		}
 	}
 	
 	protected void checkValidateButton(Data data) {
@@ -183,18 +190,17 @@ public class BottomPlayerPanel extends Panel {
 	
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.refreshCount ++;
-		if (refreshCount <= 1) {
-			return;
-		}
-		
 		this.player = player;
 		player = StreetCar.player;
 		try {
 			playerName = player.getPlayerName();
 			canBeginTrip = data.isTrackCompleted(playerName);
-			checkIfCanBeginTrip();
-			checkValidateButton(data);
-			checkResetButton(data);
+			if (refreshCount > 1) {
+				checkIfCanBeginTrip();
+				checkValidateButton(data);
+				checkResetButton(data);
+				cardsPanel.refreshGame(player, data);
+			}
 			if (data.isPlayerTurn(playerName)) {				
 				cardsPanel.setBackground(new Color(0xC9ECEE));
 				buttonsPanel.setBackground(new Color(0xC9ECEE));
@@ -202,9 +208,6 @@ public class BottomPlayerPanel extends Panel {
 				cardsPanel.setBackground(new Color(0xFFEDDE));
 				buttonsPanel.setBackground(new Color(0xFFEDDE));
 			}
-			cardsPanel.repaint();
-			buttonsPanel.repaint();
-			cardsPanel.refreshGame(player, data);
 
 			//beginTripButton.setEnabled(data.isTrackCompleted(playerName));
 		} catch (RemoteException e) {

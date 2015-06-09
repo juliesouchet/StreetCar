@@ -36,6 +36,8 @@ public class Traveler extends PlayerAutomaton {
 		if(name == null) this.name = "Traveler";
 		else this.name = name;
 		this.slave = new Worker(name);
+		
+TraceDebugAutomate.travelerTrace = true; // TODO à enlever
 	}
 	
 	@Override

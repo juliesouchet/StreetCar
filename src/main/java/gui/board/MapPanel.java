@@ -10,8 +10,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
@@ -48,8 +46,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	private Point trainPosition = new Point(3, 4);
 	private LinkedList<Point> trainMove = new LinkedList<Point>();
-
-	BufferedImage trainBufferedImage;
 
 	// Constructors
 
@@ -140,23 +136,39 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		{
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
-			if (playerColor == Color.BLACK) {
-				trainBufferedImage = Resources.imageNamed("tram_black");
-			} else if (playerColor.equals(Color.BLUE)) {
-				trainBufferedImage = Resources.imageNamed("tram_blue");
-			} else if (playerColor.equals(Color.GREEN)) {
-				trainBufferedImage = Resources.imageNamed("tram_green");
-			} else if (playerColor.equals(Color.ORANGE)) {
-				trainBufferedImage = Resources.imageNamed("tram_orange");
-			} else if (playerColor.equals(Color.RED)) {
-				trainBufferedImage = Resources.imageNamed("tram_red");
-			} else if (playerColor.equals(Color.WHITE)) {
-				trainBufferedImage = Resources.imageNamed("tram_white");
-			}
 			g2d.setColor(playerColor);
 			g2d.drawRect(x, y, cellWidth, cellWidth);
 		}
+		
+		for(String name : data.getPlayerNameList())
+		{
+			if(!data.hasStartedMaidenTravel(name)) continue;
+			
+			Color color = data.getPlayerColor(name);
+			BufferedImage trainBufferedImage = null;
+			if (color == Color.BLACK) {
+				trainBufferedImage = Resources.imageNamed("tram_black");
+			} else if (color.equals(Color.BLUE)) {
+				trainBufferedImage = Resources.imageNamed("tram_blue");
+			} else if (color.equals(Color.GREEN)) {
+				trainBufferedImage = Resources.imageNamed("tram_green");
+			} else if (color.equals(Color.ORANGE)) {
+				trainBufferedImage = Resources.imageNamed("tram_orange");
+			} else if (color.equals(Color.RED)) {
+				trainBufferedImage = Resources.imageNamed("tram_red");
+			} else if (color.equals(Color.WHITE)) {
+				trainBufferedImage = Resources.imageNamed("tram_white");
+			}
+			
+			Point currentTramPosition = data.getTramPosition(name);
+			int tramX = this.originX + this.cellWidth * currentTramPosition.x;
+			int tramY = this.originY + this.cellWidth * currentTramPosition.y;
+			if(trainBufferedImage == null) System.out.println("oiHJIONOLUIFVNLJEBligenbkuhzfngl/jkhrgkluegfn/hj.egfkuigfjkl§bfg");
+			g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
+			//Point previousTramPosition = data.getPreviousTramPosition(name);
+		}
 
+		/*
 		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName)) {
 			Point p = StreetCar.player.getGameData().getTramPosition(playerName);
 			x = this.originX + this.cellWidth * p.x;
@@ -164,9 +176,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			g2d.setColor(playerColor);
 			g2d.drawRect(x, y, cellWidth, cellWidth);
 
-			/*Point previousPosition = new Point();
-			previousPosition = data.getPreviousTramPosition(playerName);
-			System.out.println(previousPosition);*/
+//			Point previousPosition = new Point();
+//			previousPosition = data.getPreviousTramPosition(playerName);
+//			System.out.println(previousPosition);
 
 			int i=0;
 			if (trainMove.size() > 0) {
@@ -199,7 +211,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			}
 
 
-		}
+		}*/
 	}
 
 	// Mouse Listener
@@ -212,8 +224,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 
 	public void mousePressed(MouseEvent e) 
-	{	
-		//if(!canMoveTram()) return; TODO check if can move tram
+	{
+		if(!canMoveTram()) return;
 
 		Point p = this.cellPositionForLocation(e.getPoint());
 		trainMove.clear();
@@ -228,13 +240,13 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		catch (RemoteException e1) { }
 
 		if(player.getGameData().hasStartedMaidenTravel(playerName)) return true;
-		//player.getGameData().
+		if(player.getGameData().isTrackCompleted(playerName)) return true;
 		return false;
 	}
 
 	public void mouseReleased(MouseEvent e) 
 	{
-		// TODO check here if trip can be done
+		if(!canMoveTram()) return;
 		Point[] points = new Point[trainMove.size()];
 		for(int i = 0; i < trainMove.size(); i++) 
 		{
@@ -294,7 +306,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	public void mouseDragged(MouseEvent e) 
 	{
-		// TODO check here if tram can move
+		if(!canMoveTram()) return;
 		Point p = cellPositionForLocation(e.getPoint());
 		if(p == null) return;
 		if(trainMove.size() > 1 && p.equals(trainMove.get(trainMove.size() - 2)))
