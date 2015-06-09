@@ -34,6 +34,25 @@ public enum Direction implements Serializable
 	public int		getVal()							{return this.dir;}
 	public int		addDirectionToList	(int dirList)	{return  (dirList | (1 << this.dir));}
 	public boolean	isDirectionInList	(int dirList)	{return ((dirList & (1 << this.dir)) != 0);}
+	
+	static public Point getPointInDirection(Point currentPoint, Direction dir){
+		switch(dir){
+		case EAST:
+			return new Point(currentPoint.x+1,currentPoint.y);
+		case NORTH:
+			return new Point(currentPoint.x,currentPoint.y-1);
+		case SOUTH:
+			return new Point(currentPoint.x,currentPoint.y+1);
+		case WEST:
+			return new Point(currentPoint.x-1,currentPoint.y);
+		case WRONG:
+			break;
+		default:
+			break;
+			
+		}
+		return null;
+	}
 /*****
 	public static Direction	getFirstDirectionInList(int dirList)
 	{
