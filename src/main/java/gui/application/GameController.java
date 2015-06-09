@@ -50,8 +50,8 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		this.frame.setContentPane(new MovingMapPanel());
 		this.frame.getContentPane().setLayout(null); 
 		this.frame.addComponentListener(this);
-		this.frame.setSize(1300, 840);
-        this.frame.setMinimumSize(new Dimension(1300, 840));
+		this.frame.setSize(1400, 840);
+        this.frame.setMinimumSize(new Dimension(1400, 840));
 	}
 
 	private void setupMenuBar() {
