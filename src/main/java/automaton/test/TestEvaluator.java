@@ -30,7 +30,7 @@ public class TestEvaluator
 // --------------------------------------------
 	public static final LoginInfo[] initialLoginTable =	{	new LoginInfo(false,	null,	true,	true,	-1),
 															new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.travelerLvl),
-															new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.dumbestLvl),
+															new LoginInfo(false,	null,	false,	false,	PlayerAutomaton.workerLvl),
 															new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 															new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)};
 	public static final String	gameName			= "TestEvaluator";
