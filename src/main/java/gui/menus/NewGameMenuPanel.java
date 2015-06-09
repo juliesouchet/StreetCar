@@ -119,6 +119,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 					                           gameName,
 					                           //"cheater_board",
 					                           "newOrleans",
+					                           //"quasi_full",
 					                           2,
 					                           true,
 					                           IP.getIpAdressFromInet(),
