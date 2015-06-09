@@ -66,14 +66,14 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 	    UserDefaults ud = UserDefaults.getSharedInstance();
 	    String lastPlayerName = ud.getString(Constants.PLAYER_NAME_KEY);
 		this.playerNameField = new TextField(lastPlayerName);
-		this.playerNameField.setPlaceholder("Player1", null);
+		this.playerNameField.setPlaceholder("Nom", null);
 		this.playerNameField.setBounds(new Rectangle(270, 105, 150, 30));
 		this.playerNameField.getDocument().addDocumentListener(this);
 		this.add(this.playerNameField);
 
 	    String lastGameName = ud.getString(Constants.GAME_NAME_KEY);
 		this.gameNameField = new TextField(lastGameName);
-		this.gameNameField.setPlaceholder("Game1", null);
+		this.gameNameField.setPlaceholder("Jeu", null);
 		this.gameNameField.setBounds(new Rectangle(270, 155, 150, 30));
 		this.gameNameField.getDocument().addDocumentListener(this);
 		this.add(this.gameNameField);
@@ -118,6 +118,7 @@ public class NewGameMenuPanel extends MenuPanel implements DocumentListener{
 			StreetCar.player = PlayerIHM.launchPlayer(playerName,
 					                           gameName,
 					                           "cheater_board",
+					                           //"xxx",
 					                           //"newOrleans",
 					                           //"quasi_full",
 					                           2,

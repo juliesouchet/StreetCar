@@ -1,0 +1,8 @@
+#
+#Tue Jun 09 21:51:24 CEST 2015
+Language=en
+PlayerName=cheater
+UseFullScreen=false
+=\=\=\=\=\=\=
+GameName=jeux
+

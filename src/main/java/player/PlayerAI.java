@@ -33,6 +33,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 // Attributes:
 // --------------------------------------------
 	private PlayerAutomaton	automaton;
+	private Action			tmp2ndBuildSimple = null;
 
 // --------------------------------------------
 // Builder:
@@ -74,6 +75,14 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 	public synchronized void gameHasChanged(Data data) throws RemoteException
 	{
 		super.gameHasChanged(data);
+		if (this.tmp2ndBuildSimple != null)
+		{
+			Action a = this.tmp2ndBuildSimple;
+			this.tmp2ndBuildSimple = null;
+			try					{super.placeTile(a.tile2, a.positionTile2);}
+			catch (Exception e) {e.printStackTrace();}
+			return;
+		}
 		if (!data.isGameStarted())			return;
 		if (!data.isPlayerTurn(playerName)) return;
 		if (data.getWinner() != null)		{System.out.println("The winner is: " + data.getWinner());	return;}
@@ -88,7 +97,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 				try
 				{
 					if ((a.isBUILD_SIMPLE()) || (a.isBUILD_AND_START_TRIP_NEXT_TURN()))		super.placeTile(a.tile1, a.positionTile1);
-					else if (a.isTWO_BUILD_SIMPLE())										{super.placeTile(a.tile1, a.positionTile1); super.placeTile(a.tile2, a.positionTile2);}
+					else if (a.isTWO_BUILD_SIMPLE())										{this.tmp2ndBuildSimple = a;super.placeTile(a.tile1, a.positionTile1);}
 					else if (a.isBUILD_DOUBLE())											super.replaceTwoTiles(a.tile1, a.tile2, a.positionTile1, a.positionTile2);
 					else if (a.isMOVE())
 					{

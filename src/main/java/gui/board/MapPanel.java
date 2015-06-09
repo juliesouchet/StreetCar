@@ -107,6 +107,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		Tile[][] board = data.getBoard();
 
 		// Grid
+//<<<<<<< HEAD
 		for (int j=0; j < data.getHeight(); j++) {
 			for (int i=0; i < data.getWidth(); i++) {
 				Tile tile = board[i][j];
@@ -116,15 +117,27 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 					g2d.fillRect(x, y, cellWidth, cellWidth);
 				} else {
 					TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
+/*=======
+				for (int j=0; j < data.getHeight(); j++) {
+					for (int i=0; i < data.getWidth(); i++) {
+						Tile tile = board[i][j];
+						if ((i == 0 || j == 0 || i == data.getWidth()-1 || j == data.getHeight()-1) &&
+							!tile.isTerminus()) {
+							g2d.setColor(new Color(98, 179, 203));
+							g2d.fillRect(x, y, cellWidth, cellWidth);
+						} else {
+							TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
+						}
+						g2d.setColor(Color.GRAY);
+						g2d.drawRect(x, y, cellWidth, cellWidth);
+						x += this.cellWidth;
+					}
+					x = this.originX;
+					y += this.cellWidth;
+>>>>>>> 9739d882855cd1a0bd22a199b0ee59cefcfaffd9*/
 				}
-				g2d.setColor(Color.GRAY);
-				if(j != 0 && i != 0 && j != data.getHeight() - 1 && i != data.getWidth() - 1) g2d.drawRect(x, y, cellWidth, cellWidth);
-				x += this.cellWidth;
 			}
-			x = this.originX;
-			y += this.cellWidth;
 		}
-
 		String playerName = null;
 		try {
 			playerName = StreetCar.player.getPlayerName();
@@ -181,7 +194,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 					}
 				}
 			}
-			
 		}
 	}
 
@@ -242,7 +254,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		Point currentTramPosition = data.getTramPosition(name);
 		int tramX = this.originX + this.cellWidth * currentTramPosition.x;
 		int tramY = this.originY + this.cellWidth * currentTramPosition.y;
-		g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
+		g2d.drawImage(trainBufferedImage, tramX+5, tramY+15, cellWidth-1, cellWidth-30, null);
 	}
 
 	// Mouse Listener
