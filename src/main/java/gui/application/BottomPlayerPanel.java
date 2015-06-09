@@ -157,7 +157,7 @@ public class BottomPlayerPanel extends Panel {
 			canBeginText.setBounds(0, 15, 200, 35);
 			buttonsPanel.add(canBeginText);
 		} else {
-			canBeginText = new Label("Vitesse max = " + data.getMaximumSpeed());
+			canBeginText.setText("Vitesse max = " + data.getMaximumSpeed());
 		}
 	}
 	
