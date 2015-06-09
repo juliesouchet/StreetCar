@@ -241,7 +241,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		Point currentTramPosition = data.getTramPosition(name);
 		int tramX = this.originX + this.cellWidth * currentTramPosition.x;
 		int tramY = this.originY + this.cellWidth * currentTramPosition.y;
-		g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
+		g2d.drawImage(trainBufferedImage, tramX+5, tramY+15, cellWidth-1, cellWidth-30, null);
 	}
 
 	// Mouse Listener
