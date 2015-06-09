@@ -335,10 +335,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private BufferedImage createTramTrail(Color color) {
 		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
-		g2d.setColor(color);
 		if (color.equals(Color.YELLOW)) {
 			color = Color.ORANGE;
 		}
+		g2d.setColor(color);
 		int[] diamondTabX = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
 		int[] diamondTabY = {cellWidth/2, cellWidth/4, cellWidth/2, cellWidth/4*3};
 		g2d.fillPolygon(diamondTabX, diamondTabY, 4);
