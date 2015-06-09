@@ -10,6 +10,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
@@ -46,6 +48,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
     
     private Point trainPosition = new Point(3, 4);
     private LinkedList<Point> trainMove = new LinkedList<Point>();
+    
+    BufferedImage trainBufferedImage;
     
     // Constructors
     
@@ -136,17 +140,61 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		{
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
+			if (playerColor == Color.BLACK) {
+				trainBufferedImage = Resources.imageNamed("tram_black");
+			} else if (playerColor.equals(Color.BLUE)) {
+				trainBufferedImage = Resources.imageNamed("tram_blue");
+			} else if (playerColor.equals(Color.GREEN)) {
+				trainBufferedImage = Resources.imageNamed("tram_green");
+			} else if (playerColor.equals(Color.ORANGE)) {
+				trainBufferedImage = Resources.imageNamed("tram_orange");
+			} else if (playerColor.equals(Color.RED)) {
+				trainBufferedImage = Resources.imageNamed("tram_red");
+			} else if (playerColor.equals(Color.WHITE)) {
+				trainBufferedImage = Resources.imageNamed("tram_white");
+			}
 			g2d.setColor(playerColor);
-			g2d.fillRect(x, y, cellWidth, cellWidth);
+			g2d.drawRect(x, y, cellWidth, cellWidth);
 		}
-		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName))
-		{
+		
+		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName)) {
 			Point p = StreetCar.player.getGameData().getTramPosition(playerName);
-
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
 			g2d.setColor(playerColor);
-			g2d.fillRect(x, y, cellWidth, cellWidth);
+			g2d.drawRect(x, y, cellWidth, cellWidth);
+			
+			/*Point previousPosition = new Point();
+			previousPosition = data.getPreviousTramPosition(playerName);
+			System.out.println(previousPosition);*/
+
+			int i=0;
+			if (trainMove.size() > 0) {
+				i = trainMove.size();
+				System.out.println("SIZE OF TRAINMOVE : " + i);
+			} else {
+				System.out.println("TRAINMOVE NULL");
+			}
+			
+			System.out.println(trainMove.get(i-1).x-1);
+			System.out.println(trainMove.get(i-1).x+1);
+			if (x == trainMove.get(i-1).x-1 || x == trainMove.get(i-1).x+1) {
+				// tram horizontal
+				
+				AffineTransform at = new AffineTransform();
+				at.translate(trainBufferedImage.getWidth() / 2, trainBufferedImage.getHeight() / 2);
+				at.rotate(Math.toRadians(90));
+				at.translate(-trainBufferedImage.getWidth() / 2, -trainBufferedImage.getHeight() / 2);
+
+				AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);		
+
+				g2d.drawImage(op.filter(trainBufferedImage, null), x+5, y+5, cellWidth-5, cellWidth-5, null);
+				
+				
+			} else if (y == trainMove.get(i-1).y-1 || y == trainMove.get(i-1).y-1) {
+				// tram vertical
+				g2d.drawImage(trainBufferedImage, x+5, y+5, cellWidth-5, cellWidth-5, null);				
+			}
 		}
     }
 	
@@ -230,7 +278,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		trainMove.clear();
 		repaint();
 	}
 	
