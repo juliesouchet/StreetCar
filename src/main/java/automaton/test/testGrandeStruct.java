@@ -43,7 +43,7 @@ public class testGrandeStruct {
 		
 		System.out.println(myAutomate);
 		
-		System.out.println(myAutomate.getBestTerminus());
+		//System.out.println(myAutomate.getBestTerminus());
 		if(myAutomate.myStopsAreSetted()[0]){
 			System.out.println("Stop[0]=setted");
 		}
