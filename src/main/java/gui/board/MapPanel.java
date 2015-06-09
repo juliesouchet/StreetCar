@@ -146,36 +146,17 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		// Train movement
 		for(Point p : chosenPath)
 		{
-			//pathLength++;
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
 			g2d.drawImage(createTramTrail(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
 		}
 
+		highlightBuildings(data, g2d, playerName);
 		for(String name : data.getPlayerNameList())
 		{
 			if(!data.hasStartedMaidenTravel(name)) continue;
-
-			Color color = data.getPlayerColor(name);
-			BufferedImage trainBufferedImage = null;
-			if (color.equals(Color.BLACK)) {
-				trainBufferedImage = Resources.imageNamed("tram_black");
-			} else if (color.equals(Color.BLUE)) {
-				trainBufferedImage = Resources.imageNamed("tram_blue");
-			} else if (color.equals(Color.GREEN)) {
-				trainBufferedImage = Resources.imageNamed("tram_green");
-			} else if (color.equals(Color.YELLOW)) {
-				trainBufferedImage = Resources.imageNamed("tram_orange");
-			} else if (color.equals(Color.RED)) {
-				trainBufferedImage = Resources.imageNamed("tram_red");
-			} else if (color.equals(Color.WHITE)) {
-				trainBufferedImage = Resources.imageNamed("tram_white");
-			}
-
-			Point currentTramPosition = data.getTramPosition(name);
-			int tramX = this.originX + this.cellWidth * currentTramPosition.x;
-			int tramY = this.originY + this.cellWidth * currentTramPosition.y;
-			g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
+			drawTram(data, g2d, name);
+			highlightBuildings(data, g2d, name);
 		}
 
 		for (Point p : highlights.keySet()) {
@@ -184,6 +165,41 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			int imgY = this.originX + this.cellWidth * p.y;			
 			g2d.drawImage(img, imgX, imgY, cellWidth, cellWidth, null);
 		}
+		
+	}
+
+	private void highlightBuildings(Data data, Graphics2D g2d, String playerName) {
+		int x;
+		int y;
+		for(Point building : data.getPlayerAimBuildings(playerName))
+		{
+			x = this.originX + this.cellWidth * building.x;
+			y = this.originY + this.cellWidth * building.y;
+			g2d.drawImage(createHighlight(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
+		}
+	}
+
+	private void drawTram(Data data, Graphics2D g2d, String name) {
+		Color color = data.getPlayerColor(name);
+		BufferedImage trainBufferedImage = null;
+		if (color.equals(Color.BLACK)) {
+			trainBufferedImage = Resources.imageNamed("tram_black");
+		} else if (color.equals(Color.BLUE)) {
+			trainBufferedImage = Resources.imageNamed("tram_blue");
+		} else if (color.equals(Color.GREEN)) {
+			trainBufferedImage = Resources.imageNamed("tram_green");
+		} else if (color.equals(Color.YELLOW)) {
+			trainBufferedImage = Resources.imageNamed("tram_orange");
+		} else if (color.equals(Color.RED)) {
+			trainBufferedImage = Resources.imageNamed("tram_red");
+		} else if (color.equals(Color.WHITE)) {
+			trainBufferedImage = Resources.imageNamed("tram_white");
+		}
+
+		Point currentTramPosition = data.getTramPosition(name);
+		int tramX = this.originX + this.cellWidth * currentTramPosition.x;
+		int tramY = this.originY + this.cellWidth * currentTramPosition.y;
+		g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
 	}
 
 	// Mouse Listener
