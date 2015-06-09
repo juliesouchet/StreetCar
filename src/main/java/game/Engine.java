@@ -89,6 +89,11 @@ public class Engine implements Runnable
 		this.addAction(new EngineAction(pi, null, data, function, null, null, null, null, null, null, null, null, null, null, null));
 	}
 	/** @return add an event to the engine action queue*/
+	public void addAction(Data data, String function, String playerName, PlayerInterface pi)
+	{
+		this.addAction(new EngineAction(pi, playerName, data, function, null, null, null, null, null, null, null, null, null, null, null));
+	}
+	/** @return add an event to the engine action queue*/
 	public void addAction(Data data, String function, String playerName, int nbrCards)
 	{
 		this.addAction(new EngineAction(null, playerName, data, function, null, null, null, null, null, null, nbrCards, null, null, null, null));
@@ -130,6 +135,7 @@ public class Engine implements Runnable
 // Public methods:
 // This functions are executed by the caller's thread
 // --------------------------------------------
+/*
 	public void onQuitGame(Data data, String playerName) throws RemoteException
 	{
 		PlayerInterface pi;
@@ -138,16 +144,12 @@ public class Engine implements Runnable
 		{
 			for (String name: data.getPlayerNameList())
 			{
-System.out.println("iciiii ---1: " + name);
-				data.getRemotePlayer(name).excludePlayer();
+				if (!name.equals(playerName))data.getRemotePlayer(name).excludePlayer();
 			}
-System.out.println("iciiii 0000");
-//			this.engineThread.interrupt();
-System.out.println("iciiii 1111");
+			this.engineThread.interrupt();
 		}
 		else
 		{
-System.out.println("iciiii else");
 			data.removePlayer(playerName);
 			for (String name: data.getPlayerNameList())
 			{
@@ -156,7 +158,7 @@ System.out.println("iciiii else");
 			}
 		}
 	}
-
+*/
 // --------------------------------------------
 // Private methods:
 // Declare all the private methods as synchronized
@@ -178,6 +180,33 @@ System.out.println("iciiii else");
 ********/
 		
 		playerToExclude.excludePlayer();
+	}
+		
+		
+	@SuppressWarnings("unused")
+	private synchronized void onQuitGame() throws RemoteException
+	{
+		Data data = this.toExecute.data;
+		PlayerInterface playerToExclude = this.toExecute.player;
+		String playerName = this.toExecute.playerName;
+		PlayerInterface pi;
+		Data privateData;
+
+		if ((data.isGameStarted()) || (data.isHost(playerName)))
+		{
+			for (String name: data.getPlayerNameList()) data.getRemotePlayer(name).excludePlayer();
+			this.engineThread.interrupt();
+		}
+		else
+		{
+			data.removePlayer(playerName);
+			for (String name: data.getPlayerNameList())
+			{
+				pi = data.getRemotePlayer(name);
+				if (!name.equals(playerName))	pi.gameHasChanged(data.getClone(name));
+			}
+		}
+
 	}
 	@SuppressWarnings("unused")
 	private synchronized void hostStartGame() throws RemoteException
