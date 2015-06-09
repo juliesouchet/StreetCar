@@ -9,9 +9,10 @@ import main.java.data.Tile;
 
 public class Worker extends PlayerAutomaton {
 
-	private int width, height, nbrObjectives;
+	private int width, height, nbrObjectives, min, max, limit;
 	private Point[]	objectives = null;
-
+	private int[][] heuristic;
+	
 	public Worker(String playerName) {
 		super();
 		if(playerName == null) this.name = "Worker";
@@ -25,7 +26,6 @@ public class Worker extends PlayerAutomaton {
 		height = data.getHeight();
 		int nbrBuildings = data.nbrBuildingInLine();
 		nbrObjectives = nbrBuildings + 2;
-		int[][] heuristic = new int[width][height];
 		Random rand = new Random();
 		
 		/*==================
@@ -43,28 +43,57 @@ public class Worker extends PlayerAutomaton {
 			}
 			else {
 				objectives[0] = terminus[3];
-				objectives[nbrObjectives-1] = terminus[2];
+				objectives[nbrObjectives-1] = terminus[0];
 			}
+			heuristic = new int[width][height];
+			
+			for(int i = 0; i < nbrObjectives; i++) {
+				Point p = objectives[i];
+				computeThisHeuristic(p, heuristic);
+			}
+			min = Integer.MAX_VALUE;
+			max = 0;
+			for(int i = 0; i < width; i++) {
+				for(int j = 0; j < height; j++) {
+					if(heuristic[i][j]<min) min = heuristic[i][j];
+					if(heuristic[i][j]>max) max = heuristic[i][j];
+				}
+			}
+			limit = (min+max)/2;
 		}
 		
 		/*================
 		 *	Construction
 		 =================*/
-		if(!data.isTrackCompleted(name)) {
-			int min = 0, max = 0;
-			Point minMax;
-			for(int i = 0; i < nbrObjectives; i++) {
-				Point p = objectives[i];
-				minMax = computeThisHeuristic(p, heuristic);
-				min += minMax.x;
-				max += minMax.y;
-			}
+		//if(!data.isTrackCompleted(name)) {
 			
-			int limit = (min+max)/2;
-
+			/*
+			// Displaying the heuristic 
+			String blank = " ";
+			String display = "Min  " + min + ", max " + max + " limit " + limit + "\n Heuristic matrix : ";
+			for (int j=0; j<this.height ; j++){
+				display += this.separateur(this.width);
+				for (int i=0; i<this.width; i++) {
+					if(isObjective(new Point(i,j))) blank="+";
+					display += "+";
+					if(heuristic[i][j]<100) {
+						display += blank;
+					}
+					display += heuristic[i][j]+blank;
+					if(heuristic[i][j]<10) {
+						display += blank;
+					}
+					blank = " ";
+				}
+				display += "+";
+			}
+			System.out.println(display);
+			*/
+		
+		
 			int handSize = data.getHandSize(name);
 			Tile t;
-			int i, j, k, nbrTries = 0;
+			int i, j1, k, nbrTries = 0;
 
 			if(handSize == 0) return null;
 			
@@ -72,7 +101,7 @@ public class Worker extends PlayerAutomaton {
 				nbrTries++;
 				if(nbrTries > 10000)	return scanAllPossibleChoices(data);
 				i = rand.nextInt(data.getWidth());
-				j = rand.nextInt(data.getHeight());
+				j1 = rand.nextInt(data.getHeight());
 				
 				k = rand.nextInt(handSize);
 				t = data.getHandTile(name, k);
@@ -80,16 +109,34 @@ public class Worker extends PlayerAutomaton {
 				for(int rotation = 0; rotation < rand.nextInt(4); rotation++) {
 					t.turnLeft();
 				}
-			} while(heuristic[i][j] >= limit || !data.isAcceptableTilePlacement(i, j, t));
-			res = Action.newBuildSimpleAction(i, j, t);
+			} while(heuristic[i][j1] >= limit || !data.isAcceptableTilePlacement(i, j1, t));
+			res = Action.newBuildSimpleAction(i, j1, t);
 			
-		}
+		//}
 		
 		return res;
 	}
 
 	
-	
+	@SuppressWarnings("unused")
+	private boolean isObjective(Point p) {
+		for (int i=0; i<this.objectives.length; i++){
+			if (objectives[i].equals(p)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unused")
+	private String separateur(int size){
+		String result="\n";
+		for (int i=0; i<size; i++){
+			result += "+----";
+		}
+		result += "+\n";
+		return result;
+	}
 	
 	
 	/**
@@ -97,19 +144,13 @@ public class Worker extends PlayerAutomaton {
 	 * @param p Le point visé.
 	 * @param heuristique La matrice à remplir.
 	 */
-	private Point computeThisHeuristic(Point p, int[][] heuristic){
-		Point minMax = new Point(Integer.MAX_VALUE,0);
+	private void computeThisHeuristic(Point p, int[][] heuristic){
 		for(int i=0; i<this.width;i++){
 			for (int j=0; j<this.height; j++){
 				int calcul = Math.abs(i-p.x)+Math.abs(j-p.y);
-				
-				if(calcul < minMax.x)	minMax.x = calcul;
-				if(calcul > minMax.y)	minMax.y = calcul;
-				
 				heuristic[i][j] += calcul;
 			}
 		}
-		return minMax;
 	}
 	
 	
