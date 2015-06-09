@@ -12,7 +12,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
+<<<<<<< HEAD
 import java.util.HashMap;
+=======
+import java.util.Arrays;
+>>>>>>> 6429a9550099d8271593cd9aea85ea5b8ac5f29c
 import java.util.LinkedList;
 
 import main.java.data.Data;
@@ -33,6 +37,7 @@ import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
+import main.java.util.Util;
 
 
 @SuppressWarnings("serial")
@@ -44,11 +49,20 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private int originY;
 	private int mapWidth;
 	private int cellWidth;
+	<<<<<<< HEAD
 
 	private Point trainPosition = new Point(3, 4);
 	private LinkedList<Point> tramMove = new LinkedList<Point>();
-	
+
 	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
+	=======
+
+			private LinkedList<Point> chosenPath = new LinkedList<Point>();
+
+	// these are for the showPath thingie
+	boolean playerIsShowingPath = false;
+	boolean playerIsMovingTramForTheFirstTime = false;
+	>>>>>>> 6429a9550099d8271593cd9aea85ea5b8ac5f29c
 
 	// Constructors
 
@@ -134,19 +148,24 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		String NumberCardsInDeck = new String("" + data.getNbrRemainingDeckTile());
 		g2d.drawString(NumberCardsInDeck, deckX+4, deckY-cellWidth/2+30);
 
+
+
 		// Train movement
-		for(Point p : tramMove)
+		//int pathLength = 0;
+		for(Point p : chosenPath)
 		{
+			//pathLength++;
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
+			//if(pathLength > allowedPathLength) playerColor = new Color(playerColor.getRed(), playerColor.getGreen(), playerColor.getBlue(), 100);
 			g2d.setColor(playerColor);
 			g2d.drawRect(x, y, cellWidth, cellWidth);
 		}
-		
+
 		for(String name : data.getPlayerNameList())
 		{
 			if(!data.hasStartedMaidenTravel(name)) continue;
-			
+
 			Color color = data.getPlayerColor(name);
 			BufferedImage trainBufferedImage = null;
 			if (color.equals(Color.BLACK)) {
@@ -162,14 +181,14 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			} else if (color.equals(Color.WHITE)) {
 				trainBufferedImage = Resources.imageNamed("tram_white");
 			}
-			
+
 			Point currentTramPosition = data.getTramPosition(name);
 			int tramX = this.originX + this.cellWidth * currentTramPosition.x;
 			int tramY = this.originY + this.cellWidth * currentTramPosition.y;
 			g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
 			//Point previousTramPosition = data.getPreviousTramPosition(name);
 		}
-		
+
 		for (Point p : highlights.keySet()) {
 			BufferedImage img = highlights.get(p);
 			int imgX = this.originX + this.cellWidth * p.x;
@@ -214,7 +233,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 				} else {
 					System.out.println("JE RENTRE DANS RIEN DU TOUT");				
 				}
-				
+
 			} else {
 				System.out.println("TRAINMOVE NULL");
 			}
@@ -225,86 +244,80 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	// Mouse Listener
 
-	public void mouseClicked(MouseEvent e) 
-	{
-		Point p = this.cellPositionForLocation(e.getPoint());
-		System.out.println("Tile ID is : " + StreetCar.player.getGameData().getTile(p).getTileID());
-	}
+	public void mouseClicked(MouseEvent e) { }
 
 
 	public void mousePressed(MouseEvent e) 
 	{
-		if(!canMoveTram()) return;
+		PlayerIHM player = StreetCar.player;
+		Data data = player.getGameData();
+		String name = null;
+		try { name = player.getPlayerName(); } 
+		catch (RemoteException e1) { }
 
 		Point p = this.cellPositionForLocation(e.getPoint());
-		tramMove.clear();
-		tramMove.add(p);
+		if(data.hasStartedMaidenTravel(name))
+		{
+			if(!p.equals(data.getTramPosition(name))) return;
+		}
+		else
+		{
+			if(!data.isTrackCompleted(name)) return;
+			LinkedList<Point> terminiPoints = new LinkedList<Point>(Arrays.asList(data.getPlayerTerminusPosition(name)));
+			if(!terminiPoints.contains(p)) return;
+		}
+		chosenPath.clear();
+		chosenPath.add(p);
 		repaint();
 	}
 
-	private boolean canMoveTram() {
-		PlayerIHM player = StreetCar.player;
-		String playerName = null;
-		try { playerName = player.getPlayerName(); } 
-		catch (RemoteException e1) { }
-
-		if(player.getGameData().hasStartedMaidenTravel(playerName)) return true;
-		if(player.getGameData().isTrackCompleted(playerName)) return true;
-		return false;
+	public void mouseDragged(MouseEvent e) 
+	{
+		if(chosenPath.isEmpty()) return;
+		Point p = cellPositionForLocation(e.getPoint());
+		if(p == null) return;
+		if(chosenPath.size() > 1 && p.equals(chosenPath.get(chosenPath.size() - 2)))
+		{
+			chosenPath.removeLast();
+			repaint();
+		}
+		else
+		{
+			if(chosenPath.size() > StreetCar.player.getGameData().getMaximumSpeed()) return;
+			if(p.equals(chosenPath.getLast())) return;
+			if(!(Util.manhathanDistance(p, chosenPath.getLast()) == 1)) return;
+			chosenPath.add(p);
+			// TODO if(.data.isPath(gnagnagna))
+			//			{
+			//				chosenPath.removeLast()
+			//				return;
+			//			}
+			repaint();
+		}
 	}
 
-	public void mouseReleased(MouseEvent e) 
+	public void mouseReleased(MouseEvent e)
 	{
-		if(!canMoveTram()) return;
-		Point[] points = new Point[tramMove.size()];
-		for(int i = 0; i < tramMove.size(); i++) 
+		if(chosenPath.isEmpty()) return;
+		if(chosenPath.size() == 1) return;
+		Point[] points = new Point[chosenPath.size()];
+		for(int i = 0; i < chosenPath.size(); i++) 
 		{
-			points[i] = tramMove.get(i);
+			points[i] = chosenPath.get(i);
 		}
 		try {
-			StreetCar.player.moveTram(points, tramMove.size(), tramMove.getFirst());
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionNotYourTurn e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionForbiddenAction e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionGameHasNotStarted e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionMissingStartTerminus e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongPlayerTerminus e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwayPath e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwaySpeed e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionTramwayExceededArrival e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwayStart e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwayStartTerminus e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionTramwayJumpCell e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionTrtamwayDoesNotStop e1) {
-			// TODO Auto-generated catch block
+			StreetCar.player.moveTram(points, chosenPath.size(), chosenPath.getFirst());
+		} catch (RemoteException | ExceptionNotYourTurn
+				| ExceptionForbiddenAction | ExceptionGameHasNotStarted
+				| ExceptionMissingStartTerminus | ExceptionWrongPlayerTerminus
+				| ExceptionWrongTramwayPath | ExceptionWrongTramwaySpeed
+				| ExceptionTramwayExceededArrival | ExceptionWrongTramwayStart
+				| ExceptionWrongTramwayStartTerminus | ExceptionTramwayJumpCell
+				| ExceptionTrtamwayDoesNotStop e1) {
 			e1.printStackTrace();
 		}
-		
-		tramMove.clear();
+
+		chosenPath.clear();
 		repaint();
 	}
 
@@ -314,24 +327,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	// MouseMotionListener
 	public void mouseMoved(MouseEvent e) { }
-
-	public void mouseDragged(MouseEvent e) 
-	{
-		if(!canMoveTram()) return;
-		Point p = cellPositionForLocation(e.getPoint());
-		if(p == null) return;
-		if(tramMove.size() > 1 && p.equals(tramMove.get(tramMove.size() - 2)))
-		{
-			tramMove.removeLast();
-			repaint();
-		}
-		else
-		{
-			if(p.equals(tramMove.getLast())) return;
-			tramMove.add(p);
-			repaint();
-		}
-	}
 
 	// ComponentListener
 
@@ -349,15 +344,11 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		this.updateMapGeometry();
 	}
 
-	public void startMaidenVoyage(Point point) {
-		trainPosition = point;
-	}
-
 	public void moveTram(LinkedList<Point> tramPath) {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	private BufferedImage createHighlight(Color color) {
 		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
@@ -368,7 +359,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		g2d.fillRect(cellWidth/2, cellWidth/2, cellWidth/2, cellWidth/2);
 		return bufferedImage;
 	}
-	
+
 	private BufferedImage createTramTrail(Color color) {
 		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
