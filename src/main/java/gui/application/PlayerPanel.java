@@ -145,11 +145,13 @@ public class PlayerPanel extends Panel implements MouseListener{
 	@Override
 	public void mouseEntered(MouseEvent e) 
 	{ 	
+		System.out.println("ENTEEEEEEEEEERED");
 		map.highlightPreviousAction(nameOfPlayer);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		System.out.println("EXITEEEEEEEEEEED");
 		map.unHighlightPreviousAction();
 	}
 
