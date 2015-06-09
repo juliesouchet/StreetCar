@@ -38,6 +38,20 @@ public class Traveler extends PlayerAutomaton {
 		this.slave = new Dumbest(name);
 	}
 	
+	public Traveler(String name, int slaveLvl) {
+		super();
+		if(name == null) this.name = "Traveler";
+		else this.name = name;
+		switch (slaveLvl)
+		{
+			case PlayerAutomaton.dumbestLvl:	this.slave = new Dumbest(name);	break;
+			case PlayerAutomaton.travelerLvl:	this.slave = new Traveler(name);	break;
+			case PlayerAutomaton.strongestLvl:	this.slave = new Strongest(name);	break;
+			case PlayerAutomaton.workerLvl:		this.slave = new Worker(name);	break;
+			default	:throw new RuntimeException("Undefined AI difficulty : " + slaveLvl);
+		}
+	}
+	
 	@Override
 	public Action makeChoice(Data currentConfig) {
 		Action res = null;

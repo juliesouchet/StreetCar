@@ -547,7 +547,7 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (this.isTree)	 return -1;
 		if (this.isBuilding) return -1;
 		if (this.isTerminus) return -1;
-		if (this.isStop)	 return -1;
+		//if (this.isStop)	 return -1;
 
 		Path[]	localPath	= initPathTab();
 		Path[]	addedTilePath	= initPathTab();
