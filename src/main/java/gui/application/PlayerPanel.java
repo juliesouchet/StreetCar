@@ -79,6 +79,10 @@ public class PlayerPanel extends Panel{
 			TilePanel tilePanel = tilePanels.get(i);
 			tilePanel.setTile(tile);
 		}
+		for (int i=data.getHandSize(playerName); i<5; i++) {
+			TilePanel tilePanel = tilePanels.get(i);
+			tilePanel.setTile(null);
+		}
 	}
 
 	public void refreshStationCards(String playerName) {
