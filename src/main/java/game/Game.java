@@ -52,7 +52,6 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 // --------------------------------------------
 // TODO to remove after test
 public String	getTestHostName()	{return this.data.getHost();}
-//public Data		getTestData()		{return this.data;}
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
@@ -129,9 +128,6 @@ public String	getTestHostName()	{return this.data.getHost();}
 				try					{this.gameLock.wait();}
 				catch (Exception e)	{e.printStackTrace();}
 			}
-//			try					{Naming.unbind(this.url);}
-//			catch (Exception e)	{e.printStackTrace();}
-System.out.println("test: " + stopGame);
 		}
 	}
 
@@ -245,17 +241,14 @@ System.out.println("test: " + stopGame);
 
 		this.loggedPlayerTable[playerIndex] = LoginInfo.getInitialLoggedPlayerTableCell(playerIndex);
 		this.engine.addAction(data, "onQuitGame", playerName, data.getRemotePlayer(playerName));
-//		this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
 		System.out.println(gameMessageHeader + "logout result : player logged out");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 
-System.out.println("OnQuit");
 		if (gameHasStarted || isHost)
 		{
-//			for (String str: this.data.getPlayerNameList()) data.removePlayer(str);
 			synchronized(this.gameLock)
 			{
 				this.stopGame = true;
@@ -263,7 +256,6 @@ System.out.println("OnQuit");
 				catch(Exception e)	{e.printStackTrace(); return;}
 			}
 		}
-//		else this.data.removePlayer(playerName);
 	}
 
 	/**==============================================
@@ -335,7 +327,6 @@ System.out.println("OnQuit");
 	}
 	public void rollBack(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
 	{
-// TODO a decommenter apres les test
 		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
 		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
 

@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Set;
 
 
 
@@ -18,6 +19,25 @@ public class Copier <T>
 	 ===============================================================*/
 	@SuppressWarnings("unchecked")
 	public LinkedList<T> copyList(LinkedList<T> l)
+	{
+		LinkedList<T> res = new LinkedList<T>();
+		T elem;
+
+		for (T t: l)
+		{
+			if 		(t == null)							elem = null;
+			else if (t instanceof CloneableInterface)	elem = ((CloneableInterface<T>) t).getClone();
+			else										elem = getMyJavaClones(t);
+			res.add(elem);
+		}
+
+		return res;
+	}
+	/**=============================================================
+	 * @return Creates a deep clone of the input list and each of its elements
+	 ===============================================================*/
+	@SuppressWarnings("unchecked")
+	public LinkedList<T> copySet(Set<T> l)
 	{
 		LinkedList<T> res = new LinkedList<T>();
 		T elem;

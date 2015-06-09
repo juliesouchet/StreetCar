@@ -31,6 +31,9 @@ public class Traveler extends PlayerAutomaton {
 		if(name == null) this.name = "Traveler";
 		else this.name = name;
 		this.slave = new Worker(name);
+
+		TraceDebugAutomate.travelerTrace = true; // TODO a virer
+	
 	}
 	
 	@Override
@@ -42,6 +45,25 @@ public class Traveler extends PlayerAutomaton {
 
 TraceDebugAutomate.debugTraveler("\n PlayerName : " + name +"\n");
 TraceDebugAutomate.debugTraveler(" trackCompleted = " + trackCompleted +"\n");
+TraceDebugAutomate.debugTraveler(" startedTravel = " + currentConfig.hasStartedMaidenTravel(name)+"\n");
+
+// TODO a mettre dans initialize
+destinationTerminus = currentConfig.getPlayerTerminusPosition(getName());
+buildingsPosition = currentConfig.getPlayerAimBuildings(getName());
+
+String termPosString = destinationTerminus[0]+","+destinationTerminus[1]+","+destinationTerminus[2]+","+destinationTerminus[3],
+buildPosString = buildingsPosition[0].toString();
+for(int x = 1; x<currentConfig.nbrBuildingInLine(); x++) {buildPosString+=","+buildingsPosition[x];}
+TraceDebugAutomate.debugTraveler(" Initialization\n");
+TraceDebugAutomate.debugTraveler(" \tPlayerLine : " + currentConfig.getPlayerLine(getName()) +"\n");
+TraceDebugAutomate.debugTraveler(" \tPlayerTerminus : "+termPosString +"\n");
+TraceDebugAutomate.debugTraveler(" \tNbrBuildings : "+currentConfig.nbrBuildingInLine()+"\n");
+TraceDebugAutomate.debugTraveler(" \tPlayerBuildings : "+buildPosString +"\n");
+TraceDebugAutomate.debugTraveler(" \tAllowedSpeed : " + currentConfig.getMaximumSpeed() +"\n");
+// fin TODO
+
+
+
 		/*============
 		 *	Building
 		 =============*/
@@ -114,18 +136,6 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 
 	
 	private Point initializeTravel(Data currentConfig) {
-		destinationTerminus = currentConfig.getPlayerTerminusPosition(getName());
-		buildingsPosition = currentConfig.getPlayerAimBuildings(getName());
-		
-String termPosString = destinationTerminus[0]+","+destinationTerminus[1]+","+destinationTerminus[2]+","+destinationTerminus[3],
-		buildPosString = buildingsPosition[0].toString();
-for(int x = 1; x<currentConfig.nbrBuildingInLine(); x++) {buildPosString+=","+buildingsPosition[x];}
-TraceDebugAutomate.debugTraveler(" Initialization\n");
-TraceDebugAutomate.debugTraveler(" \tPlayerLine : " + currentConfig.getPlayerLine(getName()) +"\n");
-TraceDebugAutomate.debugTraveler(" \tPlayerTerminus : "+termPosString +"\n");
-TraceDebugAutomate.debugTraveler(" \tNbrBuildings : "+currentConfig.nbrBuildingInLine()+"\n");
-TraceDebugAutomate.debugTraveler(" \tPlayerBuildings : "+buildPosString +"\n");
-TraceDebugAutomate.debugTraveler(" \tAllowedSpeed : " + currentConfig.getMaximumSpeed() +"\n");
 
 		lastPosition = destinationTerminus[0];
 		currentConfig.startMaidenTravel(name, lastPosition);

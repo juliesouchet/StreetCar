@@ -38,7 +38,7 @@ public class TestEvaluator
 	public static final String	boardDirectory		= "src/main/resources/boards/";
 	public static final String	boardName			= "newOrleans";
 	public static final int		nbrBuildingInLine	= 3;
-	public static final int		nbrGamesSimulated	= 10;
+	public static final int		nbrGamesSimulated	= 50;
 	public static final int		aiLevel				= PlayerAutomaton.travelerLvl;
 
 // --------------------------------------------

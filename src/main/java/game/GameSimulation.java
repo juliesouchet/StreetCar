@@ -21,6 +21,7 @@ public class GameSimulation
 // --------------------------------------------
 	private Data								data;
 	private HashMap<String, PlayerAutomaton>	players;
+private final int maxRound	= 1000; //Secure paramter
 
 // --------------------------------------------
 // Builder:
@@ -70,7 +71,6 @@ public class GameSimulation
 
 		while ((winner == null) && (nbrEmptyActions < nbrPlayers))
 		{
-//System.out.print("\t"+playerTurn+"\t" + (data.hasStartedMaidenTravel(playerTurn)?"Moving":"Building") + "\t");
 			if (data.isGameBlocked(playerTurn))
 			{
 				nbrCards = data.getPlayerRemainingTilesToDraw(playerTurn);
@@ -83,21 +83,19 @@ public class GameSimulation
 			}
 			nbrEmptyActions = 0;
 			action = player.makeChoice(this.data);
-//if(action.isMoving())	System.out.print(action.tramwayMovementSize + "\t");
 			this.data.doAction(playerTurn, action);
 			if (!data.hasRemainingAction(playerTurn))
 			{
 				nbrCards = data.getPlayerRemainingTilesToDraw(playerTurn);
 				if (nbrCards<=data.getNbrRemainingDeckTile()) data.drawTile(playerTurn, nbrCards);
 				data.skipTurn();
-//System.out.println();
 			}
 			nbrDoneActions	++;
 			playerTurn	= this.data.getPlayerTurn();
 			player		= this.players.get(playerTurn);
 			winner		= data.getWinner();
+if (data.round >= maxRound) break;
 		}
-//this.data = tmpData;
 		for (int i=0; i<nbrDoneActions; i++) this.data.rollBack();
 		return winner;
 	}

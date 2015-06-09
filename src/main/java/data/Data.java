@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 
 import main.java.automaton.CoupleActionIndex;
 import main.java.data.Tile.Path;
@@ -218,6 +217,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
+System.out.println("doAction: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -464,21 +464,21 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		hc.action1						= a;
 		hc.previousTramPosition			= tramP;
 		hc.previousPreviousTramPosition	= tramPP;
-/*
+
 //TODO a enlever
+/****
 int ps = this.maxPlayerSpeed;
 int nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, pi.previousTramPosition, pi.tramPosition, ps, this.pathMatrix);
 System.out.println("*******");
 System.out.println("Nbr path: " + nbrPath);
 System.out.println("from: " + pi.tramPosition);
-System.out.println("length: " + (ps-1));
+System.out.println("length: " + ps);
 for (int i=0; i<nbrPath; i++)
 {
 	System.out.println("Path: " + i);
 	for (int j=0; j<ps; j++) System.out.println("\t- " + this.pathMatrix[i][j]);
 }
-*/
-	}
+*/	}
 
 // --------------------------------------------
 // Getter relative to travel:
@@ -617,7 +617,7 @@ for (int i=0; i<nbrPath; i++)
 // --------------------------------------------
 	public int					getNbrRemainingDeckTile()						{return this.deck.getNbrRemainingDeckTile();} // ajouté par Julie
 	public String				getGameName()									{return new String(this.gameName);}
-	public Set<String>			getPlayerNameList()								{return this.playerInfoList.keySet();}
+	public LinkedList<String>	getPlayerNameList()								{return(new Copier<String>()).copySet(this.playerInfoList.keySet());}
 	public Tile[][]				getBoard()										{return new Copier<Tile>().copyMatrix(this.board);}
 	public Tile					getTile  (int x, int y)							{return this.board[x][y].getClone();}
 	public Tile					getTile(Point p)								{return getTile(p.x, p.y);}
@@ -990,23 +990,23 @@ for (int i=0; i<nbrPath; i++)
 			Point currentTramPosition	= pi.tramPosition;
 			for (int l = 1; l<=this.maxPlayerSpeed; l++)
 			{
-				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, previousTramPosition, currentTramPosition, l, this.pathMatrix);
+				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, previousTramPosition, currentTramPosition, l+1, this.pathMatrix);
+System.out.println("Possible move actions : nbrPath = ");
+System.out.println("\tPrevious position = (" + previousTramPosition.x + "," + previousTramPosition.y + "), Current position = (" + currentTramPosition.x + "," + currentTramPosition.y + "), Length = " + (l+1));
 				for (int i=0; i<nbrPath; i++)
 				{
-					try					{this.checkTramPath(playerName, this.pathMatrix[i], l, null);}
+					try					{this.checkTramPath(playerName, this.pathMatrix[i], l+1, null);}
 					catch (Exception e)	{continue;}
 
-System.out.println("Possible move actions :");
-System.out.println("\tPrevious position = (" + previousTramPosition.x + "," + previousTramPosition.y + "), Current position = (" + currentTramPosition.x + "," + currentTramPosition.y + "), Length = " + l);
-System.out.print("\t("+this.pathMatrix[i][0].x+","+this.pathMatrix[i][0].y+")");
-for (int z =1; z<=l; z++)
+//System.out.print("\t("+this.pathMatrix[i][0].x+","+this.pathMatrix[i][0].y+")");
+for (int z =0; z<=l; z++)
 {
 System.out.print("->("+this.pathMatrix[i][z].x+","+this.pathMatrix[i][z].y+")");
 }
 System.out.println("\n");
 					if(writeActionsInTab)
 					{
-						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l);
+						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l+1);
 						resTab[res].setIndex(CoupleActionIndex.SIGNIFICANT_BUT_NOT_TREATED_YET);
 					}
 					res ++;
@@ -1505,7 +1505,7 @@ System.out.println("\n");
 			this.endTerminus[1]			= new Point(-1, -1);
 			this.tramPosition			= new Point(-1, -1);
 			this.previousTramPosition	= new Point(-1, -1);
-
+/*
 			if(playerName.equals("cheater"))
 			{
 				line = 1;
@@ -1517,8 +1517,8 @@ System.out.println("\n");
 				terminus[1] = new Point(0, 7);
 				terminus[2] = new Point(13, 2);
 				terminus[3] = new Point(13, 3);
-			}/*
-			if(playerName.equals("AI Level 2")) //TODO à enlever
+			}
+*/			if(playerName.equals("AI Level 2")) //TODO à enlever
 			{
 				line = 1;
 				buildingInLine_name[0] = "L";
@@ -1529,7 +1529,7 @@ System.out.println("\n");
 				terminus[1] = new Point(0, 7);
 				terminus[2] = new Point(13, 2);
 				terminus[3] = new Point(13, 3);
-			}*/
+			}
 		}
 
 		// Getter

@@ -24,10 +24,10 @@ public class Evaluator
 
 		for(int i = 0; i < nbrGamesSimulated; i++)
 		{
-System.out.print("Simulation " + i);
+			System.out.print("Simulation " + i);
 			winner = simulator.simulate();
 			if ((winner != null) && (winner.equals(playerName))) victoriesNumber++;
-System.out.println("\tThe winner is: " + winner);
+			System.out.println("\tThe winner is: " + winner);
 		}
 		victoryProportion = (double)victoriesNumber / (double)nbrGamesSimulated;
 		return victoryProportion;
