@@ -362,6 +362,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 	 ===============================================================================*/
 	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
+		if (this.data.hasStartedMaidenTravel(playerName))	return;
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnoughTilesInDeck();
@@ -472,7 +473,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 				p2 = tramPath[i];
 				if (winner != -1)								throw new ExceptionTramwayExceededArrival();
 				if (stop	!= -1)								throw new ExceptionTrtamwayDoesNotStop();
-//TODO				if (!data.pathExistsBetween(p0, p1, p2))		throw new ExceptionWrongTramwayPath();			//TODO a corriger
+				if (!data.pathExistsBetween(p0, p1, p2))		throw new ExceptionWrongTramwayPath();
 				if (Util.manhathanDistance(p1, p2) != 1)		throw new ExceptionTramwayJumpCell();
 				if (p2.equals(endTerminus[0]))		winner = i;
 				if (p2.equals(endTerminus[1]))		winner = i;
@@ -484,7 +485,6 @@ System.out.println("Game.setLoginInfo: no change to do");
 		}
 		else
 		{
-System.out.println("Start maiden travel " + playerName + " (game.checkTramPath)");
 			Point[]	terminus = data.getPlayerTerminusPosition(playerName);
 			int i;
 			
