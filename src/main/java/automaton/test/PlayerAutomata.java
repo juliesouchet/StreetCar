@@ -1,6 +1,8 @@
 package main.java.automaton.test;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -125,7 +127,7 @@ public class PlayerAutomata implements InterfaceIHM
 		}
 
 
-		String boardName = "newOrleans";	/////// Nom par defaut
+		String boardName = "newOrleans5";	/////// Nom par defaut
 		int nbrBuildingInLine= 2;	/////// Nom par defaut
 
 
@@ -175,8 +177,19 @@ public class PlayerAutomata implements InterfaceIHM
 			firstRefreshDone = true;
 			return;
 		}
-
-	myAutomaton = new AutomatePlusCourtChemin(data, data.getPlayerTerminusPosition(name), data.getPlayerAimBuildings(name));
+		
+		ArrayList<Point> mesTerminus = new ArrayList<Point>(5);
+		for(int i=0; i<data.getPlayerTerminusPosition(name).length;i++){
+			mesTerminus.add(data.getPlayerTerminusPosition(name)[i]);
+		}
+		
+		ArrayList<Point> mesStops = new ArrayList<Point>(5);
+		for(int i=0; i<data.getPlayerAimBuildings(name).length;i++){
+			mesTerminus.add(data.getPlayerAimBuildings(name)[i]);
+		}
+		
+		
+	myAutomaton = new AutomatePlusCourtChemin(data, mesTerminus, mesStops);
 
 	System.out.println(data.getPlayerTerminusPosition(name)[0]);
 	System.out.println(data.getPlayerTerminusPosition(name)[1]);
@@ -225,7 +238,7 @@ public class PlayerAutomata implements InterfaceIHM
 	data.setTile(3,5, maTile3);
 	myAutomaton.computeHeuristic();
 	myAutomaton.printMatrice(myAutomaton.heuristic);
-	//System.out.println(myAutomaton);
+	System.out.println("Best terminus="+myAutomaton.getBestTerminus());
 	
 	System.out.println("\n\t(6)===============================================\n");/**/
 	this.frame.setGameData(data);

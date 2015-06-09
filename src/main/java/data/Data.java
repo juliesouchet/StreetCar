@@ -318,7 +318,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 
 	public void setTile(int x, int y, Tile t)
 	{
-		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
+		//if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
 		this.board[x][y] = t;
 	}
 	/**===================================================
@@ -525,6 +525,13 @@ for (int i=0; i<nbrPath; i++)
 	public Point[]				getPlayerTerminusPosition(String playerName)	{return (new Copier<Point>()).copyTab(playerInfoList.get(playerName).terminus);}
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return Math.min(Data.maxNbrTileToDraw,(Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize()));}
+	public Action				getPlayerLastAcion(String playerName)
+	{
+		HistoryCell hc = this.playerInfoList.get(playerName).getLastActionHistory();
+		if (hc == null)			return null;
+		if (hc.action2 != null) return hc.action2;
+		else					return hc.action1;
+	}
 	/**=============================================================
 	 * @return true if this terminus belongs to that player
 	 * ============================================================= */

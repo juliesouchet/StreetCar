@@ -1,7 +1,0 @@
-#
-#Tue Jun 09 20:12:37 CEST 2015
-Language=en
-PlayerName=Human
-UseFullScreen=false
-=\=\=\=\=\=\=
-GameName=jeux
