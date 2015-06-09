@@ -265,7 +265,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 
 	public void excludePlayer() {
-		MessageMenuPanel messagePanel = new MessageMenuPanel(this);
+		/*MessageMenuPanel messagePanel = new MessageMenuPanel(this);
 		messagePanel.setMessage("Vous venez de vous faire exclure du jeu");
 		messagePanel.setButtonAction(new Runnable() {
 			public void run() {
@@ -273,7 +273,8 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 				showWelcomeMenuPanel();
 			}
 		});
-		this.setMenuPanel(messagePanel);
+		this.setMenuPanel(messagePanel);*/
+		System.out.println("PLAYER VIENT DE SE FAIRE REFOULER");
 	}
 	
 	public void refreshMessages(String playerName, String message) {
