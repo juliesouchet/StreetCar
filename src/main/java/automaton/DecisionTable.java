@@ -221,7 +221,7 @@ public class DecisionTable {
 		String playerName = currentConfiguration.getPlayerTurn(), newPlayerName;
 		int aFreeSlot = 0;
 		int numberOfPossibleActionsInTemporaryConfiguration;
-		Data copyDeConfigurationCourante = currentConfiguration.getClone(null); //TODO a enlever ça sera fait par le rollback
+		//Data copyDeConfigurationCourante = currentConfiguration.getClone(null); //TODO a enlever ça sera fait par le rollback
 		DecisionNode currentNode = this.getDecisionNode(index);
 		CoupleActionIndex currentCoupleActionIndex = null;
 		Action currentAction;
@@ -273,8 +273,8 @@ public class DecisionTable {
 					// Récupération des résultats, et suite du calcul
 					currentCoupleActionIndex.setQuality(this.getDecisionNode(aFreeSlot).getQuality());
 					this.freeSlot(aFreeSlot);
-					//currentConfiguration.rollBack(); //TODO
-					currentConfiguration = copyDeConfigurationCourante.getClone(null);
+					currentConfiguration.rollBack(); //TODO
+					//currentConfiguration = copyDeConfigurationCourante.getClone(null);
 				}
 				if (playerName.equals(this.getMyName())){
 					currentNode.setNodeQualityToBestChoice(); // noeud max
