@@ -46,12 +46,12 @@ public class RulesMenuPanel extends MenuPanel {
 	private void setupButtons() {
 		this.previousImageButton = new Button("Précédent", null);
 		this.previousImageButton.addAction(this, "previousImage");
-		this.previousImageButton.setBounds(50, 540, 100, 40);
+		this.previousImageButton.setBounds(50, 540, 200, 40);
     	this.add(this.previousImageButton);
     	
     	this.nextImageButton = new Button("Suivant", null);
     	this.nextImageButton.addAction(this, "nextImage");
-    	this.nextImageButton.setBounds(640, 540, 100, 40);
+    	this.nextImageButton.setBounds(540, 540, 200, 40);
     	this.add(this.nextImageButton);
     	
 		Button cancelButton = new Button("Retour au menu principal", null);

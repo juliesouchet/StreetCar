@@ -1,6 +1,5 @@
 package main.java.data;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,16 +31,11 @@ public class Deck implements Serializable
 // --------------------------------------------
 	public Deck() throws RuntimeException
 	{
-		File f;
-		String tileList[];
+		ArrayList<Tile> et = Tile.getDeckTileList();
+
 		this.stack	= new ArrayList<StackCell>();
-		f			= new File(stackDirectory);
-		tileList	= f.list();
-		for (String str: tileList)
-		{
-			Tile t = Tile.parseTile(str);
-			if (t.isDeckTile()) this.stack.add(new StackCell(t));
-		}
+		for (Tile t: et)	this.stack.add(new StackCell(t));
+
 		Collections.sort(this.stack, new StackCell());
 		Collections.reverse(stack);
 		this.stackSize = this.computeRemainingDeckSize();

@@ -18,7 +18,6 @@ import main.java.data.Tile;
 import main.java.player.PlayerAI;
 import main.java.player.PlayerInterface;
 import main.java.util.Copier;
-import main.java.util.Util;
 
 /**============================================================
  * Remote Application 
@@ -44,13 +43,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	protected Engine					engine;
 	protected EngineChat				engineChat;
 	protected HashMap<String, Thread>	aiList;
+	protected Boolean					gameLock = false;
 
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
 // TODO to remove after test
 public String	getTestHostName()	{return this.data.getHost();}
-public Data		getTestData()		{return this.data;}
+//public Data		getTestData()		{return this.data;}
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
@@ -117,6 +117,15 @@ public Data		getTestData()		{return this.data;}
 // --------------------------------------------
 	public void run()
 	{
+		while(this.gameLock == false)
+		{
+			synchronized(this.gameLock)
+			{
+				try					{this.gameLock.wait();}
+				catch (Exception e)	{e.printStackTrace();}
+			}
+	System.out.println("test: " + this.gameLock);
+		}
 	}
 
 // --------------------------------------------
@@ -149,11 +158,7 @@ public Data		getTestData()		{return this.data;}
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
-		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))
-		{
-System.out.println("Game.setLoginInfo: no change to do");
-			return;
-		}
+		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))	return;
 
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
@@ -232,15 +237,25 @@ System.out.println("Game.setLoginInfo: no change to do");
 		if (playerIndex == -1)						throw new ExceptionForbiddenAction();
 
 		this.loggedPlayerTable[playerIndex] = LoginInfo.getInitialLoggedPlayerTableCell(playerIndex);
-		this.engine.addAction(data, "excludePlayer", data.getRemotePlayer(playerName));
-		this.engine.onQuitGame(this.data, playerName);
+		this.engine.addAction(data, "onQuitGame", playerName, data.getRemotePlayer(playerName));
+//		this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
 		System.out.println(gameMessageHeader + "logout result : player logged out");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 
-		if (gameHasStarted || isHost)	System.exit(0);
+System.out.println("OnQuit");
+		if (gameHasStarted || isHost)
+		{
+//System.exit(0);
+			this.gameLock = true;
+			synchronized(this.gameLock)
+			{
+				try					{this.gameLock.notifyAll();}
+				catch(Exception e)	{e.printStackTrace(); return;}
+			}
+		}
 	}
 
 	/**==============================================
@@ -312,8 +327,8 @@ System.out.println("Game.setLoginInfo: no change to do");
 	public void rollBack(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
 	{
 // TODO a decommenter apres les test
-//		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
-//		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
+		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
+		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
 
 		this.data.rollBack();
 		this.engine.addAction(data, "notifyAllPlayers");
@@ -353,7 +368,7 @@ System.out.println("Game.setLoginInfo: no change to do");
 			if (!data.isPlayerTerminus(playerName, startTerminus))					throw new ExceptionWrongPlayerTerminus();
 			if (!data.isTrackCompleted(playerName))									throw new ExceptionForbiddenAction();
 		}
-		this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
+		this.data.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
 		this.engine.addAction(data, "moveTram", playerName, tramPath, tramPathSize, startTerminus);
 	}
 
@@ -452,60 +467,5 @@ System.out.println("Game.setLoginInfo: no change to do");
 		Thread t = new Thread(newPlayer);
 		this.aiList.put(playerName, t);
 		t.start();
-	}
-	private void checkTramPath(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionWrongTramwayPath, ExceptionTrtamwayDoesNotStop
-	{
-		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
-		if (hasStartedTravel)
-		{
-			int winner	= -1;
-			int stop	= -1;
-			Point tramPosition = this.data.getTramPosition(playerName);
-			Point p0, p1, p2;
-			Point[] endTerminus =  this.data.getPlayerTerminusPosition(playerName);
-
-			if (!tramPath[0].equals(tramPosition))				throw new ExceptionWrongTramwayStart();
-
-			p0 = this.data.getPreviousTramPosition(playerName);
-			p1 = tramPosition;
-			for (int i=1; i<tramPathSize; i++)
-			{
-				p2 = tramPath[i];
-				if (winner != -1)								throw new ExceptionTramwayExceededArrival();
-				if (stop	!= -1)								throw new ExceptionTrtamwayDoesNotStop();
-				if (!data.pathExistsBetween(p0, p1, p2))		throw new ExceptionWrongTramwayPath();
-				if (Util.manhathanDistance(p1, p2) != 1)		throw new ExceptionTramwayJumpCell();
-				if (p2.equals(endTerminus[0]))		winner = i;
-				if (p2.equals(endTerminus[1]))		winner = i;
-				if (this.data.getTile(p2).isStop())	stop = i;
-				p0 = p1;
-				p1 = p2;
-			}
-			return;
-		}
-		else
-		{
-			Point[]	terminus = data.getPlayerTerminusPosition(playerName);
-			int i;
-			
-			for (i=0; i<4; i++) if (startTerminus.equals(terminus[i])) break;
-			if (i == 4) throw new ExceptionWrongTramwayStartTerminus();
-			this.data.startMaidenTravel(playerName, startTerminus);
-			try
-			{
-				this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
-			}
-			catch(	ExceptionTramwayExceededArrival		|
-					ExceptionWrongTramwayStart			|
-					ExceptionWrongTramwayStartTerminus	|
-					ExceptionTramwayJumpCell			|
-					ExceptionWrongTramwayPath			|
-					ExceptionTrtamwayDoesNotStop 		e)
-			{
-				this.data.stopMaidenTravel(playerName);
-				throw e;
-			}
-			this.data.stopMaidenTravel(playerName);
-		}
 	}
 }

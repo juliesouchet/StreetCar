@@ -22,6 +22,7 @@ import main.java.gui.menus.ClientRoomMenuPanel;
 import main.java.gui.menus.HostRoomMenuPanel;
 import main.java.gui.menus.JoinGameMenuPanel;
 import main.java.gui.menus.MenuPanel;
+import main.java.gui.menus.MessageMenuPanel;
 import main.java.gui.menus.NewGameMenuPanel;
 import main.java.gui.menus.RulesMenuPanel;
 import main.java.gui.menus.SettingsMenuPanel;
@@ -50,8 +51,8 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		this.frame.setContentPane(new MovingMapPanel());
 		this.frame.getContentPane().setLayout(null); 
 		this.frame.addComponentListener(this);
-		this.frame.setSize(1300, 840);
-        this.frame.setMinimumSize(new Dimension(1300, 840));
+		this.frame.setSize(1400, 840);
+        this.frame.setMinimumSize(new Dimension(1400, 840));
 	}
 
 	private void setupMenuBar() {
@@ -135,11 +136,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 
 	public void showRulesPanel() {
 		MenuPanel newPanel = new RulesMenuPanel(this);
-		this.setMenuPanel(newPanel);	
-	}
-
-	public void quitGame() {
-		System.exit(0);
+		this.setMenuPanel(newPanel);
 	}
 
 	public void showInGamePanel() {
@@ -155,6 +152,33 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void showClientWaitingRoomPanel() {
 		MenuPanel newPanel = new ClientRoomMenuPanel(this);
 		this.setMenuPanel(newPanel);
+	}
+
+	public void showMessagePanel(String message) {
+		MessageMenuPanel messagePanel = new MessageMenuPanel(this);
+		messagePanel.setMessage(message);
+		messagePanel.setButtonAction(new Runnable() {
+			public void run() {
+				setMenuPanel(null);
+			}
+		});
+		this.setMenuPanel(messagePanel);
+	}
+	
+	public void showWinnerPanel() {
+		MessageMenuPanel messagePanel = new MessageMenuPanel(this);
+		messagePanel.setMessage("Le gagnant est : " + StreetCar.player.getGameData().getWinner());
+		messagePanel.setButtonAction(new Runnable() {
+			public void run() {
+				stopGame();
+				showWelcomeMenuPanel();
+			}
+		});
+		this.setMenuPanel(messagePanel);
+	}
+
+	public void quitGame() {
+		System.exit(0);
 	}
 
 	// Show / hide frame
@@ -207,10 +231,9 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 
 	public synchronized void refresh(final Data data) {
-		String winner = data.getWinner();
-		if(winner != null)
-		{
-			// TODO declare victor
+		if(data.getWinner() != null) {
+			this.showWinnerPanel();
+			return;
 		}
 		
 		// When a player joins the game, it hasn't got a color
@@ -242,7 +265,16 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 
 	public void excludePlayer() {
-		System.out.println("excludePlayer");
+		/*MessageMenuPanel messagePanel = new MessageMenuPanel(this);
+		messagePanel.setMessage("Vous venez de vous faire exclure du jeu");
+		messagePanel.setButtonAction(new Runnable() {
+			public void run() {
+				stopGame();
+				showWelcomeMenuPanel();
+			}
+		});
+		this.setMenuPanel(messagePanel);*/
+		System.out.println("PLAYER VIENT DE SE FAIRE REFOULER");
 	}
 	
 	public void refreshMessages(String playerName, String message) {

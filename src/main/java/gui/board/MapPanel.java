@@ -1,9 +1,11 @@
 package main.java.gui.board;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -12,6 +14,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import main.java.data.Data;
@@ -32,6 +36,7 @@ import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
+import main.java.util.Util;
 
 
 @SuppressWarnings("serial")
@@ -44,8 +49,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private int mapWidth;
 	private int cellWidth;
 
-	private Point trainPosition = new Point(3, 4);
-	private LinkedList<Point> tramMove = new LinkedList<Point>();
+	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
+
+	private LinkedList<Point> chosenPath = new LinkedList<Point>();
 
 	// Constructors
 
@@ -105,7 +111,13 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		for (int j=0; j < data.getHeight(); j++) {
 			for (int i=0; i < data.getWidth(); i++) {
 				Tile tile = board[i][j];
-				TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
+				if ((i == 0 || j == 0 || i == data.getWidth()-1 || j == data.getHeight()-1) &&
+					!tile.isTerminus()) {
+					g2d.setColor(new Color(98, 179, 203));
+					g2d.fillRect(x, y, cellWidth, cellWidth);
+				} else {
+					TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
+				}
 				g2d.setColor(Color.GRAY);
 				g2d.drawRect(x, y, cellWidth, cellWidth);
 				x += this.cellWidth;
@@ -114,10 +126,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			y += this.cellWidth;
 		}
 
-		Color playerColor = null;
 		String playerName = null;
 		try {
-			playerColor = StreetCar.player.getPlayerColor();
 			playerName = StreetCar.player.getPlayerName();
 		} catch (RemoteException e1) { }
 
@@ -131,170 +141,153 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		String NumberCardsInDeck = new String("" + data.getNbrRemainingDeckTile());
 		g2d.drawString(NumberCardsInDeck, deckX+4, deckY-cellWidth/2+30);
 
+
+
 		// Train movement
-		for(Point p : tramMove)
+		for(Point p : chosenPath)
 		{
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
-			g2d.setColor(playerColor);
-			g2d.drawRect(x, y, cellWidth, cellWidth);
+			g2d.drawImage(createTramTrail(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
 		}
-		
+
+		highlightBuildings(data, g2d, playerName);
 		for(String name : data.getPlayerNameList())
 		{
 			if(!data.hasStartedMaidenTravel(name)) continue;
-			
-			Color color = data.getPlayerColor(name);
-			BufferedImage trainBufferedImage = null;
-			if (color.equals(Color.BLACK)) {
-				trainBufferedImage = Resources.imageNamed("tram_black");
-			} else if (color.equals(Color.BLUE)) {
-				trainBufferedImage = Resources.imageNamed("tram_blue");
-			} else if (color.equals(Color.GREEN)) {
-				trainBufferedImage = Resources.imageNamed("tram_green");
-			} else if (color.equals(Color.ORANGE)) {
-				trainBufferedImage = Resources.imageNamed("tram_orange");
-			} else if (color.equals(Color.RED)) {
-				trainBufferedImage = Resources.imageNamed("tram_red");
-			} else if (color.equals(Color.WHITE)) {
-				trainBufferedImage = Resources.imageNamed("tram_white");
-			}
-			
-			Point currentTramPosition = data.getTramPosition(name);
-			int tramX = this.originX + this.cellWidth * currentTramPosition.x;
-			int tramY = this.originY + this.cellWidth * currentTramPosition.y;
-			g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
-			//Point previousTramPosition = data.getPreviousTramPosition(name);
+			drawTram(data, g2d, name);
+			highlightBuildings(data, g2d, name);
 		}
 
-		/*
-		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName)) {
-			Point p = StreetCar.player.getGameData().getTramPosition(playerName);
-			x = this.originX + this.cellWidth * p.x;
-			y = this.originY + this.cellWidth * p.y;
-			g2d.setColor(playerColor);
-			g2d.drawRect(x, y, cellWidth, cellWidth);
+		for (Point p : highlights.keySet()) {
+			BufferedImage img = highlights.get(p);
+			int imgX = this.originX + this.cellWidth * p.x;
+			int imgY = this.originX + this.cellWidth * p.y;			
+			g2d.drawImage(img, imgX, imgY, cellWidth, cellWidth, null);
+		}
+		
+	}
 
-//			Point previousPosition = new Point();
-//			previousPosition = data.getPreviousTramPosition(playerName);
-//			System.out.println(previousPosition);
+	private void highlightBuildings(Data data, Graphics2D g2d, String playerName) {
+		int x;
+		int y;
+		for(Point building : data.getPlayerAimBuildings(playerName))
+		{
+			x = this.originX + this.cellWidth * building.x;
+			y = this.originY + this.cellWidth * building.y;
+			g2d.drawImage(createHighlight(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
+		}
+	}
 
-			int i=0;
-			if (trainMove.size() > 0) {
-				i = trainMove.size();
-				System.out.println("SIZE OF TRAINMOVE : " + i);
+	private void drawTram(Data data, Graphics2D g2d, String name) {
+		Color color = data.getPlayerColor(name);
+		BufferedImage trainBufferedImage = null;
+		if (color.equals(Color.BLACK)) {
+			trainBufferedImage = Resources.imageNamed("tram_black");
+		} else if (color.equals(Color.BLUE)) {
+			trainBufferedImage = Resources.imageNamed("tram_blue");
+		} else if (color.equals(Color.GREEN)) {
+			trainBufferedImage = Resources.imageNamed("tram_green");
+		} else if (color.equals(Color.YELLOW)) {
+			trainBufferedImage = Resources.imageNamed("tram_orange");
+		} else if (color.equals(Color.RED)) {
+			trainBufferedImage = Resources.imageNamed("tram_red");
+		} else if (color.equals(Color.WHITE)) {
+			trainBufferedImage = Resources.imageNamed("tram_white");
+		}
 
-				if (trainMove.get(i-1).x == trainMove.get(i-2).x-1 || trainMove.get(i-1).x == trainMove.get(i-2).x+1) {
-					// tram horizontal
-					System.out.println("JE RENTRE DANS HORIZONTAL");
-					AffineTransform at = new AffineTransform();
-					if (trainBufferedImage == null) System.out.println("NULL");
-					at.translate(trainBufferedImage.getWidth() / 2, trainBufferedImage.getHeight() / 2);
-					at.rotate(Math.toRadians(90));
-					at.translate(-trainBufferedImage.getWidth() / 2, -trainBufferedImage.getHeight() / 2);
-
-					AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);		
-
-					g2d.drawImage(op.filter(trainBufferedImage, null), x+5, y+5, cellWidth-5, cellWidth-5, null);
-
-				} else if (trainMove.get(i-1).y == trainMove.get(i-2).y-1 || trainMove.get(i-1).y == trainMove.get(i-2).y+1) {
-					// tram vertical
-					System.out.println("JE RENTRE DANS HORIZONTAL");
-					g2d.drawImage(trainBufferedImage, x+5, y+5, cellWidth-5, cellWidth-10, null);				
-				} else {
-					System.out.println("JE RENTRE DANS RIEN DU TOUT");				
-				}
-				
-			} else {
-				System.out.println("TRAINMOVE NULL");
-			}
-
-
-		}*/
+		Point currentTramPosition = data.getTramPosition(name);
+		int tramX = this.originX + this.cellWidth * currentTramPosition.x;
+		int tramY = this.originY + this.cellWidth * currentTramPosition.y;
+		g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
 	}
 
 	// Mouse Listener
 
-	public void mouseClicked(MouseEvent e) 
-	{
-		Point p = this.cellPositionForLocation(e.getPoint());
-		System.out.println("Tile ID is : " + StreetCar.player.getGameData().getTile(p).getTileID());
-	}
+	public void mouseClicked(MouseEvent e) { }
 
 
 	public void mousePressed(MouseEvent e) 
 	{
-		if(!canMoveTram()) return;
-
+		PlayerIHM player = StreetCar.player;
+		Data data = player.getGameData();
+		String name = null;
+		try { name = player.getPlayerName(); } 
+		catch (RemoteException e1) { }
+		if(!data.hasRemainingAction(name)) return;
+		
 		Point p = this.cellPositionForLocation(e.getPoint());
-		tramMove.clear();
-		tramMove.add(p);
+		if(data.hasStartedMaidenTravel(name))
+		{
+			if(!p.equals(data.getTramPosition(name))) return;
+		}
+		else
+		{
+			if(!data.isTrackCompleted(name)) return;
+			LinkedList<Point> terminiPoints = new LinkedList<Point>(Arrays.asList(data.getPlayerTerminusPosition(name)));
+			if(!terminiPoints.contains(p)) return;
+		}
+		chosenPath.clear();
+		chosenPath.add(p);
 		repaint();
 	}
 
-	private boolean canMoveTram() {
-		PlayerIHM player = StreetCar.player;
-		String playerName = null;
-		try { playerName = player.getPlayerName(); } 
-		catch (RemoteException e1) { }
-
-		if(player.getGameData().hasStartedMaidenTravel(playerName)) return true;
-		if(player.getGameData().isTrackCompleted(playerName)) return true;
-		return false;
+	public void mouseDragged(MouseEvent e) 
+	{
+		if(chosenPath.isEmpty()) return;
+		Point next = cellPositionForLocation(e.getPoint());
+		if(next == null) return;
+		if(chosenPath.size() > 1 && next.equals(chosenPath.get(chosenPath.size() - 2)))
+		{
+			chosenPath.removeLast();
+			repaint();
+		}
+		else
+		{
+			PlayerIHM player = StreetCar.player;
+			Data data = player.getGameData();
+			String name = null;
+			try { name = player.getPlayerName(); } 
+			catch (RemoteException e1) { }
+			
+			if(chosenPath.size() > data.getMaximumSpeed()) return;
+			if(next.equals(chosenPath.getLast())) return;
+			if(!(Util.manhathanDistance(next, chosenPath.getLast()) == 1)) return;
+			if(chosenPath.size() > 1 && data.getTile(chosenPath.getLast()).isStop()) return;
+			
+			Point current = chosenPath.getLast();
+			Point previous;
+			if(chosenPath.size() == 1) previous = data.getPreviousTramPosition(name);
+			else previous = chosenPath.get(chosenPath.size() - 2);
+			if(!data.pathExistsBetween(previous, current, next)) return;
+				
+			chosenPath.add(next);
+			repaint();
+		}
 	}
 
-	public void mouseReleased(MouseEvent e) 
+	public void mouseReleased(MouseEvent e)
 	{
-		if(!canMoveTram()) return;
-		Point[] points = new Point[tramMove.size()];
-		for(int i = 0; i < tramMove.size(); i++) 
+		if(chosenPath.isEmpty()) return;
+		if(chosenPath.size() == 1) return;
+		Point[] points = new Point[chosenPath.size()];
+		for(int i = 0; i < chosenPath.size(); i++) 
 		{
-			points[i] = tramMove.get(i);
+			points[i] = chosenPath.get(i);
 		}
 		try {
-			StreetCar.player.moveTram(points, tramMove.size(), tramMove.getFirst());
-		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionNotYourTurn e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionForbiddenAction e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionGameHasNotStarted e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionMissingStartTerminus e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongPlayerTerminus e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwayPath e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwaySpeed e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionTramwayExceededArrival e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwayStart e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionWrongTramwayStartTerminus e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionTramwayJumpCell e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExceptionTrtamwayDoesNotStop e1) {
-			// TODO Auto-generated catch block
+			StreetCar.player.moveTram(points, chosenPath.size(), chosenPath.getFirst());
+		} catch (RemoteException | ExceptionNotYourTurn
+				| ExceptionForbiddenAction | ExceptionGameHasNotStarted
+				| ExceptionMissingStartTerminus | ExceptionWrongPlayerTerminus
+				| ExceptionWrongTramwayPath | ExceptionWrongTramwaySpeed
+				| ExceptionTramwayExceededArrival | ExceptionWrongTramwayStart
+				| ExceptionWrongTramwayStartTerminus | ExceptionTramwayJumpCell
+				| ExceptionTrtamwayDoesNotStop e1) {
 			e1.printStackTrace();
 		}
-		
-		tramMove.clear();
+
+		chosenPath.clear();
 		repaint();
 	}
 
@@ -304,24 +297,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	// MouseMotionListener
 	public void mouseMoved(MouseEvent e) { }
-
-	public void mouseDragged(MouseEvent e) 
-	{
-		if(!canMoveTram()) return;
-		Point p = cellPositionForLocation(e.getPoint());
-		if(p == null) return;
-		if(tramMove.size() > 1 && p.equals(tramMove.get(tramMove.size() - 2)))
-		{
-			tramMove.removeLast();
-			repaint();
-		}
-		else
-		{
-			if(p.equals(tramMove.getLast())) return;
-			tramMove.add(p);
-			repaint();
-		}
-	}
 
 	// ComponentListener
 
@@ -339,12 +314,34 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		this.updateMapGeometry();
 	}
 
-	public void startMaidenVoyage(Point point) {
-		trainPosition = point;
+	private BufferedImage createHighlight(Color color) {
+		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+		g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 75));
+		g2d.fillRect(0, 0, cellWidth, cellWidth);
+		
+		
+		g2d.setColor(color);
+		
+		float thickness = 10;
+		Stroke oldStroke = g2d.getStroke();
+		g2d.setStroke(new BasicStroke(thickness));
+		g2d.drawRect(0, 0, cellWidth, cellWidth);
+		g2d.setStroke(oldStroke);
+
+		return bufferedImage;
 	}
 
-	public void moveTram(LinkedList<Point> tramPath) {
-		// TODO Auto-generated method stub
-
+	private BufferedImage createTramTrail(Color color) {
+		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+		g2d.setColor(color);
+		if (color.equals(Color.YELLOW)) {
+			color = Color.ORANGE;
+		}
+		int[] diamondTabX = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
+		int[] diamondTabY = {cellWidth/2, cellWidth/4, cellWidth/2, cellWidth/4*3};
+		g2d.fillPolygon(diamondTabX, diamondTabY, 4);
+		return bufferedImage;
 	}
 }
