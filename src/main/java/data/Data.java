@@ -318,7 +318,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 
 	public void setTile(int x, int y, Tile t)
 	{
-		if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
+		//if (this.isGameStarted()) throw new RuntimeException("This methode is kept for the IA tests...");
 		this.board[x][y] = t;
 	}
 	/**===================================================

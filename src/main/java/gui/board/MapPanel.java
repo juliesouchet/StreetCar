@@ -49,16 +49,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private int mapWidth;
 	private int cellWidth;
 
-	private Point trainPosition = new Point(3, 4);
-	private LinkedList<Point> tramMove = new LinkedList<Point>();
-
 	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
 
 	private LinkedList<Point> chosenPath = new LinkedList<Point>();
-
-	// these are for the showPath thingie
-	boolean playerIsShowingPath = false;
-	boolean playerIsMovingTramForTheFirstTime = false;
 
 	// Constructors
 
@@ -133,10 +126,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			y += this.cellWidth;
 		}
 
-		Color playerColor = null;
 		String playerName = null;
 		try {
-			playerColor = StreetCar.player.getPlayerColor();
 			playerName = StreetCar.player.getPlayerName();
 		} catch (RemoteException e1) { }
 
@@ -155,37 +146,17 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		// Train movement
 		for(Point p : chosenPath)
 		{
-			//pathLength++;
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
 			g2d.drawImage(createTramTrail(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
 		}
 
+		highlightBuildings(data, g2d, playerName);
 		for(String name : data.getPlayerNameList())
 		{
 			if(!data.hasStartedMaidenTravel(name)) continue;
-
-			Color color = data.getPlayerColor(name);
-			BufferedImage trainBufferedImage = null;
-			if (color.equals(Color.BLACK)) {
-				trainBufferedImage = Resources.imageNamed("tram_black");
-			} else if (color.equals(Color.BLUE)) {
-				trainBufferedImage = Resources.imageNamed("tram_blue");
-			} else if (color.equals(Color.GREEN)) {
-				trainBufferedImage = Resources.imageNamed("tram_green");
-			} else if (color.equals(Color.ORANGE)) {
-				trainBufferedImage = Resources.imageNamed("tram_orange");
-			} else if (color.equals(Color.RED)) {
-				trainBufferedImage = Resources.imageNamed("tram_red");
-			} else if (color.equals(Color.WHITE)) {
-				trainBufferedImage = Resources.imageNamed("tram_white");
-			}
-
-			Point currentTramPosition = data.getTramPosition(name);
-			int tramX = this.originX + this.cellWidth * currentTramPosition.x;
-			int tramY = this.originY + this.cellWidth * currentTramPosition.y;
-			g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
-			//Point previousTramPosition = data.getPreviousTramPosition(name);
+			drawTram(data, g2d, name);
+			highlightBuildings(data, g2d, name);
 		}
 
 		for (Point p : highlights.keySet()) {
@@ -194,6 +165,41 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			int imgY = this.originX + this.cellWidth * p.y;			
 			g2d.drawImage(img, imgX, imgY, cellWidth, cellWidth, null);
 		}
+		
+	}
+
+	private void highlightBuildings(Data data, Graphics2D g2d, String playerName) {
+		int x;
+		int y;
+		for(Point building : data.getPlayerAimBuildings(playerName))
+		{
+			x = this.originX + this.cellWidth * building.x;
+			y = this.originY + this.cellWidth * building.y;
+			g2d.drawImage(createHighlight(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
+		}
+	}
+
+	private void drawTram(Data data, Graphics2D g2d, String name) {
+		Color color = data.getPlayerColor(name);
+		BufferedImage trainBufferedImage = null;
+		if (color.equals(Color.BLACK)) {
+			trainBufferedImage = Resources.imageNamed("tram_black");
+		} else if (color.equals(Color.BLUE)) {
+			trainBufferedImage = Resources.imageNamed("tram_blue");
+		} else if (color.equals(Color.GREEN)) {
+			trainBufferedImage = Resources.imageNamed("tram_green");
+		} else if (color.equals(Color.YELLOW)) {
+			trainBufferedImage = Resources.imageNamed("tram_orange");
+		} else if (color.equals(Color.RED)) {
+			trainBufferedImage = Resources.imageNamed("tram_red");
+		} else if (color.equals(Color.WHITE)) {
+			trainBufferedImage = Resources.imageNamed("tram_white");
+		}
+
+		Point currentTramPosition = data.getTramPosition(name);
+		int tramX = this.originX + this.cellWidth * currentTramPosition.x;
+		int tramY = this.originY + this.cellWidth * currentTramPosition.y;
+		g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
 	}
 
 	// Mouse Listener
@@ -208,7 +214,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		String name = null;
 		try { name = player.getPlayerName(); } 
 		catch (RemoteException e1) { }
-
+		if(!data.hasRemainingAction(name)) return;
+		
 		Point p = this.cellPositionForLocation(e.getPoint());
 		if(data.hasStartedMaidenTravel(name))
 		{
@@ -228,9 +235,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	public void mouseDragged(MouseEvent e) 
 	{
 		if(chosenPath.isEmpty()) return;
-		Point p = cellPositionForLocation(e.getPoint());
-		if(p == null) return;
-		if(chosenPath.size() > 1 && p.equals(chosenPath.get(chosenPath.size() - 2)))
+		Point next = cellPositionForLocation(e.getPoint());
+		if(next == null) return;
+		if(chosenPath.size() > 1 && next.equals(chosenPath.get(chosenPath.size() - 2)))
 		{
 			chosenPath.removeLast();
 			repaint();
@@ -244,24 +251,17 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			catch (RemoteException e1) { }
 			
 			if(chosenPath.size() > data.getMaximumSpeed()) return;
-			if(p.equals(chosenPath.getLast())) return;
-			if(!(Util.manhathanDistance(p, chosenPath.getLast()) == 1)) return;
-			chosenPath.add(p);
-
-			// TODO
-//			public boolean checkPath(Point previousPoint, LinkedList<Point> path)
-//			{
-//				Point p0 = previousPoint;
-//				Point p1 = path.removeFirst();
-//				for (Point p2 : path)
-//				{
-//					if (!this.pathExistsBetween(p0, p1, p2))		return false;
-//					if (Util.manhathanDistance(p1, p2) != 1)		return false;
-//					p0 = p1;
-//					p1 = p2;
-//				}
-//				return true;
-//			}
+			if(next.equals(chosenPath.getLast())) return;
+			if(!(Util.manhathanDistance(next, chosenPath.getLast()) == 1)) return;
+			if(chosenPath.size() > 1 && data.getTile(chosenPath.getLast()).isStop()) return;
+			
+			Point current = chosenPath.getLast();
+			Point previous;
+			if(chosenPath.size() == 1) previous = data.getPreviousTramPosition(name);
+			else previous = chosenPath.get(chosenPath.size() - 2);
+			if(!data.pathExistsBetween(previous, current, next)) return;
+				
+			chosenPath.add(next);
 			repaint();
 		}
 	}
@@ -336,6 +336,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
 		g2d.setColor(color);
+		if (color.equals(Color.YELLOW)) {
+			color = Color.ORANGE;
+		}
 		int[] diamondTabX = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
 		int[] diamondTabY = {cellWidth/2, cellWidth/4, cellWidth/2, cellWidth/4*3};
 		g2d.fillPolygon(diamondTabX, diamondTabY, 4);
