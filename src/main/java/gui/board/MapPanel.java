@@ -1,9 +1,11 @@
 package main.java.gui.board;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -52,7 +54,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
 
-			private LinkedList<Point> chosenPath = new LinkedList<Point>();
+	private LinkedList<Point> chosenPath = new LinkedList<Point>();
 
 	// these are for the showPath thingie
 	boolean playerIsShowingPath = false;
@@ -151,15 +153,12 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 
 		// Train movement
-		//int pathLength = 0;
 		for(Point p : chosenPath)
 		{
 			//pathLength++;
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
-			//if(pathLength > allowedPathLength) playerColor = new Color(playerColor.getRed(), playerColor.getGreen(), playerColor.getBlue(), 100);
-			g2d.setColor(playerColor);
-			g2d.drawRect(x, y, cellWidth, cellWidth);
+			g2d.drawImage(createTramTrail(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
 		}
 
 		for(String name : data.getPlayerNameList())
@@ -195,51 +194,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			int imgY = this.originX + this.cellWidth * p.y;			
 			g2d.drawImage(img, imgX, imgY, cellWidth, cellWidth, null);
 		}
-
-		/*
-		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName)) {
-			Point p = StreetCar.player.getGameData().getTramPosition(playerName);
-			x = this.originX + this.cellWidth * p.x;
-			y = this.originY + this.cellWidth * p.y;
-			g2d.setColor(playerColor);
-			g2d.drawRect(x, y, cellWidth, cellWidth);
-
-//			Point previousPosition = new Point();
-//			previousPosition = data.getPreviousTramPosition(playerName);
-//			System.out.println(previousPosition);
-
-			int i=0;
-			if (trainMove.size() > 0) {
-				i = trainMove.size();
-				System.out.println("SIZE OF TRAINMOVE : " + i);
-
-				if (trainMove.get(i-1).x == trainMove.get(i-2).x-1 || trainMove.get(i-1).x == trainMove.get(i-2).x+1) {
-					// tram horizontal
-					System.out.println("JE RENTRE DANS HORIZONTAL");
-					AffineTransform at = new AffineTransform();
-					if (trainBufferedImage == null) System.out.println("NULL");
-					at.translate(trainBufferedImage.getWidth() / 2, trainBufferedImage.getHeight() / 2);
-					at.rotate(Math.toRadians(90));
-					at.translate(-trainBufferedImage.getWidth() / 2, -trainBufferedImage.getHeight() / 2);
-
-					AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);		
-
-					g2d.drawImage(op.filter(trainBufferedImage, null), x+5, y+5, cellWidth-5, cellWidth-5, null);
-
-				} else if (trainMove.get(i-1).y == trainMove.get(i-2).y-1 || trainMove.get(i-1).y == trainMove.get(i-2).y+1) {
-					// tram vertical
-					System.out.println("JE RENTRE DANS HORIZONTAL");
-					g2d.drawImage(trainBufferedImage, x+5, y+5, cellWidth-5, cellWidth-10, null);				
-				} else {
-					System.out.println("JE RENTRE DANS RIEN DU TOUT");				
-				}
-
-			} else {
-				System.out.println("TRAINMOVE NULL");
-			}
-
-
-		}*/
 	}
 
 	// Mouse Listener
@@ -283,15 +237,31 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		}
 		else
 		{
-			if(chosenPath.size() > StreetCar.player.getGameData().getMaximumSpeed()) return;
+			PlayerIHM player = StreetCar.player;
+			Data data = player.getGameData();
+			String name = null;
+			try { name = player.getPlayerName(); } 
+			catch (RemoteException e1) { }
+			
+			if(chosenPath.size() > data.getMaximumSpeed()) return;
 			if(p.equals(chosenPath.getLast())) return;
 			if(!(Util.manhathanDistance(p, chosenPath.getLast()) == 1)) return;
 			chosenPath.add(p);
-			// TODO if(.data.isPath(gnagnagna))
-			//			{
-			//				chosenPath.removeLast()
-			//				return;
-			//			}
+
+			// TODO
+//			public boolean checkPath(Point previousPoint, LinkedList<Point> path)
+//			{
+//				Point p0 = previousPoint;
+//				Point p1 = path.removeFirst();
+//				for (Point p2 : path)
+//				{
+//					if (!this.pathExistsBetween(p0, p1, p2))		return false;
+//					if (Util.manhathanDistance(p1, p2) != 1)		return false;
+//					p0 = p1;
+//					p1 = p2;
+//				}
+//				return true;
+//			}
 			repaint();
 		}
 	}
@@ -344,29 +314,31 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		this.updateMapGeometry();
 	}
 
-	public void moveTram(LinkedList<Point> tramPath) {
-		// TODO Auto-generated method stub
-
-	}
-
 	private BufferedImage createHighlight(Color color) {
-		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_RGB);
+		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
-		g2d.setColor(color);
+		g2d.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 75));
 		g2d.fillRect(0, 0, cellWidth, cellWidth);
-		Color transparancyRectangle = new Color(0, 0, 0, 0);
-		g2d.setColor(transparancyRectangle);
-		g2d.fillRect(cellWidth/2, cellWidth/2, cellWidth/2, cellWidth/2);
+		
+		
+		g2d.setColor(color);
+		
+		float thickness = 10;
+		Stroke oldStroke = g2d.getStroke();
+		g2d.setStroke(new BasicStroke(thickness));
+		g2d.drawRect(0, 0, cellWidth, cellWidth);
+		g2d.setStroke(oldStroke);
+
 		return bufferedImage;
 	}
 
 	private BufferedImage createTramTrail(Color color) {
-		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_RGB);
+		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
 		g2d.setColor(color);
 		int[] diamondTabX = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
-		int[] diamondTabY = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
-		g2d.drawPolygon(diamondTabX, diamondTabY, 4);
+		int[] diamondTabY = {cellWidth/2, cellWidth/4, cellWidth/2, cellWidth/4*3};
+		g2d.fillPolygon(diamondTabX, diamondTabY, 4);
 		return bufferedImage;
 	}
 }
