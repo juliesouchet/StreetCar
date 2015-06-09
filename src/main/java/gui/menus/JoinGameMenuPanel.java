@@ -59,36 +59,36 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 	    this.add(titleLabel);
 	    
 	    Label playerNameLabel = new Label("Nom du joueur", null);
-	    playerNameLabel.setBounds(120, 100, 100, 40);
+	    playerNameLabel.setBounds(120, 100, 150, 40);
 	    this.add(playerNameLabel);	
 
 	    Label gameNameLabel = new Label("Nom de la partie", null);
-	    gameNameLabel.setBounds(120, 150, 100, 40);
+	    gameNameLabel.setBounds(120, 150, 150, 40);
 	    this.add(gameNameLabel);
 	    
 	    Label adressLabel = new Label("Adresse IP", null);
-	    adressLabel.setBounds(120, 200, 100, 40);
+	    adressLabel.setBounds(120, 200, 150, 40);
 	    this.add(adressLabel);
 		
 	    UserDefaults ud = UserDefaults.getSharedInstance();
 	    String lastPlayerName = ud.getString(Constants.PLAYER_NAME_KEY);
 		this.playerNameField = new TextField(lastPlayerName);
 		this.playerNameField.setPlaceholder("Player1", null);
-		this.playerNameField.setBounds(new Rectangle(230, 105, 150, 30));
+		this.playerNameField.setBounds(new Rectangle(270, 105, 150, 30));
 		this.playerNameField.getDocument().addDocumentListener(this);
 		this.add(this.playerNameField);
 		
 	    String lastGameName = ud.getString(Constants.GAME_NAME_KEY);
 		this.gameNameField = new TextField(lastGameName);
 		this.gameNameField.setPlaceholder("Game1", null);
-		this.gameNameField.setBounds(new Rectangle(230, 155, 150, 30));
+		this.gameNameField.setBounds(new Rectangle(270, 155, 150, 30));
 		this.gameNameField.getDocument().addDocumentListener(this);
 		this.add(this.gameNameField);
 				
 		this.addressField = new TextField("");
 		gameAddress = addressField.toString();
 		addressField.setPlaceholder("ex: 130.190.31.67", null);
-		addressField.setBounds(new Rectangle(230, 205, 150, 30));
+		addressField.setBounds(new Rectangle(270, 205, 150, 30));
 		this.addressField.getDocument().addDocumentListener(this);
 		this.add(this.addressField);
 	}
@@ -96,12 +96,12 @@ public class JoinGameMenuPanel extends MenuPanel implements DocumentListener{
 	private void setupButtons() {
 		joinGameButton = new Button("Rejoindre la partie", null);
 		joinGameButton.addAction(this, "joinGame");
-		joinGameButton.setBounds(270, 280, 150, 40);
+		joinGameButton.setBounds(270, 280, 170, 40);
     	this.add(joinGameButton);
     	
 		Button cancelButton = new Button("Annuler", null);
 		cancelButton.addAction(this, "cancelGame");
-		cancelButton.setBounds(80, 280, 150, 40);
+		cancelButton.setBounds(80, 280, 170, 40);
     	this.add(cancelButton);
 	}
 	

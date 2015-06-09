@@ -3,6 +3,7 @@ package main.java.gui.menus;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
@@ -23,7 +24,6 @@ import main.java.gui.components.ComboBox;
 import main.java.gui.components.Label;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
-import main.java.util.Debug;
 
 @SuppressWarnings("serial")
 public class HostRoomMenuPanel extends MenuPanel {
@@ -107,6 +107,20 @@ public class HostRoomMenuPanel extends MenuPanel {
 	// Actions
 
 	public void playGame() {
+		int playersCount = 0;
+		try {
+			for(LoginInfo info : StreetCar.player.getLoginInfo()) {
+				if (!info.isClosed())
+					playersCount++;
+			}
+			if (playersCount <= 1) {
+				Toolkit.getDefaultToolkit().beep();
+				return;
+			}
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
+		
 		try {
 			StreetCar.player.hostStartGame();
 		} catch (RemoteException e) {
@@ -144,9 +158,7 @@ public class HostRoomMenuPanel extends MenuPanel {
 		}
 	}
 
-	private static int nbOfTimesCalled = 0;
 	public void refreshMenu(PlayerIHM player, Data data) {
-		Debug.printTrace("REFRESH MENU " + ++nbOfTimesCalled);
 		try {
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i=0; i<loginInfos.length; i++) {
