@@ -1503,7 +1503,7 @@ System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 				terminus[1] = new Point(0, 7);
 				terminus[2] = new Point(13, 2);
 				terminus[3] = new Point(13, 3);
-			}
+			}/*
 			if(playerName.equals("AI Level 2")) //TODO à enlever
 			{
 				line = 1;
@@ -1515,7 +1515,7 @@ System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 				terminus[1] = new Point(0, 7);
 				terminus[2] = new Point(13, 2);
 				terminus[3] = new Point(13, 3);
-			}
+			}*/
 		}
 
 		// Getter

@@ -1,7 +1,7 @@
 #
-#Tue Jun 09 15:44:02 CEST 2015
+#Tue Jun 09 16:05:54 CEST 2015
 Language=en
-PlayerName=Humain
+PlayerName=cheater
 UseFullScreen=false
 GameName=jeux
 =\=\=\=\=\=\=
