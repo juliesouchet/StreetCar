@@ -145,13 +145,20 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkIfCanBeginTrip() {
-		if (canBeginTrip) {
+		if (!canBeginTrip) {
+			return;
+		}
+		
+		Data data = StreetCar.player.getGameData();
+		if (data.getTramPosition(playerName) == null) {
 			canBeginText = new Label("Vous pouvez commencer votre voyage !");
 			canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
 			canBeginText.setBorder(new LineBorder(Color.BLACK));
 			canBeginText.setBounds(0, 15, 200, 35);
 			buttonsPanel.add(canBeginText);
-		} 
+		} else {
+			canBeginText = new Label("Vitesse max = " + data.getMaximumSpeed());
+		}
 	}
 	
 	protected void checkValidateButton(Data data) {
