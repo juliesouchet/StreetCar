@@ -1,6 +1,7 @@
 package main.java.automaton.test;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 import main.java.automaton.AutomatePlusCourtChemin;
 import main.java.data.Data;
@@ -22,54 +23,69 @@ public class testAutomatePlusCoursChemin {
 			}
 		}
 		
-		Point[] myTerminus = new Point[4];
-		myTerminus[0]=new Point(2,0);
-		myTerminus[1]=new Point(3,0);
-		myTerminus[2]=new Point(3,6);
-		myTerminus[3]=new Point(4,6);
+		ArrayList<Point>  myTerminus = new ArrayList<Point> (4);
+		myTerminus.add(new Point(2,0));
+		myTerminus.add(new Point(3,0));
+		myTerminus.add(new Point(3,6));
+		myTerminus.add(new Point(4,6));
 
-		Point[] myStops = new Point[2];
-		myStops[0] = new Point(4,1);
-		myStops[1] = new Point(2,2);
+		ArrayList<Point>   myStops = new  ArrayList<Point> (2);
+		myStops.add(new Point(4,1));
+		myStops.add(new Point(2,2));
 
 		
 		
 		AutomatePlusCourtChemin myAutomate = new AutomatePlusCourtChemin(monTableauDeData[0], myTerminus, myStops);
-		myAutomate.computeHeuristic();
-		System.out.println(myAutomate);
+//		myAutomate.computeHeuristic();
+//		System.out.println(myAutomate);
 		Tile maTile1 = Tile.parseTile("Tile_FFFFZZ2113");
 		Tile maTile2 = Tile.parseTile("Tile_FFFFZZ2113");
 		Tile maTile3 = Tile.parseTile("Tile_FFFFZZ2113");
 		Tile maTile4 = Tile.parseTile("Tile_FFFFZZ2113");
+		Tile maTile5 = Tile.parseTile("Tile_FFFFZZ2113");
+		Tile maTile6 = Tile.parseTile("Tile_FFFFZZ2003");
 		System.out.println("\n\t(1)==============================================\n");
 
+		maTile1.setStop(true);
 		monTableauDeData[0].setTile(3, 1, maTile1);
-		myAutomate.computeHeuristic();
-		myAutomate.printMatrice(myAutomate.bufferHeuristic);
-		System.out.println(myAutomate);
-		System.out.println("\n\t(2)===============================================\n");
+//		myAutomate.computeHeuristic();
+//		myAutomate.printMatrice(myAutomate.bufferHeuristic);
+//		System.out.println(myAutomate);
+//		System.out.println("\n\t(2)===============================================\n");
 
+		maTile2.setStop(true);
 		monTableauDeData[0].setTile(3, 2, maTile2);
-		myAutomate.computeHeuristic();
-		myAutomate.printMatrice(myAutomate.bufferHeuristic);
-		System.out.println(myAutomate);
-		System.out.println("\n\t(3)===============================================\n");
+//		myAutomate.computeHeuristic();
+//		myAutomate.printMatrice(myAutomate.bufferHeuristic);
+//		System.out.println(myAutomate);
+//		System.out.println("\n\t(3)===============================================\n");
 
 		monTableauDeData[0].setTile(3,3, maTile3);
+//		myAutomate.computeHeuristic();
+//		myAutomate.printMatrice(myAutomate.bufferHeuristic);
+//		System.out.println(myAutomate);
+//		System.out.println("\n\t(4)===============================================\n");
+
+		monTableauDeData[0].setTile(3,4, maTile4);
+//		myAutomate.computeHeuristic();
+//		myAutomate.printMatrice(myAutomate.bufferHeuristic);
+//		System.out.println(myAutomate);
+		monTableauDeData[0].setTile(3,4, maTile5);
+		maTile6.turnHalf();
+		monTableauDeData[0].setTile(3,6, maTile5);
 		myAutomate.computeHeuristic();
-		myAutomate.printMatrice(myAutomate.bufferHeuristic);
+		System.out.println(myAutomate);
+		
+		Point[] myPath = new Point[100];
+		Tile[] myTilePath = new Tile[100];
+		System.out.println("\n\t(7)===============================================\n");
+
+
+//		myAutomate.computeHeuristic(arretsReduits);
 		System.out.println(myAutomate);
 
-		monTableauDeData[0].setTile(4,3, maTile3);
-		myAutomate.computeHeuristic();
-		myAutomate.printMatrice(myAutomate.bufferHeuristic);
-		System.out.println(myAutomate);
-		
-		monTableauDeData[0].setTile(5,3, maTile3);
-		myAutomate.computeHeuristic();
-		System.out.println(myAutomate);
-		
-		System.out.println("\n\t(4)===============================================\n");
+		myAutomate.makeBestPath(myTerminus.get(1), myTerminus.get(2), myStops, myPath, myTilePath);
+		System.out.println("\n\t(8)===============================================\n");
 
 		
 
