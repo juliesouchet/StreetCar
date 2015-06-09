@@ -264,15 +264,32 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		}
 		else
 		{
-			if(chosenPath.size() > StreetCar.player.getGameData().getMaximumSpeed()) return;
+			PlayerIHM player = StreetCar.player;
+			Data data = player.getGameData();
+			String name = null;
+			try { name = player.getPlayerName(); } 
+			catch (RemoteException e1) { }
+			
+			if(chosenPath.size() > data.getMaximumSpeed()) return;
 			if(p.equals(chosenPath.getLast())) return;
 			if(!(Util.manhathanDistance(p, chosenPath.getLast()) == 1)) return;
 			chosenPath.add(p);
-			// TODO if(.data.isPath(gnagnagna))
+
+			// TODO
+//			public boolean checkPath(Point previousPoint, LinkedList<Point> path)
 //			{
-//				chosenPath.removeLast()
-//				return;
+//				Point p0 = previousPoint;
+//				Point p1 = path.removeFirst();
+//				for (Point p2 : path)
+//				{
+//					if (!this.pathExistsBetween(p0, p1, p2))		return false;
+//					if (Util.manhathanDistance(p1, p2) != 1)		return false;
+//					p0 = p1;
+//					p1 = p2;
+//				}
+//				return true;
 //			}
+			
 			repaint();
 		}
 	}
