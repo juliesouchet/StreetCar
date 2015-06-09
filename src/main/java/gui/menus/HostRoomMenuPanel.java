@@ -187,14 +187,14 @@ public class HostRoomMenuPanel extends MenuPanel {
 	{
 		nameLabels.get(cellIndex).setText(" En attente de connexion", null);
 		choiceComboBoxes.get(cellIndex).setSelectedIndex(0);
-		avatarImagePanels.get(cellIndex).setBackground(Color.gray);
+		avatarImagePanels.get(cellIndex).setColor(null);
 	}
 
 	private void closeCell(int cellIndex) 
 	{
 		nameLabels.get(cellIndex).setText(" Connexion fermée", null);
 		choiceComboBoxes.get(cellIndex).setSelectedIndex(4);
-		avatarImagePanels.get(cellIndex).setBackground(Color.gray);
+		avatarImagePanels.get(cellIndex).setColor(null);
 	}
 
 }

@@ -1,10 +1,30 @@
 package main.java.gui.chat;
 
-import main.java.gui.components.Panel;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
+import java.util.Hashtable;
+
+import javax.swing.JScrollPane;
+
+import main.java.gui.components.ImagePanel;
+import main.java.gui.util.Resources;
 
 @SuppressWarnings("serial")
-public class ChatPanel extends Panel {
-	/*
+public class ChatPanel extends JScrollPane implements ComponentListener, ChatListener {
+	
 	// Static 
 	
 	private static Hashtable<TextAttribute, Object> TEXT_ATTRIBUTES = null;
@@ -26,23 +46,21 @@ public class ChatPanel extends Panel {
 	// Properties
 	
 	private Chat chat = null;
-	private String sender = null;
+	private Color senderColor = null;
 	private BufferedImage buffer = null;
 	private Graphics2D graphics = null;
+	private ImagePanel imagePanel = null;
+	private int chatWidth = 300;
 	
 	// Constructors
 	
 	public ChatPanel() {
 		super();
 		
-		this.setBackground(Color.WHITE);
-		this.chat = new Chat();
-		this.chat.addMessage(null, "Test1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
-		this.chat.addMessage(null, "Test2", "Message 2");
-		this.chat.addMessage(null, "Test3", "Nunc accumsan tincidunt dui eget hendrerit. Sed eget lacus velit. Donec laoreet venenatis suscipit. Morbi gravida justo nibh, at vestibulum nisl blandit et. Fusce posuere pellentesque nulla nec luctus. Nullam molestie condimentum dui, quis venenatis leo iaculis vel.");
-		this.chat.addMessage(null, "Test4", "Nullam a orci nec enim suscipit consequat. Nunc a malesuada neque, sit amet facilisis est. Maecenas rhoncus lobortis libero sed posuere. ");
-		this.sender = "Test3";
-		this.reloadBuffer();
+    	this.setBackground(new Color(0xFFEDDE));
+    	this.imagePanel = new ImagePanel();
+    	this.setViewportView(this.imagePanel);
+		this.addComponentListener(this);
 	}
 	
 	// Getters
@@ -51,41 +69,47 @@ public class ChatPanel extends Panel {
 		return this.chat;
 	}
 	
-	public String getSender() {
-		return this.sender;
+	public Color getSenderColor() {
+		return this.senderColor;
 	}
 	
 	// Setters
 	
 	public void setChat(Chat chat) {
+		if (this.chat != null) {
+			this.chat.removeChatListener(this);
+		}
 		this.chat = chat;
+		if (this.chat != null) {
+			this.chat.addChatListener(this);
+		}
 	}
 	
-	public void setSender(String sender) {
-		this.sender = sender;
+	public void setSenderColor(Color senderColor) {
+		this.senderColor = senderColor;
 	}
 	
 	// Buffers
 	
 	public void reloadBuffer() {
-		if (this.chat == null || this.sender == null) {
+		if (this.chat == null || this.senderColor == null) {
 			return;
 		}
         
 		int height = 1;
-		int width = this.getWidth();
 		for (int i = 0; i < this.chat.getNumberOfMessages(); i++) {
 			String text = chat.getMessageAtIndex(i).getText();
 	        AttributedString attrText = new AttributedString(text, TEXT_ATTRIBUTES);
 			Rectangle messageRect = this.computeMessageRect(attrText); 
 			height += messageRect.height;
 		}
+		height = Math.max(height, this.getHeight());
 		
-		this.buffer = new BufferedImage(height, width, BufferedImage.TYPE_INT_RGB);
+		this.buffer = new BufferedImage(this.chatWidth, height, BufferedImage.TYPE_INT_RGB);
 		this.graphics = this.buffer.createGraphics();
 
-        this.graphics.setPaint(Color.white);
-        this.graphics.fillRect(0, 0, width, height);
+        this.graphics.setColor(this.getBackground());
+        this.graphics.fillRect(0, 0, this.chatWidth, height);
 		
         int originY = 0;
 		for (int i = 0; i < chat.getNumberOfMessages() ; i++) {
@@ -93,9 +117,9 @@ public class ChatPanel extends Panel {
 			String text = message.getText();
 			
 	        AttributedString attrText = new AttributedString(text, TEXT_ATTRIBUTES);
-	        BufferedImage image = message.getAvatarImage();
-	        Color color = Color.RED;
-	        boolean isSender = message.getSender().equals(this.sender);
+	        Color color = message.getSenderColor();
+	        BufferedImage image = this.getAvatarForColor(color);
+	        boolean isSender = message.getSenderColor().equals(this.senderColor);
 	        
 	        Rectangle rect = this.computeMessageRect(attrText);
 	        rect.y += originY;
@@ -105,25 +129,14 @@ public class ChatPanel extends Panel {
 	        this.drawText(attrText, rect, isSender);
 	        this.drawAvatar(image, rect, isSender);
 		}
-	}
-	
-	public void updateBuffer() {
 		
+		Dimension bufferSize = new Dimension(buffer.getWidth(), buffer.getHeight());
+		this.imagePanel.setImage(this.buffer);
+		this.imagePanel.setSize(bufferSize);
+		this.imagePanel.setPreferredSize(bufferSize);
 	}
 	
 	// Drawings  
- 
-	
-    public void paintComponent(Graphics g) {
-    	super.paintComponent(g);
-    	
-    	if (this.buffer == null) {
-    		return;
-    	}
-    	
-    	Graphics2D g2d = (Graphics2D)g;
-    	g2d.drawImage(this.buffer, 0, 0, null);
-    }
     
     private Rectangle computeMessageRect(AttributedString attrText) {
     	AttributedCharacterIterator paragraph = attrText.getIterator();
@@ -132,7 +145,7 @@ public class ChatPanel extends Panel {
     	LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph, FONT_RENDER);
     	
         float drawPosY = 0;
-        float width = this.getWidth() - AVATAR_SIZE - 2 * (BUBBLE_MARGIN_X + TEXT_MARGIN_X);
+        float width = this.chatWidth - AVATAR_SIZE - 2 * (BUBBLE_MARGIN_X + TEXT_MARGIN_X);
         
         lineMeasurer.setPosition(paragraphStart);
         while (lineMeasurer.getPosition() < paragraphEnd) {
@@ -141,7 +154,7 @@ public class ChatPanel extends Panel {
         }
         
     	Rectangle rect = new Rectangle();
-    	rect.width = this.getWidth();
+    	rect.width = this.chatWidth;
     	rect.height = (int) (drawPosY + 2 * (BUBBLE_MARGIN_Y + TEXT_MARGIN_Y));
         return rect;
     }
@@ -219,6 +232,48 @@ public class ChatPanel extends Panel {
             layout.draw(this.graphics, x + drawPosX, y + drawPosY);
             drawPosY += layout.getDescent() + layout.getLeading();
         }
-    }*/
+    }
+
+    private BufferedImage getAvatarForColor(Color avatarColor) {
+    	if (avatarColor == null) {
+			return null;
+		} else if (avatarColor.equals(Color.RED)) {
+			return Resources.imageNamed("avatar_red");
+		} else if (avatarColor.equals(Color.YELLOW)) {
+			return Resources.imageNamed("avatar_orange");
+		} else if (avatarColor.equals(Color.GREEN)) {
+			return Resources.imageNamed("avatar_green");
+		} else if (avatarColor.equals(Color.BLUE)) {
+			return Resources.imageNamed("avatar_blue");
+		} else if (avatarColor.equals(Color.WHITE)) {
+			return Resources.imageNamed("avatar_white");
+		} else if (avatarColor.equals(Color.BLACK)) {
+			return Resources.imageNamed("avatar_black");
+		} else {
+			return Resources.imageNamed("avatar_not_found");
+		}
+    }
+    
+    // ComponentListener
+    
+	public void componentResized(ComponentEvent e) {
+		this.chatWidth = Math.min(300, this.getWidth() - 30);
+    	this.reloadBuffer();
+	}
+
+	public void componentMoved(ComponentEvent e) {
+		this.chatWidth = Math.min(300, this.getWidth() - 30);
+    	this.reloadBuffer();
+	}
+	
+	public void componentShown(ComponentEvent e) {}
+	public void componentHidden(ComponentEvent e) {}
+
+	// ChatListener
+	
+	public void chatMessageDidAdd(Chat chat, ChatMessage message) {
+		System.out.println("RELOAD");
+		this.reloadBuffer();
+	}
     
 }

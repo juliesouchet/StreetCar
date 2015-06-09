@@ -17,8 +17,13 @@ public class TextField extends JTextField {
 	
 	// Constructors
 	
+	public TextField() {
+		super();
+	}
+	
 	public TextField(String text) {
-		super(text);
+		this();
+		this.setText(text);
 	}
 	
 	public TextField(String text, String comment) {

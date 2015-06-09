@@ -4,16 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.Point;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import main.java.data.Data;
 import main.java.gui.board.MapPanel;
+import main.java.gui.chat.Chat;
 import main.java.gui.chat.ChatPanel;
+import main.java.gui.components.Button;
 import main.java.gui.components.Panel;
 import main.java.gui.components.TitlePanel;
 import main.java.player.PlayerIHM;
@@ -24,7 +28,7 @@ public class InGamePanel extends Panel {
 	
 	private static final long serialVersionUID = 1L;
 	Panel bigChatPanel;	
-	Panel chatPanel;
+	ChatPanel chatTextPanel;
 	Panel centerMapPanel;
 	Panel playersSidebarPanel;
 	BottomPlayerPanel bottomPlayerPanel;
@@ -32,6 +36,8 @@ public class InGamePanel extends Panel {
 	MapPanel mapPanel;
 	ArrayList<PlayerPanel> playerPanels = new ArrayList<PlayerPanel>();
 	String[] playersTab;
+	JTextArea inputArea;
+	Chat chat = new Chat();
 
 	// Constructors
 	
@@ -39,7 +45,6 @@ public class InGamePanel extends Panel {
 		super();
     	this.setLayout(new BorderLayout());
     	this.setPreferredSize(new Dimension(1350, 870));
-    	//this.setBackground(new Color(0xFFEDDE));
     	this.setupGameMapPanel();
     	this.setupChatPanel();
     	this.setupPlayersPanel();
@@ -49,20 +54,6 @@ public class InGamePanel extends Panel {
 		centerMapPanel = new Panel();
 		centerMapPanel.setLayout(new BorderLayout());
 		this.add(centerMapPanel, BorderLayout.CENTER);
-		
-		/*this.deckAndRoundPanel = new Panel();
-		this.deckAndRoundPanel.setLayout(null);
-		this.deckAndRoundPanel.setPreferredSize(new Dimension(100, 0));
-		centerMapPanel.add(this.deckAndRoundPanel, BorderLayout.EAST);*/
-		
-		/*Panel eastTestPanel = new Panel();
-		Panel westTestPanel = new Panel();
-		eastTestPanel.setPreferredSize(new Dimension(18, 0));
-		westTestPanel.setPreferredSize(new Dimension(18, 0));
-		eastTestPanel.setBackground(Color.WHITE);
-		westTestPanel.setBackground(Color.WHITE);
-		bigMapPanel.add(eastTestPanel, BorderLayout.EAST);
-		bigMapPanel.add(westTestPanel, BorderLayout.WEST);*/
 		
 		this.mapPanel = new MapPanel();
 		centerMapPanel.add(this.mapPanel, BorderLayout.CENTER);
@@ -81,15 +72,31 @@ public class InGamePanel extends Panel {
     	this.add(bigChatPanel, BorderLayout.EAST);
     	
     	Panel chatInputPanel = new Panel();
-    	chatInputPanel.setBackground(Color.WHITE);
+    	chatInputPanel.setLayout(null);
+    	chatInputPanel.setBackground(Color.RED);
     	chatInputPanel.setPreferredSize(new Dimension(280, 90));
     	chatInputPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+    	chatInputPanel.setBackground(new Color(0xFFEDDE));
     	this.bigChatPanel.add(chatInputPanel, BorderLayout.SOUTH);
     	
-    	ChatPanel chatTextPanel = new ChatPanel();
+    	inputArea = new JTextArea();
+    	inputArea.setBounds(5, 5, 200, 80);
+    	inputArea.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+    	inputArea.setLineWrap(true);
+    	inputArea.setMargin(new Insets(10,10,10,10));
+    	chatInputPanel.add(inputArea);
+
+    	Button inputButton = new Button("Send", null);
+    	inputButton.setBounds(210, 5, 65, 80);
+    	inputButton.addAction(this, "sendMessage");
+    	chatInputPanel.add(inputButton);
+    
+		this.chat = new Chat();
+    	chatTextPanel = new ChatPanel();
     	bigChatPanel.add(chatTextPanel, BorderLayout.CENTER);
     	chatTextPanel.setBackground(Color.WHITE);
-    	
+    	chatTextPanel.setChat(this.chat);
+		
     	TitlePanel titlePanel = new TitlePanel("Chat");
     	this.bigChatPanel.add(titlePanel, BorderLayout.NORTH);
 	}
@@ -180,6 +187,15 @@ public class InGamePanel extends Panel {
 		}
 */	}
 	
+	public void sendMessage() {
+		String text = this.inputArea.getText();
+		if (text == null || text.trim().equals("")) {
+			return;
+		}
+		this.inputArea.setText("");
+		// TODO send to engine
+	}
+	
 	// Refresh game
 	
 	public void refreshGame(PlayerIHM player, Data data) {
@@ -188,5 +204,10 @@ public class InGamePanel extends Panel {
 			playerPanel.refreshGame(player, data);
 		}
 		this.bottomPlayerPanel.refreshGame(player, data);
+		try {
+			this.chatTextPanel.setSenderColor(StreetCar.player.getPlayerColor());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 }

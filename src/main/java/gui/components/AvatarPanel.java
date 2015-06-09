@@ -25,21 +25,32 @@ public class AvatarPanel extends Panel{
 	}
 	
 	public void chooseAvatar() {
-		if (avatarColor.equals(Color.RED)) {
-			bufferedImage = Resources.imageNamed("avatar_red");
+		if (avatarColor == null) {
+			this.bufferedImage = null;
+			this.setBackground(Color.GRAY);
+		} else if (avatarColor.equals(Color.RED)) {
+			this.bufferedImage = Resources.imageNamed("avatar_red");
+			this.setBackground(Color.GRAY);
 		} else if (avatarColor.equals(Color.YELLOW)) {
-			bufferedImage = Resources.imageNamed("avatar_orange");
+			this.bufferedImage = Resources.imageNamed("avatar_orange");
+			this.setBackground(Color.GRAY);
 		} else if (avatarColor.equals(Color.GREEN)) {
-			bufferedImage = Resources.imageNamed("avatar_green");
+			this.bufferedImage = Resources.imageNamed("avatar_green");
+			this.setBackground(Color.GRAY);
 		} else if (avatarColor.equals(Color.BLUE)) {
-			bufferedImage = Resources.imageNamed("avatar_blue");
+			this.bufferedImage = Resources.imageNamed("avatar_blue");
+			this.setBackground(Color.GRAY);
 		} else if (avatarColor.equals(Color.WHITE)) {
-			bufferedImage = Resources.imageNamed("avatar_white");
+			this.bufferedImage = Resources.imageNamed("avatar_white");
+			this.setBackground(Color.GRAY);
 		} else if (avatarColor.equals(Color.BLACK)) {
-			bufferedImage = Resources.imageNamed("avatar_black");
+			this.bufferedImage = Resources.imageNamed("avatar_black");
+			this.setBackground(Color.GRAY);
 		} else {
-			bufferedImage = Resources.imageNamed("avatar_not_found");
-		}		
+			this.bufferedImage = Resources.imageNamed("avatar_not_found");
+			this.setBackground(Color.GRAY);
+		}
+		this.repaint();
 	}
 	
 	public Color getColor() {

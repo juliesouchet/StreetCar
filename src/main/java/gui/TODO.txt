@@ -7,6 +7,5 @@ faire disparaitre l'avatar quand on passe d'un joueur a une connec fermée
 
 louis
 afficher si on peut commencer le chemin
-faire dessins tram
 changer la couleur de ses stations
 faire les bordures

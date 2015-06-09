@@ -6,6 +6,7 @@ import main.java.automaton.Dumbest;
 import main.java.automaton.PlayerAutomaton;
 import main.java.automaton.Strongest;
 import main.java.automaton.Traveler;
+import main.java.automaton.Worker;
 import main.java.data.Action;
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
@@ -52,6 +53,7 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			case PlayerAutomaton.dumbestLvl:	this.automaton = new Dumbest(playerName);	break;
 			case PlayerAutomaton.travelerLvl:	this.automaton = new Traveler(playerName);	break;
 			case PlayerAutomaton.strongestLvl:	this.automaton = new Strongest(playerName);	break;
+			case PlayerAutomaton.workerLvl:		this.automaton = new Worker(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
 		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application

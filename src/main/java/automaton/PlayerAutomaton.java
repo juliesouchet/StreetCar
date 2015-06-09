@@ -16,9 +16,10 @@ import main.java.data.Data;
  * 	continuer son voyage (et donc faire son déplacement)
  */
 public abstract class PlayerAutomaton {
-	public static final int dumbestLvl = 1,
+	public static final int dumbestLvl = 4,
 							travelerLvl = 2,
-							strongestLvl = 3;
+							strongestLvl = 3,
+							workerLvl = 1;
 	protected String name;
 	
 	/**

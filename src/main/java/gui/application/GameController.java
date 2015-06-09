@@ -252,10 +252,10 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 
 	public void excludePlayer() {
-
+		System.out.println("excludePlayer");
 	}
 	
 	public void refreshMessages(String playerName, String message) {
-		
+		System.out.println("refreshMessages " + playerName + " => " + message);
 	}
 }
