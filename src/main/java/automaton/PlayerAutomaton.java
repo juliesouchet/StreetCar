@@ -18,7 +18,8 @@ import main.java.data.Data;
 public abstract class PlayerAutomaton {
 	public static final int dumbestLvl = 1,
 							travelerLvl = 2,
-							strongestLvl = 3;
+							strongestLvl = 3,
+							workerLvl = 4;
 	protected String name;
 	
 	/**
