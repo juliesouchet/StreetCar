@@ -1,9 +1,9 @@
 #
-#Tue Jun 09 11:27:07 CEST 2015
-Language=en
-PlayerName=cheater
->>>>>>>=branch 'master' of https\://github.com/juliesouchet/StreetCar
 UseFullScreen=false
 <<<<<<<=HEAD
 =\=\=\=\=\=\=
+#Tue Jun 09 11:12:51 CEST 2015
+Language=en
+PlayerName=julie
+UseFullScreen=false
 GameName=jeux

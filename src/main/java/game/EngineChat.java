@@ -18,7 +18,7 @@ public class EngineChat implements Runnable
 // --------------------------------------------
 	private Thread						engineThread;
 	private Object						engineLock;
-	private LinkedList<EngineMessage>	actionList;
+	private LinkedList<EngineMessage>	actionList = new LinkedList<EngineMessage>();
 
 // --------------------------------------------
 // Builder:

@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import main.java.data.Data;
+import main.java.data.LoginInfo;
 import main.java.gui.board.MapPanel;
 import main.java.gui.chat.Chat;
 import main.java.gui.chat.ChatPanel;
@@ -64,6 +65,16 @@ public class InGamePanel extends Panel {
 	}
 	
 	private void setupChatPanel() {
+		int humanAdversariesCount = 0;
+		try {
+			for (LoginInfo info : StreetCar.player.getLoginInfo()) {
+				if (info.isHuman()) humanAdversariesCount++;
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (humanAdversariesCount <= 1) return;
+		
     	this.bigChatPanel = new Panel();
     	this.bigChatPanel.setLayout(new BorderLayout());
     	this.bigChatPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK));    	    	
@@ -80,22 +91,26 @@ public class InGamePanel extends Panel {
     	this.bigChatPanel.add(chatInputPanel, BorderLayout.SOUTH);
     	
     	inputArea = new JTextArea();
-    	inputArea.setBounds(5, 5, 200, 80);
+    	inputArea.setBounds(5, 5, 185, 80);
     	inputArea.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
     	inputArea.setLineWrap(true);
     	inputArea.setMargin(new Insets(10,10,10,10));
     	chatInputPanel.add(inputArea);
 
-    	Button inputButton = new Button("Send", null);
-    	inputButton.setBounds(210, 5, 65, 80);
+    	Button inputButton = new Button("Envoyer", null);
+    	inputButton.setBounds(195, 5, 80, 80);
     	inputButton.addAction(this, "sendMessage");
     	chatInputPanel.add(inputButton);
     
 		this.chat = new Chat();
     	chatTextPanel = new ChatPanel();
     	bigChatPanel.add(chatTextPanel, BorderLayout.CENTER);
-    	chatTextPanel.setBackground(Color.WHITE);
     	chatTextPanel.setChat(this.chat);
+    	try {
+			this.chatTextPanel.setSenderColor(StreetCar.player.getPlayerColor());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
     	TitlePanel titlePanel = new TitlePanel("Chat");
     	this.bigChatPanel.add(titlePanel, BorderLayout.NORTH);
@@ -193,7 +208,11 @@ public class InGamePanel extends Panel {
 			return;
 		}
 		this.inputArea.setText("");
-		// TODO send to engine
+		try {
+			StreetCar.player.sendChatMessage(text);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// Refresh game
@@ -204,10 +223,10 @@ public class InGamePanel extends Panel {
 			playerPanel.refreshGame(player, data);
 		}
 		this.bottomPlayerPanel.refreshGame(player, data);
-		try {
-			this.chatTextPanel.setSenderColor(StreetCar.player.getPlayerColor());
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+	}
+	
+	public void refreshMessages(String playerName, String message) {
+		Color senderColor = StreetCar.player.getGameData().getPlayerColor(playerName);
+		this.chat.addMessage(senderColor, message);
 	}
 }

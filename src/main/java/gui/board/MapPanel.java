@@ -46,7 +46,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
     
     private Point trainPosition = new Point(3, 4);
     private LinkedList<Point> trainMove = new LinkedList<Point>();
-    private LinkedList<Point> tempThingForRiyane = new LinkedList<Point>();
     
     // Constructors
     
@@ -149,29 +148,36 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			g2d.setColor(playerColor);
 			g2d.fillRect(x, y, cellWidth, cellWidth);
 		}
-
-		Color c = new Color(1f,0f,0f,.5f);
-		g2d.setColor(c);
-		for(Point p : tempThingForRiyane)
-		{
-			x = this.originX + this.cellWidth * p.x;
-			y = this.originY + this.cellWidth * p.y;
-			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}
-		tempThingForRiyane.clear();
     }
 	
 	// Mouse Listener
 	
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) 
+	{
+		Point p = this.cellPositionForLocation(e.getPoint());
+		System.out.println("Tile ID is : " + StreetCar.player.getGameData().getTile(p).getTileID());
+	}
+	
 
 	public void mousePressed(MouseEvent e) 
-	{
-		// TODO check here if trip can be done
+	{	
+		//if(!canMoveTram()) return; TODO check if can move tram
+		
 		Point p = this.cellPositionForLocation(e.getPoint());
 		trainMove.clear();
 		trainMove.add(p);
 		repaint();
+	}
+
+	private boolean canMoveTram() {
+		PlayerIHM player = StreetCar.player;
+		String playerName = null;
+		try { playerName = player.getPlayerName(); } 
+		catch (RemoteException e1) { }
+
+		if(player.getGameData().hasStartedMaidenTravel(playerName)) return true;
+		//player.getGameData().
+		return false;
 	}
 	
 	public void mouseReleased(MouseEvent e) 
