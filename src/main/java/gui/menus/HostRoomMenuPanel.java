@@ -22,6 +22,8 @@ import main.java.gui.components.AvatarPanel;
 import main.java.gui.components.Button;
 import main.java.gui.components.ComboBox;
 import main.java.gui.components.Label;
+import main.java.gui.components.TextField;
+import main.java.gui.util.IP;
 import main.java.gui.util.Resources;
 import main.java.player.PlayerIHM;
 
@@ -33,7 +35,9 @@ public class HostRoomMenuPanel extends MenuPanel {
 	private ArrayList<Label> nameLabels = new ArrayList<Label>();
 	private ArrayList<ComboBox> choiceComboBoxes = new ArrayList<ComboBox>();
 	private ArrayList<AvatarPanel> avatarImagePanels = new ArrayList<AvatarPanel>();
-
+	private TextField gameNameField = null;
+	private TextField addressField = null;
+	
 	// Constructors
 
 	public HostRoomMenuPanel(GameController gc) {
@@ -48,8 +52,19 @@ public class HostRoomMenuPanel extends MenuPanel {
 		this.setMenuTitle("Nouvelle partie", null);
 
 		Label titleLabel = new Label("Salle d'attente", null);
-		titleLabel.setBounds(120, 20, 300, 100);
+		titleLabel.setBounds(120, 80, 300, 30);
 		this.add(titleLabel);
+		
+
+		gameNameField = new TextField();
+		gameNameField.setBounds(new Rectangle(250, 80, 150, 30));
+		gameNameField.setEditable(false);
+		this.add(gameNameField);
+		
+		addressField = new TextField(IP.getIpAdressFromInet());
+		addressField.setBounds(new Rectangle(420, 80, 150, 30));
+		addressField.setEditable(false);
+		this.add(addressField);
 	}
 
 	private void setupPlayersFields() {
@@ -160,6 +175,8 @@ public class HostRoomMenuPanel extends MenuPanel {
 
 	public void refreshMenu(PlayerIHM player, Data data) {
 		try {
+			this.gameNameField.setText(StreetCar.player.getGameData().getGameName());
+			
 			LoginInfo[] loginInfos = player.getLoginInfo();
 			for (int i=0; i<loginInfos.length; i++) {
 				LoginInfo info = loginInfos[i];
