@@ -20,7 +20,7 @@ public class PathFinder implements Serializable
 	
 	
 	/**============================================================
-	 * @return the shortest path between pSrc and pDst in the guiven board. If no path exists, null is returned.
+	 * @return the shortest path between pSrc and pDst in the given board. If no path exists, null is returned.
 	 * Uses the A* algorithm.
 	 * The source and destination point are returned in the solution.
 	 ==============================================================*/
@@ -104,7 +104,7 @@ public class PathFinder implements Serializable
 		}
 		return res;
 	}
-	private boolean isSimplePath(Data data, Point pOld, Point p, Point pNext)
+	public boolean isSimplePath(Data data, Point pOld, Point p, Point pNext)
 	{
 		Tile tOld	= data.getTile(pOld);
 		Tile t		= data.getTile(p);

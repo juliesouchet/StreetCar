@@ -3,6 +3,7 @@ package main.java.gui.chat;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -57,10 +58,13 @@ public class ChatPanel extends JScrollPane implements ComponentListener, ChatLis
 	public ChatPanel() {
 		super();
 		
-    	this.setBackground(new Color(0xFFEDDE));
+		Color backColor = new Color(0xFFEDDE);
+    	this.setBackground(backColor);
     	this.imagePanel = new ImagePanel();
+    	this.imagePanel.setBackground(backColor);
     	this.setViewportView(this.imagePanel);
 		this.addComponentListener(this);
+		
 	}
 	
 	// Getters
@@ -108,7 +112,7 @@ public class ChatPanel extends JScrollPane implements ComponentListener, ChatLis
 		this.buffer = new BufferedImage(this.chatWidth, height, BufferedImage.TYPE_INT_RGB);
 		this.graphics = this.buffer.createGraphics();
 
-        this.graphics.setColor(this.getBackground());
+        this.graphics.setColor(new Color(0xFFEDDE));
         this.graphics.fillRect(0, 0, this.chatWidth, height);
 		
         int originY = 0;
@@ -120,6 +124,7 @@ public class ChatPanel extends JScrollPane implements ComponentListener, ChatLis
 	        Color color = message.getSenderColor();
 	        BufferedImage image = this.getAvatarForColor(color);
 	        boolean isSender = message.getSenderColor().equals(this.senderColor);
+	        color = new Color(color.getRed(), color.getBlue(), color.getGreen(), 80);
 	        
 	        Rectangle rect = this.computeMessageRect(attrText);
 	        rect.y += originY;
@@ -162,17 +167,19 @@ public class ChatPanel extends JScrollPane implements ComponentListener, ChatLis
     public void drawAvatar(BufferedImage image, Rectangle rect, Boolean isSender) {
     	Graphics2D g2d = this.graphics;
     	if (isSender) {
-    		g2d.setColor(Color.BLUE);
-    		g2d.fillRect(rect.x + rect.width - AVATAR_SIZE - BUBBLE_MARGIN_X,
-    			         rect.y + BUBBLE_MARGIN_Y,
-    			         AVATAR_SIZE,
-    			         AVATAR_SIZE);
+    		g2d.drawImage(image,
+    					  rect.x + rect.width - AVATAR_SIZE - BUBBLE_MARGIN_X,
+    			          rect.y + BUBBLE_MARGIN_Y,
+    			          AVATAR_SIZE,
+    			          AVATAR_SIZE,
+    			          null);
     	} else {
-    		g2d.setColor(Color.BLUE);
-    		g2d.fillRect(rect.x + BUBBLE_MARGIN_X,
-    			         rect.y + BUBBLE_MARGIN_Y,
-    			         AVATAR_SIZE,
-    			         AVATAR_SIZE);
+    		g2d.drawImage(image, 
+    				      rect.x + BUBBLE_MARGIN_X,
+    			          rect.y + BUBBLE_MARGIN_Y,
+    			          AVATAR_SIZE,
+    			          AVATAR_SIZE,
+    			          null);
     	}
     }
     
@@ -272,8 +279,9 @@ public class ChatPanel extends JScrollPane implements ComponentListener, ChatLis
 	// ChatListener
 	
 	public void chatMessageDidAdd(Chat chat, ChatMessage message) {
-		System.out.println("RELOAD");
 		this.reloadBuffer();
+		Point p = new Point(0, this.buffer.getHeight());
+        this.getViewport().setViewPosition(p);
 	}
     
 }

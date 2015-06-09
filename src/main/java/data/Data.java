@@ -423,11 +423,25 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	public void setTramPosition(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus)
 	{
 		PlayerInfo pi = playerInfoList.get(playerName);
+		HistoryCell hc	= pi.getLastActionHistory();
+		Point tramP		= new Point(pi.tramPosition);
+		Point tramPP	= new Point(pi.previousTramPosition);
+
+		if (hc.action1 != null) throw new RuntimeException("You have already done an action");
 
 		if (!pi.hasStartedMaidenTravel()) pi.startMaidenTravel(startTerminus);
 
-		pi.previousTramPosition.x			= pi.tramPosition.x;
-		pi.previousTramPosition.y			= pi.tramPosition.y;
+		if		(tramPathSize == 0)	throw new RuntimeException("???");
+		else if (tramPathSize == 1)
+		{
+			if (!tramPath[0].equals(pi.tramPosition))	throw new RuntimeException("???");
+			else return;
+		}
+		else
+		{
+			pi.previousTramPosition.x			= tramPath[tramPathSize-2].x;
+			pi.previousTramPosition.y			= tramPath[tramPathSize-2].y;
+		}
 		pi.tramPosition.x					= tramPath[tramPathSize-1].x;
 		pi.tramPosition.y					= tramPath[tramPathSize-1].y;
 
@@ -437,10 +451,10 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
 		this.maxPlayerSpeed = tramPathSize;
 
-		Action		a	= Action.newMoveAction(tramPath, tramPathSize, startTerminus);
-		HistoryCell hc	= pi.getLastActionHistory();
-		if (hc.action1 == null) hc.action1 = a;
-		else throw new RuntimeException("You have already done an action");
+		Action a						= Action.newMoveAction(tramPath, tramPathSize, startTerminus);
+		hc.action1						= a;
+		hc.previousTramPosition			= tramP;
+		hc.previousPreviousTramPosition	= tramPP;
 	}
 
 // --------------------------------------------
@@ -522,36 +536,50 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 	 =================================================================*/
 	public boolean isTrackCompleted(String playerName)
 	{
-		int			size	= 2 + this.nbrBuildingInLine;
-		Point[]		path	= new Point[size];
+		LinkedList<Point> res = this.getCompletedTrack(playerName);
+//System.out.println("\n************************\nTrack completed: " + (res != null));
+		return (res != null);
+	}
+	/**===============================================================
+	 * @return the complete player's track path between the 2 terminus and through all the buildings)</br>
+	 =================================================================*/
+	public LinkedList<Point> getCompletedTrack(String playerName)
+	{
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
-		Point p0, p1, building;
-		LinkedList<Point> res;
-boolean shit = true;
-
-		path[0] = pi.terminus[0];
-		path[1] = pi.terminus[3];
+		Point[]		stop	= new Point[this.nbrBuildingInLine];
+		Point p0, p1, building, pp;
+		LinkedList<Point> arretPath	= new LinkedList<Point>();
+		LinkedList<Point> res		= new LinkedList<Point>();
+		LinkedList<Point> tmpRes	= null;
 
 		for (int i=0; i<this.nbrBuildingInLine; i++)				// Look for stop around buildings
 		{
 			building	= pi.buildingInLine_position[i];
-			path[i+2]	= this.isStopNextToBuilding(building);
-			if (path[i+2] == null) return false;
+			stop[i]		= this.isStopNextToBuilding(building);
+			if (stop[i] == null) return null;
 		}
-		p0 = path[0];
-		for (int i=1; i<path.length; i++)
+		for (int[] buildingCombinaison: this.getCombinaison())
 		{
-			p1 = path[i];
-			res = this.getShortestPath(null, p0, p1);
-System.out.println("\n--------------------\n Path entre " + p0 + "    et " + p1);
-System.out.println(res);
-if (res == null) shit = false;
-//TODO decommenter			if (res == null)	return false;
-			p0 = p1;
+			res.clear();
+			arretPath.clear();
+			arretPath.add(pi.terminus[0]);
+			for (int i=0; i<buildingCombinaison.length; i++) arretPath.add(stop[buildingCombinaison[i]]);
+			arretPath.add(pi.terminus[3]);
+			p0 = arretPath.get(0);
+			pp = initPreviousTerminusPosition(p0);
+			for (int i=1; i<arretPath.size(); i++)
+			{
+				p1		= arretPath.get(i);
+				tmpRes	= this.getShortestPath(pp, p0, p1);
+//System.out.println("\n**********************\nTrack betweew " + p0 + "   and " + p1 + "\n" + tmpRes);
+				if (tmpRes == null) break;
+				res.addAll(tmpRes);
+				p0 = p1;
+				pp = tmpRes.get(tmpRes.size()-2);
+			}
+			if (tmpRes != null) return res;
 		}
-if (!shit) return false;
-System.out.println("*****Track completed ");
-		return true;
+		return null;
 	}
 
 // --------------------------------------------
@@ -568,6 +596,8 @@ System.out.println("*****Track completed ");
 	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
 public LinkedList<Point>	getShortestPath(Point pOld, Point p, Point pNext){return this.pathFinder.getPath(this, pOld, p, pNext);}
 public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return getShortestPath(pOld, p, pNext) != null;}
+public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){return this.pathFinder.isSimplePath(this, pOld, p, pNext);}
+
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
 	public int					getRound()										{return this.round;}
@@ -1110,15 +1140,17 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 	}
 	private void undoFirstTravelGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-		pi.tramPosition.x			= pi.previousTramPosition.x;
-		pi.tramPosition.y			= pi.previousTramPosition.y;
+		pi.tramPosition.x			= hc.previousTramPosition.x;
+		pi.tramPosition.y			= hc.previousTramPosition.y;
 		if (hc.action1.startTerminus != null) this.stopMaidenTravel(this.getPlayerTurn());
 		else
 		{
-			pi.previousTramPosition.x			= hc.previousTramPosition.x;
-			pi.previousTramPosition.y			= hc.previousTramPosition.y;
+			pi.previousTramPosition.x			= hc.previousPreviousTramPosition.x;
+			pi.previousTramPosition.y			= hc.previousPreviousTramPosition.y;
 			hc.previousTramPosition.x			= -1;
 			hc.previousTramPosition.y			= -1;
+			hc.previousPreviousTramPosition.x	= -1;
+			hc.previousPreviousTramPosition.y	= -1;
 		}
 	}
 
@@ -1289,6 +1321,20 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 		}
 		return res;
 	}
+	private Point initPreviousTerminusPosition(Point terminus)
+	{
+		Point neighbor;
+		int dirList = board[terminus.x][terminus.y].getAccessibleDirections();
+
+		for (Direction dir: Direction.DIRECTION_LIST)
+		{
+			if (!dir.isDirectionInList(dirList)) continue;
+			neighbor = dir.getNeighbour(terminus.x, terminus.y);
+			if (!board[neighbor.x][neighbor.y].isTerminus()) continue;
+			return neighbor;
+		}
+		throw new RuntimeException("???");
+	}
 
 // --------------------------------------------
 // Player Info class:
@@ -1340,7 +1386,7 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 			this.endTerminus[1]			= new Point(-1, -1);
 			this.tramPosition			= new Point(-1, -1);
 			this.previousTramPosition	= new Point(-1, -1);
-			
+
 			if(playerName.equals("cheater"))
 			{
 				line = 1;
@@ -1380,7 +1426,7 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 			this.tramPosition.x			= startTerminus.x;
 			this.tramPosition.y			= startTerminus.y;
 
-			this.initPreviousTramPosition();
+			this.previousTramPosition	= initPreviousTerminusPosition(startTerminus);
 		}
 		public boolean hasStartedMaidenTravel(){return (!this.startTerminus.equals(new Point(-1, -1)));}
 		public void stopMaidenTravel()
@@ -1397,22 +1443,6 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 			this.previousTramPosition.y			= -1;
 		}
 
-		// private local methods
-		private void initPreviousTramPosition()
-		{
-			Point neighbor;
-			int dirList = board[startTerminus.x][startTerminus.y].getAccessibleDirections();
-
-			for (Direction dir: Direction.DIRECTION_LIST)
-			{
-				if (!dir.isDirectionInList(dirList)) continue;
-				neighbor = dir.getNeighbour(startTerminus.x, startTerminus.y);
-				if (!board[neighbor.x][neighbor.y].isTerminus()) continue;
-				this.previousTramPosition = neighbor;
-				return;
-			}
-			throw new RuntimeException("???");
-		}
 	}
 
 // --------------------------------------------
@@ -1431,6 +1461,7 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 		public String	drawnFromPlayerHand1			= null;
 		public String	drawnFromPlayerHand2			= null;
 		public Point	previousTramPosition			= null;
+		public Point	previousPreviousTramPosition	= null;
 
 		// Builder
 		private HistoryCell(){}
@@ -1440,15 +1471,16 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 		{
 			HistoryCell res = new HistoryCell();
 
-			if (this.action1				!= null)		{res.action1	= new Action();	res.action1		.copy(this.action1);}
-			if (this.action2				!= null)		{res.action2	= new Action();	res.action2		.copy(this.action2);}
-			if (this.oldTile1				!= null)		{res.oldTile1	= new Tile();	res.oldTile1	.copy(this.oldTile1);}
-			if (this.oldTile2				!= null)		{res.oldTile2	= new Tile();	res.oldTile2	.copy(this.oldTile2);}
-			if (this.drawnTile1				!= null)		{res.drawnTile1	= new Tile();	res.drawnTile1	.copy(this.drawnTile1);}
-			if (this.drawnTile2				!= null)		{res.drawnTile2	= new Tile();	res.drawnTile2	.copy(this.drawnTile2);}
-			if (this.drawnFromPlayerHand1	!= null)		{res.drawnFromPlayerHand1	= new String(this.drawnFromPlayerHand1);}
-			if (this.drawnFromPlayerHand2	!= null)		{res.drawnFromPlayerHand2	= new String(this.drawnFromPlayerHand2);}
-			if (this.previousTramPosition	!= null)		{res.previousTramPosition	= new Point(this.previousTramPosition);}
+			if (this.action1						!= null)		{res.action1	= new Action();	res.action1		.copy(this.action1);}
+			if (this.action2						!= null)		{res.action2	= new Action();	res.action2		.copy(this.action2);}
+			if (this.oldTile1						!= null)		{res.oldTile1	= new Tile();	res.oldTile1	.copy(this.oldTile1);}
+			if (this.oldTile2						!= null)		{res.oldTile2	= new Tile();	res.oldTile2	.copy(this.oldTile2);}
+			if (this.drawnTile1						!= null)		{res.drawnTile1	= new Tile();	res.drawnTile1	.copy(this.drawnTile1);}
+			if (this.drawnTile2						!= null)		{res.drawnTile2	= new Tile();	res.drawnTile2	.copy(this.drawnTile2);}
+			if (this.drawnFromPlayerHand1			!= null)		{res.drawnFromPlayerHand1			= new String(this.drawnFromPlayerHand1);}
+			if (this.drawnFromPlayerHand2			!= null)		{res.drawnFromPlayerHand2			= new String(this.drawnFromPlayerHand2);}
+			if (this.previousTramPosition			!= null)		{res.previousTramPosition			= new Point(this.previousTramPosition);}
+			if (this.previousPreviousTramPosition	!= null)		{res.previousPreviousTramPosition	= new Point(this.previousPreviousTramPosition);}
 			return res;
 		}
 		public boolean isEmpty()		{return (this.action1 == null);}
@@ -1464,4 +1496,21 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 			return "Action 1: " + this.action1 + "\nAction 2: " + this.action2; 
 		}
 	}
+	
+	
+	
+	
+//TODO
+//TODO to remove:
+private final int[][] combinaison2 = {{0, 1}, {1, 0}};
+private final int[][] combinaison3 = {{0, 1, 2}, {0, 2, 1}, {1, 0, 2}, {1, 2, 0}, {2, 1, 0}, {2, 0, 1}};
+private int[][] getCombinaison()
+{
+	switch(this.nbrBuildingInLine)
+	{
+		case 2: return combinaison2;
+		case 3: return combinaison3;
+		default: throw new RuntimeException("???");
+	}
+}
 }

@@ -338,24 +338,22 @@ System.out.println("Game.setLoginInfo: no change to do");
 	 =============================================================================*/
 	public synchronized void moveTram (String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed, ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionTrtamwayDoesNotStop
 	{
-		if (!this.data.isGameStarted())												{System.out.println("1");throw new ExceptionGameHasNotStarted();}
-		if (!this.data.isPlayerTurn(playerName))									{System.out.println("2");throw new ExceptionNotYourTurn();}
-		if (!this.data.isStartOfTurn(playerName))									{System.out.println("3");throw new ExceptionForbiddenAction();}
-		if (tramPathSize > data.getMaximumSpeed()+1)								{System.out.println("4");throw new ExceptionWrongTramwaySpeed();}
-		if (tramPathSize < Data.minSpeed+1)											{System.out.println("5");throw new ExceptionWrongTramwaySpeed();}
-		if (tramPathSize > Data.maxSpeed+1)											{System.out.println("6");throw new ExceptionWrongTramwaySpeed();}
+		if (!this.data.isGameStarted())												throw new ExceptionGameHasNotStarted();
+		if (!this.data.isPlayerTurn(playerName))									throw new ExceptionNotYourTurn();
+		if (!this.data.isStartOfTurn(playerName))									throw new ExceptionForbiddenAction();
+		if (tramPathSize > data.getMaximumSpeed()+1)								throw new ExceptionWrongTramwaySpeed();
+		if (tramPathSize < Data.minSpeed+1)											throw new ExceptionWrongTramwaySpeed();
+		if (tramPathSize > Data.maxSpeed+1)											throw new ExceptionWrongTramwaySpeed();
 
 		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
 		if (!hasStartedTravel)
 		{
-			if (startTerminus == null)												{System.out.println("7");throw new ExceptionMissingStartTerminus();}
-			if (!startTerminus.equals(tramPath[0]))									{System.out.println("8");throw new ExceptionWrongTramwayPath();}
-			if (!data.isPlayerTerminus(playerName, startTerminus))					{System.out.println("9");throw new ExceptionWrongPlayerTerminus();}
-			if (!data.isTrackCompleted(playerName))									{System.out.println("10");throw new ExceptionForbiddenAction();}
-System.out.println(playerName + " starts his travel from " + startTerminus + " (game.moveTram)");
+			if (startTerminus == null)												throw new ExceptionMissingStartTerminus();
+			if (!startTerminus.equals(tramPath[0]))									throw new ExceptionWrongTramwayPath();
+			if (!data.isPlayerTerminus(playerName, startTerminus))					throw new ExceptionWrongPlayerTerminus();
+			if (!data.isTrackCompleted(playerName))									throw new ExceptionForbiddenAction();
 		}
 		this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
-
 		this.engine.addAction(data, "moveTram", playerName, tramPath, tramPathSize, startTerminus);
 	}
 
@@ -364,6 +362,7 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 	 ===============================================================================*/
 	public synchronized void drawTile(String playerName, int nbrCards) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionNotEnoughTilesInDeck, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction
 	{
+		if (this.data.hasStartedMaidenTravel(playerName))	return;
 		if (!this.data.isGameStarted())											throw new ExceptionGameHasNotStarted();
 		if (!this.data.isPlayerTurn(playerName))								throw new ExceptionNotYourTurn();
 		if (!this.data.isEnougthTileInDeck(nbrCards))							throw new ExceptionNotEnoughTilesInDeck();
@@ -486,7 +485,6 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 		}
 		else
 		{
-System.out.println("Start maiden travel " + playerName + " (game.checkTramPath)");
 			Point[]	terminus = data.getPlayerTerminusPosition(playerName);
 			int i;
 			

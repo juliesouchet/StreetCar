@@ -3,6 +3,7 @@ package main.java.gui.application;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.rmi.RemoteException;
@@ -68,8 +69,8 @@ public class BottomPlayerPanel extends Panel {
 		
 		resetButton.setEnabled(false);
 		
-		validateButton.addAction(this, "validate");
-		resetButton.addAction(this, "reset");
+		validateButton.addAction(this, "validateAction");
+		resetButton.addAction(this, "resetAction");
 		
 		
 		//beginTripButton.setBounds(0, 15, 200, 35);
@@ -78,17 +79,22 @@ public class BottomPlayerPanel extends Panel {
 
 		buttonsPanel.add(validateButton);
 		buttonsPanel.add(resetButton);
+		
 		// TODO display canBeginText
-		canBeginText = new Label("Vous ne pouvez pas commencer votre voyage");
-		canBeginText.setBorder(new LineBorder(Color.BLACK));
-		buttonsPanel.add(canBeginText);
+		//canBeginText = new Label("Vous ne pouvez pas commencer votre voyage");
+		//canBeginText.setBorder(new LineBorder(Color.BLACK));
+		//canBeginText.setBounds(0, 15, 200, 35);
+		
+		//canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
+		//canBeginText.setFont(getFont());
+		
 		this.add(buttonsPanel, BorderLayout.EAST);	
 	}
 	
-	public void validate() {
+	public void validateAction() {
 		try {
-			//StreetCar.player.drawTile(2);
-			StreetCar.player.drawTile(StreetCar.player.getGameData().getPlayerRemainingTilesToDraw(playerName));
+			int nbTiles = StreetCar.player.getGameData().getPlayerRemainingTilesToDraw(playerName);
+			if (nbTiles > 0) StreetCar.player.drawTile(nbTiles);
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		} catch (ExceptionGameHasNotStarted e1) {
@@ -115,7 +121,7 @@ public class BottomPlayerPanel extends Panel {
 		}
 	}
 	
-	public void reset() {
+	public void resetAction() {
 		try {
 			player.rollBack();
 		} catch (RemoteException e) {
@@ -140,7 +146,11 @@ public class BottomPlayerPanel extends Panel {
 	
 	protected void checkIfCanBeginTrip() {
 		if (canBeginTrip) {
-			canBeginText.setText("Vous pouvez commencer votre voyage !");
+			canBeginText = new Label("Vous pouvez commencer votre voyage !");
+			canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
+			canBeginText.setBorder(new LineBorder(Color.BLACK));
+			canBeginText.setBounds(0, 15, 200, 35);
+			buttonsPanel.add(canBeginText);
 		} 
 	}
 	
@@ -169,7 +179,14 @@ public class BottomPlayerPanel extends Panel {
 		super.paintComponent(g);
 	}
 	
+	private int refreshCount = 0;
+	
 	public void refreshGame(PlayerIHM player, Data data) {
+		this.refreshCount ++;
+		if (refreshCount <= 1) {
+			return;
+		}
+		
 		this.player = player;
 		player = StreetCar.player;
 		try {
@@ -185,10 +202,13 @@ public class BottomPlayerPanel extends Panel {
 				cardsPanel.setBackground(new Color(0xFFEDDE));
 				buttonsPanel.setBackground(new Color(0xFFEDDE));
 			}
+			cardsPanel.repaint();
+			buttonsPanel.repaint();
 			cardsPanel.refreshGame(player, data);
+
 			//beginTripButton.setEnabled(data.isTrackCompleted(playerName));
 		} catch (RemoteException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 }
