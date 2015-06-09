@@ -224,7 +224,6 @@ System.out.println("Validate (engine)");
 		Point		startTerminus	= this.toExecute.position1;
 		int			tramPathSize	= this.toExecute.tramPathSize;
 
-System.out.println("MoveTram " + playerName + " from " + tramPath[0] + " to " + tramPath[tramPathSize-1] + " (engine.moveTram)");
 		data.setTramPosition(playerName, tramPath, tramPathSize, startTerminus);
 		this.notifyPlayer(playerName);
 	}

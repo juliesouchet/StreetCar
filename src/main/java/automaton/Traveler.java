@@ -47,7 +47,7 @@ TraceDebugAutomate.travelerTrace = true; // TODO à enlever
 		Point startingPoint = null;
 		boolean trackCompleted = currentConfig.isTrackCompleted(getName());
 
-TraceDebugAutomate.debugTraveler(" PlayerName : " + name +"\n");
+TraceDebugAutomate.debugTraveler("\n PlayerName : " + name +"\n");
 TraceDebugAutomate.debugTraveler(" trackCompleted = " + trackCompleted +"\n");
 		/*============
 		 *	Building
@@ -95,21 +95,28 @@ TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSp
 				&& pathSize < currentConfig.getMaximumSpeed()+1)	pathSize++;
 			Point [] streetcarMovement = new Point[pathSize];
 			
+TraceDebugAutomate.debugTraveler(" PathSize : "+ pathSize +"\n");
+
 			// Prepares the array for return
 			i = 0;
 			iterator = itinerary.listIterator();
 			while(iterator.hasNext() && i < pathSize) {
 				streetcarMovement[i] = iterator.next();
+TraceDebugAutomate.debugTraveler("\t Ajoute " + streetcarMovement[i] + " au trajet\n");
 				i++;
 			}
+			
+			
 			// Updates the checkpoints : removes those passed by
 			do {
 				Point p = checkpoints[startCheckpoints];
 				i = 0;
 				while(i<streetcarMovement.length && streetcarMovement[i] != p)
 					i++;
-				if(i<streetcarMovement.length)
+				if(i<streetcarMovement.length) {
 					startCheckpoints++;
+TraceDebugAutomate.debugTraveler(" Passé par " + streetcarMovement[i] + " => supprimé des checkpoints\n");
+				}
 			} while (i<streetcarMovement.length);
 			// Updates the new starting point
 			checkpoints[startCheckpoints] = streetcarMovement[streetcarMovement.length-1];
