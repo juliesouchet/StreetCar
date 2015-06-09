@@ -427,7 +427,8 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		Point tramP		= new Point(pi.tramPosition);
 		Point tramPP	= new Point(pi.previousTramPosition);
 
-		if (hc.action1 != null) throw new RuntimeException("You have already done an action");
+		if (hc.action1 != null)														throw new RuntimeException("You have already done an action");
+		if ((this.hasStartedMaidenTravel(playerName)) && (startTerminus != null))	throw new RuntimeException("You have already started maiden travel");
 
 		if (!pi.hasStartedMaidenTravel()) pi.startMaidenTravel(startTerminus);
 
@@ -445,8 +446,8 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		pi.tramPosition.x					= tramPath[tramPathSize-1].x;
 		pi.tramPosition.y					= tramPath[tramPathSize-1].y;
 
-System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
-		
+System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
+
 		if (pi.tramPosition.equals(pi.endTerminus[0]))	this.winner = playerName;
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
 		this.maxPlayerSpeed = tramPathSize;
@@ -499,7 +500,7 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 	public Tile					getHandTile(String playerName, int tileIndex)	{return this.playerInfoList.get(playerName).hand.get(tileIndex).getClone();}
 	public boolean				isInPlayerHand(String playerName, Tile t)		{return this.playerInfoList.get(playerName).hand.isInHand(t);}
 	public boolean				isUsedPlayerName(String playerName)				{return this.playerInfoList.keySet().contains(playerName);}
-	public boolean				hasDoneRoundFirstAction(String playerName)		{return ((this.playerInfoList.get(playerName).getLastActionHistory() != null) && (!this.playerInfoList.get(playerName).getLastActionHistory().isEmpty()));}  // TODO a corriger
+	public boolean				hasDoneRoundFirstAction(String playerName)		{return ((this.playerInfoList.get(playerName).getLastActionHistory() != null) && (!this.playerInfoList.get(playerName).getLastActionHistory().isEmpty()));}  // TODO a corriger(done mais je laisse le todo au cas ou ...)
 	public Point[]				getPlayerTerminusPosition(String playerName)	{return (new Copier<Point>()).copyTab(playerInfoList.get(playerName).terminus);}
 	public Point[]				getPlayerAimBuildings(String playerName)		{return this.playerInfoList.get(playerName).buildingInLine_position;}
 	public int					getPlayerRemainingTilesToDraw(String playerName){return Math.min(Data.maxNbrTileToDraw,(Hand.maxHandSize - this.playerInfoList.get(playerName).hand.getSize()));}
@@ -931,7 +932,7 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 	{
 //TODO		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
 
-		Tile[] tmpRotation1		= new Tile[4];											// Init optimization parameters
+		Tile[] tmpRotation1		= new Tile[4];															// Init optimization parameters
 		Tile[] tmpRotation2		= new Tile[4];
 		for (int i=0; i<4; i++)
 		{
@@ -1140,6 +1141,8 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 	}
 	private void undoFirstTravelGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
+System.out.println("pi.tramPosition        : " + pi.tramPosition);
+System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 		pi.tramPosition.x			= hc.previousTramPosition.x;
 		pi.tramPosition.y			= hc.previousTramPosition.y;
 		if (hc.action1.startTerminus != null) this.stopMaidenTravel(this.getPlayerTurn());
@@ -1152,6 +1155,8 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 			hc.previousPreviousTramPosition.x	= -1;
 			hc.previousPreviousTramPosition.y	= -1;
 		}
+System.out.println("pi.tramPosition        : " + pi.tramPosition);
+System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 	}
 
 // --------------------------------------------

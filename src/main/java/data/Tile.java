@@ -588,6 +588,23 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	 ===============================================================*/
 	public int getUniqueRotationList(Tile[] resTab)
 	{
+		int res = 0;
+		Tile tmp = this.getClone();
+
+		for (int i=0; i<4; i++)
+		{
+			resTab[res].copy(tmp);
+			tmp.turnLeft();
+			res ++;
+		}
+// TODO a enlever apres les test
+if ((res <= 0) || (res > 4)) throw new RuntimeException("??????");
+
+		return res;
+		
+
+//TODO: optimisation dont ulysse n'a plus besoin
+/*****************************
 		int res = 0, i;
 		Tile tmp = this.getClone();
 
@@ -601,11 +618,12 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // TODO a enlever apres les test
 if ((res <= 0) || (res > 4)) throw new RuntimeException("??????");
 
-
 		return res;
+***************************/
 	}
 	/**=============================================================
-	 * @return if this is a building the function returns its name (string).</br>  Else it returns null
+	 * @return if this is a building the function returns its name (string).</br>
+	 * Else it returns null
 	 ===============================================================*/
 	public String getBuildingName()
 	{
