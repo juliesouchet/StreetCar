@@ -43,6 +43,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	protected Engine					engine;
 	protected EngineChat				engineChat;
 	protected HashMap<String, Thread>	aiList;
+	protected Boolean					gameLock = false;
 
 // --------------------------------------------
 // Builder:
@@ -116,6 +117,15 @@ public String	getTestHostName()	{return this.data.getHost();}
 // --------------------------------------------
 	public void run()
 	{
+		while(this.gameLock == false)
+		{
+			synchronized(this.gameLock)
+			{
+				try					{this.gameLock.wait();}
+				catch (Exception e)	{e.printStackTrace();}
+			}
+	System.out.println("test: " + this.gameLock);
+		}
 	}
 
 // --------------------------------------------
@@ -227,8 +237,8 @@ public String	getTestHostName()	{return this.data.getHost();}
 		if (playerIndex == -1)						throw new ExceptionForbiddenAction();
 
 		this.loggedPlayerTable[playerIndex] = LoginInfo.getInitialLoggedPlayerTableCell(playerIndex);
-		this.engine.addAction(data, "excludePlayer", data.getRemotePlayer(playerName));
-		this.engine.onQuitGame(this.data, playerName);
+		this.engine.addAction(data, "onQuitGame", playerName, data.getRemotePlayer(playerName));
+//		this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
 		System.out.println(gameMessageHeader + "logout result : player logged out");
@@ -236,7 +246,16 @@ public String	getTestHostName()	{return this.data.getHost();}
 		System.out.println("===========================================================\n");
 
 System.out.println("OnQuit");
-		if (gameHasStarted || isHost)	System.exit(0);
+		if (gameHasStarted || isHost)
+		{
+//System.exit(0);
+			this.gameLock = true;
+			synchronized(this.gameLock)
+			{
+				try					{this.gameLock.notifyAll();}
+				catch(Exception e)	{e.printStackTrace(); return;}
+			}
+		}
 	}
 
 	/**==============================================

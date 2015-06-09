@@ -440,10 +440,10 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 
 		if (!pi.hasStartedMaidenTravel()) pi.startMaidenTravel(startTerminus);
 
-		if		(tramPathSize == 0)	throw new RuntimeException("???");
+		if		(tramPathSize == 0)	throw new RuntimeException("Empty path");
 		else if (tramPathSize == 1)
 		{
-			if (!tramPath[0].equals(pi.tramPosition))	throw new RuntimeException("???");
+			if (!tramPath[0].equals(pi.tramPosition))	throw new RuntimeException("Wrong starting point");
 			else return;
 		}
 		else
@@ -985,7 +985,15 @@ for (int i=0; i<nbrPath; i++)
 				{
 					try					{this.checkTramPath(playerName, this.pathMatrix[i], l, null);}
 					catch (Exception e)	{continue;}
-// Deja check par path finder					if (this.pathMatrix[i][1].equals(previousTramPosition)) continue;
+
+System.out.println("Possible move actions :");
+System.out.println("\tPrevious position = (" + previousTramPosition.x + "," + previousTramPosition.y + "), Current position = (" + currentTramPosition.x + "," + currentTramPosition.y + "), Length = " + l);
+System.out.print("\t("+this.pathMatrix[i][0].x+","+this.pathMatrix[i][0].y+")");
+for (int z =1; z<=l; z++)
+{
+System.out.print("->("+this.pathMatrix[i][z].x+","+this.pathMatrix[i][z].y+")");
+}
+System.out.println("\n");
 					if(writeActionsInTab)
 					{
 						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l);
@@ -1237,8 +1245,8 @@ for (int i=0; i<nbrPath; i++)
 	}
 	private void undoFirstTravelGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-System.out.println("pi.tramPosition        : " + pi.tramPosition);
-System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
+//System.out.println("pi.tramPosition        : " + pi.tramPosition);
+//System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 		pi.tramPosition.x			= hc.previousTramPosition.x;
 		pi.tramPosition.y			= hc.previousTramPosition.y;
 		if (hc.action1.startTerminus != null) this.stopMaidenTravel(this.getPlayerTurn());
@@ -1251,8 +1259,8 @@ System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 			hc.previousPreviousTramPosition.x	= -1;
 			hc.previousPreviousTramPosition.y	= -1;
 		}
-System.out.println("pi.tramPosition        : " + pi.tramPosition);
-System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
+//System.out.println("pi.tramPosition        : " + pi.tramPosition);
+//System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 	}
 
 // --------------------------------------------

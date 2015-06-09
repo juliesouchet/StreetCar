@@ -61,8 +61,9 @@ public class DecisionTable {
 	 * retourne le numero de l'action possible ayant la configuration correspondante la plus avantageuse
 	 */
 	public int getBestActionIndex(int index){
-		
-	return this.getDecisionNode(index).getBestActionIndex();
+		int res = this.getDecisionNode(index).getBestActionIndex();
+		TraceDebugAutomate.debugDecisionNodeTrace("getBestActionIndex("+index+") = " + res + "\n");
+	return res;
 
 	}		
 
@@ -252,7 +253,7 @@ public class DecisionTable {
 					this.reserveSlot(aFreeSlot);
 					currentCoupleActionIndex.setIndex(aFreeSlot);
 					currentAction = currentCoupleActionIndex.getAction();
-					////TraceDebugAutomate.debugDecisionTableTrace(" Action : " + currentAction + "\n");					
+					if(currentAction.isMoving())TraceDebugAutomate.debugDecisionTableTrace("\t\t\tAction : " + currentAction + "\n");					
 					currentConfiguration.doAction(playerName,currentAction);
 					
 					// Changement de joueur ?
@@ -276,12 +277,12 @@ public class DecisionTable {
 					//currentConfiguration.rollBack(); //TODO
 					currentConfiguration = copyDeConfigurationCourante.getClone(null);
 				}
-				if (playerName.equals(this.getMyName())){
+				if (playerName.equals(myName)){
 					currentNode.setNodeQualityToBestChoice(); // noeud max
 				}else{
 					currentNode.setNodeQualityToWorstChoice(); // noeud min
 				}
-				TraceDebugAutomate.debugDecisionTableTrace("Fin noeud interne :	" + playerName + "\tQualité : " + currentNode.getQuality());
+				TraceDebugAutomate.debugDecisionTableTrace("\tFin noeud interne :	\t" + playerName + "\tQualité : " + currentNode.getQuality());
 
 		}
 	}

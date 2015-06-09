@@ -15,7 +15,7 @@ public class TestAIvsAI {
 		LoginInfo[] initialLoginTable = 
 				// LoginInfo(isClosed, playerName, isHost, isHuman, iaLevel)
 				{
-				new LoginInfo(false,	null,		true,	false,	PlayerAutomaton.workerLvl),
+				new LoginInfo(false,	null,		true,	false,	PlayerAutomaton.strongestLvl),
 				new LoginInfo(false,	null,		false,	false,	PlayerAutomaton.travelerLvl),
 				new LoginInfo(true,		null,		false,	false,	PlayerAutomaton.strongestLvl),
 				new LoginInfo(true,		null,		false,	false,	PlayerAutomaton.dumbestLvl),
@@ -26,7 +26,7 @@ public class TestAIvsAI {
 		}
 		
 		try {
-			game = new Game("TestEvaluator", "localhost", "newOrleans", 2);
+			game = new Game("TestEvaluator", "localhost", "quasi_full", 2);
 		} catch (Exception e) {
 			System.out.println("Game creation error"); e.printStackTrace();
 		}
@@ -36,7 +36,7 @@ public class TestAIvsAI {
 		//TraceDebugAutomate.dumbestTrace = true;
 		//TraceDebugAutomate.travelerTrace = true;
 		TraceDebugAutomate.decisionTableTrace = true;
-		//TraceDebugAutomate.decisionNodeTrace = true;
+		TraceDebugAutomate.decisionNodeTrace = true;
 		
 		try {
 			game.hostStartGame(hostName);

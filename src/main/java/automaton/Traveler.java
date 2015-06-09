@@ -70,6 +70,7 @@ TraceDebugAutomate.debugTraveler(" Searching the current position... \n");
 			iterator = itinerary.listIterator();
 			int start = 0;
 			while(iterator.hasNext() && !iterator.next().equals(lastPosition)) start++;
+			if(start >= itinerary.size())	{System.out.println(name + " is at the end");return null;}
 TraceDebugAutomate.debugTraveler("\t\t"+(itinerary.get(start).equals(lastPosition)?"OK":"Error : "+lastPosition+" != "+itinerary.get(start))+"\n");
 
 			// Calculates the size of the path

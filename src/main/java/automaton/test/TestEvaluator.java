@@ -34,11 +34,11 @@ public class TestEvaluator
 															new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl),
 															new LoginInfo(true,		null,	false,	false,	PlayerAutomaton.dumbestLvl)};
 	public static final String	gameName			= "TestEvaluator";
-	public static final String	hostName			= "Testeur";
+	public static final String	hostName			= "Testeur\t";
 	public static final String	boardDirectory		= "src/main/resources/boards/";
 	public static final String	boardName			= "newOrleans";
 	public static final int		nbrBuildingInLine	= 3;
-	public static final int		nbrGamesSimulated	= 10000;
+	public static final int		nbrGamesSimulated	= 10;
 	public static final int		aiLevel				= PlayerAutomaton.travelerLvl;
 
 // --------------------------------------------
