@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import main.java.data.Data;
@@ -46,6 +47,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	private Point trainPosition = new Point(3, 4);
 	private LinkedList<Point> tramMove = new LinkedList<Point>();
+	
+	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
 
 	// Constructors
 
@@ -165,6 +168,13 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			int tramY = this.originY + this.cellWidth * currentTramPosition.y;
 			g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
 			//Point previousTramPosition = data.getPreviousTramPosition(name);
+		}
+		
+		for (Point p : highlights.keySet()) {
+			BufferedImage img = highlights.get(p);
+			int imgX = this.originX + this.cellWidth * p.x;
+			int imgY = this.originX + this.cellWidth * p.y;			
+			g2d.drawImage(img, imgX, imgY, cellWidth, cellWidth, null);
 		}
 
 		/*
@@ -346,5 +356,26 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	public void moveTram(LinkedList<Point> tramPath) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private BufferedImage createHighlight(Color color) {
+		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+		g2d.setColor(color);
+		g2d.fillRect(0, 0, cellWidth, cellWidth);
+		Color transparancyRectangle = new Color(0, 0, 0, 0);
+		g2d.setColor(transparancyRectangle);
+		g2d.fillRect(cellWidth/2, cellWidth/2, cellWidth/2, cellWidth/2);
+		return bufferedImage;
+	}
+	
+	private BufferedImage createTramTrail(Color color) {
+		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+		g2d.setColor(color);
+		int[] diamondTabX = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
+		int[] diamondTabY = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
+		g2d.drawPolygon(diamondTabX, diamondTabY, 4);
+		return bufferedImage;
 	}
 }
