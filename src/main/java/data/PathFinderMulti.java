@@ -37,6 +37,7 @@ public class PathFinderMulti implements Serializable
 		int pz;
 
 		if (pathLength <= 0) throw new RuntimeException("Wrong path length: " + pathLength);
+		if (!data.isWithinnBoard(pSrc.x, pSrc.y))	throw new RuntimeException("Src out of board");
 
 		for (int i=0; i<width; i++)								// Initialisation
 		{
@@ -53,41 +54,46 @@ public class PathFinderMulti implements Serializable
 		{
 			y		= f.remove();
 			voisin	= data.getAccessibleNeighborsPositions(y.getElem().x, y.getElem().y);
+System.out.println("\n\n\nPathfinder: point = " + y.getElem());
+			if (weight[y.getElem().x][y.getElem().y] > pathLength) continue;
 			for (Point z: voisin)
 			{
 				pz = y.getPrio() + 1;
 				if (pz > pathLength) continue;
 				if ((weight[z.x][z.y] == null) || (pz < weight[z.x][z.y]))
 				{
+System.out.println("Pathfinder: suivant = " + z);
 					weight[z.x][z.y] = pz;
 					f.add(new Noeud(z, pz));
 					previous[z.x][z.y] = new Noeud(y.getElem(), y.getPrio());
 				}
 			}
 		}
-		return scanRes(previous, pathLength, pSrc, pathMatrix);
+		return scanRes(previous, null, pathLength, pSrc, pathMatrix);
 	}
 	
 	
 	
 	
-	private int scanRes(Noeud[][] previous, int pathLength, Point pSrc, Point[][] pathMatrix)
+	private int scanRes(Noeud[][] previous, int[][] weight,  int pathLength, Point pSrc, Point[][] pathMatrix)
 	{
 		int res = 0;
+		Point tmp;
 		Noeud n;
-
+/*
 		for (int x=0; x<previous.length; x++)
 		{
 			for (int y=0; y<previous[0].length; y++)
 			{
-				if ((previous[x][y] == null) || (previous[x][y].getPrio() != pathLength)) continue;
+				tmp = previous[x][y];
+				if ((previous[x][y] == null) || (weight[x][y] != pathLength)) continue;
 				n = previous[x][y];
 				for (int i=0; i<pathLength; i++) {n = previous[x][y];}
 				if (!n.getElem().equals(pSrc)) throw new RuntimeException("?????");
 				res ++;
 			}
 		}
-		return res;
+*/		return res;
 	}
 
 // -----------------------------------------

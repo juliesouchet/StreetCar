@@ -221,7 +221,7 @@ System.out.println("Validate (engine)");
 		Data		data			= this.toExecute.data;
 		String		playerName		= this.toExecute.playerName;
 		Point[]		tramPath		= this.toExecute.tramPath;
-		Point		startTerminus	= this.toExecute.position1;
+		Point		startTerminus	= (data.hasStartedMaidenTravel(playerName)) ? null : this.toExecute.position1;
 		int			tramPathSize	= this.toExecute.tramPathSize;
 
 		data.setTramPosition(playerName, tramPath, tramPathSize, startTerminus);

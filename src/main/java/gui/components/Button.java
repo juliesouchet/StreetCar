@@ -11,10 +11,15 @@ public class Button extends JButton {
 
 	// Constructors
 	
-	public Button(String title) {
-		super(title);
+	public Button() {
+		super();
 		this.setUI(new StyledButtonUI());
 		this.setBackground(new Color(0x56C664));
+	}
+
+	public Button(String title) {
+		this();
+		this.setText(title);
 	}
 	
 	public Button(String title, String comment) {
