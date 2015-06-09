@@ -60,9 +60,11 @@ public class PathFinder implements Serializable
 			p		= y.getElem();
 			pOld	= previous[p.x][p.y];
 			if (p.equals(pDst))	return reversePath(previous, pSrc, pDst);
-			neighbor = data.getAccessibleNeighborsPositions(p.x, p.y);
+			neighbor = data.getAccessibleNeighborsPositions(p.x, p.y);				// TODO: ajouter les coups sur les borsd
 			for (Point pNext: neighbor)
 			{
+//System.out.println("-------Point p    : " + p);
+//System.out.println("-------Point pNext: " + pNext + "\n\n");
 				if ((pOld != null) && (!isSimplePath(data, pOld, p, pNext)))	continue;
 				pz = y.getDistPrev()+1;
 				if ((weight[pNext.x][pNext.y] == null) || (pz < weight[pNext.x][pNext.y]))
