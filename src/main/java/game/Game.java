@@ -336,25 +336,25 @@ System.out.println("Game.setLoginInfo: no change to do");
 	 * @param tramPath must contain the actual tram position, if the travel has already started.  Otherwise, it must contain one of the player's terminus.</br>
 	 * @param startTerminus is non null when the player start his maiden travel.  Other wise, this parameter may be null</br>
 	 =============================================================================*/
-	public synchronized void moveTram (String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed
+	public synchronized void moveTram (String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed, ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionTrtamwayDoesNotStop
 	{
-		if (!this.data.isGameStarted())												throw new ExceptionGameHasNotStarted();
-		if (!this.data.isPlayerTurn(playerName))									throw new ExceptionNotYourTurn();
-		if (!this.data.isStartOfTurn(playerName))									throw new ExceptionForbiddenAction();
-		if (tramPathSize > data.getMaximumSpeed()+1)								throw new ExceptionWrongTramwaySpeed();
-		if (tramPathSize < Data.minSpeed+1)											throw new ExceptionWrongTramwaySpeed();
-		if (tramPathSize > Data.maxSpeed+1)											throw new ExceptionWrongTramwaySpeed();
+		if (!this.data.isGameStarted())												{System.out.println("1");throw new ExceptionGameHasNotStarted();}
+		if (!this.data.isPlayerTurn(playerName))									{System.out.println("2");throw new ExceptionNotYourTurn();}
+		if (!this.data.isStartOfTurn(playerName))									{System.out.println("3");throw new ExceptionForbiddenAction();}
+		if (tramPathSize > data.getMaximumSpeed()+1)								{System.out.println("4");throw new ExceptionWrongTramwaySpeed();}
+		if (tramPathSize < Data.minSpeed+1)											{System.out.println("5");throw new ExceptionWrongTramwaySpeed();}
+		if (tramPathSize > Data.maxSpeed+1)											{System.out.println("6");throw new ExceptionWrongTramwaySpeed();}
 
 		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
 		if (!hasStartedTravel)
 		{
-			if (startTerminus == null)												throw new ExceptionMissingStartTerminus();
-			if (!startTerminus.equals(tramPath[0]))									throw new ExceptionWrongTramwayPath();
-			if (!data.isPlayerTerminus(playerName, startTerminus))					throw new ExceptionWrongPlayerTerminus();
-			if (!data.isTrackCompleted(playerName))									throw new ExceptionForbiddenAction();
+			if (startTerminus == null)												{System.out.println("7");throw new ExceptionMissingStartTerminus();}
+			if (!startTerminus.equals(tramPath[0]))									{System.out.println("8");throw new ExceptionWrongTramwayPath();}
+			if (!data.isPlayerTerminus(playerName, startTerminus))					{System.out.println("9");throw new ExceptionWrongPlayerTerminus();}
+			if (!data.isTrackCompleted(playerName))									{System.out.println("10");throw new ExceptionForbiddenAction();}
 System.out.println(playerName + " starts his travel from " + startTerminus + " (game.moveTram)");
 		}
-		if (!this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus))	throw new ExceptionWrongTramwayPath();
+		this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
 
 		this.engine.addAction(data, "moveTram", playerName, tramPath, tramPathSize, startTerminus);
 	}
@@ -454,7 +454,7 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 		this.aiList.put(playerName, t);
 		t.start();
 	}
-	private boolean checkTramPath(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus)
+	private void checkTramPath(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionWrongTramwayPath, ExceptionTrtamwayDoesNotStop
 	{
 		boolean hasStartedTravel = this.data.hasStartedMaidenTravel(playerName);
 		if (hasStartedTravel)
@@ -465,36 +465,49 @@ System.out.println(playerName + " starts his travel from " + startTerminus + " (
 			Point p0, p1, p2;
 			Point[] endTerminus =  this.data.getPlayerTerminusPosition(playerName);
 
-			if (!tramPath[0].equals(tramPosition))				return false;
+			if (!tramPath[0].equals(tramPosition))				throw new ExceptionWrongTramwayStart();
 
 			p0 = this.data.getPreviousTramPosition(playerName);
 			p1 = tramPosition;
 			for (int i=1; i<tramPathSize; i++)
 			{
 				p2 = tramPath[i];
-				if (winner != -1)								return false;
-				if (stop	!= -1)								return false;
-				if (!data.pathExistsBetween(p0, p1, p2))		return false;
-				if (Util.manhathanDistance(p1, p2) != 1)		return false;
+				if (winner != -1)								throw new ExceptionTramwayExceededArrival();
+				if (stop	!= -1)								throw new ExceptionTrtamwayDoesNotStop();
+				if (!data.pathExistsBetween(p0, p1, p2))		throw new ExceptionWrongTramwayPath();
+				if (Util.manhathanDistance(p1, p2) != 1)		throw new ExceptionTramwayJumpCell();
 				if (p2.equals(endTerminus[0]))		winner = i;
 				if (p2.equals(endTerminus[1]))		winner = i;
 				if (this.data.getTile(p2).isStop())	stop = i;
 				p0 = p1;
 				p1 = p2;
 			}
-			return true;
+			return;
 		}
 		else
 		{
 System.out.println("Start maiden travel " + playerName + " (game.checkTramPath)");
 			Point[]	terminus = data.getPlayerTerminusPosition(playerName);
 			int i;
+			
 			for (i=0; i<4; i++) if (startTerminus.equals(terminus[i])) break;
-			if (i == 4) return false;
+			if (i == 4) throw new ExceptionWrongTramwayStartTerminus();
 			this.data.startMaidenTravel(playerName, startTerminus);
-			boolean res = this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
+			try
+			{
+				this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
+			}
+			catch(	ExceptionTramwayExceededArrival		|
+					ExceptionWrongTramwayStart			|
+					ExceptionWrongTramwayStartTerminus	|
+					ExceptionTramwayJumpCell			|
+					ExceptionWrongTramwayPath			|
+					ExceptionTrtamwayDoesNotStop 		e)
+			{
+				this.data.stopMaidenTravel(playerName);
+				throw e;
+			}
 			this.data.stopMaidenTravel(playerName);
-			return res;
 		}
 	}
 }

@@ -209,7 +209,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		}
 	}
 
-	public void refresh(final Data data) {
+	public synchronized void refresh(final Data data) {
 		String winner = data.getWinner();
 		if(winner != null)
 		{
@@ -234,14 +234,14 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 			this.menuPanel.refreshMenu(StreetCar.player, data);
 		}
 		if (data.isGameStarted() && !(this.getFrameContentPane() instanceof InGamePanel)) {
-			this.showInGamePanel();
 			ActionListener taskPerformer = new ActionListener() {
         		public void actionPerformed(ActionEvent e) {
+        			showInGamePanel();
         			InGamePanel panel = (InGamePanel)getFrameContentPane();
         			panel.refreshGame(StreetCar.player, data);
         		}
         	};
-        	Timer timer = new Timer(100, taskPerformer);
+        	Timer timer = new Timer(1000, taskPerformer);
         	timer.setRepeats(false);
         	timer.start();
         	
@@ -256,6 +256,9 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 	
 	public void refreshMessages(String playerName, String message) {
-		System.out.println("refreshMessages " + playerName + " => " + message);
+		if (this.getFrameContentPane() instanceof InGamePanel) {
+			InGamePanel panel = (InGamePanel)this.getFrameContentPane();
+			panel.refreshMessages(playerName, message);
+		}
 	}
 }

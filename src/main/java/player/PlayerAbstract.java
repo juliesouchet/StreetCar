@@ -21,12 +21,17 @@ import main.java.game.ExceptionNotEnoughTilesInHand;
 import main.java.game.ExceptionNotYourTurn;
 import main.java.game.ExceptionPlayerIsBlocked;
 import main.java.game.ExceptionTooManyActions;
+import main.java.game.ExceptionTramwayExceededArrival;
+import main.java.game.ExceptionTramwayJumpCell;
+import main.java.game.ExceptionTrtamwayDoesNotStop;
 import main.java.game.ExceptionTwoManyTilesToDraw;
 import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.ExceptionWrongPlayerTerminus;
 import main.java.game.ExceptionWrongTramwayPath;
 import main.java.game.ExceptionWrongTramwaySpeed;
+import main.java.game.ExceptionWrongTramwayStart;
+import main.java.game.ExceptionWrongTramwayStartTerminus;
 import main.java.game.GameInterface;
 import main.java.rubbish.InterfaceIHM;
 
@@ -121,7 +126,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Pose tui
 		this.game.placeTile(playerName, t, position);
 	}
 
-	public synchronized void doAction(Action action) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver
+	public synchronized void doAction(Action action) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed, ExceptionTooManyActions, ExceptionPlayerIsBlocked, ExceptionGameIsOver, ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionTrtamwayDoesNotStop
 	{
 		if (action.isMOVE())
 		{
@@ -174,7 +179,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Validate
 	{
 		game.onQuitGame(playerName);
 	}
-	public synchronized void moveTram(Point[] tramPath, int tramPathSize, Point startTerminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed
+	public synchronized void moveTram(Point[] tramPath, int tramPathSize, Point startTerminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed, ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionTrtamwayDoesNotStop
 	{
 System.out.println("----------------------------------------------------------------");
 System.out.print("Round: " + data.getRound() + "\t " + playerName +": Move: ");

@@ -20,9 +20,14 @@ import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionMissingStartTerminus;
 import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionTramwayExceededArrival;
+import main.java.game.ExceptionTramwayJumpCell;
+import main.java.game.ExceptionTrtamwayDoesNotStop;
 import main.java.game.ExceptionWrongPlayerTerminus;
 import main.java.game.ExceptionWrongTramwayPath;
 import main.java.game.ExceptionWrongTramwaySpeed;
+import main.java.game.ExceptionWrongTramwayStart;
+import main.java.game.ExceptionWrongTramwayStartTerminus;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
@@ -41,7 +46,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
     
     private Point trainPosition = new Point(3, 4);
     private LinkedList<Point> trainMove = new LinkedList<Point>();
-    private LinkedList<Point> tempThingForRiyane = new LinkedList<Point>();
     
     // Constructors
     
@@ -144,29 +148,36 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			g2d.setColor(playerColor);
 			g2d.fillRect(x, y, cellWidth, cellWidth);
 		}
-
-		Color c = new Color(1f,0f,0f,.5f);
-		g2d.setColor(c);
-		for(Point p : tempThingForRiyane)
-		{
-			x = this.originX + this.cellWidth * p.x;
-			y = this.originY + this.cellWidth * p.y;
-			g2d.fillRect(x, y, cellWidth, cellWidth);
-		}
-		tempThingForRiyane.clear();
     }
 	
 	// Mouse Listener
 	
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) 
+	{
+		Point p = this.cellPositionForLocation(e.getPoint());
+		System.out.println("Tile ID is : " + StreetCar.player.getGameData().getTile(p).getTileID());
+	}
+	
 
 	public void mousePressed(MouseEvent e) 
-	{
-		// TODO check here if trip can be done
+	{	
+		//if(!canMoveTram()) return; TODO check if can move tram
+		
 		Point p = this.cellPositionForLocation(e.getPoint());
 		trainMove.clear();
 		trainMove.add(p);
 		repaint();
+	}
+
+	private boolean canMoveTram() {
+		PlayerIHM player = StreetCar.player;
+		String playerName = null;
+		try { playerName = player.getPlayerName(); } 
+		catch (RemoteException e1) { }
+
+		if(player.getGameData().hasStartedMaidenTravel(playerName)) return true;
+		//player.getGameData().
+		return false;
 	}
 	
 	public void mouseReleased(MouseEvent e) 
@@ -201,6 +212,21 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionWrongTramwaySpeed e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionTramwayExceededArrival e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionWrongTramwayStart e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionWrongTramwayStartTerminus e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionTramwayJumpCell e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionTrtamwayDoesNotStop e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}

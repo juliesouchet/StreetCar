@@ -2,8 +2,5 @@
 #Tue Jun 09 10:33:59 CEST 2015
 Language=en
 PlayerName=julie
->>>>>>>=branch 'master' of https\://github.com/juliesouchet/StreetCar
 UseFullScreen=false
 GameName=jeux
-=\=\=\=\=\=\=
-<<<<<<<=HEAD

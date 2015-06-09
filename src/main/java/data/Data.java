@@ -526,6 +526,8 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		Point[]		path	= new Point[size];
 		PlayerInfo	pi		= this.playerInfoList.get(playerName);
 		Point p0, p1, building;
+		LinkedList<Point> res;
+boolean shit = true;
 
 		path[0] = pi.terminus[0];
 		path[1] = pi.terminus[3];
@@ -540,9 +542,15 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		for (int i=1; i<path.length; i++)
 		{
 			p1 = path[i];
-			if (this.getShortestPath(null, p0, p1) == null)	return false;
+			res = this.getShortestPath(null, p0, p1);
+System.out.println("\n--------------------\n Path entre " + p0 + "    et " + p1);
+System.out.println(res);
+if (res == null) shit = false;
+//TODO decommenter			if (res == null)	return false;
 			p0 = p1;
 		}
+if (!shit) return false;
+System.out.println("*****Track completed ");
 		return true;
 	}
 
