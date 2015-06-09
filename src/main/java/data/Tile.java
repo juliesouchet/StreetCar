@@ -1,6 +1,8 @@
 package main.java.data;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import main.java.util.CloneableInterface;
 import main.java.util.Direction;
@@ -300,6 +302,21 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 // --------------------------------------------
 // Getters:
 // --------------------------------------------
+	public static ArrayList<Tile> getDeckTileList()
+	{
+		ArrayList<Tile> res = new ArrayList<Tile>();
+		File f;
+		String tileList[];
+
+		f			= new File(Deck.stackDirectory);
+		tileList	= f.list();
+		for (String str: tileList)
+		{
+			Tile t = Tile.parseTile(str);
+			if (t.isDeckTile()) res.add(t);
+		}
+		return res;
+	}
 	/**
 	 *	Vrai si l'ID des 2 tuiles est le même. (donc les tuiles sont censés être les mêmes à la rotation et au stop près) </br>
 	 *	/!\ Ne prend pas du tout en compte les autres attributs 

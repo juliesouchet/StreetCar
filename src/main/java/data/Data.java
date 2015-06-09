@@ -15,7 +15,13 @@ import main.java.automaton.CoupleActionIndex;
 import main.java.data.Tile.Path;
 import main.java.game.ExceptionFullParty;
 import main.java.game.ExceptionHostAlreadyExists;
+import main.java.game.ExceptionTramwayExceededArrival;
+import main.java.game.ExceptionTramwayJumpCell;
+import main.java.game.ExceptionTrtamwayDoesNotStop;
 import main.java.game.ExceptionUnknownBoardName;
+import main.java.game.ExceptionWrongTramwayPath;
+import main.java.game.ExceptionWrongTramwayStart;
+import main.java.game.ExceptionWrongTramwayStartTerminus;
 import main.java.player.PlayerInterface;
 import main.java.util.CloneableInterface;
 import main.java.util.Copier;
@@ -427,6 +433,10 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		Point tramP		= new Point(pi.tramPosition);
 		Point tramPP	= new Point(pi.previousTramPosition);
 
+
+		
+		
+		
 		if (hc.action1 != null)														throw new RuntimeException("You have already done an action");
 		if ((this.hasStartedMaidenTravel(playerName)) && (startTerminus != null))	throw new RuntimeException("You have already started maiden travel");
 
@@ -456,6 +466,18 @@ System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previous
 		hc.action1						= a;
 		hc.previousTramPosition			= tramP;
 		hc.previousPreviousTramPosition	= tramPP;
+
+/****
+int ps = 1;
+int nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, pi.tramPosition, ps, this.pathMatrix);
+System.out.println("*******");
+System.out.println("Nbr path: " + nbrPath);
+for (int i=0; i<nbrPath; i++)
+{
+	System.out.println("Path: " + i);
+	for (int j=0; j<ps; j++) System.out.println("\t- " + this.pathMatrix[i][j]);
+}
+***/
 	}
 
 // --------------------------------------------
@@ -574,6 +596,7 @@ System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previous
 				tmpRes	= this.getShortestPath(pp, p0, p1);
 //System.out.println("\n**********************\nTrack betweew " + p0 + "   and " + p1 + "\n" + tmpRes);
 				if (tmpRes == null) break;
+				if (i>1)tmpRes.removeFirst();
 				res.addAll(tmpRes);
 				p0 = p1;
 				pp = tmpRes.get(tmpRes.size()-2);
@@ -747,7 +770,7 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 		return res;
 	}
 	/**============================================================
-	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell and from the given (x,y) direction.</br>
+	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell.</br>
 	 ==============================================================*/
 	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y)
 	{
@@ -758,11 +781,18 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 		{
 			if (!d.isDirectionInList(ad)) continue;
 			Point next = d.getNeighbour(x, y);
-			if (isWithinnBoard(next.x, next.y))	res.add(next);
+//			if (isWithinnBoard(next.x, next.y))	res.add(next);
+			if ((next.x < 0) || (next.y < 0))	continue;
+			if (next.x >= this.board.length)	continue;
+			if (next.y >= this.board[0].length)	continue;
+			res.add(next);
 		}
 		return res;
 	}
-/******	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y, Direction initialDir)
+	/**============================================================
+	 * @return the list of the neighbor coordinates that can be acceded from the (x,y) cell and from the given (x,y) direction.</br>
+	 ==============================================================*/
+/*****	public LinkedList<Point> getAccessibleNeighborsPositions(int x, int y, Direction initialDir)
 	{
 		LinkedList<Point>		res = new LinkedList<Point>();
 		int	ad	= board[x][y].getAccessibleDirections(initialDir);				// List of the reachable directions from the given direction
@@ -932,32 +962,34 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 	{
 //TODO		if (!this.isPlayerTurn(playerName))	throw new RuntimeException("Not the player turn: " + playerName);
 
-		Tile[] tmpRotation1		= new Tile[4];															// Init optimization parameters
+		Tile[] tmpRotation1		= new Tile[4];																			// Init optimization parameters
 		Tile[] tmpRotation2		= new Tile[4];
+		PlayerInfo pi = this.playerInfoList.get(playerName);
 		for (int i=0; i<4; i++)
 		{
-			tmpRotation1[i]= this.board[0][0].getClone();
-			tmpRotation2[i]= this.board[0][0].getClone();
+			tmpRotation1[i]= Tile.getNewEmptyTile();
+			tmpRotation2[i]= Tile.getNewEmptyTile();
 		}
 
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
-		Point lastTramPosition		= this.playerInfoList.get(playerName).previousTramPosition;
-		Point currentTramPosition	= this.playerInfoList.get(playerName).tramPosition;
-		Point startTerminus			= this.getPlayerTerminusPosition(playerName)[0];
+		Point lastTramPosition		= pi.previousTramPosition;
+		Point currentTramPosition	= pi.tramPosition;
+		Point startTerminus			= pi.terminus[0];
+		boolean hashStartedTravel	= this.hasStartedMaidenTravel(playerName);
 		Tile t, oldT1;
 
-		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))			// Case: can move tram
+		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))							// Case: can move tramway
 		{
-// TODO s'arreter au stop, initialiser currentTramPosition et startTerminus si isTrackCompleted
-			if (startTerminus == null)	startTerminus = this.getPlayerTerminusPosition(playerName)[0];	//		Case Can start maiden travel
-			else						startTerminus = null;
-			this.startMaidenTravel(playerName, startTerminus);
+			if (!hashStartedTravel)	{startTerminus = pi.terminus[0];this.startMaidenTravel(playerName, startTerminus);}	//		Case Can start maiden travel
+			else					startTerminus = null;
 			for (int l = 1; l<=this.maxPlayerSpeed; l++)
 			{
 				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, currentTramPosition, l, this.pathMatrix);
 				for (int i=0; i<nbrPath; i++)
 				{
-					if (this.pathMatrix[i][1].equals(lastTramPosition)) continue;
+					try					{this.checkTramPath(playerName, this.pathMatrix[i], l, null);}
+					catch (Exception e)	{continue;}
+					if (this.pathMatrix[i][1].equals(lastTramPosition)) continue;// Tour
 					if(writeActionsInTab)
 					{
 						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l);
@@ -966,7 +998,7 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 					res ++;
 				}
 			}
-			this.stopMaidenTravel(playerName);
+			if (!hashStartedTravel)this.stopMaidenTravel(playerName);
 			return res;
 		}
 																										// Case is building
@@ -1031,6 +1063,74 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 		}
 
 		return res;
+	}
+	/**
+	 * A commenter
+	 * @param playerName
+	 * @param tramPath
+	 * @param tramPathSize
+	 * @param startTerminus
+	 * @throws ExceptionTramwayExceededArrival
+	 * @throws ExceptionWrongTramwayStart
+	 * @throws ExceptionWrongTramwayStartTerminus
+	 * @throws ExceptionTramwayJumpCell
+	 * @throws ExceptionWrongTramwayPath
+	 * @throws ExceptionTrtamwayDoesNotStop
+	 */
+	public void checkTramPath(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus) throws ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionWrongTramwayPath, ExceptionTrtamwayDoesNotStop
+	{
+		boolean hasStartedTravel = this.hasStartedMaidenTravel(playerName);
+		if (hasStartedTravel)
+		{
+			int winner	= -1;
+			int stop	= -1;
+			Point tramPosition = this.getTramPosition(playerName);
+			Point p0, p1, p2;
+			Point[] endTerminus =  this.getPlayerTerminusPosition(playerName);
+
+			if (!tramPath[0].equals(tramPosition))				throw new ExceptionWrongTramwayStart();
+
+			p0 = this.getPreviousTramPosition(playerName);
+			p1 = tramPosition;
+			for (int i=1; i<tramPathSize; i++)
+			{
+				p2 = tramPath[i];
+				if (winner != -1)								throw new ExceptionTramwayExceededArrival();
+				if (stop	!= -1)								throw new ExceptionTrtamwayDoesNotStop();
+				if (!this.pathExistsBetween(p0, p1, p2))		throw new ExceptionWrongTramwayPath();
+				if (Util.manhathanDistance(p1, p2) != 1)		throw new ExceptionTramwayJumpCell();
+				if (p2.equals(endTerminus[0]))		winner = i;
+				if (p2.equals(endTerminus[1]))		winner = i;
+				if (this.getTile(p2).isStop())		stop = i;
+				p0 = p1;
+				p1 = p2;
+			}
+			return;
+		}
+		else
+		{
+			Point[]	terminus = this.getPlayerTerminusPosition(playerName);
+			int i;
+			
+			for (i=0; i<4; i++) if (startTerminus.equals(terminus[i])) break;
+			if (i == 4) throw new ExceptionWrongTramwayStartTerminus();
+			this.startMaidenTravel(playerName, startTerminus);
+			try
+			{
+				this.checkTramPath(playerName, tramPath, tramPathSize, startTerminus);
+			}
+			catch(	ExceptionTramwayExceededArrival		|
+					ExceptionWrongTramwayStart			|
+					ExceptionWrongTramwayStartTerminus	|
+					ExceptionTramwayJumpCell			|
+					ExceptionWrongTramwayPath			|
+					ExceptionTrtamwayDoesNotStop 		e)
+			{
+				this.stopMaidenTravel(playerName);
+				throw e;
+			}
+			this.stopMaidenTravel(playerName);
+		}
 	}
 
 // --------------------------------------------
