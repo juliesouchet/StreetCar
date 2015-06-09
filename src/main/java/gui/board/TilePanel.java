@@ -18,6 +18,7 @@ import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
+import main.java.gui.util.Resources;
 import main.java.util.Direction;
 
 @SuppressWarnings("serial")
@@ -28,6 +29,7 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 	private Tile tile = null;
 	private boolean draggable = false;
 	private boolean editable = false;
+	private boolean tileHidden = false;
 	private boolean isDragging = false;
 	
 	// Constructors
@@ -71,20 +73,34 @@ public class TilePanel extends Panel implements Transferable, MouseListener, Mou
 		this.editable = editable;
 	}
 	
+	public boolean isTileHidden() {
+		return this.tileHidden;
+	}
+	
+	public void setTileHidden(boolean hidden) {
+		this.tileHidden = hidden;
+		this.repaint();
+	}
+	
 	// Drawings
 	
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		if (this.tile != null) {
-			Graphics2D g2d = (Graphics2D)g;
+		Graphics2D g2d = (Graphics2D)g;
+		int min = Math.min(this.getWidth(), this.getHeight());
+		int x = (this.getWidth() - min) / 2;
+		int y = (this.getHeight() - min) / 2;
+		
+		if (this.tileHidden) {
+			BufferedImage image = Resources.imageNamed("tile_hidden");
+			if (image != null) {
+				g2d.drawImage(image, x, y, min, min, null);
+			}
+		} else if (this.tile != null) {
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			int min = Math.min(this.getWidth(), this.getHeight());
-			int x = (this.getWidth() - min) / 2;
-			int y = (this.getHeight() - min) / 2;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);	
 			TileImage.drawTile(g2d, this.tile, x, y, min);
 		}
 	}
