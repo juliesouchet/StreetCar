@@ -15,9 +15,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 
+import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.game.ExceptionForbiddenAction;
@@ -49,9 +49,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private int mapWidth;
 	private int cellWidth;
 
-	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
-
 	private LinkedList<Point> chosenPath = new LinkedList<Point>();
+	String playerToHighlight;
 
 	// Constructors
 
@@ -108,23 +107,23 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		Tile[][] board = data.getBoard();
 
 		// Grid
-		for (int j=0; j < data.getHeight(); j++) {
-			for (int i=0; i < data.getWidth(); i++) {
-				Tile tile = board[i][j];
-				if ((i == 0 || j == 0 || i == data.getWidth()-1 || j == data.getHeight()-1) &&
-					!tile.isTerminus()) {
-					g2d.setColor(new Color(98, 179, 203));
-					g2d.fillRect(x, y, cellWidth, cellWidth);
-				} else {
-					TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
+				for (int j=0; j < data.getHeight(); j++) {
+					for (int i=0; i < data.getWidth(); i++) {
+						Tile tile = board[i][j];
+						if ((i == 0 || j == 0 || i == data.getWidth()-1 || j == data.getHeight()-1) &&
+							!tile.isTerminus()) {
+							g2d.setColor(new Color(98, 179, 203));
+							g2d.fillRect(x, y, cellWidth, cellWidth);
+						} else {
+							TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
+						}
+						g2d.setColor(Color.GRAY);
+						g2d.drawRect(x, y, cellWidth, cellWidth);
+						x += this.cellWidth;
+					}
+					x = this.originX;
+					y += this.cellWidth;
 				}
-				g2d.setColor(Color.GRAY);
-				g2d.drawRect(x, y, cellWidth, cellWidth);
-				x += this.cellWidth;
-			}
-			x = this.originX;
-			y += this.cellWidth;
-		}
 
 		String playerName = null;
 		try {
@@ -146,9 +145,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		// Train movement
 		for(Point p : chosenPath)
 		{
-			x = this.originX + this.cellWidth * p.x;
-			y = this.originY + this.cellWidth * p.y;
-			g2d.drawImage(createTramTrail(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
+			Color color = data.getPlayerColor(playerName);
+			drawLineTrail(g2d, p, color);
 		}
 
 		highlightBuildings(data, g2d, playerName);
@@ -158,25 +156,68 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			drawTram(data, g2d, name);
 			highlightBuildings(data, g2d, name);
 		}
-
-		for (Point p : highlights.keySet()) {
-			BufferedImage img = highlights.get(p);
-			int imgX = this.originX + this.cellWidth * p.x;
-			int imgY = this.originX + this.cellWidth * p.y;			
-			g2d.drawImage(img, imgX, imgY, cellWidth, cellWidth, null);
-		}
 		
+		
+		if(playerToHighlight != null)
+		{
+			Action lastAction = data.getPlayerLastAcion(playerToHighlight);
+			if(lastAction != null)
+			{
+				if(lastAction.tile1 != null)
+				{
+					highlight(lastAction.positionTile1, data.getPlayerColor(playerName), g2d);
+				}
+				if(lastAction.tile2 != null)
+				{
+					highlight(lastAction.positionTile2, data.getPlayerColor(playerName), g2d);
+				}
+				if(lastAction.tramwayMovement.length > 0)
+				{
+					for(Point point : lastAction.tramwayMovement)
+					{
+						drawLineTrail(g2d, point, data.getPlayerColor(playerToHighlight));
+					}
+				}
+			}
+			
+		}
+	}
+
+	private void drawLineTrail(Graphics2D g2d, Point p, Color color) {
+		int x;
+		int y;
+		x = this.originX + this.cellWidth * p.x;
+		y = this.originY + this.cellWidth * p.y;
+		g2d.drawImage(createTramTrail(color), x, y, cellWidth, cellWidth, null);
 	}
 
 	private void highlightBuildings(Data data, Graphics2D g2d, String playerName) {
-		int x;
-		int y;
 		for(Point building : data.getPlayerAimBuildings(playerName))
 		{
-			x = this.originX + this.cellWidth * building.x;
-			y = this.originY + this.cellWidth * building.y;
-			g2d.drawImage(createHighlight(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
+			highlight(building, data.getPlayerColor(playerName), g2d);
+//			x = this.originX + this.cellWidth * building.x;
+//			y = this.originY + this.cellWidth * building.y;
+//			g2d.drawImage(createHighlight(data.getPlayerColor(playerName)), x, y, cellWidth, cellWidth, null);
 		}
+	}
+	
+	private void highlight(Point point, Color color, Graphics2D g2d)
+	{
+		int x = this.originX + this.cellWidth * point.x;
+		int y = this.originY + this.cellWidth * point.y;
+		g2d.drawImage(createHighlight(color), x, y, cellWidth, cellWidth, null);
+	}
+	
+	public void highlightPreviousAction(String playerName)
+	{
+		playerToHighlight = playerName;
+		repaint();
+	}
+	
+	public void unHighlightPreviousAction()
+	{
+		playerToHighlight = null;
+		repaint();
 	}
 
 	private void drawTram(Data data, Graphics2D g2d, String name) {
@@ -199,7 +240,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		Point currentTramPosition = data.getTramPosition(name);
 		int tramX = this.originX + this.cellWidth * currentTramPosition.x;
 		int tramY = this.originY + this.cellWidth * currentTramPosition.y;
-		g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
+		g2d.drawImage(trainBufferedImage, tramX+5, tramY+15, cellWidth-1, cellWidth-30, null);
 	}
 
 	// Mouse Listener
@@ -335,10 +376,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private BufferedImage createTramTrail(Color color) {
 		BufferedImage bufferedImage = new BufferedImage(cellWidth, cellWidth, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
-		g2d.setColor(color);
 		if (color.equals(Color.YELLOW)) {
 			color = Color.ORANGE;
 		}
+		g2d.setColor(color);
 		int[] diamondTabX = {cellWidth/4, cellWidth/2, cellWidth/4*3, cellWidth/2};
 		int[] diamondTabY = {cellWidth/2, cellWidth/4, cellWidth/2, cellWidth/4*3};
 		g2d.fillPolygon(diamondTabX, diamondTabY, 4);

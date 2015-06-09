@@ -36,7 +36,7 @@ public class PathFinderMulti implements Serializable
 		Point np;
 		int res = 0;
 
-		if (pathLength <= 0) throw new RuntimeException("Size = " + pathLength);
+		if (pathLength <= 0) throw new RuntimeException("Empty path : Size = " + pathLength);
 		if (pathLength == 1)
 		{
 			pathMatrix[0][0].x = pSrc.x;

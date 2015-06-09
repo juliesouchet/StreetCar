@@ -149,7 +149,7 @@ public class InGamePanel extends Panel {
     	int y = 40;
     	int j = 0;
     	for (int i = bottomPlayerIndex+1; i < nbPlayers; i++) {
-    		PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
+    		PlayerPanel playerPanel = new PlayerPanel(playersTab[i], mapPanel);
        		playerPanels.add (playerPanel);
        		if (i<nbPlayers-1) { //last bar not displayed
        			playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
@@ -160,7 +160,7 @@ public class InGamePanel extends Panel {
    		}
     	
    		for (int i = 0; i < bottomPlayerIndex; i++) {
-   			PlayerPanel playerPanel = new PlayerPanel(playersTab[i]);
+   			PlayerPanel playerPanel = new PlayerPanel(playersTab[i], mapPanel);
   	     	playerPanels.add (playerPanel);
         	if (i<nbPlayers-1) { //last bar not displayed
         		playerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));

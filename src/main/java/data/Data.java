@@ -464,18 +464,20 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		hc.action1						= a;
 		hc.previousTramPosition			= tramP;
 		hc.previousPreviousTramPosition	= tramPP;
+/*
 //TODO a enlever
 int ps = this.maxPlayerSpeed;
 int nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, pi.previousTramPosition, pi.tramPosition, ps, this.pathMatrix);
 System.out.println("*******");
 System.out.println("Nbr path: " + nbrPath);
 System.out.println("from: " + pi.tramPosition);
-System.out.println("length: " + ps);
+System.out.println("length: " + (ps-1));
 for (int i=0; i<nbrPath; i++)
 {
 	System.out.println("Path: " + i);
 	for (int j=0; j<ps; j++) System.out.println("\t- " + this.pathMatrix[i][j]);
 }
+*/
 	}
 
 // --------------------------------------------

@@ -3,19 +3,22 @@ package main.java.gui.application;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
 
 import main.java.data.Data;
 import main.java.data.Tile;
+import main.java.gui.board.MapPanel;
 import main.java.gui.board.TilePanel;
 import main.java.gui.components.AvatarPanel;
 import main.java.gui.components.LinePanel;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
-public class PlayerPanel extends Panel{
+public class PlayerPanel extends Panel implements MouseListener{
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,17 +27,19 @@ public class PlayerPanel extends Panel{
 	LinePanel linePanel = new LinePanel();
 	ArrayList<TilePanel> tilePanels = new ArrayList<TilePanel>();
 	ArrayList<TilePanel> buildingsPanels = new ArrayList<TilePanel>();
+	MapPanel map;
 
 	int sizeOfCard = 45;
 	int spaceBetween = 10;
 
 	private AvatarPanel avatarPanel = null;
 
-	public PlayerPanel(String nameOfPlayer) {		
+	public PlayerPanel(String nameOfPlayer, MapPanel map) {		
 		this.setBackground(Color.WHITE);
 		this.setPreferredSize(new Dimension(285, 175));
 		this.setLayout(null);
 		this.nameOfPlayer = nameOfPlayer;
+		this.map = map;
 		placePlayerAvatar();
 		placePlayerName();
 		placePlayerCards();
@@ -133,4 +138,26 @@ public class PlayerPanel extends Panel{
 			this.setBackground(new Color(0xFFEDDE));
 		}
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) { }
+
+	@Override
+	public void mouseEntered(MouseEvent e) 
+	{ 	
+		System.out.println("ENTEEEEEEEEEERED");
+		map.highlightPreviousAction(nameOfPlayer);
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		System.out.println("EXITEEEEEEEEEEED");
+		map.unHighlightPreviousAction();
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) { }
+
+	@Override
+	public void mouseReleased(MouseEvent e) { }
 }
