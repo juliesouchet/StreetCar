@@ -3,6 +3,7 @@ package main.java.gui.application;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.rmi.RemoteException;
@@ -78,10 +79,15 @@ public class BottomPlayerPanel extends Panel {
 
 		buttonsPanel.add(validateButton);
 		buttonsPanel.add(resetButton);
+		
 		// TODO display canBeginText
-		canBeginText = new Label("Vous ne pouvez pas commencer votre voyage");
-		canBeginText.setBorder(new LineBorder(Color.BLACK));
-		buttonsPanel.add(canBeginText);
+		//canBeginText = new Label("Vous ne pouvez pas commencer votre voyage");
+		//canBeginText.setBorder(new LineBorder(Color.BLACK));
+		//canBeginText.setBounds(0, 15, 200, 35);
+		
+		//canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
+		//canBeginText.setFont(getFont());
+		
 		this.add(buttonsPanel, BorderLayout.EAST);	
 	}
 	
@@ -140,7 +146,11 @@ public class BottomPlayerPanel extends Panel {
 	
 	protected void checkIfCanBeginTrip() {
 		if (canBeginTrip) {
-			canBeginText.setText("Vous pouvez commencer votre voyage !");
+			canBeginText = new Label("Vous pouvez commencer votre voyage !");
+			canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
+			canBeginText.setBorder(new LineBorder(Color.BLACK));
+			canBeginText.setBounds(0, 15, 200, 35);
+			buttonsPanel.add(canBeginText);
 		} 
 	}
 	
