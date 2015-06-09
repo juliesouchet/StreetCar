@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.util.Random;
 import java.util.Scanner;
 
+import main.java.automaton.AutomatePlusCourtChemin;
 import main.java.automaton.DecisionTable;
-import main.java.automaton.PlayerAutomaton;
-import main.java.automaton.Strongest;
 import main.java.data.Action;
 import main.java.data.Data;
+import main.java.data.Tile;
 import main.java.game.Game;
 import main.java.game.GameInterface;
 import main.java.player.PlayerAI;
@@ -38,7 +38,7 @@ public class PlayerAutomata implements InterfaceIHM
 	private boolean firstRefreshDone = false;
 	private boolean secondRefreshDone = false;
 
-	PlayerAutomaton myAutomaton ;
+	AutomatePlusCourtChemin myAutomaton ;
 
 	// --------------------------------------------
 	// Builder:
@@ -70,7 +70,7 @@ public class PlayerAutomata implements InterfaceIHM
 		if(!create){System.out.print("\t- IP of the application\t:");	ip			= sc.next();}
 		else															ip			= null;
 		String boardName = "newOrleans";	/////// Nom par defaut
-		int nbrBuildingInLine= 3;	/////// Nom par defaut
+		int nbrBuildingInLine= 2;	/////// Nom par defaut
 
 		try
 		{
@@ -126,7 +126,7 @@ public class PlayerAutomata implements InterfaceIHM
 
 
 		String boardName = "newOrleans";	/////// Nom par defaut
-		int nbrBuildingInLine= 3;	/////// Nom par defaut
+		int nbrBuildingInLine= 2;	/////// Nom par defaut
 
 
 		try{
@@ -176,20 +176,59 @@ public class PlayerAutomata implements InterfaceIHM
 			return;
 		}
 
-	myAutomaton = new Strongest(name);
-	myAction = myAutomaton.makeChoice(data);
-	
-	
-	try {
-		player.doAction(myAction);
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	
+	myAutomaton = new AutomatePlusCourtChemin(data, data.getPlayerTerminusPosition(name), data.getPlayerAimBuildings(name));
+
+	System.out.println(data.getPlayerTerminusPosition(name)[0]);
+	System.out.println(data.getPlayerTerminusPosition(name)[1]);
+	System.out.println(data.getPlayerTerminusPosition(name)[2]);
+	System.out.println(data.getPlayerTerminusPosition(name)[3]);
+
+	System.out.println(data.getPlayerAimBuildings(name)[0]);
+	System.out.println(data.getPlayerAimBuildings(name)[1]);
 	this.frame.setGameData(data);
+
+	Tile maTile1 = Tile.parseTile("Tile_FFFFZZ2113");
+	Tile maTile2 = Tile.parseTile("Tile_FFFFZZ2113");
+	Tile maTile3 = Tile.parseTile("Tile_FFFFZZ2113");
+	Tile maTile4 = Tile.parseTile("Tile_FFFFZZ2113");
 	
+	myAutomaton.computeHeuristic();
+	myAutomaton.printMatrice(myAutomaton.heuristic);
+
+	System.out.println("\n\t(1)==============================================\n");
+
+
+		data.setTile(3, 1, maTile1);
+	myAutomaton.computeHeuristic();
+	myAutomaton.printMatrice(myAutomaton.heuristic);
+	//System.out.println(myAutomaton);
+	System.out.println("\n\t(2)===============================================\n");
+
+	data.setTile(3, 2, maTile2);
+	myAutomaton.computeHeuristic();
+	myAutomaton.printMatrice(myAutomaton.heuristic);
+	//System.out.println(myAutomaton);
+	System.out.println("\n\t(3)===============================================\n");
+
+	data.setTile(3,3, maTile3);
+	myAutomaton.computeHeuristic();
+	myAutomaton.printMatrice(myAutomaton.heuristic);
+	//System.out.println(myAutomaton);
+	System.out.println("\n\t(4)===============================================\n");
+
+	data.setTile(3,4, maTile4);
+	myAutomaton.computeHeuristic();
+	myAutomaton.printMatrice(myAutomaton.heuristic);
+	//System.out.println(myAutomaton);
+	System.out.println("\n\t(5)===============================================\n");
+
+	data.setTile(3,5, maTile3);
+	myAutomaton.computeHeuristic();
+	myAutomaton.printMatrice(myAutomaton.heuristic);
+	//System.out.println(myAutomaton);
 	
+	System.out.println("\n\t(6)===============================================\n");/**/
+	this.frame.setGameData(data);
 	}
 
 	// --------------------------------------------
