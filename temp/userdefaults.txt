@@ -1,9 +1,7 @@
 #
-#Tue Jun 09 09:15:12 CEST 2015
+#Tue Jun 09 08:39:16 CEST 2015
 Language=en
-PlayerName=wsdfg
->>>>>>>=branch 'master' of https\://github.com/juliesouchet/StreetCar
+PlayerName=cheater
 UseFullScreen=false
-<<<<<<<=HEAD
 =\=\=\=\=\=\=
 GameName=jeux

@@ -221,7 +221,7 @@ public class DecisionTable {
 		String playerName = currentConfiguration.getPlayerTurn(), newPlayerName;
 		int aFreeSlot = 0;
 		int numberOfPossibleActionsInTemporaryConfiguration;
-		Data copyDeConfigurationCourante = currentConfiguration.getClone(null); //FIXME a enlever ça sera fait par le rollback
+		Data copyDeConfigurationCourante = currentConfiguration.getClone(null); //TODO a enlever ça sera fait par le rollback
 		DecisionNode currentNode = this.getDecisionNode(index);
 		CoupleActionIndex currentCoupleActionIndex = null;
 		Action currentAction;
@@ -240,7 +240,7 @@ public class DecisionTable {
 
 		// Cas d'une recurrence	
 		} else if(wantedDepth>0){
-				TraceDebugAutomate.debugDecisionTableTrace("Début noeud interne : " + playerName + "\tActions possibles : " + numberOfpossibleActions + "\t Profondeur restante : " + wantedDepth);
+				TraceDebugAutomate.debugDecisionTableTrace("Début noeud interne :	" + playerName + "\tActions possibles : " + numberOfpossibleActions + "\t Profondeur restante : " + wantedDepth);
 				for (int i=0;i< numberOfpossibleActions; i++){
 					//TraceDebugAutomate.debugDecisionTableTrace("\t\t"+playerName + " has already played : " + currentConfiguration.hasDoneRoundFirstAction(playerName)+"\n");
 					//TraceDebugAutomate.debugDecisionTableTrace("\t\t"+playerName + " can play again : " + currentConfiguration.hasRemainingAction(playerName)+"\n");
@@ -281,7 +281,7 @@ public class DecisionTable {
 				}else{
 					currentNode.setNodeQualityToWorstChoice(); // noeud min
 				}
-				TraceDebugAutomate.debugDecisionTableTrace("Fin noeud interne : " + playerName + "\tQualité : " + currentNode.getQuality());
+				TraceDebugAutomate.debugDecisionTableTrace("Fin noeud interne :	" + playerName + "\tQualité : " + currentNode.getQuality());
 
 		}
 	}
