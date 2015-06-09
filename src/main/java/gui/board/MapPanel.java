@@ -199,7 +199,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		String name = null;
 		try { name = player.getPlayerName(); } 
 		catch (RemoteException e1) { }
-
+		if(!data.hasRemainingAction(name)) return;
+		
 		Point p = this.cellPositionForLocation(e.getPoint());
 		if(data.hasStartedMaidenTravel(name))
 		{
@@ -219,9 +220,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	public void mouseDragged(MouseEvent e) 
 	{
 		if(chosenPath.isEmpty()) return;
-		Point p = cellPositionForLocation(e.getPoint());
-		if(p == null) return;
-		if(chosenPath.size() > 1 && p.equals(chosenPath.get(chosenPath.size() - 2)))
+		Point next = cellPositionForLocation(e.getPoint());
+		if(next == null) return;
+		if(chosenPath.size() > 1 && next.equals(chosenPath.get(chosenPath.size() - 2)))
 		{
 			chosenPath.removeLast();
 			repaint();
@@ -235,24 +236,17 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			catch (RemoteException e1) { }
 			
 			if(chosenPath.size() > data.getMaximumSpeed()) return;
-			if(p.equals(chosenPath.getLast())) return;
-			if(!(Util.manhathanDistance(p, chosenPath.getLast()) == 1)) return;
-			chosenPath.add(p);
-
-			// TODO
-//			public boolean checkPath(Point previousPoint, LinkedList<Point> path)
-//			{
-//				Point p0 = previousPoint;
-//				Point p1 = path.removeFirst();
-//				for (Point p2 : path)
-//				{
-//					if (!this.pathExistsBetween(p0, p1, p2))		return false;
-//					if (Util.manhathanDistance(p1, p2) != 1)		return false;
-//					p0 = p1;
-//					p1 = p2;
-//				}
-//				return true;
-//			}
+			if(next.equals(chosenPath.getLast())) return;
+			if(!(Util.manhathanDistance(next, chosenPath.getLast()) == 1)) return;
+			if(chosenPath.size() > 1 && data.getTile(chosenPath.getLast()).isStop()) return;
+			
+			Point current = chosenPath.getLast();
+			Point previous;
+			if(chosenPath.size() == 1) previous = data.getPreviousTramPosition(name);
+			else previous = chosenPath.get(chosenPath.size() - 2);
+			if(!data.pathExistsBetween(previous, current, next)) return;
+				
+			chosenPath.add(next);
 			repaint();
 		}
 	}
