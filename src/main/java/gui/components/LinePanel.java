@@ -5,8 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import main.java.gui.util.Resources;
+
 @SuppressWarnings("serial")
-public class LinePanel extends Panel{
+public class LinePanel extends Panel {
 
 	BufferedImage bufferedImage;
 
@@ -26,6 +28,14 @@ public class LinePanel extends Panel{
 	public void setBufferedImage(BufferedImage bufferedImage) {
 		this.bufferedImage = bufferedImage;
 		this.repaint();
+	}
+	
+	public void setLineNumber(int lineNumber) {
+		BufferedImage image = Resources.imageNamed("line" + lineNumber);
+		if (image == null) {
+			image = Resources.imageNamed("line_hidden");
+		}
+		this.setBufferedImage(image);
 	}
 
 	protected void paintComponent(Graphics g) {

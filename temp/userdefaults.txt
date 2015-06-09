@@ -1,7 +1,7 @@
 #
-#Tue Jun 09 17:11:40 CEST 2015
+#Tue Jun 09 18:14:15 CEST 2015
 Language=en
-PlayerName=yopla
+PlayerName=bazinga
 UseFullScreen=false
-GameName=jeux
 =\=\=\=\=\=\=
+GameName=jeux

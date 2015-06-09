@@ -43,13 +43,14 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	protected Engine					engine;
 	protected EngineChat				engineChat;
 	protected HashMap<String, Thread>	aiList;
+	protected Boolean					gameLock = false;
 
 // --------------------------------------------
 // Builder:
 // --------------------------------------------
 // TODO to remove after test
 public String	getTestHostName()	{return this.data.getHost();}
-public Data		getTestData()		{return this.data;}
+//public Data		getTestData()		{return this.data;}
 	/**=======================================================================
 	 * @return Creates a local application that can be called as a local object
 	 * @throws RemoteException			: network trouble	(caught by the IHM)
@@ -116,6 +117,15 @@ public Data		getTestData()		{return this.data;}
 // --------------------------------------------
 	public void run()
 	{
+		while(this.gameLock == false)
+		{
+			synchronized(this.gameLock)
+			{
+				try					{this.gameLock.wait();}
+				catch (Exception e)	{e.printStackTrace();}
+			}
+	System.out.println("test: " + this.gameLock);
+		}
 	}
 
 // --------------------------------------------
@@ -148,11 +158,7 @@ public Data		getTestData()		{return this.data;}
 		if (!this.data.getHost().equals(playerName))	throw new ExceptionForbiddenAction();
 		if (playerToChangeIndex == 0)					throw new ExceptionForbiddenHostModification();
 
-		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))
-		{
-System.out.println("Game.setLoginInfo: no change to do");
-			return;
-		}
+		if (this.loggedPlayerTable[playerToChangeIndex].equals(newPlayerInfo))	return;
 
 		String	oldPlayerName		= this.loggedPlayerTable[playerToChangeIndex].getPlayerName();
 		boolean	oldPlayerIsOccupied	= this.loggedPlayerTable[playerToChangeIndex].isOccupiedCell();
@@ -231,15 +237,25 @@ System.out.println("Game.setLoginInfo: no change to do");
 		if (playerIndex == -1)						throw new ExceptionForbiddenAction();
 
 		this.loggedPlayerTable[playerIndex] = LoginInfo.getInitialLoggedPlayerTableCell(playerIndex);
-		this.engine.addAction(data, "excludePlayer", data.getRemotePlayer(playerName));
-		this.engine.onQuitGame(this.data, playerName);
+		this.engine.addAction(data, "onQuitGame", playerName, data.getRemotePlayer(playerName));
+//		this.engine.onQuitGame(this.data, playerName);
 		System.out.println("\n===========================================================");
 		System.out.println(gameMessageHeader + "quitGame");
 		System.out.println(gameMessageHeader + "logout result : player logged out");
 		System.out.println(gameMessageHeader + "playerName    : " + playerName);
 		System.out.println("===========================================================\n");
 
-		if (gameHasStarted || isHost)	System.exit(0);
+System.out.println("OnQuit");
+		if (gameHasStarted || isHost)
+		{
+//System.exit(0);
+			this.gameLock = true;
+			synchronized(this.gameLock)
+			{
+				try					{this.gameLock.notifyAll();}
+				catch(Exception e)	{e.printStackTrace(); return;}
+			}
+		}
 	}
 
 	/**==============================================
@@ -311,8 +327,8 @@ System.out.println("Game.setLoginInfo: no change to do");
 	public void rollBack(String playerName) throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach
 	{
 // TODO a decommenter apres les test
-//		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
-//		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
+		if (!data.getPlayerTurn().equals(playerName))							throw new ExceptionNotYourTurn();
+		if (!data.hasDoneRoundFirstAction(playerName))							throw new ExceptionNoPreviousGameToReach();
 
 		this.data.rollBack();
 		this.engine.addAction(data, "notifyAllPlayers");
