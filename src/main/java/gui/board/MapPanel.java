@@ -112,7 +112,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 				Tile tile = board[i][j];
 				if ((i == 0 || j == 0 || i == data.getWidth()-1 || j == data.getHeight()-1) &&
 					!tile.isTerminus()) {
-					//g2d.setColor(new Color(98, 179, 203));
 					g2d.setColor(new Color(255, 255, 255));
 					g2d.fillRect(x, y, cellWidth, cellWidth);
 				} else {
@@ -162,17 +161,19 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		if(playerToHighlight != null)
 		{
 			Action lastAction = data.getPlayerLastAcion(playerToHighlight);
+			System.out.println("FIRST TILE " + lastAction.positionTile1);
+			System.out.println("SECOND TILE " + lastAction.positionTile2);
 			if(lastAction != null)
 			{
-				if(lastAction.tile1 != null)
+				if(data.isWithinnBoard(lastAction.positionTile1.x, lastAction.positionTile1.y))
 				{
-					highlight(lastAction.positionTile1, data.getPlayerColor(playerName), g2d);
+					highlight(lastAction.positionTile1, data.getPlayerColor(playerToHighlight), g2d);
 				}
-				if(lastAction.tile2 != null)
+				if(data.isWithinnBoard(lastAction.positionTile2.x, lastAction.positionTile2.y))
 				{
-					highlight(lastAction.positionTile2, data.getPlayerColor(playerName), g2d);
+					highlight(lastAction.positionTile2, data.getPlayerColor(playerToHighlight), g2d);
 				}
-				if(lastAction.tramwayMovement.length > 0)
+				if(lastAction.tramwayMovementSize > 0)
 				{
 					for(Point point : lastAction.tramwayMovement)
 					{

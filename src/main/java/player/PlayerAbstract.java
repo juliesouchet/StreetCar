@@ -215,7 +215,7 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Echange 
 		game.replaceTwoTiles(playerName, t1, t2, p1, p2);
 	}
 
-	public synchronized void stopMaidenTravel (String playerName, Point terminus) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
+	public synchronized void stopMaidenTravel (String playerName) throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction
 	{
 		game.stopMaidenTravel(playerName);
 	}

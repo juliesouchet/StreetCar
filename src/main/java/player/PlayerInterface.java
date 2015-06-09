@@ -59,7 +59,7 @@ public interface PlayerInterface extends Remote
 	public void		validate			()											throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction;
 	public void		rollBack			()											throws RemoteException, ExceptionForbiddenAction, ExceptionNotYourTurn, ExceptionNoPreviousGameToReach;
 	public void		moveTram			(Point[] tramPath, int tramPathSize, Point startTerminus) throws RemoteException, ExceptionNotYourTurn, ExceptionForbiddenAction, ExceptionGameHasNotStarted, ExceptionMissingStartTerminus, ExceptionWrongPlayerTerminus, ExceptionWrongTramwayPath, ExceptionWrongTramwaySpeed, ExceptionTramwayExceededArrival, ExceptionWrongTramwayStart, ExceptionWrongTramwayStartTerminus, ExceptionTramwayJumpCell, ExceptionTrtamwayDoesNotStop;
-	public void		stopMaidenTravel	(String playerName, Point terminus)			throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, RemoteException;
+	public void		stopMaidenTravel	(String playerName)							throws ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionForbiddenAction, RemoteException;
 	public void		drawTile			(int nbrCards)								throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInDeck;
 	public void		pickTileFromPlayer	(String chosenPlayer, Tile tile)			throws RemoteException, ExceptionGameHasNotStarted, ExceptionNotYourTurn, ExceptionTwoManyTilesToDraw, ExceptionForbiddenAction, ExceptionNotEnoughTilesInHand;
 
