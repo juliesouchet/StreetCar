@@ -118,10 +118,6 @@ public class BottomPlayerCardsPanel extends Panel{
 			Tile tile = data.getHandTile(playerName, i);
 			TilePanel tilePanel = this.tilePanels.get(i);
 			tilePanel.setTile(tile);
-			if(data.hasStartedMaidenTravel(playerName))
-			{
-				tilePanel.setEditable(false);
-			}
 		}
 		for (int i=data.getHandSize(playerName); i<5; i++) {
 			TilePanel tilePanel = this.tilePanels.get(i);
@@ -139,10 +135,5 @@ public class BottomPlayerCardsPanel extends Panel{
 		}
 		// TODO remove below
 		System.out.println("allowed speed : " + data.getMaximumSpeed());
-	}
-
-	public void grayOut() {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -32,7 +32,9 @@ public class BottomPlayerPanel extends Panel {
 	Label canBeginText;
 
 	Button validateButton;
+	Button showMyTripButton;
 	Button resetButton;
+	Button stopShowingMyTripButton;
 	Button resetMyTripButton;
 	
 	// Constructors
@@ -62,23 +64,28 @@ public class BottomPlayerPanel extends Panel {
 
 		validateButton = new Button("Valider", null);
 		resetButton = new Button("Annuler le dernier coup", null);
+		showMyTripButton = new Button("Montrer mon chemin", null);
+		stopShowingMyTripButton = new Button("Arrêter de montrer mon chemin", null);
 		resetMyTripButton = new Button("Recommencer mon chemin", null);
 		
 		validateButton.setEnabled(false);
 		resetButton.setEnabled(false);
-		resetMyTripButton.setEnabled(false);
 		
 		validateButton.addAction(this, "validateAction");
 		resetButton.addAction(this, "resetAction");
+		showMyTripButton.addAction(this, "showMyTripAction");
+		stopShowingMyTripButton.addAction(this, "stopShowingMyTripAction");
 		resetMyTripButton.addAction(this, "resetMyTripAction");
 		
 		validateButton.setBounds(0, 55, 280, 35);
 		resetButton.setBounds(0, 95, 280, 35);
+		showMyTripButton.setBounds(0, 15, 280, 35);
+		stopShowingMyTripButton.setBounds(0, 15, 280, 35);
 		resetMyTripButton.setBounds(0, 15, 280, 35);
 		
 		buttonsPanel.add(validateButton);
 		buttonsPanel.add(resetButton);
-		buttonsPanel.add(resetMyTripButton);
+		buttonsPanel.add(showMyTripButton);
 
 		/*canBeginText = new Label("");
 		canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
@@ -141,14 +148,32 @@ public class BottomPlayerPanel extends Panel {
 		}
 	}
 	
-	public void resetMyTripAction() {
-		try {
-			StreetCar.player.stopMaidenTravel(playerName);
-		} catch (RemoteException | ExceptionGameHasNotStarted
-				| ExceptionNotYourTurn | ExceptionForbiddenAction e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void showMyTripAction() {
+		// TODO passe en mode montrer mon chemin
+		showMyTripButton.setVisible(false);
+		buttonsPanel.add(stopShowingMyTripButton);
+		stopShowingMyTripButton.setVisible(true);
+	}
+	
+	public void stopShowingMyTripAction() {
+		// TODO passe en mode ne plus montrer mon chemin
+		stopShowingMyTripButton.setVisible(false);		
+		buttonsPanel.add(showMyTripButton);
+		showMyTripButton.setVisible(true);
+	}
+	
+	public void checkInTripButton(Data data) {
+		if (data.hasStartedMaidenTravel(playerName)) {
+			System.out.println("ON EST EN MAIDEN TRAVEL");
+			stopShowingMyTripButton.setVisible(false);
+			showMyTripButton.setVisible(false);
+			buttonsPanel.add(resetMyTripButton);
+			resetMyTripButton.setVisible(true);
 		}
+	}
+	
+	public void resetMyTripAction() {
+		// TODO recommencer le maiden travel
 	}
 	
 	/*protected void checkIfCanBeginTrip() {
@@ -177,8 +202,8 @@ public class BottomPlayerPanel extends Panel {
 	}
 	
 	protected void checkResetButton(Data data) {
-		if  (data.getPlayerTurn().equals(playerName) && data.hasStartedMaidenTravel(playerName)) {
-			resetMyTripButton.setEnabled(true);
+		if  (data.getPlayerTurn().equals(playerName)) {
+			resetButton.setEnabled(!data.isStartOfTurn(playerName));
 		}
 	}
 	
@@ -197,6 +222,7 @@ public class BottomPlayerPanel extends Panel {
 			if (refreshCount > 1) {
 				checkValidateButton(data);
 				checkResetButton(data);
+				checkInTripButton(data);
 				cardsPanel.refreshGame(player, data);
 			}
 			if (data.isPlayerTurn(playerName)) {				
@@ -205,10 +231,6 @@ public class BottomPlayerPanel extends Panel {
 			} else {
 				cardsPanel.setBackground(new Color(0xFFEDDE));
 				buttonsPanel.setBackground(new Color(0xFFEDDE));
-			}
-			if(data.hasStartedMaidenTravel(playerName))
-			{
-				cardsPanel.grayOut();
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();

@@ -18,7 +18,6 @@ import main.java.gui.components.LinePanel;
 import main.java.gui.components.Panel;
 import main.java.player.PlayerIHM;
 
-
 public class PlayerPanel extends Panel implements MouseListener{
 
 	private static final long serialVersionUID = 1L;
@@ -45,8 +44,6 @@ public class PlayerPanel extends Panel implements MouseListener{
 		placePlayerName();
 		placePlayerCards();
 		placePlayerStations();
-		//this.addMouseMotionListener(this);
-		addMouseListener(this);
 	}
 	
 	protected void placePlayerAvatar() {
@@ -146,12 +143,15 @@ public class PlayerPanel extends Panel implements MouseListener{
 	public void mouseClicked(MouseEvent e) { }
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent e) 
+	{ 	
+		System.out.println("ENTEEEEEEEEEERED");
 		map.highlightPreviousAction(nameOfPlayer);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		System.out.println("EXITEEEEEEEEEEED");
 		map.unHighlightPreviousAction();
 	}
 
