@@ -533,10 +533,9 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 	}
 
 	/**=================================================
-	 *	Test if the calling tile can be replaced by the tile given as argument.
-	 * @return 
-	 * 	-1 if the current tile can not be replaced by addedTile.</br>
-	 * 	The number of additional path, is the current tile can be replaced by addedTile.</br>
+	 * @return Test if the calling tile can be replaced by the tile given as argument.</br>
+	 * 	@return -1 if the current tile can not be replaced by addedTile.</br>
+	 * 	@return The number of additional path, is the current tile can be replaced by addedTile.</br>
 	 * 	Those path are added in additionalPath.</br>
 	 * 	REMARK: /!\ This function does not check if t is suitable for the current tile neighbors</br>
 	 * @Param addedTile
@@ -547,7 +546,6 @@ public class Tile implements Serializable, CloneableInterface<Tile>
 		if (this.isTree)	 return -1;
 		if (this.isBuilding) return -1;
 		if (this.isTerminus) return -1;
-		if (this.isStop)	 return -1;
 
 		Path[]	localPath	= initPathTab();
 		Path[]	addedTilePath	= initPathTab();

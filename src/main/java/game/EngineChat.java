@@ -25,6 +25,7 @@ public class EngineChat implements Runnable
 // --------------------------------------------
 	public EngineChat()
 	{
+		this.actionList		= new LinkedList<EngineMessage>();
 		this.engineLock		= new Object();
 		this.engineThread	= new Thread(this);
 		this.engineThread	.start();

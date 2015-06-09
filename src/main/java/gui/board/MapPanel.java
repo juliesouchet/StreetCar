@@ -20,9 +20,14 @@ import main.java.game.ExceptionForbiddenAction;
 import main.java.game.ExceptionGameHasNotStarted;
 import main.java.game.ExceptionMissingStartTerminus;
 import main.java.game.ExceptionNotYourTurn;
+import main.java.game.ExceptionTramwayExceededArrival;
+import main.java.game.ExceptionTramwayJumpCell;
+import main.java.game.ExceptionTrtamwayDoesNotStop;
 import main.java.game.ExceptionWrongPlayerTerminus;
 import main.java.game.ExceptionWrongTramwayPath;
 import main.java.game.ExceptionWrongTramwaySpeed;
+import main.java.game.ExceptionWrongTramwayStart;
+import main.java.game.ExceptionWrongTramwayStartTerminus;
 import main.java.gui.application.StreetCar;
 import main.java.gui.components.Panel;
 import main.java.gui.util.Resources;
@@ -201,6 +206,21 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExceptionWrongTramwaySpeed e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionTramwayExceededArrival e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionWrongTramwayStart e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionWrongTramwayStartTerminus e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionTramwayJumpCell e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExceptionTrtamwayDoesNotStop e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
