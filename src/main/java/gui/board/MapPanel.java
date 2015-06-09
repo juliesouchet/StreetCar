@@ -113,7 +113,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 				Tile tile = board[i][j];
 				if ((i == 0 || j == 0 || i == data.getWidth()-1 || j == data.getHeight()-1) &&
 					!tile.isTerminus()) {
-					g2d.setColor(new Color(98, 179, 203));
+					//g2d.setColor(new Color(98, 179, 203));
+					g2d.setColor(new Color(255, 255, 255));
 					g2d.fillRect(x, y, cellWidth, cellWidth);
 				} else {
 					TileImage.drawTile(g2d, tile, x, y, this.cellWidth);
