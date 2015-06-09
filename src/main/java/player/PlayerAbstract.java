@@ -2,6 +2,8 @@ package main.java.player;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -54,10 +56,13 @@ public abstract class PlayerAbstract extends UnicastRemoteObject implements Play
 // ----------------------------------------------------------------------------
 	private static final long serialVersionUID = -8965945491565879485L;
 
+	public final static String			playerProtocol		= "rmi";
+
 	protected GameInterface	game;
 	protected InterfaceIHM	ihm;
 	protected String		playerName;
 	protected Data			data;
+
 
 // ----------------------------------------------------------------------------
 // Builder:
@@ -232,4 +237,15 @@ System.out.println("Round: " + data.getRound() + "\t " + playerName +": Echange 
 	{
 		if (this.ihm != null) this.ihm.refreshMessages(playerName, message);
 	}
+	
+// -----------------------------------------
+// Private methods
+// -----------------------------------------
+	public static String getRemotePlayerURL(String playerIP, int playerPort, String playerName) throws UnsupportedEncodingException
+	{
+		String encodedIP = URLEncoder.encode(playerIP, "UTF-8");
+		String encodedPlayerName = URLEncoder.encode(playerName, "UTF-8");
+		return playerProtocol + "://" + encodedIP + ":" + playerPort + "/" + encodedPlayerName;
+	}
+
 }

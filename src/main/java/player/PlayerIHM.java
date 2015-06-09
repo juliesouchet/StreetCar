@@ -1,5 +1,6 @@
 package main.java.player;
 
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -72,7 +73,30 @@ public class PlayerIHM extends PlayerAbstract
 	private PlayerIHM(boolean isHost, String playerName, GameInterface app, InterfaceIHM ihm) throws RemoteException, ExceptionFullParty, ExceptionUsedPlayerName, ExceptionUsedPlayerColor, ExceptionGameHasAlreadyStarted
 	{
 		super(playerName, app, ihm);
-		super.game.onJoinGame(this, true, isHost, -1);								// Log the player to the application
+		String playerIP = NetworkTools.myIPAddress();
+		int playerPort	= NetworkTools.firstFreePort();
+		try																				// Create the player's remote reference
+		{
+			String url = PlayerAbstract.getRemotePlayerURL(playerIP, playerPort, playerName);
+			java.rmi.registry.LocateRegistry.createRegistry(playerPort);
+			Naming.bind(url, this);
+		}
+		catch (Exception e) {e.printStackTrace(); throw new RemoteException();}
+		super.game.onJoinGame(playerName, playerIP, playerPort, true, isHost, -1);								// Log the player to the application
+	}
+	/**=======================================================================
+	 * @return Creates a remote player cloned to the real player at the given ip
+	 =========================================================================*/
+	public static PlayerInterface getRemotePlayer(String playerIP, int playerPort, String playerName) throws RemoteException
+	{
+////	System.setSecurityManager(new RMISecurityManager());
+		String url = null;
+		try
+		{
+			url = PlayerAbstract.getRemotePlayerURL(playerIP, playerPort, playerName);
+			return (PlayerInterface) Naming.lookup(url);
+		}
+		catch (Exception e) {System.out.println("URL = " + url);e.printStackTrace(); throw new RemoteException();}
 	}
 
 // --------------------------------------------

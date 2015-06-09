@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import main.java.data.Data;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
-import main.java.player.PlayerInterface;
 
 
 
@@ -16,7 +15,7 @@ import main.java.player.PlayerInterface;
 
 public interface GameInterface extends Remote
 {
-	public void		onJoinGame			(PlayerInterface player, boolean isHuman, boolean isHost, int iaLevel)	throws RemoteException, ExceptionUsedPlayerName, ExceptionGameHasAlreadyStarted;
+	public void		onJoinGame			(String playerName, String playerIP, int playerPort, boolean isHuman, boolean isHost, int iaLevel)	throws RemoteException, ExceptionUsedPlayerName, ExceptionGameHasAlreadyStarted;
 	public void		onQuitGame			(String playerName)										throws RemoteException, ExceptionForbiddenAction;
 
 	public Data		getData				(String playerName)										throws RemoteException;

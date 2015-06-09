@@ -16,6 +16,7 @@ import main.java.data.Hand;
 import main.java.data.LoginInfo;
 import main.java.data.Tile;
 import main.java.player.PlayerAI;
+import main.java.player.PlayerIHM;
 import main.java.player.PlayerInterface;
 import main.java.util.Copier;
 
@@ -206,10 +207,12 @@ public String	getTestHostName()	{return this.data.getHost();}
 	/**================================================
 	 * @return Makes a player join the game
 	 * ================================================*/
-	public synchronized void onJoinGame(PlayerInterface player, boolean isHuman, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionGameHasAlreadyStarted
+	public synchronized void onJoinGame(String playerName, String playerIP, int playerPort, boolean isHuman, boolean isHost, int iaLevel) throws RemoteException, ExceptionUsedPlayerName, ExceptionGameHasAlreadyStarted
 	{
-		String	playerName	= player.getPlayerName();
 		int		playerIndex = getFreeAndMatchingLoginInTableIndex(isHost, isHuman, iaLevel);
+		PlayerInterface player;
+		if (isHuman)	player = PlayerIHM.getRemotePlayer(playerIP, playerPort, playerName);
+		else			player = PlayerAI. getRemotePlayer(playerIP, playerPort, playerName);
 
 		if (this.data.getNbrPlayer() >= Data.maxNbrPlayer)	throw new ExceptionFullParty();
 		if (playerIndex == -1)								throw new ExceptionNoCorrespondingPlayerExpected();
@@ -448,6 +451,7 @@ public String	getTestHostName()	{return this.data.getHost();}
 	 =======================================================================*/
 	private void launchAIPlayer(LoginInfo newPlayerInfo)
 	{
+//TODO
 		PlayerAI	newPlayer	= null;
 		String		playerName	= AiDefaultName + newPlayerInfo.getAiLevel();
 		String		nameAdd		= "", str;

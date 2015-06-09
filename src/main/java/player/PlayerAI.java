@@ -1,5 +1,6 @@
 package main.java.player;
 
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 import main.java.automaton.Dumbest;
@@ -18,6 +19,7 @@ import main.java.game.ExceptionUsedPlayerColor;
 import main.java.game.ExceptionUsedPlayerName;
 import main.java.game.GameInterface;
 import main.java.rubbish.InterfaceIHM;
+import main.java.util.NetworkTools;
 
 
 
@@ -57,7 +59,29 @@ public class PlayerAI extends PlayerAbstract implements Runnable
 			case PlayerAutomaton.workerLvl:		this.automaton = new Worker(playerName);	break;
 			default	:throw new RuntimeException("Undefined AI difficulty : " + iaLevel);
 		}
-		super.game.onJoinGame(this, false, isHost, iaLevel);						// Log the player to the application
+		String playerIP = NetworkTools.myIPAddress();
+		int playerPort	= NetworkTools.firstFreePort();
+		try																				// Create the player's remote reference
+		{
+			String url = PlayerAbstract.getRemotePlayerURL(playerIP, playerPort, playerName);
+			java.rmi.registry.LocateRegistry.createRegistry(playerPort);
+			Naming.bind(url, this);
+		}
+		catch (Exception e) {e.printStackTrace(); throw new RemoteException();}
+		super.game.onJoinGame(playerName, playerIP, playerPort, false, isHost, iaLevel);						// Log the player to the application
+	}
+	/**=======================================================================
+	 * @return Creates a remote player cloned to the real player at the given ip
+	 =========================================================================*/
+	public static PlayerInterface getRemotePlayer(String playerIP, int playerPort, String playerName) throws RemoteException
+	{
+////	System.setSecurityManager(new RMISecurityManager());
+		try
+		{
+			String url = PlayerAbstract.getRemotePlayerURL(playerIP, playerPort, playerName);
+			return (PlayerInterface) Naming.lookup(url);
+		}
+		catch (Exception e) {e.printStackTrace(); throw new RemoteException();}
 	}
 
 // --------------------------------------------
