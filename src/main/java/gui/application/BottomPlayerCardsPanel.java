@@ -187,6 +187,8 @@ public class BottomPlayerCardsPanel extends Panel{
 			refreshPlayerHandCards(playerName, data);
 		} catch (RemoteException e) {
 			e.printStackTrace();
-		}		
+		}
+		// TODO remove below
+		System.out.println("allowed speed : " + data.getMaximumSpeed());
 	}
 }
