@@ -25,8 +25,55 @@ public class PathFinderMulti implements Serializable
 	 * 		- Start from the given point</br>
 	 * Each path p is returned into the input parameter pathMatrix[p]
 	 ===========================================================*/
-	public int getAllFixedLengthPath(Data data, Point pSrc, int pathLength, Point[][] pathMatrix)
+	public int getAllFixedLengthPath(Data data, Point previousInitial, Point pSrc, int pathLength, Point[][] pathMatrix)
 	{
+//TODO grosse pu*** d'arnaque (desole)
+
+		
+		
+		PathFinder pf = new PathFinder();
+		LinkedList<Point> tmp;
+		Point np;
+		int res = 0;
+
+		if (pathLength <= 0) throw new RuntimeException("Size = " + pathLength);
+		if (pathLength == 1)
+		{
+			pathMatrix[0][0].x = pSrc.x;
+			pathMatrix[0][0].y = pSrc.y;
+			return 1;
+		}
+		for (int x=0; x<data.getWidth(); x++)
+		{
+			for (int y=0; y<data.getHeight(); y++)
+			{
+				np = new Point(x, y);
+				if(np.equals(pSrc)) continue;
+				tmp = pf.getPath(data, previousInitial, pSrc, np);
+				if (tmp == null)				continue;
+				if (tmp.size() != pathLength)	continue;
+				copyRes(pathMatrix[res], tmp);
+				res ++;
+			}
+		}
+		return res;
+	}
+	private void copyRes(Point[] points, LinkedList<Point> tmp)
+	{
+		for (int i=0; i<tmp.size(); i++)
+		{
+			points[i].x = tmp.get(i).x;
+			points[i].y = tmp.get(i).y;
+		}
+	}
+		/**========================================================
+		 * @return the number of different paths that:</br>
+		 * 		- Have the given length</br>
+		 * 		- Start from the given point</br>
+		 * Each path p is returned into the input parameter pathMatrix[p]
+		 ===========================================================*/
+/*		public int getAllFixedLengthPath(Data data, Point pSrc, int pathLength, Point[][] pathMatrix)
+		{
 		int			width		= data.getWidth();
 		int			height		= data.getHeight();
 		Integer[][]	weight		= new Integer[data.getWidth()][data.getHeight()];
@@ -69,33 +116,38 @@ System.out.println("Pathfinder: suivant = " + z);
 				}
 			}
 		}
-		return scanRes(previous, null, pathLength, pSrc, pathMatrix);
+		return scanRes(previous, weight, pathLength, pSrc, pathMatrix);
 	}
 	
 	
 	
 	
-	private int scanRes(Noeud[][] previous, int[][] weight,  int pathLength, Point pSrc, Point[][] pathMatrix)
+	private int scanRes(Noeud[][] previous, Integer[][] weight,  int pathLength, Point pSrc, Point[][] pathMatrix)
 	{
 		int res = 0;
-		Point tmp;
 		Noeud n;
-/*
+
 		for (int x=0; x<previous.length; x++)
 		{
 			for (int y=0; y<previous[0].length; y++)
 			{
-				tmp = previous[x][y];
-				if ((previous[x][y] == null) || (weight[x][y] != pathLength)) continue;
+				Noeud	prev	= previous[x][y];
+				Integer	wei		= weight[x][y];
+				if ((prev == null) || (wei == null) || (wei != pathLength)) continue;
 				n = previous[x][y];
-				for (int i=0; i<pathLength; i++) {n = previous[x][y];}
+				for (int i=0; i<pathLength; i++)
+				{
+					if (n == null) break;
+					n = previous[n.getElem().x][n.getElem().y];
+				}
+				if (n == null) continue;
 				if (!n.getElem().equals(pSrc)) throw new RuntimeException("?????");
 				res ++;
 			}
 		}
-*/		return res;
+		return res;
 	}
-
+*/
 // -----------------------------------------
 // Private classes
 // -----------------------------------------
