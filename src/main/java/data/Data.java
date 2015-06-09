@@ -423,11 +423,25 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	public void setTramPosition(String playerName, Point[] tramPath, int tramPathSize, Point startTerminus)
 	{
 		PlayerInfo pi = playerInfoList.get(playerName);
+		HistoryCell hc	= pi.getLastActionHistory();
+		Point tramP		= new Point(pi.tramPosition);
+		Point tramPP	= new Point(pi.previousTramPosition);
+
+		if (hc.action1 != null) throw new RuntimeException("You have already done an action");
 
 		if (!pi.hasStartedMaidenTravel()) pi.startMaidenTravel(startTerminus);
 
-		pi.previousTramPosition.x			= pi.tramPosition.x;
-		pi.previousTramPosition.y			= pi.tramPosition.y;
+		if		(tramPathSize == 0)	throw new RuntimeException("???");
+		else if (tramPathSize == 1)
+		{
+			if (!tramPath[0].equals(pi.tramPosition))	throw new RuntimeException("???");
+			else return;
+		}
+		else
+		{
+			pi.previousTramPosition.x			= tramPath[tramPathSize-2].x;
+			pi.previousTramPosition.y			= tramPath[tramPathSize-2].y;
+		}
 		pi.tramPosition.x					= tramPath[tramPathSize-1].x;
 		pi.tramPosition.y					= tramPath[tramPathSize-1].y;
 
@@ -437,10 +451,10 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
 		this.maxPlayerSpeed = tramPathSize;
 
-		Action		a	= Action.newMoveAction(tramPath, tramPathSize, startTerminus);
-		HistoryCell hc	= pi.getLastActionHistory();
-		if (hc.action1 == null) hc.action1 = a;
-		else throw new RuntimeException("You have already done an action");
+		Action a						= Action.newMoveAction(tramPath, tramPathSize, startTerminus);
+		hc.action1						= a;
+		hc.previousTramPosition			= tramP;
+		hc.previousPreviousTramPosition	= tramPP;
 	}
 
 // --------------------------------------------
@@ -582,6 +596,8 @@ System.out.println("SetTramPosition " + playerName + " from " + pi.previousTramP
 	public int					nbrBuildingInLine()								{return this.nbrBuildingInLine;}
 public LinkedList<Point>	getShortestPath(Point pOld, Point p, Point pNext){return this.pathFinder.getPath(this, pOld, p, pNext);}
 public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return getShortestPath(pOld, p, pNext) != null;}
+public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){return this.pathFinder.isSimplePath(this, pOld, p, pNext);}
+
 	public int					getNbrPlayer()									{return this.playerInfoList.size();}
 	public int					getMaximumSpeed()								{return this.maxPlayerSpeed;}
 	public int					getRound()										{return this.round;}
@@ -1124,15 +1140,17 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 	}
 	private void undoFirstTravelGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-		pi.tramPosition.x			= pi.previousTramPosition.x;
-		pi.tramPosition.y			= pi.previousTramPosition.y;
+		pi.tramPosition.x			= hc.previousTramPosition.x;
+		pi.tramPosition.y			= hc.previousTramPosition.y;
 		if (hc.action1.startTerminus != null) this.stopMaidenTravel(this.getPlayerTurn());
 		else
 		{
-			pi.previousTramPosition.x			= hc.previousTramPosition.x;
-			pi.previousTramPosition.y			= hc.previousTramPosition.y;
+			pi.previousTramPosition.x			= hc.previousPreviousTramPosition.x;
+			pi.previousTramPosition.y			= hc.previousPreviousTramPosition.y;
 			hc.previousTramPosition.x			= -1;
 			hc.previousTramPosition.y			= -1;
+			hc.previousPreviousTramPosition.x	= -1;
+			hc.previousPreviousTramPosition.y	= -1;
 		}
 	}
 
@@ -1368,7 +1386,7 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 			this.endTerminus[1]			= new Point(-1, -1);
 			this.tramPosition			= new Point(-1, -1);
 			this.previousTramPosition	= new Point(-1, -1);
-			
+
 			if(playerName.equals("cheater"))
 			{
 				line = 1;
@@ -1443,6 +1461,7 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 		public String	drawnFromPlayerHand1			= null;
 		public String	drawnFromPlayerHand2			= null;
 		public Point	previousTramPosition			= null;
+		public Point	previousPreviousTramPosition	= null;
 
 		// Builder
 		private HistoryCell(){}
@@ -1452,15 +1471,16 @@ public boolean				pathExistsBetween(Point pOld, Point p, Point pNext){return get
 		{
 			HistoryCell res = new HistoryCell();
 
-			if (this.action1				!= null)		{res.action1	= new Action();	res.action1		.copy(this.action1);}
-			if (this.action2				!= null)		{res.action2	= new Action();	res.action2		.copy(this.action2);}
-			if (this.oldTile1				!= null)		{res.oldTile1	= new Tile();	res.oldTile1	.copy(this.oldTile1);}
-			if (this.oldTile2				!= null)		{res.oldTile2	= new Tile();	res.oldTile2	.copy(this.oldTile2);}
-			if (this.drawnTile1				!= null)		{res.drawnTile1	= new Tile();	res.drawnTile1	.copy(this.drawnTile1);}
-			if (this.drawnTile2				!= null)		{res.drawnTile2	= new Tile();	res.drawnTile2	.copy(this.drawnTile2);}
-			if (this.drawnFromPlayerHand1	!= null)		{res.drawnFromPlayerHand1	= new String(this.drawnFromPlayerHand1);}
-			if (this.drawnFromPlayerHand2	!= null)		{res.drawnFromPlayerHand2	= new String(this.drawnFromPlayerHand2);}
-			if (this.previousTramPosition	!= null)		{res.previousTramPosition	= new Point(this.previousTramPosition);}
+			if (this.action1						!= null)		{res.action1	= new Action();	res.action1		.copy(this.action1);}
+			if (this.action2						!= null)		{res.action2	= new Action();	res.action2		.copy(this.action2);}
+			if (this.oldTile1						!= null)		{res.oldTile1	= new Tile();	res.oldTile1	.copy(this.oldTile1);}
+			if (this.oldTile2						!= null)		{res.oldTile2	= new Tile();	res.oldTile2	.copy(this.oldTile2);}
+			if (this.drawnTile1						!= null)		{res.drawnTile1	= new Tile();	res.drawnTile1	.copy(this.drawnTile1);}
+			if (this.drawnTile2						!= null)		{res.drawnTile2	= new Tile();	res.drawnTile2	.copy(this.drawnTile2);}
+			if (this.drawnFromPlayerHand1			!= null)		{res.drawnFromPlayerHand1			= new String(this.drawnFromPlayerHand1);}
+			if (this.drawnFromPlayerHand2			!= null)		{res.drawnFromPlayerHand2			= new String(this.drawnFromPlayerHand2);}
+			if (this.previousTramPosition			!= null)		{res.previousTramPosition			= new Point(this.previousTramPosition);}
+			if (this.previousPreviousTramPosition	!= null)		{res.previousPreviousTramPosition	= new Point(this.previousPreviousTramPosition);}
 			return res;
 		}
 		public boolean isEmpty()		{return (this.action1 == null);}

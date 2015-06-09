@@ -1,9 +1,8 @@
 #
-UseFullScreen=false
-<<<<<<<=HEAD
-=\=\=\=\=\=\=
-#Tue Jun 09 11:12:51 CEST 2015
+#Tue Jun 09 12:44:27 CEST 2015
 Language=en
-PlayerName=julie
+PlayerName=cheater
 UseFullScreen=false
 GameName=jeux
+=\=\=\=\=\=\=
+<<<<<<<=HEAD
