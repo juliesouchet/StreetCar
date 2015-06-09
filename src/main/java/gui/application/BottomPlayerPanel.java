@@ -183,18 +183,17 @@ public class BottomPlayerPanel extends Panel {
 	
 	public void refreshGame(PlayerIHM player, Data data) {
 		this.refreshCount ++;
-		if (refreshCount <= 1) {
-			return;
-		}
-		
 		this.player = player;
 		player = StreetCar.player;
 		try {
 			playerName = player.getPlayerName();
 			canBeginTrip = data.isTrackCompleted(playerName);
-			checkIfCanBeginTrip();
-			checkValidateButton(data);
-			checkResetButton(data);
+			if (refreshCount > 1) {
+				checkIfCanBeginTrip();
+				checkValidateButton(data);
+				checkResetButton(data);
+				cardsPanel.refreshGame(player, data);
+			}
 			if (data.isPlayerTurn(playerName)) {				
 				cardsPanel.setBackground(new Color(0xC9ECEE));
 				buttonsPanel.setBackground(new Color(0xC9ECEE));
@@ -202,9 +201,6 @@ public class BottomPlayerPanel extends Panel {
 				cardsPanel.setBackground(new Color(0xFFEDDE));
 				buttonsPanel.setBackground(new Color(0xFFEDDE));
 			}
-			cardsPanel.repaint();
-			buttonsPanel.repaint();
-			cardsPanel.refreshGame(player, data);
 
 			//beginTripButton.setEnabled(data.isTrackCompleted(playerName));
 		} catch (RemoteException e) {
