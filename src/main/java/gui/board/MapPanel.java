@@ -49,16 +49,10 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private int mapWidth;
 	private int cellWidth;
 
-	private Point trainPosition = new Point(3, 4);
-	private LinkedList<Point> tramMove = new LinkedList<Point>();
-
 	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
 
 	private LinkedList<Point> chosenPath = new LinkedList<Point>();
-
-	// these are for the showPath thingie
-	boolean playerIsShowingPath = false;
-	boolean playerIsMovingTramForTheFirstTime = false;
+	private Point previousTramPosition;
 
 	// Constructors
 
@@ -133,10 +127,8 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			y += this.cellWidth;
 		}
 
-		Color playerColor = null;
 		String playerName = null;
 		try {
-			playerColor = StreetCar.player.getPlayerColor();
 			playerName = StreetCar.player.getPlayerName();
 		} catch (RemoteException e1) { }
 
@@ -185,7 +177,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			int tramX = this.originX + this.cellWidth * currentTramPosition.x;
 			int tramY = this.originY + this.cellWidth * currentTramPosition.y;
 			g2d.drawImage(trainBufferedImage, tramX+5, tramY+5, cellWidth-5, cellWidth-10, null);
-			//Point previousTramPosition = data.getPreviousTramPosition(name);
 		}
 
 		for (Point p : highlights.keySet()) {
