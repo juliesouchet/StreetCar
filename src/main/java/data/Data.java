@@ -280,7 +280,6 @@ System.out.println("doAction: " + action);
 		this.remainingColors			.add(pi.color);
 		this.remainingBuildingInLine	.add(pi.remainingBuildingInLineSave);
 		this.playerInfoList.remove(playerName);
-		if (playerName.equals(this.host))	this.host = null;
 	}
 	/**================================================
 	 * @return Start the game: </br>
@@ -1109,10 +1108,10 @@ System.out.println("\n");
 			for (int i=1; i<tramPathSize; i++)
 			{
 				p2 = tramPath[i];
-				if (winner != -1)										throw new ExceptionTramwayExceededArrival();
-				if (stop	!= -1)										throw new ExceptionTrtamwayDoesNotStop();
-				if (!this.pathFinder.isSimplePath(this, p0, p1, p2))	throw new ExceptionWrongTramwayPath();
-				if (Util.manhathanDistance(p1, p2) != 1)				throw new ExceptionTramwayJumpCell();
+				if (winner != -1)								throw new ExceptionTramwayExceededArrival();
+				if (stop	!= -1)								throw new ExceptionTrtamwayDoesNotStop();
+				if (!this.pathExistsBetween(p0, p1, p2))		throw new ExceptionWrongTramwayPath();
+				if (Util.manhathanDistance(p1, p2) != 1)		throw new ExceptionTramwayJumpCell();
 				if (p2.equals(endTerminus[0]))		winner = i;
 				if (p2.equals(endTerminus[1]))		winner = i;
 				if (this.getTile(p2).isStop())		stop = i;

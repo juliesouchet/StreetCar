@@ -38,7 +38,7 @@ public class Game extends UnicastRemoteObject implements GameInterface, Runnable
 	public final static String			applicationProtocol		= "rmi";
 	public final static String			AiDefaultName			= "AI Level ";
 
-	protected static String				url						= null;
+	protected String					url						= null;
 	protected Data						data;
 	protected LoginInfo[]				loggedPlayerTable;
 	protected Engine					engine;
@@ -65,11 +65,10 @@ public String	getTestHostName()	{return this.data.getHost();}
 		try																				// Create the player's remote reference
 		{
 			String url = getRemoteURL(appIP, gameName);
-			if (Game.url == null)
+			if ((this.url == null) || (!url.equals(this.url)))
 			{
 				java.rmi.registry.LocateRegistry.createRegistry(applicationPort);
 				Naming.bind(url, this);
-				Game.url = url;
 			}
 		}
 		catch (Exception e) {e.printStackTrace(); throw new RemoteException();}
@@ -319,8 +318,7 @@ public String	getTestHostName()	{return this.data.getHost();}
 		{
 			if(data.getHandSize(playerName) < Hand.maxHandSize &&
 			   data.getNbrRemainingDeckTile() > 0)					throw new ExceptionForbiddenAction();
-			if((data.hasRemainingAction(playerName)) &&
-			   (!data.isGameBlocked(playerName)))					throw new ExceptionForbiddenAction();
+			if(data.hasRemainingAction(playerName))					throw new ExceptionForbiddenAction();
 		}
 
 		this.engine.addAction(this.data, "validate", playerName);
