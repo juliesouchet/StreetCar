@@ -456,7 +456,7 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 		pi.tramPosition.x					= tramPath[tramPathSize-1].x;
 		pi.tramPosition.y					= tramPath[tramPathSize-1].y;
 
-System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
+//System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previousTramPosition + " to " + pi.tramPosition + " (data.setTramPosition)");
 
 		if (pi.tramPosition.equals(pi.endTerminus[0]))	this.winner = playerName;
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
@@ -467,18 +467,18 @@ System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previous
 		hc.action1						= a;
 		hc.previousTramPosition			= tramP;
 		hc.previousPreviousTramPosition	= tramPP;
-
-/****
-int ps = 1;
-int nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, pi.tramPosition, ps, this.pathMatrix);
+//TODO a enlever
+int ps = this.maxPlayerSpeed;
+int nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, pi.previousTramPosition, pi.tramPosition, ps, this.pathMatrix);
 System.out.println("*******");
 System.out.println("Nbr path: " + nbrPath);
+System.out.println("from: " + pi.tramPosition);
+System.out.println("length: " + ps);
 for (int i=0; i<nbrPath; i++)
 {
 	System.out.println("Path: " + i);
 	for (int j=0; j<ps; j++) System.out.println("\t- " + this.pathMatrix[i][j]);
 }
-***/
 	}
 
 // --------------------------------------------
@@ -973,24 +973,24 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 		}
 
 		int res = 0, nbrRotation1, nbrRotation2, nbrPath;
-		Point lastTramPosition		= pi.previousTramPosition;
-		Point currentTramPosition	= pi.tramPosition;
-		Point startTerminus			= pi.terminus[0];
 		boolean hashStartedTravel	= this.hasStartedMaidenTravel(playerName);
+		Point startTerminus			= pi.terminus[0];
 		Tile t, oldT1;
 
 		if ((this.hasStartedMaidenTravel(playerName)) || (this.isTrackCompleted(playerName)))							// Case: can move tramway
 		{
 			if (!hashStartedTravel)	{startTerminus = pi.terminus[0];this.startMaidenTravel(playerName, startTerminus);}	//		Case Can start maiden travel
 			else					startTerminus = null;
+			Point previousTramPosition	= pi.previousTramPosition;
+			Point currentTramPosition	= pi.tramPosition;
 			for (int l = 1; l<=this.maxPlayerSpeed; l++)
 			{
-				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, currentTramPosition, l, this.pathMatrix);
+				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, previousTramPosition, currentTramPosition, l, this.pathMatrix);
 				for (int i=0; i<nbrPath; i++)
 				{
 					try					{this.checkTramPath(playerName, this.pathMatrix[i], l, null);}
 					catch (Exception e)	{continue;}
-					if (this.pathMatrix[i][1].equals(lastTramPosition)) continue;// Tour
+					if (this.pathMatrix[i][1].equals(previousTramPosition)) continue;// TODO a enlever
 					if(writeActionsInTab)
 					{
 						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l);
@@ -1242,8 +1242,8 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 	}
 	private void undoFirstTravelGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
-System.out.println("pi.tramPosition        : " + pi.tramPosition);
-System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
+//System.out.println("pi.tramPosition        : " + pi.tramPosition);
+//System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 		pi.tramPosition.x			= hc.previousTramPosition.x;
 		pi.tramPosition.y			= hc.previousTramPosition.y;
 		if (hc.action1.startTerminus != null) this.stopMaidenTravel(this.getPlayerTurn());
@@ -1256,8 +1256,8 @@ System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 			hc.previousPreviousTramPosition.x	= -1;
 			hc.previousPreviousTramPosition.y	= -1;
 		}
-System.out.println("pi.tramPosition        : " + pi.tramPosition);
-System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
+//System.out.println("pi.tramPosition        : " + pi.tramPosition);
+//System.out.println("pi.previousTramPosition: " + pi.previousTramPosition);
 	}
 
 // --------------------------------------------
