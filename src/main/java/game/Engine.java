@@ -164,20 +164,25 @@ public class Engine implements Runnable
 		String playerName = this.toExecute.playerName;
 		PlayerInterface pi;
 		Data privateData;
+		LinkedList<String> nameList = new LinkedList<String>(data.getPlayerNameList());
 
 		if ((data.isGameStarted()) || (data.isHost(playerName)))
 		{
-			for (String name: data.getPlayerNameList()) data.getRemotePlayer(name).excludePlayer();
+			for (String name: nameList)
+			{
+				data.getRemotePlayer(name).excludePlayer();
+				data.removePlayer(name);
+			}
 			this.engineStop = true;
 		}
 		else
 		{
-			data.removePlayer(playerName);
 			for (String name: data.getPlayerNameList())
 			{
 				pi = data.getRemotePlayer(name);
 				if (!name.equals(playerName))	pi.gameHasChanged(data.getClone(name));
 			}
+			data.removePlayer(playerName);
 		}
 	}
 	@SuppressWarnings("unused")

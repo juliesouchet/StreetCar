@@ -1,7 +1,7 @@
 #
-#Tue Jun 09 20:27:01 CEST 2015
+#Tue Jun 09 21:51:24 CEST 2015
 Language=en
-PlayerName=bazinga
+PlayerName=cheater
 UseFullScreen=false
-GameName=jeux
 =\=\=\=\=\=\=
+GameName=jeux
