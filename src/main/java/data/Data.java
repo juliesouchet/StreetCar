@@ -1398,7 +1398,19 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 				terminus[1] = new Point(0, 7);
 				terminus[2] = new Point(13, 2);
 				terminus[3] = new Point(13, 3);
-			}
+			}/*
+			if(playerName.equals("AI Level 2")) //TODO à enlever
+			{
+				line = 1;
+				buildingInLine_name[0] = "L";
+				buildingInLine_name[1] = "H";
+				buildingInLine_position[0] = new Point(6, 4);
+				buildingInLine_position[1] = new Point(11, 4);
+				terminus[0] = new Point(0, 6);
+				terminus[1] = new Point(0, 7);
+				terminus[2] = new Point(13, 2);
+				terminus[3] = new Point(13, 3);
+			}*/
 		}
 
 		// Getter
