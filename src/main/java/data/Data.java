@@ -461,6 +461,7 @@ System.out.println("Data.SetTramPosition " + playerName + " from " + pi.previous
 		if (pi.tramPosition.equals(pi.endTerminus[0]))	this.winner = playerName;
 		if (pi.tramPosition.equals(pi.endTerminus[1]))	this.winner = playerName;
 		this.maxPlayerSpeed = tramPathSize;
+		if(this.maxPlayerSpeed >= maxSpeed) this.maxPlayerSpeed = maxSpeed;
 
 		Action a						= Action.newMoveAction(tramPath, tramPathSize, startTerminus);
 		hc.action1						= a;
