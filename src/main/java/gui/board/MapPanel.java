@@ -12,11 +12,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
-<<<<<<< HEAD
-import java.util.HashMap;
-=======
 import java.util.Arrays;
->>>>>>> 6429a9550099d8271593cd9aea85ea5b8ac5f29c
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import main.java.data.Data;
@@ -49,20 +46,17 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	private int originY;
 	private int mapWidth;
 	private int cellWidth;
-	<<<<<<< HEAD
 
 	private Point trainPosition = new Point(3, 4);
 	private LinkedList<Point> tramMove = new LinkedList<Point>();
 
 	HashMap<Point, BufferedImage> highlights = new HashMap<Point, BufferedImage>();
-	=======
 
 			private LinkedList<Point> chosenPath = new LinkedList<Point>();
 
 	// these are for the showPath thingie
 	boolean playerIsShowingPath = false;
 	boolean playerIsMovingTramForTheFirstTime = false;
-	>>>>>>> 6429a9550099d8271593cd9aea85ea5b8ac5f29c
 
 	// Constructors
 
