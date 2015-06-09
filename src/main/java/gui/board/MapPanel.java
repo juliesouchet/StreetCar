@@ -41,18 +41,18 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	// Properties
 
-    private int originX;
-    private int originY;
-    private int mapWidth;
-    private int cellWidth;
-    
-    private Point trainPosition = new Point(3, 4);
-    private LinkedList<Point> trainMove = new LinkedList<Point>();
-    
-    BufferedImage trainBufferedImage;
-    
-    // Constructors
-    
+	private int originX;
+	private int originY;
+	private int mapWidth;
+	private int cellWidth;
+
+	private Point trainPosition = new Point(3, 4);
+	private LinkedList<Point> trainMove = new LinkedList<Point>();
+
+	BufferedImage trainBufferedImage;
+
+	// Constructors
+
 	public MapPanel() {
 		this.setBackground(Color.WHITE);
 		this.addMouseListener(this);
@@ -60,26 +60,26 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		this.addComponentListener(this);
 
 		MapPanelDropTargetListener dropTarget = new MapPanelDropTargetListener(this);
-        this.setDropTarget(new DropTarget(this, dropTarget));
+		this.setDropTarget(new DropTarget(this, dropTarget));
 	}
-	
+
 	// Cells positions
-	
+
 	protected void updateMapGeometry() {
-        Data data = StreetCar.player.getGameData();
+		Data data = StreetCar.player.getGameData();
 		if (data == null) return;
 		int sideBarWidth = 50;
 		this.mapWidth = (int) (Math.min((0.96 * this.getWidth()) - sideBarWidth, 0.96 * this.getHeight()));
 		this.cellWidth = Math.round((float)this.mapWidth / (float)data.getWidth());
-	    this.originX = (int)Math.round((float)(this.getWidth() - this.mapWidth - sideBarWidth) / 2.0);
-	    this.originY = (int)Math.round((float)(this.getHeight() - this.mapWidth) / 2.0);
-	    
+		this.originX = (int)Math.round((float)(this.getWidth() - this.mapWidth - sideBarWidth) / 2.0);
+		this.originY = (int)Math.round((float)(this.getHeight() - this.mapWidth) / 2.0);
+
 		this.repaint();
 	}
-	
+
 	public Point cellPositionForLocation(Point location) {
 		if (location.x >= this.originX &&  location.x <= this.originX + this.mapWidth &&
-			location.y >= this.originY &&  location.y <= this.originY + this.mapWidth) {
+				location.y >= this.originY &&  location.y <= this.originY + this.mapWidth) {
 			Point cellPosition = new Point();
 			cellPosition.x = (int)((float)(location.x - this.originX) / this.cellWidth);
 			cellPosition.y = (int)((float)(location.y - this.originY) / this.cellWidth);
@@ -88,24 +88,24 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			return null;
 		}
 	}
-	
+
 	// Drawings
-	
+
 	protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        
-        Data data = StreetCar.player.getGameData();
-        if (data == null) {
-        	System.out.println("data is null");
-        	return;
-        }
-        
-        int x = this.originX;
-        int y = this.originY;
-        Graphics2D g2d = (Graphics2D)g;
-    	Tile[][] board = data.getBoard();
-    	
-    	// Grid
+		super.paintComponent(g);
+
+		Data data = StreetCar.player.getGameData();
+		if (data == null) {
+			System.out.println("data is null");
+			return;
+		}
+
+		int x = this.originX;
+		int y = this.originY;
+		Graphics2D g2d = (Graphics2D)g;
+		Tile[][] board = data.getBoard();
+
+		// Grid
 		for (int j=0; j < data.getHeight(); j++) {
 			for (int i=0; i < data.getWidth(); i++) {
 				Tile tile = board[i][j];
@@ -117,14 +117,14 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			x = this.originX;
 			y += this.cellWidth;
 		}
-		
+
 		Color playerColor = null;
 		String playerName = null;
 		try {
 			playerColor = StreetCar.player.getPlayerColor();
 			playerName = StreetCar.player.getPlayerName();
 		} catch (RemoteException e1) { }
-		
+
 		// Deck and its number of cards
 		g2d.setColor(Color.BLACK);
 		int deckX, deckY;
@@ -134,7 +134,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		g2d.drawImage(bufferedImage, deckX-10, deckY-cellWidth/2, 50, 50, null);
 		String NumberCardsInDeck = new String("" + data.getNbrRemainingDeckTile());
 		g2d.drawString(NumberCardsInDeck, deckX+4, deckY-cellWidth/2+30);
-		
+
 		// Train movement
 		for(Point p : trainMove)
 		{
@@ -156,14 +156,14 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			g2d.setColor(playerColor);
 			g2d.drawRect(x, y, cellWidth, cellWidth);
 		}
-		
+
 		if(StreetCar.player.getGameData().hasStartedMaidenTravel(playerName)) {
 			Point p = StreetCar.player.getGameData().getTramPosition(playerName);
 			x = this.originX + this.cellWidth * p.x;
 			y = this.originY + this.cellWidth * p.y;
 			g2d.setColor(playerColor);
 			g2d.drawRect(x, y, cellWidth, cellWidth);
-			
+
 			/*Point previousPosition = new Point();
 			previousPosition = data.getPreviousTramPosition(playerName);
 			System.out.println(previousPosition);*/
@@ -172,45 +172,49 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			if (trainMove.size() > 0) {
 				i = trainMove.size();
 				System.out.println("SIZE OF TRAINMOVE : " + i);
+
+				if (trainMove.get(i-1).x == trainMove.get(i-2).x-1 || trainMove.get(i-1).x == trainMove.get(i-2).x+1) {
+					// tram horizontal
+					System.out.println("JE RENTRE DANS HORIZONTAL");
+					AffineTransform at = new AffineTransform();
+					if (trainBufferedImage == null) System.out.println("NULL");
+					at.translate(trainBufferedImage.getWidth() / 2, trainBufferedImage.getHeight() / 2);
+					at.rotate(Math.toRadians(90));
+					at.translate(-trainBufferedImage.getWidth() / 2, -trainBufferedImage.getHeight() / 2);
+
+					AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);		
+
+					g2d.drawImage(op.filter(trainBufferedImage, null), x+5, y+5, cellWidth-5, cellWidth-5, null);
+
+				} else if (trainMove.get(i-1).y == trainMove.get(i-2).y-1 || trainMove.get(i-1).y == trainMove.get(i-2).y+1) {
+					// tram vertical
+					System.out.println("JE RENTRE DANS HORIZONTAL");
+					g2d.drawImage(trainBufferedImage, x+5, y+5, cellWidth-5, cellWidth-10, null);				
+				} else {
+					System.out.println("JE RENTRE DANS RIEN DU TOUT");				
+				}
+				
 			} else {
 				System.out.println("TRAINMOVE NULL");
 			}
-			
-			System.out.println(trainMove.get(i-1).x-1);
-			System.out.println(trainMove.get(i-1).x+1);
-			if (x == trainMove.get(i-1).x-1 || x == trainMove.get(i-1).x+1) {
-				// tram horizontal
-				
-				AffineTransform at = new AffineTransform();
-				at.translate(trainBufferedImage.getWidth() / 2, trainBufferedImage.getHeight() / 2);
-				at.rotate(Math.toRadians(90));
-				at.translate(-trainBufferedImage.getWidth() / 2, -trainBufferedImage.getHeight() / 2);
 
-				AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);		
 
-				g2d.drawImage(op.filter(trainBufferedImage, null), x+5, y+5, cellWidth-5, cellWidth-5, null);
-				
-				
-			} else if (y == trainMove.get(i-1).y-1 || y == trainMove.get(i-1).y-1) {
-				// tram vertical
-				g2d.drawImage(trainBufferedImage, x+5, y+5, cellWidth-5, cellWidth-5, null);				
-			}
 		}
-    }
-	
+	}
+
 	// Mouse Listener
-	
+
 	public void mouseClicked(MouseEvent e) 
 	{
 		Point p = this.cellPositionForLocation(e.getPoint());
 		System.out.println("Tile ID is : " + StreetCar.player.getGameData().getTile(p).getTileID());
 	}
-	
+
 
 	public void mousePressed(MouseEvent e) 
 	{	
 		//if(!canMoveTram()) return; TODO check if can move tram
-		
+
 		Point p = this.cellPositionForLocation(e.getPoint());
 		trainMove.clear();
 		trainMove.add(p);
@@ -227,7 +231,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		//player.getGameData().
 		return false;
 	}
-	
+
 	public void mouseReleased(MouseEvent e) 
 	{
 		// TODO check here if trip can be done
@@ -280,14 +284,14 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 		}
 		repaint();
 	}
-	
+
 	public void mouseEntered(MouseEvent e) { }
 
 	public void mouseExited(MouseEvent e) { }
-	
+
 	// MouseMotionListener
 	public void mouseMoved(MouseEvent e) { }
-	
+
 	public void mouseDragged(MouseEvent e) 
 	{
 		// TODO check here if tram can move
@@ -305,9 +309,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			repaint();
 		}
 	}
-		
+
 	// ComponentListener
-	
+
 	public void componentResized(ComponentEvent e) {
 		this.updateMapGeometry();
 	}
@@ -315,7 +319,7 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	public void componentMoved(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
 	public void componentHidden(ComponentEvent e) {}
-	
+
 	// Refresh game
 
 	public void refreshGame(PlayerIHM player, Data data) {
@@ -328,6 +332,6 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 
 	public void moveTram(LinkedList<Point> tramPath) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
