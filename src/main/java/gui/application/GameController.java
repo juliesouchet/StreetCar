@@ -3,15 +3,12 @@ package main.java.gui.application;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 
 import javax.swing.JMenuBar;
-import javax.swing.Timer;
 
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
@@ -215,7 +212,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		{
 			// TODO declare victor
 		}
-
+		
 		// When a player joins the game, it hasn't got a color
 		// We don't know if this behavior is expected ?
 		try {
@@ -234,17 +231,10 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 			this.menuPanel.refreshMenu(StreetCar.player, data);
 		}
 		if (data.isGameStarted() && !(this.getFrameContentPane() instanceof InGamePanel)) {
-			ActionListener taskPerformer = new ActionListener() {
-        		public void actionPerformed(ActionEvent e) {
-        			showInGamePanel();
-        			InGamePanel panel = (InGamePanel)getFrameContentPane();
-        			panel.refreshGame(StreetCar.player, data);
-        		}
-        	};
-        	Timer timer = new Timer(1000, taskPerformer);
-        	timer.setRepeats(false);
-        	timer.start();
-        	
+			showInGamePanel();
+			this.getFrame().revalidate();
+			InGamePanel panel = (InGamePanel)getFrameContentPane();
+       		panel.refreshGame(StreetCar.player, data);
 		} else if (this.getFrameContentPane() instanceof InGamePanel) {
 			InGamePanel panel = (InGamePanel)this.getFrameContentPane();
 			panel.refreshGame(StreetCar.player, data);

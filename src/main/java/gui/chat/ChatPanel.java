@@ -124,7 +124,7 @@ public class ChatPanel extends JScrollPane implements ComponentListener, ChatLis
 	        Color color = message.getSenderColor();
 	        BufferedImage image = this.getAvatarForColor(color);
 	        boolean isSender = message.getSenderColor().equals(this.senderColor);
-	        color = new Color(color.getRed(), color.getBlue(), color.getGreen(), 50);
+	        color = new Color(color.getRed(), color.getBlue(), color.getGreen(), 80);
 	        
 	        Rectangle rect = this.computeMessageRect(attrText);
 	        rect.y += originY;
