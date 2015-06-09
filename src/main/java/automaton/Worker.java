@@ -43,7 +43,7 @@ public class Worker extends PlayerAutomaton {
 			}
 			else {
 				objectives[0] = terminus[3];
-				objectives[nbrObjectives-1] = terminus[2];
+				objectives[nbrObjectives-1] = terminus[0];
 			}
 			heuristic = new int[width][height];
 			
@@ -67,8 +67,8 @@ public class Worker extends PlayerAutomaton {
 		 =================*/
 		//if(!data.isTrackCompleted(name)) {
 			
-			
-			/* Displaying the heuristic */
+			/*
+			// Displaying the heuristic 
 			String blank = " ";
 			String display = "Min  " + min + ", max " + max + " limit " + limit + "\n Heuristic matrix : ";
 			for (int j=0; j<this.height ; j++){
@@ -88,9 +88,9 @@ public class Worker extends PlayerAutomaton {
 				display += "+";
 			}
 			System.out.println(display);
-			
-			
-
+			*/
+		
+		
 			int handSize = data.getHandSize(name);
 			Tile t;
 			int i, j1, k, nbrTries = 0;
@@ -118,6 +118,7 @@ public class Worker extends PlayerAutomaton {
 	}
 
 	
+	@SuppressWarnings("unused")
 	private boolean isObjective(Point p) {
 		for (int i=0; i<this.objectives.length; i++){
 			if (objectives[i].equals(p)){
@@ -127,6 +128,7 @@ public class Worker extends PlayerAutomaton {
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	private String separateur(int size){
 		String result="\n";
 		for (int i=0; i<size; i++){
