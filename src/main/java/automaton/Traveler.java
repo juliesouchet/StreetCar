@@ -77,15 +77,23 @@ TraceDebugAutomate.debugTraveler(" MaximumSpeed : " + currentConfig.getMaximumSp
 			}
 			
 			// Calculates the shortest itinerary
-			LinkedList<Point> itinerary = getShortestItinerary(currentConfig);
+			LinkedList<Point> itinerary = currentConfig.getCompletedTrack(name);
+					//getShortestItinerary(currentConfig);
 			
-			// Go forward the maximum allowed number of squares
+			// Find where the streetcar is currently
 			ListIterator<Point> iterator = itinerary.listIterator();
+			i = 0;
+			while(iterator.hasNext() && !iterator.next().equals(checkpoints[startCheckpoints])) i++;
+			
+			// Calculates the size of the path
+			iterator = itinerary.listIterator(i);
 			int pathSize = 0;
 			while(iterator.hasNext()
 				&& !currentConfig.getTile(iterator.next()).isStop()
 				&& pathSize < currentConfig.getMaximumSpeed()+1)	pathSize++;
 			Point [] streetcarMovement = new Point[pathSize];
+			
+			// Prepares the array for return
 			i = 0;
 			iterator = itinerary.listIterator();
 			while(iterator.hasNext() && i < pathSize) {
@@ -163,9 +171,6 @@ TraceDebugAutomate.debugTraveler(" Action "+res+"\n");
 			if(destination == null)
 				 throw new RuntimeException("This building " + destination + " has no stop");
 			
-//TODO Riyane: 
-// Cette fonction prend mnt en parametre le point par lequel tu viens
-// Fais bien attention a l'ordre de tes parametres
 			path1 = data.getShortestPath(previous, origin, destination);
 			if(path1==null)
 				throw new RuntimeException("The traveler "+name+" is blocked");
