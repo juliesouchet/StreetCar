@@ -245,7 +245,7 @@ public class Action implements Serializable, CloneableInterface<Action>
 			case MOVE:
 				str += "MOVE : ";
 				for(int i = 0; i < tramwayMovementSize; i++) {
-					str += "("+tramwayMovement[i].x+","+tramwayMovement[i].y+"), ";
+					str += tramwayMovement[i] + ", ";
 				}
 				str += "\n\t\t\tStartTerminus: "
 				+ this.startTerminus;

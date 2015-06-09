@@ -442,10 +442,10 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 
 		if (!pi.hasStartedMaidenTravel()) pi.startMaidenTravel(startTerminus);
 
-		if		(tramPathSize == 0)	throw new RuntimeException("???");
+		if		(tramPathSize == 0)	throw new RuntimeException("Empty path");
 		else if (tramPathSize == 1)
 		{
-			if (!tramPath[0].equals(pi.tramPosition))	throw new RuntimeException("???");
+			if (!tramPath[0].equals(pi.tramPosition))	throw new RuntimeException("Wrong starting point");
 			else return;
 		}
 		else
@@ -990,7 +990,19 @@ public boolean				simplePathExistsBetween(Point pOld, Point p, Point pNext){retu
 				{
 					try					{this.checkTramPath(playerName, this.pathMatrix[i], l, null);}
 					catch (Exception e)	{continue;}
+
+System.out.println("Possible move actions :");
+System.out.println("\tPrevious position = (" + previousTramPosition.x + "," + previousTramPosition.y + "), Current position = (" + currentTramPosition.x + "," + currentTramPosition.y + "), Length = " + l);
+System.out.print("\t("+this.pathMatrix[i][0].x+","+this.pathMatrix[i][0].y+")");
+for (int z =1; z<=l; z++)
+{
+System.out.print("->("+this.pathMatrix[i][z].x+","+this.pathMatrix[i][z].y+")");
+}
+System.out.println("\n");
+
 					if (this.pathMatrix[i][1].equals(previousTramPosition)) continue;// TODO a enlever
+
+					
 					if(writeActionsInTab)
 					{
 						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l);

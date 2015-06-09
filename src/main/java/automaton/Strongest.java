@@ -39,7 +39,7 @@ public class Strongest extends PlayerAutomaton {
 			//=====================TRACE===================================
 			TraceDebugAutomate.debugDecisionTableTrace("\tNbActions possible = "+nbActionsPossibles+" \n");
 
-			profondeurExplorable = Math.min(150000/nbActionsPossibles, 2); // TODO enlever le min, garder le 150...
+			profondeurExplorable = 1;//Math.min(150000/nbActionsPossibles, 2); // TODO enlever le min, garder le 150000...
 
 			//=====================TRACE===================================
 			TraceDebugAutomate.debugDecisionTableTrace("\tprofondeurExplorable = "+profondeurExplorable+" \n");
@@ -60,7 +60,9 @@ public class Strongest extends PlayerAutomaton {
 				myDecisionTable.applyMinMax(0, profondeurExplorable, currentConfig, nbActionsPossibles);
 				// Resultat
 				myDecisionTable.freeSlot(0);
-				myAction = myDecisionTable.getDecisionNode(0).getCoupleActionIndex(myDecisionTable.getBestActionIndex(0)).getAction();
+				int bestIndex = myDecisionTable.getBestActionIndex(0);
+				if(bestIndex == DecisionNode.NOT_SIGNIFICANT) throw new RuntimeException(name + " has no possible action (Strongest)");
+				myAction = myDecisionTable.getDecisionNode(0).getCoupleActionIndex(bestIndex).getAction();
 			}
 
 

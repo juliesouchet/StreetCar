@@ -163,7 +163,7 @@ public class DecisionNode {
 		double bestValue=-1.0;
 		int indexBestValue=-1;
 		for(int i=0; i<this.getSizeOfPossiblesActionsTable();i++){
-			if(this.actionIsSignificant(i) && bestValue<=this.getCoupleActionIndex(i).getQuality()){
+			if(this.actionIsSignificant(i) && bestValue<this.getCoupleActionIndex(i).getQuality()){
 				bestValue=this.getCoupleActionIndex(i).getQuality();
 				indexBestValue=i;
 			}
