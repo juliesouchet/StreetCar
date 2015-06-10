@@ -107,8 +107,8 @@ public class Action implements Serializable, CloneableInterface<Action>
 		
 		res.positionTile1.x	= position1.x;
 		res.positionTile1.y	= position1.y;
-		res.positionTile1.x	= position2.x;
-		res.positionTile1.y	= position2.y;
+		res.positionTile2.x	= position2.x;
+		res.positionTile2.y	= position2.y;
 
 		return res;		
 	}

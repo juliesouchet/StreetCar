@@ -2,6 +2,8 @@ package main.java.automaton;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Random;
 
 import main.java.data.Action;
 import main.java.data.Data;
@@ -30,6 +32,10 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	int bestPathLength;
 	boolean write =false;
 
+	ArrayList<Point> theBestPath;
+	ArrayList<Tile> theBestTiles;
+
+
 	public heuristicNode[][] bufferHeuristic;
 
 	class heuristicNode{
@@ -37,6 +43,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		int West=0;
 		int South=0;
 		int East=0;
+
 
 		void setAllTo(int value){
 			this.East = value;
@@ -70,6 +77,8 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		}
 	}
 
+
+
 	/*=============================================================================
 	 * CONSTRUCTOR
 	 *=============================================================================*/
@@ -91,8 +100,8 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 				this.heuristic[i][j]= new heuristicNode();
 			}
 		}
-//		this.myTerminus = (ArrayList<Point>) terminus.clone();
-//		this.myStops = (ArrayList<Point>) stops.clone();
+		this.myTerminus = (ArrayList<Point>) terminus.clone();
+		this.myStops = (ArrayList<Point>) stops.clone();
 
 		this.MAX_LENGTH_OF_PATH = this.width * this.height;
 		this.bestPathPoint = new Point[MAX_LENGTH_OF_PATH];
@@ -104,7 +113,11 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 				this.bufferHeuristic[i][j]= new heuristicNode();
 			}
 		}
+		ArrayList<Point> theBestPath = new ArrayList<Point>(50);
+		ArrayList<Tile> theBestTiles  = new ArrayList<Tile>(50);
+
 		this.write = false;
+
 	}
 
 	/*=============================================================================
@@ -151,33 +164,33 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 	public void computeHeuristic(ArrayList<Point> targets1, ArrayList<Point> targets2){
 		boolean trace=false;
-		
+
 		if(trace)System.out.println("\n\n\n/!\\computeHeuristic/!\\\n\n\n");
-		
+
 		reset(this.heuristic);
 		reset(this.bufferHeuristic);
-		
+
 		computeUnaccessibleHeuristic(this.bufferHeuristic);
 		mul(this.bufferHeuristic,1);
 		if(trace)System.out.println("computeUnaccessibleHeuristic");
 		if(trace)printMatrice(bufferHeuristic);
-		
+
 		add(this.heuristic, this.heuristic,this.bufferHeuristic);
 		reset(this.bufferHeuristic);
 
-		computePositiveConnexityHeuristic(this.bufferHeuristic);
-		mul(this.bufferHeuristic,3);
-		if(trace)System.out.println("computePositiveConnexityHeuristic");
-		if(trace)printMatrice(bufferHeuristic);
-		
-		add(this.heuristic, this.heuristic,this.bufferHeuristic);
-		reset(this.bufferHeuristic);
+		//		computePositiveConnexityHeuristic(this.bufferHeuristic);
+		//		mul(this.bufferHeuristic,3);
+		//		if(trace)System.out.println("computePositiveConnexityHeuristic");
+		//		if(trace)printMatrice(bufferHeuristic);
+		//
+		//		add(this.heuristic, this.heuristic,this.bufferHeuristic);
+		//		reset(this.bufferHeuristic);
+		//
+		//		computeNegativeConnexityHeuristic(this.bufferHeuristic);
+		//		mul(this.bufferHeuristic,3);
+		//		if(trace)System.out.println("computeNegativeConnexityHeuristic");
+		//		if(trace)printMatrice(bufferHeuristic);
 
-		computeNegativeConnexityHeuristic(this.bufferHeuristic);
-		mul(this.bufferHeuristic,3);
-		if(trace)System.out.println("computeNegativeConnexityHeuristic");
-		if(trace)printMatrice(bufferHeuristic);
-		
 		add(this.heuristic, this.heuristic,this.bufferHeuristic);
 		reset(this.bufferHeuristic);
 
@@ -200,7 +213,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 		if(trace)	System.out.println("\n\n\n/!\\computeHeuristic DONE/!\\\n\n\n");
 
-		
+
 	}
 
 
@@ -209,30 +222,31 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	 * @param cible Le point visé.
 	 * @param heuristique La matrice à remplir.
 	 */
+	@SuppressWarnings("unused")
 	private void computeManhatanHeuristic(Point cible, heuristicNode[][] heuristique){
 
 		for(int i=0; i<this.width;i++){
 			for (int j=0; j<this.height; j++){
 
 				if(j>cible.y){
-					heuristique[i][j].North=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2;
-					heuristique[i][j].South=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
+					heuristique[i][j].North=(Math.abs(i-cible.x)+Math.abs(j-cible.y));
+					heuristique[i][j].South=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
 				}else if(j<cible.y){
-					heuristique[i][j].North=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
+					heuristique[i][j].North=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
 					heuristique[i][j].South=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2;
 				}else{
-					heuristique[i][j].North=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
-					heuristique[i][j].South=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
+					heuristique[i][j].North=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
+					heuristique[i][j].South=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
 				}
 				if(i<cible.x){
-					heuristique[i][j].East=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2;
-					heuristique[i][j].West=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
+					heuristique[i][j].East=(Math.abs(i-cible.x)+Math.abs(j-cible.y));
+					heuristique[i][j].West=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
 				}else if(i>cible.x){
-					heuristique[i][j].East=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
+					heuristique[i][j].East=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
 					heuristique[i][j].West=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2;
 				}else{
-					heuristique[i][j].East=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
-					heuristique[i][j].West=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*2+2;
+					heuristique[i][j].East=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
+					heuristique[i][j].West=(Math.abs(i-cible.x)+Math.abs(j-cible.y))*4;
 				}
 
 
@@ -299,8 +313,8 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 					heuristique[i][j].setAllTo(Integer.MAX_VALUE);
 					heuristique[i+1][j].West = Integer.MAX_VALUE;
 					heuristique[i-1][j].East = Integer.MAX_VALUE;
-					heuristique[i][j+1].South = Integer.MAX_VALUE;
-					heuristique[i][j-1].North = Integer.MAX_VALUE;
+					heuristique[i][j+1].North = Integer.MAX_VALUE;
+					heuristique[i][j-1].South = Integer.MAX_VALUE;
 				}
 				if(this.currentData.isOnEdge(i, j) ){
 
@@ -360,19 +374,50 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	}
 
 	/**
-	 * @return Un des terminus de d'heurisitique minimal.
+	 * @return Les terminus ideaux.
 	 */
-	public Point getBestTerminus(){
-		int bestValue=this.heuristic[this.myTerminus.get(0).x][this.myTerminus.get(0).y].getMinValue();
-		int bestIndex=0;
-		for (int i=1; i<this.myTerminus.size(); i++){
-			if(this.heuristic[this.myTerminus.get(i).x][this.myTerminus.get(i).y].getMinValue()<bestValue){
-				bestValue =  this.heuristic[this.myTerminus.get(i).x][this.myTerminus.get(i).y].getMinValue();
-				bestIndex = i;
+	public Point[] getBestTerminus(){
+		Point[] resultat = new Point[2];
+		for(int j=0; j<2; j++){
+
+			int bestValue=this.heuristic[this.myTerminus.get(0).x][this.myTerminus.get(0).y].getMinValue();
+			int bestIndex=0;
+			for (int i=1; i<this.myTerminus.size(); i++){
+				if(this.heuristic[this.myTerminus.get(i).x][this.myTerminus.get(i).y].getMinValue()<bestValue){
+					bestValue =  this.heuristic[this.myTerminus.get(i).x][this.myTerminus.get(i).y].getMinValue();
+					bestIndex = i;
+				}
+
 			}
 
+			resultat[j] = this.myTerminus.get(bestIndex);
+			Point voisin = new Point(new Point(resultat[j].x+1,resultat[j].y));
+
+			voisin.x = resultat[j].x+1;
+			voisin.y = resultat[j].y;
+			if(this.myTerminus.contains(voisin)){
+				this.myTerminus.remove(voisin);
+			}
+			voisin.x = resultat[j].x;
+			voisin.y = resultat[j].y+1;
+			if(this.myTerminus.contains(voisin)){
+				this.myTerminus.remove(voisin);
+			}
+			voisin.x = resultat[j].x-1;
+			voisin.y = resultat[j].y;
+			if(this.myTerminus.contains(voisin)){
+				this.myTerminus.remove(voisin);
+			}
+			voisin.x = resultat[j].x;
+			voisin.y = resultat[j].y-1;
+			if(this.myTerminus.contains(voisin)){
+				this.myTerminus.remove(voisin);
+			}
+			this.myTerminus.remove(resultat[j]);
 		}
-		return this.myTerminus.get(bestIndex);
+		this.myTerminus.add(resultat[0]);
+		this.myTerminus.add(resultat[1]);
+		return resultat;
 	}
 
 	public boolean[] myStopsAreSetted(){
@@ -547,65 +592,259 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		}
 		return false;
 	}
-	
-	public Tile findSuitableTiles(ArrayList<Point> listOfPoints, ArrayList<Tile> theTiles, Point currentPosition, Direction comeFrom, Direction currentBestDirection){
-		
-		
-		return null;
+
+	public ArrayList<Tile> findSuitableTiles(ArrayList<Point> listOfPoints, ArrayList<Tile> theTiles, Point currentPosition, Direction comeFrom, Direction currentBestDirection){
+		ArrayList<Tile> existingTile= Tile.getDeckTileList();
+		Point targetedPosition = currentPosition;
+		Tile currentTile = null;
+		ArrayList<Tile> setOfPossibleTiles = new ArrayList<Tile>(10) ;
+		boolean thisTileIsOkWithTheCurrentData;
+		boolean thisTileIsOkWithMyPotentialPath;
+		for(int i=0; i<existingTile.size(); i++){
+			for(int direction=0; direction<4; direction++){
+				currentTile = existingTile.get(i);
+				for(int k=0; k<direction; k++){
+					currentTile.turnLeft();
+				}
+				thisTileIsOkWithTheCurrentData = this.currentData.isAcceptableTilePlacement(targetedPosition.x, targetedPosition.y, currentTile);
+				thisTileIsOkWithMyPotentialPath = currentTile.isPath(comeFrom, currentBestDirection);
+				if( thisTileIsOkWithTheCurrentData && thisTileIsOkWithMyPotentialPath ){
+					listOfPoints.add(currentPosition);
+					theTiles.add(currentTile.getClone());
+					setOfPossibleTiles.add(currentTile.getClone());
+				}
+			}
+		}		
+		return setOfPossibleTiles;
 	}
 
-	public void makeBestPath(Point terminus1, Point terminus2, ArrayList<Point> stops, ArrayList<Point> thePath, ArrayList<Tile> theTiles){
-		Point currentPosition = new Point(terminus1);
-		Direction currentBestDirection, comeFrom;
-		ArrayList<Point> target = new ArrayList<Point>(1);
-		target.add(terminus2);
-		
-		
-		System.out.println("\n\tJe commence la construction.\n");
-		System.out.println("Je vais a:"+terminus2);
-		comeFrom = this.currentData.getTile(currentPosition).getPathTab()[0].end0;
-		if(comeFrom ==  get(this.heuristic,currentPosition).getMinDirection()){
-			comeFrom=this.currentData.getTile(currentPosition).getPathTab()[0].end1;
-		}
-		while(!currentPosition.equals(terminus2)){
-			System.out.println("Je suis au point:"+currentPosition);
-			if(this.checkIfStopDone(currentPosition)){
-				System.out.println("\n\tJe passe par le stop\n");
-				stops.remove(currentPosition);
-				this.computeHeuristic(target, stops);
-				System.out.println("\n\tJe recalcule mon heuristique.\n");
-				this.printMatrice(this.heuristic);
-			};
-			currentBestDirection = get(this.heuristic,currentPosition).getMinDirection();
-			System.out.println("Je veux aller vers le "+currentBestDirection.toNiceString());
-			if(this.currentData.getTile(currentPosition).isPath(comeFrom, currentBestDirection)){
-				System.out.println("\n\tLa tuile me le permet\n");
-				thePath.add(new Point(currentPosition));
-				theTiles.add(null); //Je met null car la tuile est déja placée
-				currentPosition = Direction.getPointInDirection(currentPosition, currentBestDirection);
-				comeFrom = currentBestDirection.turnHalf();
-			}else{
-				findSuitableTiles(thePath,theTiles,currentPosition,comeFrom,currentBestDirection);
-				System.out.println("pop");
-				return;
+	public class SituationInAStar implements Comparable<SituationInAStar>{
 
+		@Override
+		public int compareTo( SituationInAStar s2)
+		{
+			if(this.weightOfThePath<s2.weightOfThePath){return -1;}
+			if(this.weightOfThePath==s2.weightOfThePath){return 0;}
+			return +1;
+		}	
+
+		Point position;
+		Direction comeFrom;
+		Direction goingTo;
+		int weightOfThePath;
+		ArrayList<Point> SituationStops = new ArrayList<Point>();
+		ArrayList<Point> SituationPath = new ArrayList<Point>();
+		ArrayList<Tile> SituationTiles = new ArrayList<Tile>();
+
+		public  void copy(SituationInAStar src){
+			this.position = new Point(src.position);
+			this.comeFrom = src.comeFrom;
+			this.goingTo = src.goingTo;
+			this.weightOfThePath = src.weightOfThePath;
+			for (int i=0; i<src.SituationPath.size();i++){
+				this.SituationPath.add(new Point(src.SituationPath.get(i)));
+				if(src.SituationTiles.get(i)==null){this.SituationTiles.add(null);}
+				else{this.SituationTiles.add(src.SituationTiles.get(i).getClone());}
+			}
+
+			for( int i=0; i< src.SituationStops.size(); i++){
+				this.SituationStops.add(new Point(src.SituationStops.get(i)));
 			}
 		}
 
-		System.out.println("done!");
+		public SituationInAStar clone(){
+			SituationInAStar leClone = new SituationInAStar();
+			leClone.copy(this);
+			return leClone;
+		}
+
 	}
 
+	public void incrementWithDirectionValue(SituationInAStar currentConfiguration){
+		if(currentConfiguration.goingTo==Direction.EAST){
+			currentConfiguration.weightOfThePath += get(heuristic,currentConfiguration.position).East;
+		}else if (currentConfiguration.goingTo==Direction.WEST){
+			currentConfiguration.weightOfThePath += get(heuristic,currentConfiguration.position).West;
+		}else if (currentConfiguration.goingTo==Direction.NORTH){
+			currentConfiguration.weightOfThePath += get(heuristic,currentConfiguration.position).North;
+		}else if (currentConfiguration.goingTo==Direction.SOUTH){
+			currentConfiguration.weightOfThePath += get(heuristic,currentConfiguration.position).South;
+		}
+	}
 
+	public void addPositionAndTileToThePotentialBestPath(SituationInAStar currentConfiguration){
+		if(this.currentData.getTile(currentConfiguration.position).isPath(currentConfiguration.comeFrom, currentConfiguration.goingTo)){
+			currentConfiguration.SituationPath.add(new Point(currentConfiguration.position));
+			currentConfiguration.SituationTiles.add(null);
+		}else{
+			 ArrayList<Tile> setOfPossibleTiles = findSuitableTiles(currentConfiguration.SituationPath, currentConfiguration.SituationTiles, currentConfiguration.position, currentConfiguration.comeFrom, currentConfiguration.goingTo);
+			 
+		}
+	}
+
+	
+
+	@SuppressWarnings("unused")
+	public boolean IveGotTheTiles(Tile tile1, Tile tile2){
+		String currentName = currentData.getPlayerTurn();
+
+		if(false){
+			System.out.println("PoseTile ="+tile1);
+			System.out.println("PoseTile="+tile2);
+			for (int i = 0; i< currentData.getHandSize(currentName); i++){
+				System.out.println("HandTile "+i+"="+currentData.getHandTile(currentName, i));
+			}
+		}
+		for (int i = 0; i< currentData.getHandSize(currentName); i++){
+			for (int j=i+1 ; j<currentData.getHandSize(currentName); j++ ){
+
+				if((currentData.getHandTile(currentName, i).equals(tile1) && currentData.getHandTile(currentName, j).equals(tile2)) 
+						|| (currentData.getHandTile(currentName, i).equals(tile2) && currentData.getHandTile(currentName, j).equals(tile1))){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	
+	public void addNeighboorsToQueue(SituationInAStar currentConfiguration, PriorityQueue<SituationInAStar> PriorityQueue){
+		SituationInAStar bufferAStarConfig = new SituationInAStar();
+		if(get(heuristic, currentConfiguration.position).East!=Integer.MAX_VALUE){
+			bufferAStarConfig = currentConfiguration.clone();
+			bufferAStarConfig.goingTo=Direction.EAST;
+			incrementWithDirectionValue(bufferAStarConfig);
+			PriorityQueue.add(bufferAStarConfig);
+		}
+		if(get(heuristic, currentConfiguration.position).West!=Integer.MAX_VALUE){
+			bufferAStarConfig = currentConfiguration.clone();
+			bufferAStarConfig.goingTo=Direction.WEST;
+			incrementWithDirectionValue(bufferAStarConfig);
+			PriorityQueue.add(bufferAStarConfig);
+		}
+		if(get(heuristic, currentConfiguration.position).North!=Integer.MAX_VALUE){
+			bufferAStarConfig = currentConfiguration.clone();
+			bufferAStarConfig.goingTo=Direction.NORTH;
+			incrementWithDirectionValue(bufferAStarConfig);
+			PriorityQueue.add(bufferAStarConfig);
+		}
+		if(get(heuristic, currentConfiguration.position).South!=Integer.MAX_VALUE){
+			bufferAStarConfig = currentConfiguration.clone();
+			bufferAStarConfig.goingTo=Direction.SOUTH;
+			incrementWithDirectionValue(bufferAStarConfig);
+			PriorityQueue.add(bufferAStarConfig);
+		}
+	}
+
+	public void traiterNoeud(SituationInAStar currentConfiguration, PriorityQueue<SituationInAStar> priorityQueue){
+
+		addPositionAndTileToThePotentialBestPath(currentConfiguration);
+		currentConfiguration.position = Direction.getPointInDirection(currentConfiguration.position, currentConfiguration.goingTo);
+		currentConfiguration.comeFrom = currentConfiguration.goingTo.turnHalf();
+		addNeighboorsToQueue(currentConfiguration,priorityQueue);
+
+
+	}
+
+	public void initAStar(Point origin, PriorityQueue<SituationInAStar> priorityQueue){
+		SituationInAStar currentSituationInAStar = new SituationInAStar();
+		SituationInAStar bufSituationInAStar = new SituationInAStar();
+
+		currentSituationInAStar.position = new Point(origin);
+		currentSituationInAStar.comeFrom = this.currentData.getTile(currentSituationInAStar.position).getPathTab()[0].end1;
+		currentSituationInAStar.goingTo = this.currentData.getTile(currentSituationInAStar.position).getPathTab()[0].end0;
+		currentSituationInAStar.weightOfThePath=0;
+		incrementWithDirectionValue(currentSituationInAStar);
+		bufSituationInAStar = currentSituationInAStar.clone();
+		priorityQueue.add(bufSituationInAStar);
+
+		currentSituationInAStar.comeFrom = this.currentData.getTile(currentSituationInAStar.position).getPathTab()[0].end0;
+		currentSituationInAStar.goingTo = this.currentData.getTile(currentSituationInAStar.position).getPathTab()[0].end1;
+		currentSituationInAStar.weightOfThePath=0;
+		incrementWithDirectionValue(currentSituationInAStar);
+		bufSituationInAStar = currentSituationInAStar.clone();
+		priorityQueue.add(bufSituationInAStar);
+	}
+
+	public int makeBestPath(Point terminus1, Point terminus2){
+		ArrayList<Point> target = new ArrayList<Point>(1);
+		target.add(terminus2);
+		boolean trace = true;
+		PriorityQueue<SituationInAStar> maFileAPriorite = new PriorityQueue<SituationInAStar>();
+		this.computeHeuristic(target,new ArrayList<Point>());
+		System.out.println("\tHeuristique courant:\n\t===================================================================");
+		printMatrice(heuristic);
+		System.out.println("\n\t===================================================================");
+
+		SituationInAStar currentSituationInAStar = new SituationInAStar();
+
+		if(trace)System.out.println("\n\tJe commence la construction.\n");
+		if(trace)System.out.println("Je pars de:"+terminus1);
+		if(trace)System.out.println("Je vais a:"+terminus2);
+
+		initAStar(terminus1, maFileAPriorite);
+		currentSituationInAStar = maFileAPriorite.poll();
+		while (!currentSituationInAStar.position.equals(terminus2)) {
+			if (trace)
+				System.out.println("Traite noeud:\n\tPosition="
+						+ currentSituationInAStar.position + "\n\t Cible="
+						+ terminus2 +"\n\tPoids=" +
+						+ currentSituationInAStar.weightOfThePath
+						+ "\n\tLongueur="
+						+ currentSituationInAStar.SituationPath.size()
+						+ "\n\tTaille de la file=" + maFileAPriorite.size()
+						+ "\n\t=============");
+			traiterNoeud(currentSituationInAStar, maFileAPriorite);
+			currentSituationInAStar = maFileAPriorite.poll();
+		}
+		//public int makeBestPath(Point terminus1, Point terminus2, ArrayList<Point> stops, ArrayList<Point> thePath, ArrayList<Tile> theTiles){
+
+		if(trace)System.out.println("TROUVE NOEUD:\n\tPosition="+currentSituationInAStar.position+"\n\tPoids="+currentSituationInAStar.weightOfThePath+"\n\tLongueur="+currentSituationInAStar.SituationPath.size()+"\n\t=============");
+
+		theBestPath = (ArrayList<Point>) currentSituationInAStar.SituationPath.clone();
+		theBestTiles = (ArrayList<Tile>) currentSituationInAStar.SituationTiles.clone();
+		return currentSituationInAStar.weightOfThePath;
+	}
 
 
 
 	@Override
 	public Action makeChoice(Data currentConfig) {
+		boolean trace = true;
+
+		this.currentData = currentConfig;
 		this.computeHeuristic();
-		return null;
+		Point[] extremityTerminus = this.getBestTerminus();
+		Random monAlea = new Random();
+
+		//TODO remettre int weightOfBestPath = this.makeBestPath(extremityTerminus[0], extremityTerminus[1]);
+		int weightOfBestPath = this.makeBestPath(new Point(1,3), new Point(12,7));
+		if(trace){
+			System.out.println(extremityTerminus[0]);
+			System.out.println(extremityTerminus[1]);
+			System.out.println(weightOfBestPath);
+			System.out.println(theBestPath.size());
+			System.out.println(theBestTiles.size());
+		}
+
+
+
+		Action[] myPossiblesGoodActions = new Action[theBestPath.size()*theBestPath.size()];
+		int nombreGoodActionsPossibles = 0;
+
+		for(int i=0; i<theBestPath.size() ; i++ ){
+			for(int j=i+1; j<(theBestPath.size()) ; j++ ){
+				if(!(theBestTiles.get(i) == null || theBestTiles.get(j) == null || theBestPath.get(i).equals(theBestPath.get(j)) || !IveGotTheTiles(theBestTiles.get(i),theBestTiles.get(j)))){
+					myPossiblesGoodActions[nombreGoodActionsPossibles] = Action.newBuildTwoSimpleAction(theBestPath.get(i), theBestTiles.get(i), theBestPath.get(j),theBestTiles.get(j));
+					nombreGoodActionsPossibles++;
+				}
+			}		
+		}
+
+
+		return myPossiblesGoodActions[monAlea.nextInt(nombreGoodActionsPossibles)];
+
 	}
-
-
 
 
 }
