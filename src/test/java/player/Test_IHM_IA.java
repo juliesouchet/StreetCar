@@ -28,14 +28,13 @@ public class Test_IHM_IA implements InterfaceIHM
 	{
 		String iaName = "IA_DUMB_" + ((new Random()).nextInt(7));
 		PlayerIHM playerIHM = null;
-		PlayerAI playerAI = null;
 		GameInterface game;
 
 		try
 		{
 			playerIHM	= PlayerIHM.launchPlayer("riyane", "jeux", "newOrleans", 3,  true, null, this);
 			game		= Game.getRemoteGame("127.0.0.1", "jeux");
-			playerAI	= new PlayerAI(iaName, false, game, 1, null);
+			new PlayerAI(iaName, false, game, 1, null);
 		}
 		catch (Exception e)	{e.printStackTrace(); System.exit(0);}
 

@@ -91,8 +91,8 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 				this.heuristic[i][j]= new heuristicNode();
 			}
 		}
-		this.myTerminus = (ArrayList<Point>) terminus.clone();
-		this.myStops = (ArrayList<Point>) stops.clone();
+//		this.myTerminus = (ArrayList<Point>) terminus.clone();
+//		this.myStops = (ArrayList<Point>) stops.clone();
 
 		this.MAX_LENGTH_OF_PATH = this.width * this.height;
 		this.bestPathPoint = new Point[MAX_LENGTH_OF_PATH];
@@ -209,7 +209,6 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	 * @param cible Le point visé.
 	 * @param heuristique La matrice à remplir.
 	 */
-	@SuppressWarnings("unused")
 	private void computeManhatanHeuristic(Point cible, heuristicNode[][] heuristique){
 
 		for(int i=0; i<this.width;i++){

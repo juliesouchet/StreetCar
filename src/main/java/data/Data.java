@@ -217,7 +217,6 @@ if (this.round == 0) throw new RuntimeException("Round == 0");
 	 =====================================================================*/
 	public void doAction(String playerName, Action action)
 	{
-System.out.println("doAction: " + action);
 		if (action.isMOVE())
 		{
 			this.setTramPosition(playerName, action.tramwayMovement, action.tramwayMovementSize, action.startTerminus);
@@ -991,19 +990,10 @@ for (int i=0; i<nbrPath; i++)
 			for (int l = 1; l<=this.maxPlayerSpeed; l++)
 			{
 				nbrPath = this.pathFinderMulti.getAllFixedLengthPath(this, previousTramPosition, currentTramPosition, l+1, this.pathMatrix);
-System.out.println("Possible move actions : nbrPath = ");
-System.out.println("\tPrevious position = (" + previousTramPosition.x + "," + previousTramPosition.y + "), Current position = (" + currentTramPosition.x + "," + currentTramPosition.y + "), Length = " + (l+1));
 				for (int i=0; i<nbrPath; i++)
 				{
 					try					{this.checkTramPath(playerName, this.pathMatrix[i], l+1, null);}
 					catch (Exception e)	{continue;}
-
-//System.out.print("\t("+this.pathMatrix[i][0].x+","+this.pathMatrix[i][0].y+")");
-for (int z =0; z<=l; z++)
-{
-System.out.print("->("+this.pathMatrix[i][z].x+","+this.pathMatrix[i][z].y+")");
-}
-System.out.println("\n");
 					if(writeActionsInTab)
 					{
 						resTab[res].getAction().setMoveAction(startTerminus, this.pathMatrix[i], l+1);
@@ -1177,7 +1167,6 @@ System.out.println("\n");
 			hc.drawnTile1			= null;
 			hc.drawnFromPlayerHand1	= null;
 		}
-///		else throw new RuntimeException("No draw to undo");
 	}
 	private void undoSecondGameInThisRound(HistoryCell hc, PlayerInfo pi)
 	{
@@ -1197,7 +1186,6 @@ System.out.println("\n");
 			this.board[x][y] = Tile.getNewEmptyTile();
 			this.undoLastDraw(hc, pi);
 		}
-//		if (!pi.hand.isFull()) pi.hand.add(hc.action2.tile1);
 		pi.hand.add(hc.action2.tile1.getClone());
 	}
 	private void undoFirstSimpleGameInThisRound(HistoryCell hc, PlayerInfo pi)
@@ -1216,7 +1204,6 @@ System.out.println("\n");
 			this.board[x][y] = Tile.getNewEmptyTile();
 			this.undoLastDraw(hc, pi);
 		}
-//		if (!pi.hand.isFull()) pi.hand.add(hc.action1.tile1);
 		pi.hand.add(hc.action1.tile1.getClone());
 	}
 	private void undoFirstDoubleGameInThisRound(HistoryCell hc, PlayerInfo pi)
@@ -1518,19 +1505,7 @@ System.out.println("\n");
 				terminus[2] = new Point(13, 2);
 				terminus[3] = new Point(13, 3);
 			}
-*/			if(playerName.equals("AI Level 2")) //TODO à enlever
-			{
-				line = 1;
-				buildingInLine_name[0] = "L";
-				buildingInLine_name[1] = "H";
-				buildingInLine_position[0] = new Point(6, 4);
-				buildingInLine_position[1] = new Point(11, 4);
-				terminus[0] = new Point(0, 6);
-				terminus[1] = new Point(0, 7);
-				terminus[2] = new Point(13, 2);
-				terminus[3] = new Point(13, 3);
-			}
-		}
+*/		}
 
 		// Getter
 		public HistoryCell getLastActionHistory()

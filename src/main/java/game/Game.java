@@ -451,7 +451,6 @@ public String	getTestHostName()	{return this.data.getHost();}
 	 =======================================================================*/
 	private void launchAIPlayer(LoginInfo newPlayerInfo)
 	{
-//TODO
 		PlayerAI	newPlayer	= null;
 		String		playerName	= AiDefaultName + newPlayerInfo.getAiLevel();
 		String		nameAdd		= "", str;
