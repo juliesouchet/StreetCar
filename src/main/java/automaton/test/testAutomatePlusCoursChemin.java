@@ -83,8 +83,8 @@ public class testAutomatePlusCoursChemin {
 
 //		myAutomate.computeHeuristic(arretsReduits);
 		System.out.println(myAutomate);
-//TODO
-//		myAutomate.makeBestPath(myTerminus.get(1), myTerminus.get(2), myStops, myPath, myTilePath);
+
+		myAutomate.makeBestPath(myTerminus.get(1), myTerminus.get(2), myStops, myPath, myTilePath);
 		System.out.println("\n\t(8)===============================================\n");
 
 		

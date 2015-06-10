@@ -1,5 +1,6 @@
 package main.java.automaton.test;
 
+import main.java.automaton.DecisionNode;
 import main.java.automaton.DecisionTable;
 import main.java.util.TraceDebugAutomate;
 
@@ -12,6 +13,7 @@ public class testDecisionTable {
 	public static void main(String[] args){
 		DecisionTable maTableDeDecision = null;
 		TraceDebugAutomate.decisionTableTrace=true;
+		DecisionNode monNoeudDeDecision = null;
 
 		//for(int i=150000;i<1000000;i+=500){
 			//for(int j=1;j<2;j+=1){
@@ -19,7 +21,9 @@ public class testDecisionTable {
 			int j=10;
 				System.out.println("toc");
 					TraceDebugAutomate.debugDecisionTableTrace("try table largeur"+j+" hauteur"+i+"\n");
+					long tmps1 = System.nanoTime();
 					maTableDeDecision= new DecisionTable(j, i, "nomDuJoueur");
+					long tmps2 = System.nanoTime();
 
 			//}
 		//}

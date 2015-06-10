@@ -58,7 +58,6 @@ public class NetworkTools
 		{
 			for(InterfaceAddress ia : interfaces.nextElement().getInterfaceAddresses())
 			{
-System.out.println("Ip sea");
 				str = ia.getAddress().toString();
 				if (str.charAt(0) == '/') str = str.substring(1);
 				if (!isIPV4(str))			continue;

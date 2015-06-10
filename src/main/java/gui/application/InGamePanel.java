@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Point;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -181,6 +182,25 @@ public class InGamePanel extends Panel {
 	
 	// Actions
 	
+	public void beginTrip() {
+		PlayerIHM player = StreetCar.player;
+		Point terminus = new Point();
+//TODO
+/*		try {
+			player.startMaidenTravel(player.getPlayerName(), terminus);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (ExceptionNotYourTurn e) {
+			e.printStackTrace();
+		} catch (ExceptionForbiddenAction e) {
+			e.printStackTrace();
+		} catch (ExceptionGameHasNotStarted e) {
+			e.printStackTrace();
+		} catch (ExceptionUncompletedPath e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+*/	}
 	
 	public void sendMessage() {
 		String text = this.inputArea.getText();

@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 import main.java.automaton.AutomatePlusCourtChemin;
+import main.java.automaton.DecisionTable;
+import main.java.data.Action;
 import main.java.data.Data;
 import main.java.data.Tile;
 import main.java.game.Game;
@@ -32,8 +34,11 @@ public class PlayerAutomata implements InterfaceIHM
 
 	private PlayerIHM player = null;
 	private String name;
+	private int i = 0;
+	private int nbCoups = 100;
 
 	private boolean firstRefreshDone = false;
+	private boolean secondRefreshDone = false;
 
 	AutomatePlusCourtChemin myAutomaton ;
 
@@ -120,7 +125,7 @@ public class PlayerAutomata implements InterfaceIHM
 		} else { //if ( i== 1) {
 			create = false; name = "joueurB"; gameName = "jeu"; color = Color.blue; ip = "127.0.0.1";
 		}
-if (color == null) color = Color.red;
+
 
 		String boardName = "newOrleans5";	/////// Nom par defaut
 		int nbrBuildingInLine= 2;	/////// Nom par defaut
@@ -159,6 +164,9 @@ if (color == null) color = Color.red;
 	// --------------------------------------------
 	public void refresh(Data data)
 	{
+		DecisionTable maTableDeDecision = null;
+		int nbActionsPossibles = 0;
+		Action myAction = null;
 		
 		//=======================================
 		TraceDebugAutomate.debugDecisionTableTrace("Refresh called\n");
@@ -255,11 +263,13 @@ if (color == null) color = Color.red;
 
 	@Override
 	public void excludePlayer() {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void refreshMessages(String playerName, String message) {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -1,10 +1,12 @@
 package test.java.player;
 
+import java.awt.Color;
 import java.util.Scanner;
 
 import main.java.data.Data;
 import main.java.player.PlayerIHM;
 import main.java.rubbish.InterfaceIHM;
+import main.java.util.Util;
 
 
 
@@ -111,6 +113,19 @@ nbrBuildingInLine= 3;			/////// Nom par defaut
 // --------------------------------------------
 // Private Local methods:
 // --------------------------------------------
+	private Color askColor(Scanner sc)
+	{
+		String color;
+		while(true)
+		{
+			System.out.print("\t- Color\t\t\t :"); color = sc.next();
+			try
+			{
+				return Util.parseColor(color);
+			}
+			catch(Exception e){}
+		}
+	}
 
 	@Override
 	public void refreshMessages(String playerName, String message) {
