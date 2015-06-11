@@ -205,6 +205,9 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 	{
 		int x = this.originX + this.cellWidth * point.x;
 		int y = this.originY + this.cellWidth * point.y;
+		if (color.equals(Color.YELLOW)) {
+			color = Color.ORANGE;
+		}
 		g2d.drawImage(createHighlight(color), x, y, cellWidth, cellWidth, null);
 	}
 	
