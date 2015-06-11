@@ -1492,7 +1492,7 @@ for (int i=0; i<nbrPath; i++)
 			this.endTerminus[1]			= new Point(-1, -1);
 			this.tramPosition			= new Point(-1, -1);
 			this.previousTramPosition	= new Point(-1, -1);
-/*
+
 			if(playerName.equals("cheater"))
 			{
 				line = 1;
@@ -1505,7 +1505,7 @@ for (int i=0; i<nbrPath; i++)
 				terminus[2] = new Point(13, 2);
 				terminus[3] = new Point(13, 3);
 			}
-*/		}
+		}
 
 		// Getter
 		public HistoryCell getLastActionHistory()
