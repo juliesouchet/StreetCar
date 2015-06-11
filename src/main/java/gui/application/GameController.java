@@ -58,22 +58,22 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	private void setupMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 
-		Menu menu = new Menu("Game", null);
-		MenuItem item = new MenuItem("Stop game", null);
+		Menu menu = new Menu("Jeu", null);
+		MenuItem item = new MenuItem("Arreter la partie", null);
 		item.addAction(this, "stopGame", KeyEvent.VK_L);
 		menu.add(item);
 		menuBar.add(menu);
 
-		menu = new Menu("Edit", null);
+		menu = new Menu("Editer", null);
 		menuBar.add(menu);
 
-		menu = new Menu("Window", null);
-		item = new MenuItem("quit", null);
+		menu = new Menu("Fenetre", null);
+		item = new MenuItem("Basculer plein-ecran", null);
 		item.addAction(this, "toggleFullScreen", KeyEvent.VK_F);
 		menu.add(item);
 		menuBar.add(menu);
 
-		menu = new Menu("Help", null);
+		menu = new Menu("Aide", null);
 		menuBar.add(menu);
 
 		this.setFrameMenuBar(menuBar);

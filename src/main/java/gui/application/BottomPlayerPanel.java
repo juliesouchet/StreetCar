@@ -3,8 +3,12 @@ package main.java.gui.application;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.rmi.RemoteException;
+
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 import main.java.data.Data;
 import main.java.game.ExceptionForbiddenAction;
@@ -32,10 +36,7 @@ public class BottomPlayerPanel extends Panel {
 	Label canBeginText;
 
 	Button validateButton;
-	Button showMyTripButton;
 	Button resetButton;
-	Button stopShowingMyTripButton;
-	Button resetMyTripButton;
 	
 	// Constructors
 
@@ -64,34 +65,25 @@ public class BottomPlayerPanel extends Panel {
 
 		validateButton = new Button("Valider", null);
 		resetButton = new Button("Annuler le dernier coup", null);
-		showMyTripButton = new Button("Montrer mon chemin", null);
-		stopShowingMyTripButton = new Button("Arrêter de montrer mon chemin", null);
-		resetMyTripButton = new Button("Recommencer mon chemin", null);
-		
 		validateButton.setEnabled(false);
 		resetButton.setEnabled(false);
 		
 		validateButton.addAction(this, "validateAction");
 		resetButton.addAction(this, "resetAction");
-		showMyTripButton.addAction(this, "showMyTripAction");
-		stopShowingMyTripButton.addAction(this, "stopShowingMyTripAction");
-		resetMyTripButton.addAction(this, "resetMyTripAction");
 		
 		validateButton.setBounds(0, 55, 280, 35);
 		resetButton.setBounds(0, 95, 280, 35);
-		showMyTripButton.setBounds(0, 15, 280, 35);
-		stopShowingMyTripButton.setBounds(0, 15, 280, 35);
-		resetMyTripButton.setBounds(0, 15, 280, 35);
 		
 		buttonsPanel.add(validateButton);
 		buttonsPanel.add(resetButton);
-		buttonsPanel.add(showMyTripButton);
 
-		/*canBeginText = new Label("");
-		canBeginText.setFont(new Font("Serif", Font.PLAIN, 10));
+		Font f = new Font("Serif", Font.PLAIN, 14);
+		canBeginText = new Label("Vous ne pouvez pas commencer votre voyage");
+		canBeginText.setFont(f);
+		canBeginText.setHorizontalAlignment(SwingConstants.CENTER);
 		canBeginText.setBorder(new LineBorder(Color.BLACK));
-		canBeginText.setBounds(0, 15, 200, 35);
-		buttonsPanel.add(canBeginText);*/
+		canBeginText.setBounds(0, 15, 280, 35);
+		buttonsPanel.add(canBeginText);
 		
 		// TODO display canBeginText
 		//canBeginText = new Label("Vous ne pouvez pas commencer votre voyage");
@@ -148,46 +140,20 @@ public class BottomPlayerPanel extends Panel {
 		}
 	}
 	
-	public void showMyTripAction() {
-		// TODO passe en mode montrer mon chemin
-		showMyTripButton.setVisible(false);
-		buttonsPanel.add(stopShowingMyTripButton);
-		stopShowingMyTripButton.setVisible(true);
-	}
-	
-	public void stopShowingMyTripAction() {
-		// TODO passe en mode ne plus montrer mon chemin
-		stopShowingMyTripButton.setVisible(false);		
-		buttonsPanel.add(showMyTripButton);
-		showMyTripButton.setVisible(true);
-	}
-	
-	public void checkInTripButton(Data data) {
-		if (data.hasStartedMaidenTravel(playerName)) {
-			System.out.println("ON EST EN MAIDEN TRAVEL");
-			stopShowingMyTripButton.setVisible(false);
-			showMyTripButton.setVisible(false);
-			buttonsPanel.add(resetMyTripButton);
-			resetMyTripButton.setVisible(true);
-		}
-	}
-	
 	public void resetMyTripAction() {
 		// TODO recommencer le maiden travel
 	}
 	
-	/*protected void checkIfCanBeginTrip() {
-		if (!canBeginTrip) {
-			return;
-		}
-		
+	protected void checkIfCanBeginTrip() {
 		Data data = StreetCar.player.getGameData();
-		if (data.getTramPosition(playerName) == null) {
+		if (!canBeginTrip) {
+			canBeginText.setText("Vous ne pouvez pas commencer votre voyage");
+		} else if (data.getTramPosition(playerName) == null) {
 			canBeginText.setText("Vous pouvez commencer votre voyage !");
 		} else {
 			canBeginText.setText("Vitesse max = " + data.getMaximumSpeed());
 		}
-	}*/
+	}
 	
 	protected void checkValidateButton(Data data) {
 		boolean enabled = false;
@@ -222,8 +188,8 @@ public class BottomPlayerPanel extends Panel {
 			if (refreshCount > 1) {
 				checkValidateButton(data);
 				checkResetButton(data);
-				checkInTripButton(data);
 				cardsPanel.refreshGame(player, data);
+				checkIfCanBeginTrip();
 			}
 			if (data.isPlayerTurn(playerName)) {				
 				cardsPanel.setBackground(new Color(0xC9ECEE));

@@ -19,7 +19,7 @@ public class WelcomeMenuPanel extends MenuPanel {
 	}
 	
 	private void setupPanel() {
-		this.setMenuTitle("Main Menu", null);
+		this.setMenuTitle("Menu principal", null);
 	}
 	
 	private void setupButtons() {

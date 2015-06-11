@@ -12,6 +12,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -240,10 +241,37 @@ public class MapPanel extends Panel implements MouseListener, ComponentListener,
 			trainBufferedImage = Resources.imageNamed("tram_white");
 		}
 
+		int angleInDegrees = 0;
 		Point currentTramPosition = data.getTramPosition(name);
+		try {
+			Point previousTramPosition = data.getPreviousTramPosition(StreetCar.player.getPlayerName());
+			if (previousTramPosition != null) {
+				if (currentTramPosition.x > previousTramPosition.x) {
+					angleInDegrees = 0;
+				} else if (currentTramPosition.x < previousTramPosition.x) {
+					angleInDegrees = 180;
+				} else if (currentTramPosition.y > previousTramPosition.y) {
+					angleInDegrees = 90;
+				} else if (currentTramPosition.y < previousTramPosition.y) {
+					angleInDegrees = 270;
+				} 
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
 		int tramX = this.originX + this.cellWidth * currentTramPosition.x;
 		int tramY = this.originY + this.cellWidth * currentTramPosition.y;
-		g2d.drawImage(trainBufferedImage, tramX+5, tramY+15, cellWidth-1, cellWidth-30, null);
+		
+		AffineTransform at = new AffineTransform();
+		at.translate(tramX + cellWidth / 2, tramY + cellWidth / 2);
+		at.rotate(Math.toRadians(angleInDegrees));
+		at.scale((double)(cellWidth-5) / (double)trainBufferedImage.getWidth(),
+				(double)(cellWidth-25) / (double)trainBufferedImage.getHeight());
+		at.translate(-trainBufferedImage.getWidth() / 2, -trainBufferedImage.getHeight() / 2);
+		g2d.drawImage(trainBufferedImage, at, null);
+		
+		//g2d.drawImage(trainBufferedImage, tramX+5, tramY+15, cellWidth-1, cellWidth-30, null);
 	}
 
 	// Mouse Listener
