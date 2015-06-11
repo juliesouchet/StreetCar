@@ -2,7 +2,6 @@
 package main.java.gui.application;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -53,7 +52,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 		this.frame.getContentPane().setLayout(null); 
 		this.frame.addComponentListener(this);
 		this.frame.setSize(1400, 840);
-        this.frame.setMinimumSize(new Dimension(1400, 840));
+        //this.frame.setMinimumSize(new Dimension(1400, 840));
 	}
 
 	private void setupMenuBar() {
