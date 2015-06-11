@@ -36,7 +36,11 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 	ArrayList<Tile> theBestTiles;
 
 
-	public heuristicNode[][] bufferHeuristic;
+	private heuristicNode[][] bufferHeuristic;
+
+	Point[] lesTargets;
+	private heuristicNode[][][] lesHeuristiques;
+
 
 	class heuristicNode{
 		int North=0;
@@ -108,11 +112,25 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		this.bestPathTile = new Tile[MAX_LENGTH_OF_PATH];
 		this.bestPathLength = 0;
 		this.bufferHeuristic = new heuristicNode[this.width][this.height];
+		
+		this.lesHeuristiques = new heuristicNode[terminus.size()+stops.size()][this.width][this.height];
 		for (int i=0;i<this.width;i++){
 			for (int j=0; j<this.height; j++){
 				this.bufferHeuristic[i][j]= new heuristicNode();
+				for( int k=0; k<terminus.size()+stops.size();k++){
+					this.lesHeuristiques[k][i][j] = new heuristicNode();
+				}
 			}
 		}
+		
+		this.lesTargets = new Point[terminus.size()+stops.size()];
+		for( int k=0; k<terminus.size();k++){
+			lesTargets[k] = new Point(terminus.get(k));
+		}
+		for( int k=terminus.size(); k<terminus.size()+stops.size();k++){
+			lesTargets[k] = new Point(stops.get(k-terminus.size()));
+		}
+
 		ArrayList<Point> theBestPath = new ArrayList<Point>(50);
 		ArrayList<Tile> theBestTiles  = new ArrayList<Tile>(50);
 
@@ -171,7 +189,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		reset(this.bufferHeuristic);
 
 		computeUnaccessibleHeuristic(this.bufferHeuristic);
-		mul(this.bufferHeuristic,1);
+		//mul(this.bufferHeuristic,1);
 		if(trace)System.out.println("computeUnaccessibleHeuristic");
 		if(trace)printMatrice(bufferHeuristic);
 
@@ -196,7 +214,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 		for (int i=0; i<targets1.size(); i++){
 			computeManhatanHeuristic(targets1.get(i), this.bufferHeuristic);
-			mul(this.bufferHeuristic,1);
+			//mul(this.bufferHeuristic,1);
 			add(this.heuristic, this.heuristic,this.bufferHeuristic);
 			if(trace)System.out.println("computeManhatanHeuristic:"+targets1.get(i));
 			if(trace)printMatrice(bufferHeuristic);			
@@ -205,17 +223,40 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 		for (int i=0; i<targets2.size(); i++){
 			computeManhatanHeuristic(targets2.get(i), this.bufferHeuristic);
-			mul(this.bufferHeuristic,1);
+			//mul(this.bufferHeuristic,1);
 			add(this.heuristic, this.heuristic,this.bufferHeuristic);
 			if(trace)System.out.println("computeManhatanHeuristic:"+targets2.get(i));
 			if(trace)printMatrice(bufferHeuristic);			
 			reset(this.bufferHeuristic);		}
+		
+		for (int i=0; i<this.lesTargets.length; i++){
+			computeManhatanHeuristic(this.lesTargets[i], this.lesHeuristiques[i]);
+		}		
 
 		if(trace)	System.out.println("\n\n\n/!\\computeHeuristic DONE/!\\\n\n\n");
 
 
 	}
 
+	//TODO ~ c'est une horreur: addition de matrice a chaque traitement de noeud
+	public void majHeuristique(SituationInAStar situationInAStar){
+		boolean needToMaj = false;
+		for(int i=0; i<this.lesTargets.length; i++){
+			if(!situationInAStar.SituationStops.contains(this.lesTargets)){
+				needToMaj = true;
+			}
+		}
+		if (needToMaj){
+			System.out.println("\t\t\t/!\\Need to maj l'heuristique:/!\\");
+			reset(this.heuristic);
+			computeUnaccessibleHeuristic(this.heuristic);
+			for(int i=0; i<this.lesTargets.length; i++){
+				if(situationInAStar.SituationStops.contains(this.lesTargets[i])){
+					add(this.heuristic,this.heuristic,this.lesHeuristiques[i]);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Calcule l'heuristique pour un point donné. (Pour l'instant distance de manhatan, TODO : pondérer avec tuiles existantes.)
@@ -647,7 +688,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 				else{this.SituationTiles.add(src.SituationTiles.get(i).getClone());}
 			}
 
-			for( int i=0; i< src.SituationStops.size(); i++){
+			for( int i=0; i<src.SituationStops.size(); i++){
 				this.SituationStops.add(new Point(src.SituationStops.get(i)));
 			}
 		}
@@ -672,17 +713,55 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		}
 	}
 
+
+	public boolean IveGotTheTile(Tile tile){
+		for(int i=0; i< this.currentData.getHandSize(currentData.getPlayerTurn()); i++){
+			if(this.currentData.getHandTile(currentData.getPlayerTurn(), i).equals(tile)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private double priceOfTile(Tile theTile){
+		return 24-(theTile.getCardinal());
+	}
+	public int priceOfTheTile(double proba, Tile theTile){
+		proba = 1.0 - proba; // Proba de ne pas l'avoir
+		if (proba==1.0){ return 500;} //Quelqu'un d'autre peut nous débloquer mais peu probable
+		else{
+			return (int) (priceOfTile(theTile) * (1+proba));
+		}
+	}
+
+
 	public void addPositionAndTileToThePotentialBestPath(SituationInAStar currentConfiguration){
 		if(this.currentData.getTile(currentConfiguration.position).isPath(currentConfiguration.comeFrom, currentConfiguration.goingTo)){
 			currentConfiguration.SituationPath.add(new Point(currentConfiguration.position));
 			currentConfiguration.SituationTiles.add(null);
 		}else{
-			 ArrayList<Tile> setOfPossibleTiles = findSuitableTiles(currentConfiguration.SituationPath, currentConfiguration.SituationTiles, currentConfiguration.position, currentConfiguration.comeFrom, currentConfiguration.goingTo);
-			 
+			ArrayList<Tile> setOfPossibleTiles = findSuitableTiles(currentConfiguration.SituationPath, currentConfiguration.SituationTiles, currentConfiguration.position, currentConfiguration.comeFrom, currentConfiguration.goingTo);
+			//TODO
+			//			int bestPriceForThere = 0;
+			//			for(int i=0; i<setOfPossibleTiles.size(); i++){
+			//				Tile currentTile = setOfPossibleTiles.get(i);
+			//				if(IveGotTheTile(currentTile)){
+			//					if (bestPriceForThere<priceOfTheTile(1.0,currentTile)){
+			//						bestPriceForThere=priceOfTheTile(1.0,currentTile);
+			//					}
+			//				}else{
+			//					if (bestPriceForThere<priceOfTheTile(currentData.deck.getPickProba(currentTile),currentTile)){
+			//						bestPriceForThere=priceOfTheTile(currentData.deck.getPickProba(currentTile),currentTile);
+			//				}
+			//					currentConfiguration.weightOfThePath +=  priceOfTheTile(currentData.deck.getPickProba(currentTile),currentTile);
+			//				}
+			//			}
+			//			currentConfiguration.weightOfThePath += bestPriceForThere;
+			currentConfiguration.weightOfThePath += 3;
 		}
 	}
 
-	
+
 
 	@SuppressWarnings("unused")
 	public boolean IveGotTheTiles(Tile tile1, Tile tile2){
@@ -707,7 +786,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		return false;
 	}
 
-	
+
 	public void addNeighboorsToQueue(SituationInAStar currentConfiguration, PriorityQueue<SituationInAStar> PriorityQueue){
 		SituationInAStar bufferAStarConfig = new SituationInAStar();
 		if(get(heuristic, currentConfiguration.position).East!=Integer.MAX_VALUE){
@@ -740,17 +819,78 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 		addPositionAndTileToThePotentialBestPath(currentConfiguration);
 		currentConfiguration.position = Direction.getPointInDirection(currentConfiguration.position, currentConfiguration.goingTo);
+		majArrets(currentConfiguration);
 		currentConfiguration.comeFrom = currentConfiguration.goingTo.turnHalf();
 		addNeighboorsToQueue(currentConfiguration,priorityQueue);
 
 
 	}
+	
+	
+	private boolean checkIfTargetBuildingCompleted(SituationInAStar situationInAStar){
+		int x = situationInAStar.position.x;
+		int y = situationInAStar.position.y;
 
-	public void initAStar(Point origin, PriorityQueue<SituationInAStar> priorityQueue){
+		if(situationInAStar.SituationStops.contains(new Point(x,y))){ 
+			System.out.println(situationInAStar.SituationStops);
+			situationInAStar.SituationStops.remove(new Point(x,y));
+			System.out.println("\n\t\t\t\tBOOOM!\n\n");
+			System.out.println(situationInAStar.SituationStops);
+			situationInAStar.weightOfThePath = 0;
+			return true; }
+		if(situationInAStar.SituationStops.contains(new Point(x+1,y))){ 
+			System.out.println(situationInAStar.SituationStops);
+			situationInAStar.SituationStops.remove(new Point(x+1,y));
+			System.out.println("\n\t\t\t\tBOOOM!\n\n");
+			System.out.println(situationInAStar.SituationStops);
+			situationInAStar.weightOfThePath = 0;
+			return true; }
+		if(situationInAStar.SituationStops.contains(new Point(x-1,y))){ 
+			System.out.println(situationInAStar.SituationStops);
+
+			situationInAStar.SituationStops.remove(new Point(x-1,y));
+			System.out.println("\n\t\t\t\tBOOOM!\n\n");
+			System.out.println(situationInAStar.SituationStops);
+			situationInAStar.weightOfThePath = 0;
+			return true; }
+		if(situationInAStar.SituationStops.contains(new Point(x,y+1))){ 
+			situationInAStar.SituationStops.remove(new Point(x,y+1));
+			System.out.println(situationInAStar.SituationStops);
+			System.out.println("\n\t\t\t\tBOOOM!\n\n");
+			System.out.println(situationInAStar.SituationStops);
+			situationInAStar.weightOfThePath = 0;
+
+			return true; }
+		if(situationInAStar.SituationStops.contains(new Point(x,y-1))){ 
+			System.out.println(situationInAStar.SituationStops);
+			situationInAStar.SituationStops.remove(new Point(x,y-1));
+			System.out.println(situationInAStar.SituationStops);
+			System.out.println("\n\t\t\t\tBOOOM!\n\n");
+			situationInAStar.weightOfThePath = 0;
+			return true; }
+
+		return false;
+	}
+
+	public void majArrets(SituationInAStar currentSituationInAStar){
+		if (currentSituationInAStar.SituationStops.contains(currentSituationInAStar.position)){
+			currentSituationInAStar.SituationStops.remove(currentSituationInAStar.position);
+		}
+		if(checkIfStopDone(currentSituationInAStar.position)){
+			currentSituationInAStar.SituationStops.remove(currentSituationInAStar.position);
+		}
+		checkIfTargetBuildingCompleted(currentSituationInAStar);
+	}
+
+	public void initAStar(Point origin, PriorityQueue<SituationInAStar> priorityQueue, ArrayList<Point> lesCibles){
 		SituationInAStar currentSituationInAStar = new SituationInAStar();
 		SituationInAStar bufSituationInAStar = new SituationInAStar();
 
+		for(int i=0; i< lesCibles.size(); i++){
+			currentSituationInAStar.SituationStops.add(lesCibles.get(i));
+		}
 		currentSituationInAStar.position = new Point(origin);
+		majArrets(currentSituationInAStar);
 		currentSituationInAStar.comeFrom = this.currentData.getTile(currentSituationInAStar.position).getPathTab()[0].end1;
 		currentSituationInAStar.goingTo = this.currentData.getTile(currentSituationInAStar.position).getPathTab()[0].end0;
 		currentSituationInAStar.weightOfThePath=0;
@@ -766,12 +906,13 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		priorityQueue.add(bufSituationInAStar);
 	}
 
-	public int makeBestPath(Point terminus1, Point terminus2){
+	public int makeBestPath(Point origin, ArrayList<Point> terminus2){
 		ArrayList<Point> target = new ArrayList<Point>(1);
-		target.add(terminus2);
 		boolean trace = true;
 		PriorityQueue<SituationInAStar> maFileAPriorite = new PriorityQueue<SituationInAStar>();
-		this.computeHeuristic(target,new ArrayList<Point>());
+
+		this.computeHeuristic(terminus2,new ArrayList<Point>());
+
 		System.out.println("\tHeuristique courant:\n\t===================================================================");
 		printMatrice(heuristic);
 		System.out.println("\n\t===================================================================");
@@ -779,12 +920,20 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		SituationInAStar currentSituationInAStar = new SituationInAStar();
 
 		if(trace)System.out.println("\n\tJe commence la construction.\n");
-		if(trace)System.out.println("Je pars de:"+terminus1);
+		if(trace)System.out.println("Je pars de:"+origin);
 		if(trace)System.out.println("Je vais a:"+terminus2);
 
-		initAStar(terminus1, maFileAPriorite);
+		initAStar(origin, maFileAPriorite, terminus2);
 		currentSituationInAStar = maFileAPriorite.poll();
-		while (!currentSituationInAStar.position.equals(terminus2)) {
+		while (!(currentSituationInAStar.SituationStops.size()==0)) {
+			
+			if(currentSituationInAStar.position.equals(currentSituationInAStar.SituationStops.get(0))){
+				System.out.println("\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!\nPassage au point!");
+				break;
+			}
+			
+			
+			this.majHeuristique(currentSituationInAStar);
 			if (trace)
 				System.out.println("Traite noeud:\n\tPosition="
 						+ currentSituationInAStar.position + "\n\t Cible="
@@ -792,6 +941,7 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 						+ currentSituationInAStar.weightOfThePath
 						+ "\n\tLongueur="
 						+ currentSituationInAStar.SituationPath.size()
+						+ "Nombre de cibles restantes=" + currentSituationInAStar.SituationStops.size()+"->"+currentSituationInAStar.SituationStops
 						+ "\n\tTaille de la file=" + maFileAPriorite.size()
 						+ "\n\t=============");
 			traiterNoeud(currentSituationInAStar, maFileAPriorite);
@@ -803,6 +953,21 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 
 		theBestPath = (ArrayList<Point>) currentSituationInAStar.SituationPath.clone();
 		theBestTiles = (ArrayList<Tile>) currentSituationInAStar.SituationTiles.clone();
+
+		if(trace){
+			System.out.println("A placer dans le chemin");
+			for (int i=0; i<theBestTiles.size(); i++){
+				if( theBestTiles.get(i)!=null){
+					System.out.println(theBestTiles.get(i));
+				}
+			}
+			System.out.println("Ma main:");
+			for (int i=0; i<this.currentData.getHandSize(this.currentData.getPlayerTurn()); i++){
+				System.out.println(this.currentData.getHandTile(this.currentData.getPlayerTurn(), i));
+			}
+		}
+
+
 		return currentSituationInAStar.weightOfThePath;
 	}
 
@@ -816,9 +981,15 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 		this.computeHeuristic();
 		Point[] extremityTerminus = this.getBestTerminus();
 		Random monAlea = new Random();
+		ArrayList<Point> targets = new ArrayList<Point>();
 
-		//TODO remettre int weightOfBestPath = this.makeBestPath(extremityTerminus[0], extremityTerminus[1]);
-		int weightOfBestPath = this.makeBestPath(new Point(1,3), new Point(12,7));
+		for (int i=0; i< currentConfig.nbrBuildingInLine(); i++){
+			targets.add(currentConfig.getPlayerAimBuildings(currentConfig.getPlayerTurn())[i]);
+		}
+		targets.add(extremityTerminus[1]);
+
+
+		int weightOfBestPath = this.makeBestPath(extremityTerminus[0], targets);
 		if(trace){
 			System.out.println(extremityTerminus[0]);
 			System.out.println(extremityTerminus[1]);
@@ -840,8 +1011,22 @@ public class AutomatePlusCourtChemin extends PlayerAutomaton {
 				}
 			}		
 		}
+		if(nombreGoodActionsPossibles==0){
+			for(int i=0; i<theBestPath.size() ; i++ ){
+				if(!(theBestTiles.get(i) == null || !IveGotTheTile(theBestTiles.get(i)))){
+					myPossiblesGoodActions[nombreGoodActionsPossibles] = Action.newBuildSimpleAction(theBestPath.get(i), theBestTiles.get(i));
+					nombreGoodActionsPossibles++;
+				}
+			}		
+		}
 
-
+		if (nombreGoodActionsPossibles==0){
+			System.out.println("Dumbest Called!");
+			
+			Dumbest autreAutomate = new Dumbest(currentConfig.getPlayerTurn());
+			System.out.println("Appel a dumbest");
+			return autreAutomate.makeChoice(currentConfig);
+		}
 		return myPossiblesGoodActions[monAlea.nextInt(nombreGoodActionsPossibles)];
 
 	}
