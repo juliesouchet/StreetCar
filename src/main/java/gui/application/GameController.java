@@ -36,6 +36,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	// Properties
 
 	protected MenuPanel menuPanel = null;
+	protected boolean wantStopGame = false;
 
 	// Constructors
 
@@ -97,8 +98,12 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 			contentPanel.add(this.menuPanel);
 			this.componentResized(null);
 		}
-		contentPanel.revalidate();
+
+		
+		//contentPanel.revalidate();
 		contentPanel.repaint();
+		//this.frame.revalidate();
+		this.frame.repaint();
 	}
 
 	public void setFrameContentPane(Panel panel) {
@@ -166,6 +171,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 	
 	public void showWinnerPanel() {
+		this.setFrameContentPane(new MovingMapPanel());
 		MessageMenuPanel messagePanel = new MessageMenuPanel(this);
 		messagePanel.setMessage("Le gagnant est : " + StreetCar.player.getGameData().getWinner());
 		messagePanel.setButtonAction(new Runnable() {
@@ -221,6 +227,7 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	public void componentShown(ComponentEvent e) {}
 
 	public void stopGame() {
+		wantStopGame = true;
 		try {
 			StreetCar.player.onQuitGame(StreetCar.player.getPlayerName());
 		} catch (RemoteException e) {
@@ -265,15 +272,19 @@ public class GameController extends FrameController implements InterfaceIHM, Com
 	}
 
 	public void excludePlayer() {
-		/*MessageMenuPanel messagePanel = new MessageMenuPanel(this);
-		messagePanel.setMessage("Vous venez de vous faire exclure du jeu");
-		messagePanel.setButtonAction(new Runnable() {
-			public void run() {
-				stopGame();
-				showWelcomeMenuPanel();
-			}
-		});
-		this.setMenuPanel(messagePanel);*/
+		this.setFrameContentPane(new MovingMapPanel());
+		if (!wantStopGame) {
+			MessageMenuPanel messagePanel = new MessageMenuPanel(this);
+			messagePanel.setMessage("Vous venez de vous faire exclure du jeu");
+			messagePanel.setButtonAction(new Runnable() {
+				public void run() {
+					showWelcomeMenuPanel();
+				}
+			});
+			this.setMenuPanel(messagePanel);
+		} else {
+			showWelcomeMenuPanel();
+		}
 		System.out.println("PLAYER VIENT DE SE FAIRE REFOULER");
 	}
 	

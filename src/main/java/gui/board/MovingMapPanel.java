@@ -22,6 +22,7 @@ public class MovingMapPanel extends Panel {
 		bufferedImage = Resources.imageNamed("background");
 		this.imagePanel = new ImagePanel();
 		this.add(this.imagePanel);
+		this.setLayout(null);
 		this.imagePanel.setImage(bufferedImage);
 	}
 	
