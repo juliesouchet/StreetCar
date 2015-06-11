@@ -34,17 +34,17 @@ public class ClientRoomMenuPanel extends MenuPanel {
 	
 	private void setupPanel() {
     	this.setSize(new Dimension(700, 500));
-    	this.setMenuTitle("Join Game", null);
+    	this.setMenuTitle("Rejoindre une partie", null);
 	}	
 
 	private void setupPlayersFields() {
-	    String defaultName = Resources.localizedString("Name", null);
+	    String defaultName = Resources.localizedString("Nom", null);
 	    String[] adversaryChoices = {
-			Resources.localizedString("Player", null),
-			Resources.localizedString("Computer (easy)", null),
-			Resources.localizedString("Computer (medium)", null),
-			Resources.localizedString("Computer (hard)", null),		  	  
-			Resources.localizedString("Closed", null)
+			Resources.localizedString("Joueur", null),
+			Resources.localizedString("Ordinateur (facile)", null),
+			Resources.localizedString("Ordinateur (moyen)", null),
+			Resources.localizedString("Ordinateur (difficile)", null),		  	  
+			Resources.localizedString("Fermé", null)
 	    };
 	    
 	    for (int i = 0, y = 140; i < 5; i++, y += 50) {
@@ -68,7 +68,7 @@ public class ClientRoomMenuPanel extends MenuPanel {
 	}
 	
 	private void setupButtons() {    	
-		Button cancelButton = new Button("Cancel");
+		Button cancelButton = new Button("Quitter");
 		cancelButton.addAction(this, "cancelGame");
 		cancelButton.setBounds(new Rectangle(275, 430, 150, 40));
     	this.add(cancelButton);
@@ -106,17 +106,17 @@ public class ClientRoomMenuPanel extends MenuPanel {
 				avatarImagePanel.setColor(data.getPlayerColor(playerName));
 				
 				if (info.isClosed()) {
-					nameLabel.setText("Connection closed", null);
+					nameLabel.setText("Connexion fermée", null);
 					choiceComboBox.setSelectedIndex(4);
 					
 				} if (nameLabel.getText() == null && info.isHuman()) {
-					nameLabel.setText("Waiting connection", null);
+					nameLabel.setText("En attente de connexion", null);
 					choiceComboBox.setSelectedIndex(0);
 					
 				} else if (!info.isHuman()) {
 					int level = info.getAiLevel();
 					choiceComboBox.setSelectedIndex(level);
-					nameLabel.setText("AI", null);
+					nameLabel.setText("IA", null);
 				}
 			}
 		} catch (Exception e) {
